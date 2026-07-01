@@ -2,10 +2,9 @@ import type { Case } from '../game/caseModel'
 
 interface HeaderProps {
   currentCase: Case
-  attemptsLeft: number
 }
 
-export function Header({ currentCase, attemptsLeft }: HeaderProps) {
+export function Header({ currentCase }: HeaderProps) {
   return (
     <header className="app-header notebook-card">
       <div className="brand-lockup">
@@ -25,14 +24,6 @@ export function Header({ currentCase, attemptsLeft }: HeaderProps) {
         </div>
       </div>
 
-      <div className="header-meta">
-        <div className="status-pill-group">
-          <span className="status-pill">
-            {currentCase.crimeIcon} {currentCase.difficulty}
-          </span>
-          <span className="status-pill">Attempts: {attemptsLeft}</span>
-        </div>
-      </div>
     </header>
   )
 }

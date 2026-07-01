@@ -80,6 +80,12 @@ function App() {
     navigate('/investigation')
   }
 
+  const startInvestigation = () => {
+    setHasStartedCase(true)
+    setActivePanel('investigation')
+    navigate('/investigation')
+  }
+
   const toggleRuledOut = (suspectId: number) => {
     updateSuspect(suspectId, (suspect) => ({
       ...suspect,
@@ -310,12 +316,18 @@ function App() {
       />
 
       <div className="app-content">
-        <Header currentCase={currentCase} attemptsLeft={attemptsLeft} />
+        <Header currentCase={currentCase} />
 
         <Routes>
           <Route
             path="/overview"
-            element={<CaseOverviewRoute attemptsLeft={attemptsLeft} currentCase={currentCase} />}
+            element={
+              <CaseOverviewRoute
+                attemptsLeft={attemptsLeft}
+                currentCase={currentCase}
+                startInvestigation={startInvestigation}
+              />
+            }
           />
           <Route path="/investigation" element={<CaseRoute {...sharedInvestigationRouteProps} />} />
           <Route path="/suspects" element={<SuspectsRoute {...sharedInvestigationRouteProps} />} />
