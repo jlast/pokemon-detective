@@ -315,7 +315,6 @@ function App() {
                 wrongAccusationIds={wrongAccusationIds}
                 inspectGroup={inspectGroup}
                 setSuspectNoteStatus={setSuspectNoteStatus}
-                toggleRuledOut={toggleRuledOut}
                 openAccusation={openAccusation}
                 attemptsLeft={attemptsLeft}
               />

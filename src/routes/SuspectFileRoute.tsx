@@ -8,7 +8,6 @@ interface SuspectFileRouteProps {
   wrongAccusationIds: number[]
   inspectGroup: (suspectId: number, groupKey: SuspectInvestigationGroup) => void
   setSuspectNoteStatus: (suspectId: number, noteStatus: SuspectNoteStatus) => void
-  toggleRuledOut: (suspectId: number) => void
   openAccusation: (suspectId: number) => void
   attemptsLeft: number
 }
@@ -18,7 +17,6 @@ export function SuspectFileRoute({
   wrongAccusationIds,
   inspectGroup,
   setSuspectNoteStatus,
-  toggleRuledOut,
   openAccusation,
   attemptsLeft,
 }: SuspectFileRouteProps) {
@@ -59,7 +57,6 @@ export function SuspectFileRoute({
           inspectGroup={inspectGroup}
           setExpandedGroup={setExpandedGroup}
           setSuspectNoteStatus={setSuspectNoteStatus}
-          toggleRuledOut={toggleRuledOut}
           openAccusation={openAccusation}
           attemptsLeft={attemptsLeft}
         />

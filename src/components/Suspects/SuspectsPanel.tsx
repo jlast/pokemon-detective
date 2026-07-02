@@ -13,32 +13,57 @@ export function SuspectsPanel({
   inspectSuspect,
 }: SuspectsProps) {
   const discoveredEvidence = currentCase.evidence.filter((evidenceItem) => evidenceItem.discovered)
+  const totalEvidence = currentCase.evidence.length
 
   return (
     <section className={`notebook-card evidence-board mobile-section`}>
       <div className="section-heading">
         <div>
           <h2>Suspects Lineup</h2>
-          <p className="investigation-board-subtitle">
-            Open a suspect dossier to inspect facts and update your notes.
-          </p>
         </div>
       </div>
 
-      <div className="suspect-evidence-strip inspect-item">
-        <strong>Evidence collected</strong>
+      <section className="suspect-evidence-strip suspect-evidence-board inspect-item">
+        <div className="suspect-evidence-board-header">
+          <strong>📎 Evidence Collected</strong>
+          <span className="suspect-evidence-counter">
+            {discoveredEvidence.length} / {totalEvidence} clues
+          </span>
+        </div>
+
+        <div className="suspect-evidence-progress" aria-hidden="true">
+          {currentCase.evidence.map((evidenceItem) => (
+            <span
+              key={evidenceItem.id}
+              className={`suspect-evidence-slot ${evidenceItem.discovered ? 'is-collected' : ''}`}
+            >
+              <span className="suspect-evidence-slot-pin" />
+              <span className="suspect-evidence-slot-mark">{evidenceItem.discovered ? '✓' : '?'}</span>
+            </span>
+          ))}
+        </div>
+
         {discoveredEvidence.length > 0 ? (
-          <div className="suspect-evidence-list">
+          <div className="suspect-evidence-list suspect-evidence-board-list">
             {discoveredEvidence.map((evidenceItem) => (
-              <span key={evidenceItem.id} className="suspect-evidence-pill">
-                ✓ {evidenceItem.title}
-              </span>
+              <article key={evidenceItem.id} className="suspect-evidence-tag evidence-note-card">
+                <span className="suspect-evidence-tag-icon" aria-hidden="true">
+                  📎
+                </span>
+                <div className="suspect-evidence-tag-copy">
+                  <strong>{evidenceItem.title}</strong>
+                  <span>{evidenceItem.clueText}</span>
+                </div>
+              </article>
             ))}
           </div>
         ) : (
-          <p className="overview-section-hook">No evidence collected yet. Search locations to build your case.</p>
+          <div className="suspect-evidence-empty">
+            <p className="overview-section-hook">No evidence collected yet.</p>
+            <p className="overview-section-hook">Search investigation locations to collect your first clue.</p>
+          </div>
         )}
-      </div>
+      </section>
 
       <div className="suspect-grid suspect-grid-lineup">
         {currentCase.suspects.map((suspect, index) => (
