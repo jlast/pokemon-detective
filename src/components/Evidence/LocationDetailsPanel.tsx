@@ -1,18 +1,18 @@
-import type { Evidence, Location } from "../../game/caseModel";
+import type { Location } from '../../game/caseModel'
 
 interface LocationsDetailsPanelProps {
-    selectedLocation: Location;
-    selectedLocationEvidence: Evidence;
-    addEvidenceToNotebook: () => void;
-    closeLocation: () => void;
+  selectedLocation: Location
+  closeLocation: () => void
 }
 
 export function LocationsDetailsPanel({
   selectedLocation,
-  selectedLocationEvidence,
-  addEvidenceToNotebook,
   closeLocation,
 }: LocationsDetailsPanelProps) {
+  const observationText = selectedLocation.observationText ?? selectedLocation.description ?? ''
+  const evidenceTitle = selectedLocation.evidenceTitle ?? 'Clue discovered'
+  const evidenceText = selectedLocation.evidenceText ?? ''
+
   return (
     <div
       className="overlay-shell"
@@ -30,7 +30,8 @@ export function LocationsDetailsPanel({
 
         <div className="inspect-list">
           <div className="inspect-item">
-            <span>{selectedLocation.description}</span>
+            <strong>Observation</strong>
+            <span>{observationText}</span>
           </div>
           <div className="inspect-item">
             <strong>Investigation</strong>
@@ -47,23 +48,12 @@ export function LocationsDetailsPanel({
             </span>
           </div>
           <div className="inspect-item evidence-reveal">
-            <strong>{selectedLocationEvidence.title}</strong>
-            <span>{selectedLocationEvidence.clueText}</span>
+            <strong>{evidenceTitle}</strong>
+            <span>{evidenceText}</span>
           </div>
         </div>
 
         <div className="overlay-actions">
-          {!selectedLocation.investigated ? (
-            <button
-              type="button"
-              className="primary-button"
-              onClick={addEvidenceToNotebook}
-            >
-              Add to notebook
-            </button>
-          ) : (
-            <span> Added to notebook</span>
-          )}
           <button
             type="button"
             className="secondary-button"
@@ -74,5 +64,5 @@ export function LocationsDetailsPanel({
         </div>
       </section>
     </div>
-  );
+  )
 }

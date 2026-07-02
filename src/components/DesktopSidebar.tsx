@@ -1,10 +1,9 @@
 interface DesktopSidebarProps {
-  activeSection: 'overview' | 'investigation' | 'suspects' | 'notes'
+  activeSection: 'overview' | 'investigation' | 'suspects'
   canGiveUp: boolean
   onSelectOverview: () => void
   onSelectInvestigation: () => void
   onSelectSuspects: () => void
-  onSelectNotes: () => void
   onGiveUp: () => void
 }
 
@@ -14,13 +13,11 @@ export function DesktopSidebar({
   onSelectOverview,
   onSelectInvestigation,
   onSelectSuspects,
-  onSelectNotes,
   onGiveUp,
 }: DesktopSidebarProps) {
   const isOverviewActive = activeSection === 'overview'
   const isInvestigationActive = activeSection === 'investigation'
   const isSuspectsActive = activeSection === 'suspects'
-  const isNotesActive = activeSection === 'notes'
 
   return (
     <aside className="desktop-sidebar notebook-card" aria-label="Primary navigation">
@@ -69,13 +66,6 @@ export function DesktopSidebar({
           Suspects
         </button>
 
-        <button
-          type="button"
-          className={`sidebar-nav-button ${isNotesActive ? 'is-active' : ''}`}
-          onClick={onSelectNotes}
-        >
-          Notes
-        </button>
       </div>
 
       <div className="desktop-sidebar-section desktop-sidebar-actions">

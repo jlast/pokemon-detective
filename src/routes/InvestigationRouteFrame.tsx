@@ -1,16 +1,15 @@
 import type { ReactNode } from 'react'
 import type { Case } from '../game/caseModel'
-import { SuspectsPanel } from '../components/Suspects/SuspectsPanel'
 import { LocationsPanel } from '../components/Evidence/LocationsPanel'
 
 interface InvestigationRouteFrameProps {
-  activePanel: 'investigation' | 'suspects' | 'notebook'
-  layout: 'locations' | 'suspects' | 'none'
+  activePanel: 'investigation' | 'suspects'
+  layout: 'locations' | 'none'
   attemptsLeft: number
   currentCase: Case
-  inspectSuspect: (suspectId: number) => void
+  lastInvestigatedLocationId?: string | null
+  investigateLocation?: (locationId: string) => void
   openLocation: (locationId: string) => void
-  openNotebook: () => void
   setActivePanel: (panel: 'investigation' | 'suspects') => void
   startNewCase: () => void
   giveUp: () => void
@@ -21,9 +20,9 @@ export function InvestigationRouteFrame({
   activePanel,
   layout,
   currentCase,
-  inspectSuspect,
+  lastInvestigatedLocationId,
+  investigateLocation,
   openLocation,
-  openNotebook,
   setActivePanel,
   startNewCase,
   giveUp,
@@ -31,16 +30,18 @@ export function InvestigationRouteFrame({
 }: InvestigationRouteFrameProps) {
   const isInvestigationTab = activePanel === 'investigation'
   const isSuspectsTab = activePanel === 'suspects'
-  const isNotebookTab = activePanel === 'notebook'
 
   return (
     <>
       <div className="main-layout-single">
-        {layout === 'suspects' ? (
-          <SuspectsPanel currentCase={currentCase} inspectSuspect={inspectSuspect} />
-        ) : null}
         {layout === 'locations' ? (
-          <LocationsPanel isEvidenceTab currentCase={currentCase} openLocation={openLocation} />
+          <LocationsPanel
+            isEvidenceTab
+            currentCase={currentCase}
+            investigateLocation={investigateLocation ?? (() => {})}
+            lastInvestigatedLocationId={lastInvestigatedLocationId ?? null}
+            openLocation={openLocation}
+          />
         ) : null}
         {layout === 'none' ? children : null}
       </div>
@@ -59,13 +60,6 @@ export function InvestigationRouteFrame({
           onClick={() => setActivePanel('suspects')}
         >
           Suspects
-        </button>
-        <button
-          type="button"
-          className={`secondary-button ${isNotebookTab ? 'is-pressed' : ''}`}
-          onClick={openNotebook}
-        >
-          Notes
         </button>
       </footer>
 

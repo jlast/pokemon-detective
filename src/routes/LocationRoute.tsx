@@ -9,9 +9,7 @@ interface LocationRouteProps {
   selectedLocationEvidence: Evidence
   inspectSuspect: (suspectId: number) => void
   openLocation: (locationId: string) => void
-  openNotebook: () => void
   closeLocation: () => void
-  addEvidenceToNotebook: () => void
   setActivePanel: (panel: 'investigation' | 'suspects') => void
   startNewCase: () => void
   giveUp: () => void
@@ -19,18 +17,14 @@ interface LocationRouteProps {
 
 export function LocationRoute({
   selectedLocation,
-  selectedLocationEvidence,
   closeLocation,
-  addEvidenceToNotebook,
   ...props
 }: LocationRouteProps) {
   return (
     <InvestigationRouteFrame activePanel="investigation" layout="locations" {...props}>
       <LocationsDetailsPanel
-        addEvidenceToNotebook={addEvidenceToNotebook}
         closeLocation={closeLocation}
         selectedLocation={selectedLocation}
-        selectedLocationEvidence={selectedLocationEvidence}
       />
     </InvestigationRouteFrame>
   )

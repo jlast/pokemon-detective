@@ -6,9 +6,7 @@ interface AccuseRouteProps {
   attemptsLeft: number
   currentCase: Case
   accusationTarget: Suspect
-  inspectSuspect: (suspectId: number) => void
   openLocation: (locationId: string) => void
-  openNotebook: () => void
   closeAccusation: () => void
   confirmAccusation: () => void
   setActivePanel: (panel: 'investigation' | 'suspects') => void
@@ -20,9 +18,7 @@ export function AccuseRoute({
   attemptsLeft,
   currentCase,
   accusationTarget,
-  inspectSuspect,
   openLocation,
-  openNotebook,
   closeAccusation,
   confirmAccusation,
   setActivePanel,
@@ -32,12 +28,10 @@ export function AccuseRoute({
   return (
     <InvestigationRouteFrame
       activePanel="suspects"
-      layout="suspects"
+      layout="none"
       attemptsLeft={attemptsLeft}
       currentCase={currentCase}
-      inspectSuspect={inspectSuspect}
       openLocation={openLocation}
-      openNotebook={openNotebook}
       setActivePanel={setActivePanel}
       startNewCase={startNewCase}
       giveUp={giveUp}

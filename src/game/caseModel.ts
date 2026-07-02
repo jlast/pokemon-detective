@@ -9,11 +9,19 @@ export interface InspectedFact {
   discovered: boolean
 }
 
+export type SuspectInvestigationGroup = 'appearance' | 'records' | 'habitat' | 'ability'
+
+export type SuspectNoteStatus =
+  | 'suspect'
+  | 'ruled-out'
+
 export interface Suspect {
   pokemonId: number
   name: string
   sprite: string
   manuallyRuledOut: boolean
+  noteStatus: SuspectNoteStatus
+  inspectedGroups: Record<SuspectInvestigationGroup, boolean>
   inspectedFacts: InspectedFact[]
 }
 
@@ -21,7 +29,11 @@ export interface Location {
   id: string
   name: string
   icon: string
-  description: string
+  description?: string
+  teaserText?: string
+  observationText?: string
+  evidenceTitle?: string
+  evidenceText?: string
   evidenceId: string
   investigated: boolean
 }

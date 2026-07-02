@@ -3,15 +3,14 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-
 import './App.css'
 import { DesktopSidebar } from './components/DesktopSidebar'
 import { createMissingCookiesCase } from './game/cases'
-import type { Case, Suspect } from './game/caseModel'
+import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from './game/caseModel'
 import { Header } from './components/Header'
 import { AccuseRoute } from './routes/AccuseRoute'
 import { CaseOverviewRoute } from './routes/CaseOverviewRoute'
 import { CaseRoute } from './routes/CaseRoute'
 import { EndingRoute } from './routes/EndingRoute'
 import { LocationRoute } from './routes/LocationRoute'
-import { NotesRoute } from './routes/NotesRoute'
-import { SuspectRoute } from './routes/SuspectRoute'
+import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
 
 function App() {
@@ -20,16 +19,11 @@ function App() {
   const [currentCase, setCurrentCase] = useState<Case>(() => createMissingCookiesCase())
   const [, setHasStartedCase] = useState(false)
   const [attemptsLeft, setAttemptsLeft] = useState(3)
-  const [selectedSuspectId, setSelectedSuspectId] = useState<number | null>(null)
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null)
   const [accusationTargetId, setAccusationTargetId] = useState<number | null>(null)
   const [wrongAccusationIds, setWrongAccusationIds] = useState<number[]>([])
-  const [, setActivePanel] = useState<'investigation' | 'suspects' | 'notebook'>('investigation')
-
-  const ruledOutSuspects = currentCase.suspects.filter((suspect) => suspect.manuallyRuledOut)
-  const activeSuspects = currentCase.suspects.filter((suspect) => !suspect.manuallyRuledOut)
-  const selectedSuspect =
-    currentCase.suspects.find((suspect) => suspect.pokemonId === selectedSuspectId) ?? null
+  const [lastInvestigatedLocationId, setLastInvestigatedLocationId] = useState<string | null>(null)
+  const [, setActivePanel] = useState<'investigation' | 'suspects'>('investigation')
   const accusationTarget =
     currentCase.suspects.find((suspect) => suspect.pokemonId === accusationTargetId) ?? null
   const selectedLocation =
@@ -44,11 +38,9 @@ function App() {
   const activeSidebarSection =
     currentRoute === '/overview'
       ? 'overview'
-      : currentRoute === '/notes'
-      ? 'notes'
-        : currentRoute === '/suspects' || currentRoute.startsWith('/suspect/') || currentRoute.startsWith('/accuse/')
-            ? 'suspects'
-            : 'investigation'
+      : currentRoute === '/suspects' || currentRoute.startsWith('/suspects/') || currentRoute.startsWith('/accuse/')
+        ? 'suspects'
+        : 'investigation'
   const canGiveUp = currentCase.status === 'active' && !currentRoute.startsWith('/ending/')
 
   const updateSuspect = (pokemonId: number, updater: (suspect: Suspect) => Suspect) => {
@@ -61,7 +53,6 @@ function App() {
   }
 
   const clearScreenState = () => {
-    setSelectedSuspectId(null)
     setSelectedLocationId(null)
     setAccusationTargetId(null)
   }
@@ -76,6 +67,7 @@ function App() {
     setHasStartedCase(false)
     setAttemptsLeft(3)
     setWrongAccusationIds([])
+    setLastInvestigatedLocationId(null)
     resetTransientUi()
     navigate('/investigation')
   }
@@ -90,18 +82,21 @@ function App() {
     updateSuspect(suspectId, (suspect) => ({
       ...suspect,
       manuallyRuledOut: !suspect.manuallyRuledOut,
+      noteStatus: suspect.manuallyRuledOut ? 'suspect' : 'ruled-out',
+    }))
+  }
+
+  const setSuspectNoteStatus = (suspectId: number, noteStatus: SuspectNoteStatus) => {
+    updateSuspect(suspectId, (suspect) => ({
+      ...suspect,
+      noteStatus,
+      manuallyRuledOut: noteStatus === 'ruled-out',
     }))
   }
 
   const inspectSuspect = (suspectId: number) => {
-    setSelectedSuspectId(suspectId)
     setActivePanel('suspects')
-    navigate(`/suspect/${suspectId}`)
-  }
-
-  const closeSuspectSheet = () => {
-    setSelectedSuspectId(null)
-    navigate('/suspects')
+    navigate(`/suspects/${suspectId}`)
   }
 
   const openAccusation = (suspectId: number) => {
@@ -110,8 +105,9 @@ function App() {
   }
 
   const closeAccusation = () => {
+    const suspectId = accusationTargetId
     setAccusationTargetId(null)
-    navigate('/suspects')
+    navigate(suspectId ? `/suspects/${suspectId}` : '/suspects')
   }
 
   const confirmAccusation = () => {
@@ -131,6 +127,7 @@ function App() {
     updateSuspect(accusationTarget.pokemonId, (suspect) => ({
       ...suspect,
       manuallyRuledOut: true,
+      noteStatus: 'ruled-out',
     }))
 
     setWrongAccusationIds((ids) =>
@@ -146,25 +143,16 @@ function App() {
       return
     }
 
-    navigate('/suspects')
+    navigate(`/suspects/${accusationTarget.pokemonId}`)
   }
 
-  const openNotebook = () => {
-    setActivePanel('notebook')
-    navigate('/notes')
-  }
-
-  const closeNotebook = () => {
-    setActivePanel('investigation')
-    navigate('/investigation')
-  }
-
-  const inspectFact = (suspectId: number, factKey: string) => {
+  const inspectGroup = (suspectId: number, groupKey: SuspectInvestigationGroup) => {
     updateSuspect(suspectId, (suspect) => ({
       ...suspect,
-      inspectedFacts: suspect.inspectedFacts.map((fact) =>
-        fact.key === factKey ? { ...fact, discovered: true } : fact,
-      ),
+      inspectedGroups: {
+        ...suspect.inspectedGroups,
+        [groupKey]: true,
+      },
     }))
   }
 
@@ -174,31 +162,26 @@ function App() {
     navigate(`/location/${locationId}`)
   }
 
+  const investigateLocation = (locationId: string) => {
+    const location = currentCase.locations.find((locationItem) => locationItem.id === locationId)
+
+    if (location && !location.investigated) {
+      setCurrentCase((caseState) => ({
+        ...caseState,
+        locations: caseState.locations.map((locationItem) =>
+          locationItem.id === locationId ? { ...locationItem, investigated: true } : locationItem,
+        ),
+        evidence: caseState.evidence.map((evidenceItem) =>
+          evidenceItem.id === location.evidenceId ? { ...evidenceItem, discovered: true } : evidenceItem,
+        ),
+      }))
+      setLastInvestigatedLocationId(locationId)
+    }
+  }
+
   const closeLocation = () => {
     setSelectedLocationId(null)
     navigate('/investigation')
-  }
-
-  const addEvidenceToNotebook = () => {
-    if (!selectedLocation || !selectedLocationEvidence) {
-      return
-    }
-
-    setCurrentCase((caseState) => ({
-      ...caseState,
-      locations: caseState.locations.map((location) =>
-        location.id === selectedLocation.id ? { ...location, investigated: true } : location,
-      ),
-      evidence: caseState.evidence.map((evidenceItem) =>
-        evidenceItem.id === selectedLocationEvidence.id
-          ? { ...evidenceItem, discovered: true }
-          : evidenceItem,
-      ),
-    }))
-
-    setSelectedLocationId(null)
-    setActivePanel('notebook')
-    navigate('/notes')
   }
 
   useEffect(() => {
@@ -223,10 +206,10 @@ function App() {
       return
     }
 
-    if (currentRoute === '/notes') {
+    if (currentRoute.startsWith('/suspects/')) {
       clearScreenState()
       setHasStartedCase(true)
-      setActivePanel('notebook')
+      setActivePanel('suspects')
       return
     }
 
@@ -238,18 +221,6 @@ function App() {
         setHasStartedCase(true)
         setActivePanel('investigation')
         setSelectedLocationId(locationId)
-      }
-      return
-    }
-
-    if (currentRoute.startsWith('/suspect/')) {
-      const suspectId = Number(currentRoute.replace('/suspect/', ''))
-
-      if (currentCase.suspects.some((suspect) => suspect.pokemonId === suspectId)) {
-        clearScreenState()
-        setHasStartedCase(true)
-        setActivePanel('suspects')
-        setSelectedSuspectId(suspectId)
       }
       return
     }
@@ -295,9 +266,15 @@ function App() {
   const sharedInvestigationRouteProps = {
     attemptsLeft,
     currentCase,
+    lastInvestigatedLocationId,
+    wrongAccusationIds,
     inspectSuspect,
+    inspectGroup,
+    setSuspectNoteStatus,
+    toggleRuledOut,
+    openAccusation,
+    investigateLocation,
     openLocation,
-    openNotebook,
     setActivePanel: setPrimaryPanel,
     startNewCase,
     giveUp,
@@ -311,7 +288,6 @@ function App() {
         onSelectOverview={() => navigate('/overview')}
         onSelectInvestigation={() => navigate('/investigation')}
         onSelectSuspects={() => navigate('/suspects')}
-        onSelectNotes={() => navigate('/notes')}
         onGiveUp={giveUp}
       />
 
@@ -332,13 +308,16 @@ function App() {
           <Route path="/investigation" element={<CaseRoute {...sharedInvestigationRouteProps} />} />
           <Route path="/suspects" element={<SuspectsRoute {...sharedInvestigationRouteProps} />} />
           <Route
-            path="/notes"
+            path="/suspects/:id"
             element={
-              <NotesRoute
-                {...sharedInvestigationRouteProps}
-                activeSuspects={activeSuspects}
-                ruledOutSuspects={ruledOutSuspects}
-                closeNotebook={closeNotebook}
+              <SuspectFileRoute
+                currentCase={currentCase}
+                wrongAccusationIds={wrongAccusationIds}
+                inspectGroup={inspectGroup}
+                setSuspectNoteStatus={setSuspectNoteStatus}
+                toggleRuledOut={toggleRuledOut}
+                openAccusation={openAccusation}
+                attemptsLeft={attemptsLeft}
               />
             }
           />
@@ -351,28 +330,9 @@ function App() {
                   selectedLocation={selectedLocation}
                   selectedLocationEvidence={selectedLocationEvidence}
                   closeLocation={closeLocation}
-                  addEvidenceToNotebook={addEvidenceToNotebook}
                 />
               ) : (
                 <Navigate to="/investigation" replace />
-              )
-            }
-          />
-          <Route
-            path="/suspect/:suspectId"
-            element={
-              selectedSuspect ? (
-                <SuspectRoute
-                  {...sharedInvestigationRouteProps}
-                  selectedSuspect={selectedSuspect}
-                  wrongAccusationIds={wrongAccusationIds}
-                  closeSuspectSheet={closeSuspectSheet}
-                  inspectFact={inspectFact}
-                  openAccusation={openAccusation}
-                  toggleRuledOut={toggleRuledOut}
-                />
-              ) : (
-                <Navigate to="/suspects" replace />
               )
             }
           />

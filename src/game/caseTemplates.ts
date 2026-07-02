@@ -1,5 +1,6 @@
 import { pokemonData, type Pokemon } from '../data/pokemon'
 import type { CaseDifficulty, Evidence, InspectedFact, Location, Suspect } from './caseModel'
+import { getAbilityText, getEvolutionLineText, getHabitatNote } from './suspectCaseFile'
 
 export interface CaseEvidenceTemplate {
   id: string
@@ -13,7 +14,11 @@ export interface CaseLocationTemplate {
   id: string
   name: string
   icon: string
-  description: string
+  description?: string
+  teaserText?: string
+  observationText?: string
+  evidenceTitle?: string
+  evidenceText?: string
   evidenceId: string
 }
 
@@ -39,54 +44,25 @@ const getPokemon = (pokemonId: number) => {
   return pokemon
 }
 
-const suspectExtras: Record<number, { ability: string; habitatNote: string }> = {
-  27: { ability: 'Sand Veil', habitatNote: 'Usually feels at home in dry ground and dusty places.' },
-  37: { ability: 'Flash Fire', habitatNote: 'Likes warm dens and often curls up near dry brush.' },
-  41: { ability: 'Inner Focus', habitatNote: 'Drifts through caves and dim places after sunset.' },
-  43: { ability: 'Chlorophyll', habitatNote: 'Stays close to damp soil and shady patches of grass.' },
-  52: { ability: 'Pickup', habitatNote: 'Wanders around camps and cottages in search of shiny things.' },
-  54: { ability: 'Damp', habitatNote: 'Often spotted near ponds, rivers, and other wet spots.' },
-  58: { ability: 'Intimidate', habitatNote: 'Tends to patrol open routes and stay alert to strangers.' },
-  77: { ability: 'Run Away', habitatNote: 'Roams open plains and dislikes cramped spaces.' },
-  163: { ability: 'Insomnia', habitatNote: 'Keeps watch from tree branches during the night.' },
-  190: { ability: 'Run Away', habitatNote: 'Climbs beams, trees, and shelves with ease.' },
-  194: { ability: 'Damp', habitatNote: 'Settles near cool mud and shallow water.' },
-  198: { ability: 'Insomnia', habitatNote: 'Glides around rooftops and dark places looking for trinkets.' },
-  215: { ability: 'Inner Focus', habitatNote: 'Prefers cold, shadowy routes and moves very quietly.' },
-  228: { ability: 'Early Bird', habitatNote: 'Lingers near charred fields and warm paths.' },
-  231: { ability: 'Pickup', habitatNote: 'Follows simple trails and sniffs around gardens and farms.' },
-  252: { ability: 'Overgrow', habitatNote: 'Prefers leafy cover and quick movement through brush.' },
-  302: { ability: 'Keen Eye', habitatNote: 'Hides in caves and is drawn to glittering stones.' },
-  304: { ability: 'Rock Head', habitatNote: 'Lives in rocky tunnels and old mine paths.' },
-  315: { ability: 'Natural Cure', habitatNote: 'Appears in tidy gardens and flower beds.' },
-  322: { ability: 'Oblivious', habitatNote: 'Handles hot, dry terrain well and stores energy for long walks.' },
-  327: { ability: 'Own Tempo', habitatNote: 'Staggers around camps in unpredictable little circles.' },
-  328: { ability: 'Hyper Cutter', habitatNote: 'Lurks in sandy ground and likes to wait near loose soil.' },
-  353: { ability: 'Insomnia', habitatNote: 'Lingers in quiet corners once the lanterns go out.' },
-  399: { ability: 'Simple', habitatNote: 'Gnaws on wood near streams and camp supplies.' },
-}
-
 const toTitle = (value: string) => value[0].toUpperCase() + value.slice(1)
 
 const createInspectedFacts = (pokemon: Pokemon): InspectedFact[] => {
-  const extras = suspectExtras[pokemon.id]
-
   return [
     { key: 'type', label: 'Type', value: pokemon.types.map(toTitle).join(' / '), discovered: false },
     { key: 'region', label: 'Region', value: pokemon.region, discovered: false },
     { key: 'height', label: 'Height', value: `${pokemon.heightM} m`, discovered: false },
     { key: 'weight', label: 'Weight', value: `${pokemon.weightKg} kg`, discovered: false },
-    { key: 'ability', label: 'Ability', value: extras?.ability ?? 'Unknown ability', discovered: false },
+    { key: 'ability', label: 'Ability', value: getAbilityText(pokemon.id), discovered: false },
     {
       key: 'evolution-line',
       label: 'Evolution line',
-      value: `${pokemon.evolutionLineStages}-stage line, currently stage ${pokemon.evolutionStage}`,
+      value: getEvolutionLineText(pokemon),
       discovered: false,
     },
     {
       key: 'habitat-note',
       label: 'Habitat note',
-      value: extras?.habitatNote ?? 'No habitat note recorded.',
+      value: getHabitatNote(pokemon.id),
       discovered: false,
     },
   ]
@@ -100,6 +76,13 @@ export const createSuspectFromPokemonId = (pokemonId: number): Suspect => {
     name: pokemon.name,
     sprite: pokemon.sprite,
     manuallyRuledOut: false,
+    noteStatus: 'suspect',
+    inspectedGroups: {
+      appearance: false,
+      records: false,
+      habitat: false,
+      ability: false,
+    },
     inspectedFacts: createInspectedFacts(pokemon),
   }
 }
@@ -124,11 +107,11 @@ export const caseTemplates: CaseTemplate[] = [
     culpritPokemonId: 27,
     suspectPokemonIds: [54, 27, 58, 252, 322, 328],
     locations: [
-      { id: 'campsite', name: 'Campsite', icon: '⛺', description: 'Blankets are messy and crumbs are scattered around the cold fire pit.', evidenceId: 'sand-trail' },
-      { id: 'footprints', name: 'Footprints', icon: '👣', description: 'Tiny tracks loop behind the tents before fading into the dirt.', evidenceId: 'small-footprints' },
-      { id: 'forest-edge', name: 'Forest Edge', icon: '🌲', description: 'The edge of camp is quiet, with loose soil under the roots.', evidenceId: 'midnight-digging' },
-      { id: 'cookie-jar', name: 'Cookie Jar', icon: '🍪', description: 'The lid hangs crooked, and the table bears fresh marks.', evidenceId: 'jar-scratches' },
-      { id: 'witness-tent', name: 'Witness Tent', icon: '🛏️', description: 'A sleepy camper points toward the wash bucket by the lantern.', evidenceId: 'avoided-water' },
+      { id: 'campsite', name: 'Campsite', icon: '⛺', teaserText: 'The crime started here.', observationText: 'Blankets are messy and crumbs are scattered around the cold fire pit.', evidenceTitle: 'Cookie crumbs', evidenceText: 'A trail of sand crossed the campsite.', evidenceId: 'sand-trail' },
+      { id: 'footprints', name: 'Footprints', icon: '👣', teaserText: 'Something unusual was found near the tents.', observationText: 'Tiny tracks loop behind the tents before fading into the dirt.', evidenceTitle: 'Small footprints', evidenceText: 'The footprints were small and low to the ground.', evidenceId: 'small-footprints' },
+      { id: 'forest-edge', name: 'Forest Edge', icon: '🌲', teaserText: 'The edge of camp needs a closer look.', observationText: 'The edge of camp is quiet, with loose soil under the roots.', evidenceTitle: 'Midnight digging', evidenceText: 'The witness heard quiet digging after midnight.', evidenceId: 'midnight-digging' },
+      { id: 'cookie-jar', name: 'Cookie Jar', icon: '🍪', teaserText: 'The scene looks disturbed.', observationText: 'The lid hangs crooked, and the table bears fresh marks.', evidenceTitle: 'Cookie jar scratches', evidenceText: 'Someone scratched near the cookie jar.', evidenceId: 'jar-scratches' },
+      { id: 'witness-tent', name: 'Witness Tent', icon: '🛏️', teaserText: 'Someone might have seen or heard something.', observationText: 'A sleepy camper points toward the wash bucket by the lantern.', evidenceTitle: 'Avoided water', evidenceText: 'The culprit avoided the water bucket.', evidenceId: 'avoided-water' },
     ],
     evidence: [
       { id: 'sand-trail', title: 'Sand Trail', clueText: 'A trail of sand crossed the campsite.', hiddenTrait: 'ground_or_sand', endExplanation: 'Sandshrew is associated with dry ground and sand.' },

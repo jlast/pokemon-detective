@@ -1,5 +1,6 @@
 import { pokemonData } from '../data/pokemon'
 import type { Case, Evidence, InspectedFact, Location, Suspect } from './caseModel'
+import { getAbilityText, getEvolutionLineText, getHabitatNote } from './suspectCaseFile'
 
 const getPokemon = (pokemonId: number) => {
   const pokemon = pokemonData.find((entry) => entry.id === pokemonId)
@@ -11,36 +12,8 @@ const getPokemon = (pokemonId: number) => {
   return pokemon
 }
 
-const suspectExtras: Record<number, { ability: string; habitatNote: string }> = {
-  27: {
-    ability: 'Sand Veil',
-    habitatNote: 'Usually feels at home in dry ground and dusty places.',
-  },
-  54: {
-    ability: 'Damp',
-    habitatNote: 'Often spotted near ponds, rivers, and other wet spots.',
-  },
-  58: {
-    ability: 'Intimidate',
-    habitatNote: 'Tends to patrol open routes and stay alert to strangers.',
-  },
-  252: {
-    ability: 'Overgrow',
-    habitatNote: 'Prefers leafy cover and quick movement through brush.',
-  },
-  322: {
-    ability: 'Oblivious',
-    habitatNote: 'Handles hot, dry terrain well and stores energy for long walks.',
-  },
-  328: {
-    ability: 'Hyper Cutter',
-    habitatNote: 'Lurks in sandy ground and likes to wait near loose soil.',
-  },
-}
-
 const createHiddenFacts = (pokemonId: number): InspectedFact[] => {
   const pokemon = getPokemon(pokemonId)
-  const extras = suspectExtras[pokemonId]
 
   return [
     {
@@ -70,19 +43,19 @@ const createHiddenFacts = (pokemonId: number): InspectedFact[] => {
     {
       key: 'ability',
       label: 'Ability',
-      value: extras?.ability ?? 'Unknown ability',
+      value: getAbilityText(pokemonId),
       discovered: false,
     },
     {
       key: 'evolution-line',
       label: 'Evolution line',
-      value: `${pokemon.evolutionLineStages}-stage line, currently stage ${pokemon.evolutionStage}`,
+      value: getEvolutionLineText(pokemon),
       discovered: false,
     },
     {
       key: 'habitat-note',
       label: 'Habitat note',
-      value: extras?.habitatNote ?? 'No habitat note recorded.',
+      value: getHabitatNote(pokemonId),
       discovered: false,
     },
   ]
@@ -96,6 +69,13 @@ const createSuspect = (pokemonId: number): Suspect => {
     name: pokemon.name,
     sprite: pokemon.sprite,
     manuallyRuledOut: false,
+    noteStatus: 'suspect',
+    inspectedGroups: {
+      appearance: false,
+      records: false,
+      habitat: false,
+      ability: false,
+    },
     inspectedFacts: createHiddenFacts(pokemonId),
   }
 }
@@ -148,7 +128,10 @@ const locations: Location[] = [
     id: 'campsite',
     name: 'Campsite',
     icon: '⛺',
-    description: 'Blankets are messy and crumbs are scattered around the cold fire pit.',
+    teaserText: 'The crime started here.',
+    observationText: 'Blankets are messy and crumbs are scattered around the cold fire pit.',
+    evidenceTitle: 'Cookie crumbs',
+    evidenceText: 'A trail of sand crossed the campsite.',
     evidenceId: 'sand-trail',
     investigated: false,
   },
@@ -156,7 +139,10 @@ const locations: Location[] = [
     id: 'footprints',
     name: 'Footprints',
     icon: '👣',
-    description: 'Tiny tracks loop behind the tents before fading into the dirt.',
+    teaserText: 'Something unusual was found near the tents.',
+    observationText: 'Tiny tracks loop behind the tents before fading into the dirt.',
+    evidenceTitle: 'Small footprints',
+    evidenceText: 'The footprints were small and low to the ground.',
     evidenceId: 'small-footprints',
     investigated: false,
   },
@@ -164,7 +150,10 @@ const locations: Location[] = [
     id: 'forest-edge',
     name: 'Forest Edge',
     icon: '🌲',
-    description: 'The edge of camp is quiet, with loose soil under the roots.',
+    teaserText: 'The edge of camp needs a closer look.',
+    observationText: 'The edge of camp is quiet, with loose soil under the roots.',
+    evidenceTitle: 'Midnight digging',
+    evidenceText: 'The witness heard quiet digging after midnight.',
     evidenceId: 'midnight-digging',
     investigated: false,
   },
@@ -172,7 +161,10 @@ const locations: Location[] = [
     id: 'cookie-jar',
     name: 'Cookie Jar',
     icon: '🍪',
-    description: 'The lid hangs crooked, and the table bears fresh marks.',
+    teaserText: 'The scene looks disturbed.',
+    observationText: 'The lid hangs crooked, and the table bears fresh marks.',
+    evidenceTitle: 'Cookie jar scratches',
+    evidenceText: 'Someone scratched near the cookie jar.',
     evidenceId: 'jar-scratches',
     investigated: false,
   },
@@ -180,7 +172,10 @@ const locations: Location[] = [
     id: 'witness-tent',
     name: 'Witness Tent',
     icon: '🛏️',
-    description: 'A sleepy camper points toward the wash bucket by the lantern.',
+    teaserText: 'Someone might have seen or heard something.',
+    observationText: 'A sleepy camper points toward the wash bucket by the lantern.',
+    evidenceTitle: 'Avoided water',
+    evidenceText: 'The culprit avoided the water bucket.',
     evidenceId: 'avoided-water',
     investigated: false,
   },
@@ -205,6 +200,7 @@ export const createMissingCookiesCase = (): Case => ({
   ...missingCookiesCase,
   suspects: missingCookiesCase.suspects.map((suspect) => ({
     ...suspect,
+    inspectedGroups: { ...suspect.inspectedGroups },
     inspectedFacts: suspect.inspectedFacts.map((fact) => ({ ...fact })),
   })),
   locations: missingCookiesCase.locations.map((location) => ({ ...location })),
