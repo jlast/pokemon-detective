@@ -391,7 +391,6 @@
 
 .detective-desk-shell {
   display: grid;
-  gap: 0.35rem;
   margin-top: 1rem;
 }
 
@@ -403,6 +402,7 @@
 }
 
 .detective-desk-tab {
+  margin-left: 2em;
   justify-self: start;
   padding: 0.38rem 0.8rem 0.42rem;
   border-radius: 12px 12px 0 0;
@@ -1650,23 +1650,13 @@
 }
 
 .cleared-suspect-card {
-  display: grid;
+  display: flex;
   justify-items: start;
   gap: 0.35rem;
   padding: 0.75rem;
   border-radius: 14px;
   background: rgba(255, 251, 239, 0.82);
   border: 1px solid #d7c9ab;
-}
-
-.cleared-suspect-card .suspect-sprite-frame {
-  width: 84px;
-  height: 84px;
-}
-
-.cleared-suspect-card .suspect-sprite {
-  width: 138px;
-  height: 138px;
 }
 
 .ending-actions {

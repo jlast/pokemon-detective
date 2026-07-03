@@ -141,8 +141,10 @@ export function EndingScreen({
                 return (
                   <article key={suspect.pokemonId} className="cleared-suspect-card">
                     <MugShot suspect={suspect} />
-                    <strong>{suspect.name}</strong>
-                    <p>{explanation?.reason ?? 'The evidence did not support this suspect strongly enough.'}</p>
+                    <div>
+                      <strong>{suspect.name}</strong>
+                      <p>{explanation?.reason ?? 'The evidence did not support this suspect strongly enough.'}</p>
+                    </div>
                   </article>
                 )
               })}

@@ -412,7 +412,7 @@ const locations: Location[] = [
   },
 ]
 
-export const missingCookiesCase: Case = {
+const missingCookiesCase: Case = {
   id: 'missing-cookies',
   title: 'The Missing Cookies',
   shortStory: 'Someone snuck into camp overnight and ate all the cookies.',
@@ -484,8 +484,6 @@ export const missingCookiesCase: Case = {
   },
   status: 'active',
 }
-
-export const starterCases: Case[] = [missingCookiesCase]
 
 export const createMissingCookiesCase = (): Case => ({
   ...missingCookiesCase,
