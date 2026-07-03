@@ -9,7 +9,7 @@ import { AccuseRoute } from './routes/AccuseRoute'
 import { CaseOverviewRoute } from './routes/CaseOverviewRoute'
 import { CaseRoute } from './routes/CaseRoute'
 import { EndingRoute } from './routes/EndingRoute'
-import { LocationRoute } from './routes/LocationRoute'
+import { InvestigationLocationRoute } from './routes/InvestigationLocationRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
 
@@ -26,14 +26,8 @@ function App() {
   const [, setActivePanel] = useState<'investigation' | 'suspects'>('investigation')
   const accusationTarget =
     currentCase.suspects.find((suspect) => suspect.pokemonId === accusationTargetId) ?? null
-  const selectedLocation =
-    currentCase.locations.find((location) => location.id === selectedLocationId) ?? null
-  const selectedLocationEvidence = selectedLocation
-    ? currentCase.evidence.find((evidenceItem) => evidenceItem.id === selectedLocation.evidenceId) ?? null
-    : null
   const culpritSuspect =
     currentCase.suspects.find((suspect) => suspect.pokemonId === currentCase.culpritPokemonId) ?? null
-  const endingExplanation = currentCase.evidence.map((evidenceItem) => evidenceItem.endExplanation)
   const currentRoute = location.pathname
   const activeSidebarSection =
     currentRoute === '/overview'
@@ -159,29 +153,36 @@ function App() {
   const openLocation = (locationId: string) => {
     setSelectedLocationId(locationId)
     setActivePanel('investigation')
-    navigate(`/location/${locationId}`)
+    navigate(`/investigation/${locationId}`)
   }
 
-  const investigateLocation = (locationId: string) => {
+  const investigateLocation = (locationId: string, actionId: string) => {
     const location = currentCase.locations.find((locationItem) => locationItem.id === locationId)
+    const selectedAction = location?.actions.find((action) => action.id === actionId) ?? null
 
-    if (location && !location.investigated) {
+    if (location && selectedAction && !location.investigated) {
       setCurrentCase((caseState) => ({
         ...caseState,
         locations: caseState.locations.map((locationItem) =>
-          locationItem.id === locationId ? { ...locationItem, investigated: true } : locationItem,
+          locationItem.id === locationId
+            ? {
+                ...locationItem,
+                investigated: true,
+                selectedActionId: actionId,
+                observationText: selectedAction.observationText,
+                evidenceTitle: selectedAction.evidenceTitle ?? undefined,
+                evidenceText: selectedAction.evidenceText ?? undefined,
+              }
+            : locationItem,
         ),
         evidence: caseState.evidence.map((evidenceItem) =>
-          evidenceItem.id === location.evidenceId ? { ...evidenceItem, discovered: true } : evidenceItem,
+          evidenceItem.id === selectedAction.evidenceId && (selectedAction.outcomeType === 'evidence' || selectedAction.outcomeType === 'witness')
+            ? { ...evidenceItem, discovered: true }
+            : evidenceItem,
         ),
       }))
       setLastInvestigatedLocationId(locationId)
     }
-  }
-
-  const closeLocation = () => {
-    setSelectedLocationId(null)
-    navigate('/investigation')
   }
 
   useEffect(() => {
@@ -213,8 +214,8 @@ function App() {
       return
     }
 
-    if (currentRoute.startsWith('/location/')) {
-      const locationId = currentRoute.replace('/location/', '')
+    if (currentRoute.startsWith('/investigation/')) {
+      const locationId = currentRoute.replace('/investigation/', '')
 
       if (currentCase.locations.some((locationItem) => locationItem.id === locationId)) {
         clearScreenState()
@@ -306,6 +307,21 @@ function App() {
             }
           />
           <Route path="/investigation" element={<CaseRoute {...sharedInvestigationRouteProps} />} />
+          <Route
+            path="/investigation/:locationId"
+            element={
+              <InvestigationLocationRoute
+                attemptsLeft={attemptsLeft}
+                currentCase={currentCase}
+                investigateLocation={investigateLocation}
+                openLocation={openLocation}
+                selectedLocationId={selectedLocationId}
+                setActivePanel={setPrimaryPanel}
+                startNewCase={startNewCase}
+                giveUp={giveUp}
+              />
+            }
+          />
           <Route path="/suspects" element={<SuspectsRoute {...sharedInvestigationRouteProps} />} />
           <Route
             path="/suspects/:id"
@@ -321,21 +337,6 @@ function App() {
             }
           />
           <Route
-            path="/location/:locationId"
-            element={
-              selectedLocation && selectedLocationEvidence ? (
-                <LocationRoute
-                  {...sharedInvestigationRouteProps}
-                  selectedLocation={selectedLocation}
-                  selectedLocationEvidence={selectedLocationEvidence}
-                  closeLocation={closeLocation}
-                />
-              ) : (
-                <Navigate to="/investigation" replace />
-              )
-            }
-          />
-          <Route
             path="/accuse/:suspectId"
             element={
               accusationTarget ? (
@@ -345,6 +346,12 @@ function App() {
                   closeAccusation={closeAccusation}
                   confirmAccusation={confirmAccusation}
                 />
+              ) : currentCase.status === 'solved' ? (
+                <Navigate to="/ending/solved" replace />
+              ) : currentCase.status === 'failed' ? (
+                <Navigate to="/ending/failed" replace />
+              ) : currentCase.status === 'gave-up' ? (
+                <Navigate to="/ending/gave-up" replace />
               ) : (
                 <Navigate to="/suspects" replace />
               )
@@ -356,7 +363,8 @@ function App() {
               <EndingRoute
                 currentCase={currentCase}
                 culpritSuspect={culpritSuspect}
-                endingExplanation={endingExplanation}
+                attemptsLeft={attemptsLeft}
+                wrongAccusationCount={wrongAccusationIds.length}
                 startNewCase={startNewCase}
               />
             }

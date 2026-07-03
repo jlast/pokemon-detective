@@ -9,9 +9,12 @@ export function LocationsDetailsPanel({
   selectedLocation,
   closeLocation,
 }: LocationsDetailsPanelProps) {
-  const observationText = selectedLocation.observationText ?? selectedLocation.description ?? ''
-  const evidenceTitle = selectedLocation.evidenceTitle ?? 'Clue discovered'
-  const evidenceText = selectedLocation.evidenceText ?? ''
+  const selectedAction = selectedLocation.actions.find((action) => action.id === selectedLocation.selectedActionId) ?? null
+  const observationText = selectedAction?.observationText ?? selectedLocation.observationText ?? selectedLocation.description ?? ''
+  const evidenceTitle = selectedAction?.evidenceTitle ?? selectedLocation.evidenceTitle ?? 'Clue discovered'
+  const evidenceText = selectedAction?.evidenceText ?? selectedLocation.evidenceText ?? ''
+  const actionLabel = selectedAction?.label ?? 'Review result'
+  const hasEvidence = selectedAction?.outcomeType === 'evidence' || selectedAction?.outcomeType === 'witness'
 
   return (
     <div
@@ -30,26 +33,22 @@ export function LocationsDetailsPanel({
 
         <div className="inspect-list">
           <div className="inspect-item">
+            <strong>Chosen action</strong>
+            <span>{actionLabel}</span>
+          </div>
+          <div className="inspect-item">
             <strong>Observation</strong>
             <span>{observationText}</span>
           </div>
           <div className="inspect-item">
             <strong>Investigation</strong>
             <span>
-              {selectedLocation.id === "footprints"
-                ? "You kneel beside the tracks near the tents."
-                : selectedLocation.id === "campsite"
-                  ? "You sweep your lantern across the sleeping area and the disturbed ground."
-                  : selectedLocation.id === "forest-edge"
-                    ? "You part the brush and check the loose soil at the edge of camp."
-                    : selectedLocation.id === "cookie-jar"
-                      ? "You crouch by the table and inspect the cookie jar under the lantern light."
-                      : "You listen carefully inside the witness tent while the camper recalls the noise."}
+              {selectedAction?.description ?? 'You review the notes from this location carefully.'}
             </span>
           </div>
           <div className="inspect-item evidence-reveal">
-            <strong>{evidenceTitle}</strong>
-            <span>{evidenceText}</span>
+            <strong>{hasEvidence ? evidenceTitle : 'No useful evidence found.'}</strong>
+            <span>{hasEvidence ? evidenceText : observationText}</span>
           </div>
         </div>
 

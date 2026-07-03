@@ -4,16 +4,24 @@ import type { Case, Suspect } from '../game/caseModel'
 interface EndingRouteProps {
   currentCase: Case
   culpritSuspect: Suspect | null
-  endingExplanation: string[]
+  attemptsLeft: number
+  wrongAccusationCount: number
   startNewCase: () => void
 }
 
-export function EndingRoute({ currentCase, culpritSuspect, endingExplanation, startNewCase }: EndingRouteProps) {
+export function EndingRoute({
+  currentCase,
+  culpritSuspect,
+  attemptsLeft,
+  wrongAccusationCount,
+  startNewCase,
+}: EndingRouteProps) {
   return (
     <div className="">
       <EndingScreen
         culpritSuspect={culpritSuspect}
-        endingExplanation={endingExplanation}
+        attemptsLeft={attemptsLeft}
+        wrongAccusationCount={wrongAccusationCount}
         startNewCase={startNewCase}
         currentCase={currentCase}
       />

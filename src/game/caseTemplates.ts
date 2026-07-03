@@ -19,7 +19,7 @@ export interface CaseLocationTemplate {
   observationText?: string
   evidenceTitle?: string
   evidenceText?: string
-  evidenceId: string
+  evidenceId?: string
 }
 
 export interface CaseTemplate {
@@ -29,6 +29,7 @@ export interface CaseTemplate {
   crimeIcon: string
   difficulty: CaseDifficulty
   culpritPokemonId: number
+  maxInvestigations?: number
   suspectPokemonIds: number[]
   locations: CaseLocationTemplate[]
   evidence: CaseEvidenceTemplate[]
@@ -94,6 +95,22 @@ export const createEvidenceFromTemplate = (evidence: CaseEvidenceTemplate): Evid
 
 export const createLocationFromTemplate = (location: CaseLocationTemplate): Location => ({
   ...location,
+  selectedActionId: null,
+  actions: [
+    {
+      id: `${location.id}-default`,
+      label: 'Search the area',
+      leadType: 'obvious',
+      description: location.teaserText ?? location.description ?? 'Look for anything that stands out.',
+      outcomeType: location.evidenceId ? 'evidence' : 'nothing',
+      evidenceId: location.evidenceId ?? null,
+      evidenceTitle: location.evidenceTitle ?? null,
+      evidenceText: location.evidenceText ?? null,
+      observationText: location.observationText ?? location.description ?? 'Nothing useful turns up here.',
+      unlocksLocationIds: [],
+      isUseful: Boolean(location.evidenceId),
+    },
+  ],
   investigated: false,
 })
 

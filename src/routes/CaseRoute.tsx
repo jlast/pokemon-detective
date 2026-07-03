@@ -5,7 +5,7 @@ interface CaseRouteProps {
   attemptsLeft: number
   currentCase: Case
   inspectSuspect: (suspectId: number) => void
-  investigateLocation: (locationId: string) => void
+  investigateLocation: (locationId: string, actionId: string) => void
   openLocation: (locationId: string) => void
   setActivePanel: (panel: 'investigation' | 'suspects') => void
   startNewCase: () => void

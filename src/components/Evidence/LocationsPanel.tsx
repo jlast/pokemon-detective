@@ -1,57 +1,75 @@
-import { useEffect, useState } from 'react'
 import type { Case } from '../../game/caseModel'
-import { LocationCard } from './LocationCard'
+import { InvestigationLocationCard } from './InvestigationLocationCard'
+
+const getRemainingInvestigationCopy = (remainingActions: number) => {
+  if (remainingActions <= 0) {
+    return 'No investigations left.'
+  }
+
+  if (remainingActions === 1) {
+    return 'Final investigation.'
+  }
+
+  if (remainingActions === 2) {
+    return 'Two investigations remain.'
+  }
+
+  if (remainingActions === 3) {
+    return 'The case is taking shape.'
+  }
+
+  if (remainingActions === 4) {
+    return 'Plenty of time left.'
+  }
+
+  return 'Full budget available.'
+}
+
+const getCurrentTheoryCopy = (evidenceCount: number, remainingActions: number) => {
+  if (remainingActions <= 0) {
+    return 'Investigation is over. Make your call.'
+  }
+
+  if (evidenceCount === 0) {
+    return 'No suspect stands out yet.'
+  }
+
+  if (evidenceCount === 1) {
+    return 'One clue has surfaced.'
+  }
+
+  if (evidenceCount === 2) {
+    return 'A pattern may be forming.'
+  }
+
+  if (evidenceCount === 3) {
+    return 'Several leads point in the same direction.'
+  }
+
+  if (evidenceCount === 4) {
+    return 'You may be ready to inspect suspect files.'
+  }
+
+  return 'The case is ready for a final accusation.'
+}
 
 export function LocationsPanel({
   currentCase,
   isEvidenceTab,
-  investigateLocation,
   openLocation,
-  lastInvestigatedLocationId,
 }: {
   currentCase: Case
   isEvidenceTab: boolean
-  investigateLocation: (locationId: string) => void
   openLocation: (locationId: string) => void
-  lastInvestigatedLocationId: string | null
 }) {
-  const [searchingLocationId, setSearchingLocationId] = useState<string | null>(null)
-  const [highlightedLocationId, setHighlightedLocationId] = useState<string | null>(null)
-
   const investigatedCount = currentCase.locations.filter((location) => location.investigated).length
-  const progressNote =
-    investigatedCount === 0
-      ? 'No evidence collected yet. Pick a location to start the case.'
-      : investigatedCount === 1
-        ? 'Evidence is beginning to build.'
-        : investigatedCount < currentCase.locations.length
-          ? 'Keep searching. The pattern may become clearer.'
-          : 'All locations searched. Time to inspect suspects and make your call.'
-
-  useEffect(() => {
-    if (!lastInvestigatedLocationId) {
-      return
-    }
-
-    setHighlightedLocationId(lastInvestigatedLocationId)
-
-    const timeoutId = window.setTimeout(() => {
-      setHighlightedLocationId((currentId) =>
-        currentId === lastInvestigatedLocationId ? null : currentId,
-      )
-    }, 1800)
-
-    return () => window.clearTimeout(timeoutId)
-  }, [lastInvestigatedLocationId])
-
-  const beginSearch = (locationId: string) => {
-    setSearchingLocationId(locationId)
-
-    window.setTimeout(() => {
-      setSearchingLocationId((currentId) => (currentId === locationId ? null : currentId))
-      investigateLocation(locationId)
-    }, 420)
-  }
+  const evidenceCollectedCount = currentCase.evidence.filter((evidenceItem) => evidenceItem.discovered).length
+  const discoveredEvidence = currentCase.evidence.filter((evidenceItem) => evidenceItem.discovered)
+  const actionsUsed = investigatedCount
+  const maxInvestigations = currentCase.maxInvestigations
+  const pointsLeft = Math.max(maxInvestigations - actionsUsed, 0)
+  const remainingCopy = getRemainingInvestigationCopy(pointsLeft)
+  const currentTheoryCopy = getCurrentTheoryCopy(evidenceCollectedCount, pointsLeft)
 
   return (
     <section
@@ -64,50 +82,72 @@ export function LocationsPanel({
         </div>
       </div>
 
-      <div className="investigation-board-summary">
-        <section className="investigation-progress-card inspect-item">
-          <div className="overview-section-copy">
-            <strong>Investigation progress</strong>
-            <p className="overview-section-hook">
-              {investigatedCount} / {currentCase.locations.length} locations searched
-            </p>
-          </div>
+      <div className="detective-desk-shell">
+        <div className="detective-desk-tab">Detective Desk</div>
+        <section className="detective-desk notebook-card">
+          <div className="detective-desk-grid">
+            <section className="detective-desk-section">
+              <strong>Investigation Budget</strong>
 
-          <div className="investigation-progress-track" aria-hidden="true">
-            {currentCase.locations.map((location) => (
-              <span key={location.id} className="investigation-progress-step">
-                <span className="investigation-progress-icon">{location.icon}</span>
-                <span className={`investigation-progress-mark ${location.investigated ? 'is-complete' : ''}`}>
-                  {location.investigated ? '✓' : '○'}
-                </span>
-              </span>
-            ))}
-          </div>
+              <div className="investigation-token-row" aria-hidden="true">
+                {Array.from({ length: maxInvestigations }, (_, index) => (
+                  <span
+                    key={index}
+                    className={`investigation-token ${index < pointsLeft ? 'is-available' : 'is-spent'}`}
+                  />
+                ))}
+              </div>
 
-          <p className="investigation-progress-note">{progressNote}</p>
-        </section>
+              <p className="detective-desk-copy">{remainingCopy}</p>
+              <p className="detective-desk-meta">Actions used: {actionsUsed} / {maxInvestigations}</p>
+              <p className="detective-desk-meta">Locations resolved: {investigatedCount} / {currentCase.locations.length}</p>
+            </section>
 
-        <section className="investigation-mission-card inspect-item">
-          <strong>Mission</strong>
-          <div className="investigation-mission-list">
-            <span>1. Search locations</span>
-            <span>2. Collect evidence</span>
-            <span>3. Inspect suspects</span>
-            <span>4. Rule out the innocent</span>
-            <span>5. Accuse the culprit</span>
+            <section className="detective-desk-section detective-desk-evidence-board">
+              <strong>Evidence Board</strong>
+
+              {discoveredEvidence.length > 0 ? (
+                <>
+                  <div className="detective-desk-evidence-tags">
+                    {discoveredEvidence.map((evidenceItem) => (
+                      <span key={evidenceItem.id} className="detective-desk-evidence-tag">
+                        <span aria-hidden="true">📎</span>
+                        <span>{evidenceItem.title}</span>
+                      </span>
+                    ))}
+                  </div>
+                  <p className="detective-desk-meta">
+                    {evidenceCollectedCount} {evidenceCollectedCount === 1 ? 'clue' : 'clues'} collected
+                  </p>
+                </>
+              ) : (
+                <div className="detective-desk-empty-state">
+                  <p className="detective-desk-copy">No clues yet.</p>
+                  <p className="detective-desk-meta">Search a location.</p>
+                </div>
+              )}
+            </section>
+
+            <section className="detective-desk-section">
+              <strong>Current Theory</strong>
+              <p className="detective-desk-meta">Detective note</p>
+              <p className="detective-desk-copy">{currentTheoryCopy}</p>
+              <p className="detective-desk-meta">Every action costs time. Choose carefully.</p>
+            </section>
           </div>
         </section>
       </div>
 
       <div className="locations-grid">
         {currentCase.locations.map((location) => (
-          <LocationCard
+          <InvestigationLocationCard
             key={location.id}
             location={location}
-            isSearching={searchingLocationId === location.id}
-            isNewEvidence={highlightedLocationId === location.id}
-            investigateLocation={beginSearch}
-            openLocation={openLocation}
+            isActiveLocation={false}
+            isSearching={false}
+            isNewEvidence={false}
+            pointsLeft={pointsLeft}
+            openPanel={openLocation}
           />
         ))}
       </div>

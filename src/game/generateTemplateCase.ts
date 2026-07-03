@@ -71,6 +71,7 @@ export const createCaseFromTemplate = (template: CaseTemplate): Case => ({
   crimeIcon: template.crimeIcon,
   difficulty: template.difficulty,
   culpritPokemonId: template.culpritPokemonId,
+  maxInvestigations: template.maxInvestigations ?? 3,
   suspects: template.suspectPokemonIds.map(createSuspectFromPokemonId),
   locations: template.locations.map(createLocationFromTemplate),
   evidence: template.evidence.map(createEvidenceFromTemplate),

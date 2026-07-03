@@ -7,9 +7,7 @@ interface InvestigationRouteFrameProps {
   layout: 'locations' | 'none'
   attemptsLeft: number
   currentCase: Case
-  lastInvestigatedLocationId?: string | null
-  investigateLocation?: (locationId: string) => void
-  openLocation: (locationId: string) => void
+  openLocation?: (locationId: string) => void
   setActivePanel: (panel: 'investigation' | 'suspects') => void
   startNewCase: () => void
   giveUp: () => void
@@ -20,8 +18,6 @@ export function InvestigationRouteFrame({
   activePanel,
   layout,
   currentCase,
-  lastInvestigatedLocationId,
-  investigateLocation,
   openLocation,
   setActivePanel,
   startNewCase,
@@ -38,9 +34,7 @@ export function InvestigationRouteFrame({
           <LocationsPanel
             isEvidenceTab
             currentCase={currentCase}
-            investigateLocation={investigateLocation ?? (() => {})}
-            lastInvestigatedLocationId={lastInvestigatedLocationId ?? null}
-            openLocation={openLocation}
+            openLocation={openLocation ?? (() => {})}
           />
         ) : null}
         {layout === 'none' ? children : null}

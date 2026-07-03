@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { SelectedSuspectCaseFile } from '../components/Suspects/SelectedSuspectCaseFile'
-import type { Case, SuspectInvestigationGroup, SuspectNoteStatus } from '../game/caseModel'
+import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from '../game/caseModel'
 
 interface SuspectFileRouteProps {
   currentCase: Case
+  selectedSuspectOverride?: Suspect | null
+  backLinkTo?: string
   wrongAccusationIds: number[]
   inspectGroup: (suspectId: number, groupKey: SuspectInvestigationGroup) => void
   setSuspectNoteStatus: (suspectId: number, noteStatus: SuspectNoteStatus) => void
@@ -14,6 +16,8 @@ interface SuspectFileRouteProps {
 
 export function SuspectFileRoute({
   currentCase,
+  selectedSuspectOverride = null,
+  backLinkTo = '/suspects',
   wrongAccusationIds,
   inspectGroup,
   setSuspectNoteStatus,
@@ -23,18 +27,25 @@ export function SuspectFileRoute({
   const { id } = useParams()
   const [expandedGroup, setExpandedGroup] = useState<SuspectInvestigationGroup | null>(null)
   const suspectId = Number(id)
-  const selectedSuspect = currentCase.suspects.find((suspect) => suspect.pokemonId === suspectId) ?? null
+  const selectedSuspect =
+    selectedSuspectOverride ??
+    currentCase.suspects.find((suspect) => suspect.pokemonId === suspectId) ??
+    null
+
+  useEffect(() => {
+    setExpandedGroup(null)
+  }, [selectedSuspect?.pokemonId])
 
   if (!selectedSuspect) {
     return (
       <section className="suspect-file-page notebook-card">
-        <Link to="/suspects" className="subtle-link">
+        <Link to={backLinkTo} className="subtle-link">
           ← Back to suspects
         </Link>
         <div className="inspect-item">
           <strong>Suspect not found</strong>
           <p className="overview-section-hook">This suspect file could not be opened.</p>
-          <Link to="/suspects" className="secondary-button suspect-file-back-button">
+          <Link to={backLinkTo} className="secondary-button suspect-file-back-button">
             Back to suspects
           </Link>
         </div>
@@ -44,7 +55,7 @@ export function SuspectFileRoute({
 
   return (
     <section className="suspect-file-page">
-      <Link to="/suspects" className="subtle-link suspect-file-back-link">
+      <Link to={backLinkTo} className="subtle-link suspect-file-back-link">
         ← Back to suspects
       </Link>
 

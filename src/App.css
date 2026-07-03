@@ -389,9 +389,181 @@
   margin-top: 1rem;
 }
 
+.detective-desk-shell {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+}
+
+.detective-desk {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.85rem 0.9rem 0.8rem;
+  background: linear-gradient(180deg, #f8f1df 0%, #f0e5c7 100%);
+}
+
+.detective-desk-tab {
+  justify-self: start;
+  padding: 0.38rem 0.8rem 0.42rem;
+  border-radius: 12px 12px 0 0;
+  background: #dccaa3;
+  color: #5f533d;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.detective-desk-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.detective-desk-section {
+  position: relative;
+  display: grid;
+  gap: 0.45rem;
+  padding-left: 0.55rem;
+}
+
+.detective-desk-copy,
+.detective-desk-meta {
+  margin: 0;
+}
+
+.detective-desk-copy {
+  color: var(--text-main);
+}
+
+.detective-desk-meta {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.investigation-token-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55rem;
+  max-width: 220px;
+}
+
+.investigation-token {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 1.55rem;
+  border-radius: 8px;
+  justify-self: start;
+  border: 1px solid #b8ab8f;
+  background: rgba(255, 251, 239, 0.68);
+}
+
+.investigation-token::before {
+  content: '✓';
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #8b7e65;
+  opacity: 0;
+}
+
+.investigation-token.is-available::before {
+  content: '';
+}
+
+.investigation-token.is-spent::before {
+  opacity: 1;
+}
+
+.detective-desk-evidence-board {
+  gap: 0.8rem;
+}
+
+.detective-desk-evidence-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.detective-desk-evidence-tag {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 12px;
+  background: rgba(255, 251, 239, 0.88);
+  border: 1px solid #d4c5a6;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.detective-desk-evidence-tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 14px rgba(82, 66, 38, 0.1);
+}
+
+.detective-desk-evidence-tag::before {
+  content: '';
+  position: absolute;
+  top: -0.24rem;
+  left: 0.75rem;
+  width: 1rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: rgba(188, 180, 155, 0.58);
+}
+
+.detective-desk-empty-state {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.active-investigation-panel {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: linear-gradient(180deg, #f8f1df 0%, #f0e5c7 100%);
+}
+
+.active-investigation-heading {
+  margin-bottom: -0.1rem;
+}
+
+.active-investigation-location {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: start;
+}
+
+.active-investigation-resolving {
+  color: var(--muted);
+  font-weight: 700;
+}
+
 .investigation-progress-card,
 .investigation-mission-card {
   gap: 0.7rem;
+}
+
+.investigation-counter-grid {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.investigation-counter-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.investigation-counter-label {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
 }
 
 .investigation-progress-track {
@@ -400,23 +572,16 @@
   gap: 0.55rem;
 }
 
-.investigation-progress-step {
-  display: grid;
-  justify-items: center;
-  gap: 0.3rem;
+.investigation-point-slot {
+  height: 0.8rem;
+  border-radius: 999px;
+  background: #e4ddce;
+  border: 1px solid #d1c7b4;
 }
 
-.investigation-progress-icon {
-  font-size: 1.05rem;
-}
-
-.investigation-progress-mark {
-  font-weight: 700;
-  color: #9f957f;
-}
-
-.investigation-progress-mark.is-complete {
-  color: #7b6541;
+.investigation-point-slot.is-used {
+  background: linear-gradient(135deg, #d9b13f 0%, #8b6640 100%);
+  border-color: #ad8f52;
 }
 
 .investigation-progress-note {
@@ -437,20 +602,45 @@
   margin-top: 1rem;
 }
 
+.locations-grid.has-expanded-location {
+  align-items: start;
+}
+
 .location-card {
   position: relative;
   display: grid;
   gap: 1rem;
   padding: 1rem;
   border-radius: 16px;
-  background: linear-gradient(180deg, #f8f1dd 0%, #f3ead2 100%);
-  border: 1px solid #d3c5ab;
+  background: linear-gradient(180deg, #fbf0c9 0%, #f2df9f 100%);
+  border: 1px solid #d5bc76;
   box-shadow: 0 10px 20px rgba(98, 79, 44, 0.08);
   transition:
     transform 150ms ease,
     box-shadow 150ms ease,
-    border-color 150ms ease;
+    border-color 150ms ease,
+    opacity 180ms ease;
   overflow: hidden;
+}
+
+.location-card.is-expanded-card {
+  gap: 0.8rem;
+  padding: 1.15rem 1rem 0.95rem;
+}
+
+.location-card.is-secondary-card {
+  gap: 0.65rem;
+  opacity: 0.84;
+}
+
+.location-card.is-secondary-card .location-evidence-preview {
+  display: none;
+}
+
+.location-card.is-secondary-card .location-action-button {
+  justify-self: start;
+  min-width: 0;
+  width: auto;
 }
 
 .location-card::before {
@@ -460,9 +650,9 @@
   right: 1rem;
   width: 2.75rem;
   height: 0.95rem;
-  background: rgba(240, 234, 213, 0.7);
+  background: rgba(246, 232, 178, 0.82);
   border-left: 1px solid rgba(255, 255, 255, 0.4);
-  border-right: 1px solid rgba(183, 162, 110, 0.16);
+  border-right: 1px solid rgba(183, 162, 110, 0.28);
   transform: rotate(4deg);
 }
 
@@ -479,13 +669,14 @@
 
 .location-card.is-complete,
 .location-card.is-new-evidence {
-  background: linear-gradient(180deg, #f6ebd3 0%, #eedfbf 100%);
+  background: linear-gradient(180deg, #ece7d7 0%, #ddd6c0 100%);
+  border-color: #bfb59b;
 }
 
 .location-card.is-complete::before,
 .location-card.is-new-evidence::before {
-  background: rgba(236, 224, 176, 0.68);
-  border-right-color: rgba(183, 162, 110, 0.3);
+  background: rgba(216, 210, 191, 0.82);
+  border-right-color: rgba(153, 141, 114, 0.28);
 }
 
 .location-card:hover {
@@ -497,6 +688,15 @@
 .location-card.is-searching {
   animation: clue-fade 220ms ease;
   box-shadow: 0 0 0 2px rgba(217, 177, 63, 0.16), 0 18px 28px rgba(98, 79, 44, 0.14);
+}
+
+.location-card.is-disabled {
+  opacity: 0.66;
+}
+
+.location-card.is-active-location {
+  border-color: #8a7448;
+  box-shadow: 0 0 0 3px rgba(245, 234, 191, 0.78), 0 18px 28px rgba(98, 79, 44, 0.14);
 }
 
 .location-card.is-new-evidence .location-status-stamp {
@@ -574,10 +774,92 @@
   color: #7b6541;
 }
 
+.location-status-stamp.is-disabled {
+  color: #9a8f77;
+}
+
+.investigation-action-chooser {
+  display: grid;
+  gap: 0.5rem;
+  padding-top: 0.2rem;
+  border-top: 1px solid rgba(203, 185, 146, 0.8);
+}
+
+.investigation-action-header {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.investigation-action-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.investigation-action-list {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.investigation-action-option {
+  display: grid;
+  gap: 0.18rem;
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border-radius: 12px;
+  border: 1px solid #ccb992;
+  background: rgba(255, 251, 239, 0.92);
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  align-content: start;
+}
+
+.investigation-action-option:hover {
+  transform: translateY(-2px);
+  border-color: #b79d60;
+  box-shadow: 0 6px 12px rgba(82, 66, 38, 0.08);
+}
+
+.investigation-action-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.investigation-action-icon {
+  font-size: 0.95rem;
+}
+
+.investigation-action-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.4rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(228, 217, 188, 0.8);
+  color: #6f6148;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.investigation-action-label {
+  font-weight: 800;
+}
+
+.investigation-action-description {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
 .location-evidence-preview {
   display: grid;
-  gap: 0.6rem;
-  padding: 0.85rem;
+  gap: 0.45rem;
+  padding: 0.75rem 0.8rem;
   border-radius: 12px;
   border: 1px dashed #c7b999;
   background: rgba(255, 252, 244, 0.76);
@@ -586,6 +868,10 @@
 .location-evidence-preview.is-hidden {
   background: rgba(255, 251, 240, 0.72);
   border-style: solid;
+}
+
+.compact-location-preview {
+  padding: 0.55rem 0.7rem;
 }
 
 .location-evidence-preview.is-revealed {
@@ -607,7 +893,7 @@
 
 .location-evidence-list {
   display: grid;
-  gap: 0.35rem;
+  gap: 0.22rem;
 }
 
 .location-evidence-copy {
@@ -631,6 +917,26 @@
 .location-action-button.is-review {
   background: #fffdf7;
   color: var(--text-main);
+}
+
+.location-action-button.is-review:not(:hover) {
+  box-shadow: none;
+}
+
+.location-cancel-button {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.location-continue-button {
+  justify-self: start;
+  margin-top: 0.15rem;
 }
 
 .location-button-spinner {
@@ -748,7 +1054,7 @@
 
 .suspect-evidence-progress {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.55rem;
 }
 
@@ -795,6 +1101,8 @@
 }
 
 .suspect-evidence-board-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   align-items: stretch;
 }
 
@@ -816,7 +1124,7 @@
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
   gap: 0.7rem;
-  min-width: min(100%, 220px);
+  min-width: 0;
   padding: 0.8rem 0.85rem;
   border-radius: 14px;
   border: 1px solid #d1c19d;
@@ -1220,6 +1528,149 @@
   padding: 1rem;
   display: grid;
   gap: 1rem;
+}
+
+.solved-case-screen {
+  gap: 1.25rem;
+}
+
+.victory-screen {
+  gap: 1.25rem;
+  background: linear-gradient(180deg, #fbf6e8 0%, #f0e5c7 100%);
+}
+
+.failed-case-screen {
+  background: linear-gradient(180deg, #f6f0df 0%, #eadfc3 100%);
+}
+
+.case-closed-hero {
+  display: grid;
+  gap: 1rem;
+}
+
+.culprit-reveal-card {
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(255, 251, 239, 0.82);
+  border: 1px solid #d5c6a7;
+}
+
+.ending-hero-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.ending-hero-copy h2,
+.ending-hero-copy p {
+  margin: 0;
+}
+
+.ending-summary-list {
+  gap: 1rem;
+}
+
+.ending-case-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #6c614c;
+}
+
+.ending-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.ending-culprit-visuals {
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+}
+
+.ending-mugshot-frame {
+  display: grid;
+  justify-items: center;
+}
+
+.ending-ditto-note {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem;
+}
+
+.ending-layout-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.ending-main-column,
+.ending-side-column {
+  display: grid;
+  gap: 1rem;
+}
+
+.ending-evidence-grid {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 0.85rem;
+}
+
+.evidence-explanation-card {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem;
+  border-radius: 14px;
+  background: rgba(255, 251, 239, 0.88);
+  border: 1px solid #d7c9ab;
+}
+
+.evidence-explanation-card p,
+.detective-conclusion p,
+.cleared-suspect-card p {
+  margin: 0;
+}
+
+.detective-conclusion {
+  gap: 0.55rem;
+}
+
+.case-summary-card {
+  gap: 0.7rem;
+}
+
+.case-summary-list {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.cleared-suspect-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.cleared-suspect-card {
+  display: grid;
+  justify-items: start;
+  gap: 0.35rem;
+  padding: 0.75rem;
+  border-radius: 14px;
+  background: rgba(255, 251, 239, 0.82);
+  border: 1px solid #d7c9ab;
+}
+
+.cleared-suspect-card .suspect-sprite-frame {
+  width: 84px;
+  height: 84px;
+}
+
+.cleared-suspect-card .suspect-sprite {
+  width: 138px;
+  height: 138px;
+}
+
+.ending-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .landing-screen {
@@ -2053,6 +2504,27 @@
     align-items: start;
   }
 
+  .detective-desk-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .investigation-action-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .locations-grid.has-expanded-location {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .location-card.is-expanded-card {
+    grid-column: 1 / -1;
+  }
+
+  .detective-desk-section:not(:first-child) {
+    border-left: 1px solid rgba(203, 185, 146, 0.8);
+    padding-left: 1rem;
+  }
+
   .investigation-board-summary {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
@@ -2145,6 +2617,16 @@
 
   .suspect-overview-decision {
     grid-column: 1 / -1;
+  }
+
+  .case-closed-hero {
+    grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
+    align-items: start;
+  }
+
+  .ending-layout-grid {
+    grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.9fr);
+    align-items: start;
   }
 
   .suspects-page-layout {

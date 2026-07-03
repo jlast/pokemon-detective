@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { SuspectsPanel } from '../components/Suspects/SuspectsPanel'
 import type { Case } from '../game/caseModel'
 import { InvestigationRouteFrame } from './InvestigationRouteFrame'
@@ -7,10 +8,10 @@ interface SuspectsRouteProps {
   currentCase: Case
   wrongAccusationIds: number[]
   inspectSuspect: (suspectId: number) => void
-  openLocation: (locationId: string) => void
   setActivePanel: (panel: 'investigation' | 'suspects') => void
   startNewCase: () => void
   giveUp: () => void
+  children?: ReactNode
 }
 
 export function SuspectsRoute({
@@ -18,10 +19,10 @@ export function SuspectsRoute({
   currentCase,
   wrongAccusationIds,
   inspectSuspect,
-  openLocation,
   setActivePanel,
   startNewCase,
   giveUp,
+  children,
 }: SuspectsRouteProps) {
   return (
     <InvestigationRouteFrame
@@ -29,7 +30,6 @@ export function SuspectsRoute({
       layout="none"
       attemptsLeft={attemptsLeft}
       currentCase={currentCase}
-      openLocation={openLocation}
       setActivePanel={setActivePanel}
       startNewCase={startNewCase}
       giveUp={giveUp}
@@ -39,6 +39,7 @@ export function SuspectsRoute({
         wrongAccusationIds={wrongAccusationIds}
         inspectSuspect={inspectSuspect}
       />
+      {children}
     </InvestigationRouteFrame>
   )
 }
