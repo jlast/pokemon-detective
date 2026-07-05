@@ -1,5 +1,6 @@
 import { pokemonData } from '../data/pokemon'
 import type { Case, Evidence, InspectedFact, Location, Suspect } from './caseModel'
+import { generateMissingCookiesLineup } from './caseGeneration'
 import { getAbilityText, getEvolutionLineText, getHabitatNote } from './suspectCaseFile'
 
 const getPokemon = (pokemonId: number) => {
@@ -98,8 +99,8 @@ const evidence: Evidence[] = [
     discovered: false,
   },
   {
-    id: 'small-footprints',
-    title: 'Small Footprints',
+    id: 'small-tracks',
+    title: 'Small Tracks',
     clueText: 'The tracks were small and close to the ground.',
     hiddenTrait: 'small_low',
     endExplanation: 'The culprit left small, low tracks near the tents.',
@@ -151,6 +152,70 @@ const evidence: Evidence[] = [
     clueText: 'A dry path of grit led away from the wash bucket.',
     hiddenTrait: 'ground_or_sand',
     endExplanation: 'The culprit carried dry grit even near the water station.',
+    discovered: false,
+  },
+  {
+    id: 'ash-scatter',
+    title: 'Ash Scatter',
+    clueText: 'A fine dusting of residue settled near the fire pit.',
+    hiddenTrait: 'ash_or_scorch',
+    endExplanation: 'The culprit brushed against the ashes and left a trail.',
+    discovered: false,
+  },
+  {
+    id: 'static-mark',
+    title: 'Static Mark',
+    clueText: 'A faint burn mark blackened the edge of the lid.',
+    hiddenTrait: 'fire_heat',
+    endExplanation: 'The culprit left a scorched mark while forcing the jar open.',
+    discovered: false,
+  },
+  {
+    id: 'frost-trail',
+    title: 'Frost Trail',
+    clueText: 'A trail of frost sparkled behind the tents.',
+    hiddenTrait: 'moisture_residue',
+    endExplanation: 'The culprit left a glittering line of frost in the night air.',
+    discovered: false,
+  },
+  {
+    id: 'pollen-scent',
+    title: 'Pollen Scent',
+    clueText: 'The air near the roots carried a strange hint of plant matter.',
+    hiddenTrait: 'plant_residue',
+    endExplanation: 'The culprit disturbed the ground and stirred up plant matter.',
+    discovered: false,
+  },
+  {
+    id: 'psychic-echo',
+    title: 'Psychic Echo',
+    clueText: 'The witness felt an odd chill while describing the culprit.',
+    hiddenTrait: 'psychic_trace',
+    endExplanation: 'Something about the culprit left an uneasy sensation in the air.',
+    discovered: false,
+  },
+  {
+    id: 'metal-shaving',
+    title: 'Metal Shaving',
+    clueText: 'Thin curls of metal were found near the jar lid.',
+    hiddenTrait: 'metal_scrape',
+    endExplanation: 'The culprit left metal shavings while scraping against the jar.',
+    discovered: false,
+  },
+  {
+    id: 'slime-trail',
+    title: 'Slime Trail',
+    clueText: 'A slick ribbon of residue traced away from the camp.',
+    hiddenTrait: 'toxic_residue',
+    endExplanation: 'The culprit left a viscous trail as it moved through the scene.',
+    discovered: false,
+  },
+  {
+    id: 'feather-drift',
+    title: 'Feather Drift',
+    clueText: 'A few specks of down drifted down near the tracks.',
+    hiddenTrait: 'air_movement',
+    endExplanation: 'The culprit scattered light debris while moving through the brush.',
     discovered: false,
   },
 ]
@@ -208,8 +273,8 @@ const locations: Location[] = [
     ],
   },
   {
-    id: 'footprints',
-    name: 'Footprints',
+    id: 'tracks',
+    name: 'Tracks',
     icon: '👣',
     teaserText: 'Something passed behind the tents.',
     investigated: false,
@@ -219,12 +284,12 @@ const locations: Location[] = [
         id: 'measure-tracks',
         label: 'Measure the tracks',
         leadType: 'careful',
-        description: 'Check the size of the prints.',
+        description: 'Check the size of the tracks.',
         outcomeType: 'evidence',
-        evidenceId: 'small-footprints',
-        evidenceTitle: 'Small Footprints',
+        evidenceId: 'small-tracks',
+        evidenceTitle: 'Small Tracks',
         evidenceText: 'The tracks were small and close to the ground.',
-        observationText: 'The prints stay tight and shallow beside the tents.',
+        observationText: 'The tracks stay tight and shallow beside the tents.',
         implicationText: 'The culprit may have moved low and lightly.',
         unlocksLocationIds: [],
         isUseful: true,
@@ -412,96 +477,42 @@ const locations: Location[] = [
   },
 ]
 
-const missingCookiesCase: Case = {
+const createBaseMissingCookiesCase = (): Omit<Case, 'culpritPokemonId' | 'suspects' | 'solution'> => ({
   id: 'missing-cookies',
   title: 'The Missing Cookies',
   shortStory: 'Someone snuck into camp overnight and ate all the cookies.',
   crimeIcon: '🍪',
   difficulty: 'easy',
-  culpritPokemonId: 27,
   maxInvestigations: 5,
-  suspects: [54, 27, 58, 252, 322, 328].map(createSuspect),
-  locations,
-  evidence,
-  solution: {
-    culpritRevealText: 'Sandshrew was behind the case.',
-    detectiveConclusion:
-      'The culprit had to be small, close to the ground, comfortable around dry soil, and likely capable of scratching or digging. Sandshrew best fit the collected evidence.',
-    evidenceExplanation: [
-      {
-        locationId: 'campsite',
-        evidenceTitle: 'Cookie Crumbs',
-        clueText: 'Fresh crumbs were scattered low across the ground.',
-        deductionText: 'This pointed toward a small Pokemon that stayed low while moving through camp.',
-      },
-      {
-        locationId: 'footprints',
-        evidenceTitle: 'Small Footprints',
-        clueText: 'The tracks were small and close to the ground.',
-        deductionText: 'The culprit was light, low, and careful around the tents.',
-      },
-      {
-        locationId: 'forest-edge',
-        evidenceTitle: 'Loose Soil',
-        clueText: 'Fresh soil had been disturbed under the tree roots.',
-        deductionText: 'Digging behavior made Sandshrew far more likely than the other suspects.',
-      },
-      {
-        locationId: 'cookie-jar',
-        evidenceTitle: 'Scratch Marks',
-        clueText: 'Narrow marks scored the cookie jar lid.',
-        deductionText: 'The culprit likely used claws or scraping motions to force the lid open.',
-      },
-      {
-        locationId: 'witness-tent',
-        evidenceTitle: 'Avoided Water',
-        clueText: 'The camper remembered the culprit skirting around the water bucket.',
-        deductionText: 'That behavior fit a Pokemon more comfortable in dry ground than near water.',
-      },
-    ],
-    clearedSuspects: [
-      {
-        pokemonId: 54,
-        reason: 'Too connected to water for the dry trail and avoided-water clues.',
-      },
-      {
-        pokemonId: 58,
-        reason: 'Did not explain the small, low tracks left near the tents.',
-      },
-      {
-        pokemonId: 252,
-        reason: 'Did not fit the dry soil and digging evidence as strongly.',
-      },
-      {
-        pokemonId: 322,
-        reason: 'Too bulky for the small footprints and low crumb trail.',
-      },
-      {
-        pokemonId: 328,
-        reason: 'Shared some clues, but did not explain the jar scratches as well.',
-      },
-    ],
-  },
-  status: 'active',
-}
-
-export const createMissingCookiesCase = (): Case => ({
-  ...missingCookiesCase,
-  suspects: missingCookiesCase.suspects.map((suspect) => ({
-    ...suspect,
-    inspectedGroups: { ...suspect.inspectedGroups },
-    inspectedFacts: suspect.inspectedFacts.map((fact) => ({ ...fact })),
-  })),
-  locations: missingCookiesCase.locations.map((location) => ({
+  locations: locations.map((location) => ({
     ...location,
     actions: location.actions.map((action) => ({ ...action })),
   })),
-  evidence: missingCookiesCase.evidence.map((evidenceItem) => ({ ...evidenceItem })),
-  solution: missingCookiesCase.solution
-    ? {
-        ...missingCookiesCase.solution,
-        evidenceExplanation: missingCookiesCase.solution.evidenceExplanation.map((item) => ({ ...item })),
-        clearedSuspects: missingCookiesCase.solution.clearedSuspects.map((item) => ({ ...item })),
-      }
-    : undefined,
+  evidence: evidence.map((evidenceItem) => ({ ...evidenceItem })),
+  status: 'active',
 })
+
+export const createMissingCookiesCase = (): Case => {
+  const baseCase = createBaseMissingCookiesCase()
+  const generated = generateMissingCookiesLineup(baseCase.evidence, baseCase.locations)
+
+  return {
+    ...baseCase,
+    culpritPokemonId: generated.culpritPokemonId,
+    suspects: generated.suspectPokemonIds.map(createSuspect).map((suspect) => ({
+      ...suspect,
+      inspectedGroups: { ...suspect.inspectedGroups },
+      inspectedFacts: suspect.inspectedFacts.map((fact) => ({ ...fact })),
+    })),
+    locations: generated.locations.map((location) => ({
+      ...location,
+      actions: location.actions.map((action) => ({ ...action })),
+    })),
+    evidence: generated.evidence.map((evidenceItem) => ({ ...evidenceItem })),
+    solution: {
+      ...generated.solution,
+      evidenceExplanation: generated.solution.evidenceExplanation.map((item) => ({ ...item })),
+      clearedSuspects: generated.solution.clearedSuspects.map((item) => ({ ...item })),
+    },
+  }
+}

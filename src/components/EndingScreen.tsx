@@ -80,7 +80,7 @@ export function EndingScreen({
               {isSolved ? 'Solved' : 'Failed'}
             </span>
           </div>
-          <p>{isSolved ? 'Sandshrew was the culprit!' : culpritRevealText}</p>
+          <p>{isSolved ? `${culpritSuspect?.name ?? 'The culprit'} was the culprit!` : culpritRevealText}</p>
         </div>
 
         <div className="ending-culprit-visuals">

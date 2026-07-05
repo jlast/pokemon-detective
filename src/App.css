@@ -543,6 +543,39 @@
   font-weight: 700;
 }
 
+.investigation-report {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.15rem 0;
+}
+
+.investigation-report-section {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.investigation-report-section p {
+  margin: 0;
+}
+
+.investigation-report-finding {
+  gap: 0.45rem;
+}
+
+.investigation-report-evidence-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.investigation-report-notes {
+  font-style: italic;
+}
+
+.investigation-report-divider {
+  height: 1px;
+  background: rgba(203, 185, 146, 0.8);
+}
+
 .investigation-progress-card,
 .investigation-mission-card {
   gap: 0.7rem;

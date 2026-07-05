@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Location } from '../../game/caseModel'
 import { InvestigationActionChooser } from './InvestigationActionChooser'
-import { InvestigationResult } from './InvestigationResult'
 
 interface InvestigationLocationPageProps {
   location: Location | null
@@ -35,6 +34,13 @@ export function InvestigationLocationPage({
 
   const selectedAction = location.actions.find((action) => action.id === location.selectedActionId) ?? null
   const statusLabel = location.investigated ? 'Complete' : 'Not searched'
+  const hasEvidence =
+    selectedAction?.outcomeType === 'evidence' || selectedAction?.outcomeType === 'witness'
+  const detectiveNote = selectedAction
+    ? hasEvidence
+      ? selectedAction.implicationText ?? 'The new clue should be compared against the suspect files.'
+      : 'This lead does not narrow the suspect list.'
+    : null
 
   return (
     <section className="notebook-card active-investigation-panel investigation-location-page">
@@ -75,16 +81,41 @@ export function InvestigationLocationPage({
         )
       ) : selectedAction ? (
         <>
-          <section className="selected-suspect-section inspect-item">
-            <strong>Investigation result</strong>
-            <p className="overview-section-hook">Lead followed: {selectedAction.label}</p>
-            <InvestigationResult
-              action={selectedAction}
-              highlightResult={false}
-              isExpanded
-              onContinue={() => {}}
-              showContinue={false}
-            />
+          <section className="investigation-report">
+            <div className="investigation-report-section">
+              <strong>Investigation complete</strong>
+            </div>
+
+            <div className="investigation-report-divider" aria-hidden="true" />
+
+            <div className="investigation-report-section investigation-report-finding">
+              <strong>Finding</strong>
+              {hasEvidence ? (
+                <>
+                  <p className="investigation-report-evidence-title">📎 {selectedAction.evidenceTitle}</p>
+                  <p>{selectedAction.evidenceText}</p>
+                </>
+              ) : (
+                <>
+                  <p className="investigation-report-evidence-title">No useful evidence was recovered.</p>
+                  <p>{selectedAction.observationText}</p>
+                </>
+              )}
+            </div>
+
+            <div className="investigation-report-divider" aria-hidden="true" />
+
+            <div className="investigation-report-section investigation-report-notes">
+              <strong>Detective&apos;s Notes</strong>
+              <p>{detectiveNote}</p>
+            </div>
+
+            <div className="investigation-report-divider" aria-hidden="true" />
+
+            <div className="investigation-report-section">
+              <strong>Evidence Board</strong>
+              <p>{hasEvidence ? `✓ ${selectedAction.evidenceTitle} added` : 'No new evidence added.'}</p>
+            </div>
           </section>
 
           <div className="investigation-location-actions">

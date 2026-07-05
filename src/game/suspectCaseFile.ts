@@ -1,31 +1,25 @@
-import { pokemonData, type Pokemon } from '../data/pokemon'
+import { pokemonData, type Pokemon, type PokemonType } from '../data/pokemon'
 import type { SuspectInvestigationGroup } from './caseModel'
 
-const suspectExtras: Record<number, { ability: string; habitatNote: string }> = {
-  27: { ability: 'Sand Veil', habitatNote: 'Usually feels at home in dry ground and dusty places.' },
-  37: { ability: 'Flash Fire', habitatNote: 'Likes warm dens and often curls up near dry brush.' },
-  41: { ability: 'Inner Focus', habitatNote: 'Drifts through caves and dim places after sunset.' },
-  43: { ability: 'Chlorophyll', habitatNote: 'Stays close to damp soil and shady patches of grass.' },
-  52: { ability: 'Pickup', habitatNote: 'Wanders around camps and cottages in search of shiny things.' },
-  54: { ability: 'Damp', habitatNote: 'Often spotted near ponds, rivers, and other wet spots.' },
-  58: { ability: 'Intimidate', habitatNote: 'Tends to patrol open routes and stay alert to strangers.' },
-  77: { ability: 'Run Away', habitatNote: 'Roams open plains and dislikes cramped spaces.' },
-  163: { ability: 'Insomnia', habitatNote: 'Keeps watch from tree branches during the night.' },
-  190: { ability: 'Run Away', habitatNote: 'Climbs beams, trees, and shelves with ease.' },
-  194: { ability: 'Damp', habitatNote: 'Settles near cool mud and shallow water.' },
-  198: { ability: 'Insomnia', habitatNote: 'Glides around rooftops and dark places looking for trinkets.' },
-  215: { ability: 'Inner Focus', habitatNote: 'Prefers cold, shadowy routes and moves very quietly.' },
-  228: { ability: 'Early Bird', habitatNote: 'Lingers near charred fields and warm paths.' },
-  231: { ability: 'Pickup', habitatNote: 'Follows simple trails and sniffs around gardens and farms.' },
-  252: { ability: 'Overgrow', habitatNote: 'Prefers leafy cover and quick movement through brush.' },
-  302: { ability: 'Keen Eye', habitatNote: 'Hides in caves and is drawn to glittering stones.' },
-  304: { ability: 'Rock Head', habitatNote: 'Lives in rocky tunnels and old mine paths.' },
-  315: { ability: 'Natural Cure', habitatNote: 'Appears in tidy gardens and flower beds.' },
-  322: { ability: 'Oblivious', habitatNote: 'Handles hot, dry terrain well and stores energy for long walks.' },
-  327: { ability: 'Own Tempo', habitatNote: 'Staggers around camps in unpredictable little circles.' },
-  328: { ability: 'Hyper Cutter', habitatNote: 'Lurks in sandy ground and likes to wait near loose soil.' },
-  353: { ability: 'Insomnia', habitatNote: 'Lingers in quiet corners once the lanterns go out.' },
-  399: { ability: 'Simple', habitatNote: 'Gnaws on wood near streams and camp supplies.' },
+const abilityByPrimaryType: Record<PokemonType, string> = {
+  bug: 'Swarm',
+  dark: 'Inner Focus',
+  dragon: 'Shed Skin',
+  electric: 'Static',
+  fairy: 'Cute Charm',
+  fighting: 'Guts',
+  fire: 'Flash Fire',
+  flying: 'Keen Eye',
+  ghost: 'Levitate',
+  grass: 'Overgrow',
+  ground: 'Sand Veil',
+  ice: 'Snow Cloak',
+  normal: 'Run Away',
+  poison: 'Poison Point',
+  psychic: 'Synchronize',
+  rock: 'Rock Head',
+  steel: 'Sturdy',
+  water: 'Torrent',
 }
 
 const evolutionLineByPokemonId: Record<number, string> = {
@@ -67,10 +61,50 @@ export const getPokemonById = (pokemonId: number): Pokemon => {
   return pokemon
 }
 
-export const getAbilityText = (pokemonId: number) => suspectExtras[pokemonId]?.ability ?? 'Unknown ability'
+export const getAbilityText = (pokemonId: number) => {
+  const pokemon = getPokemonById(pokemonId)
 
-export const getHabitatNote = (pokemonId: number) =>
-  suspectExtras[pokemonId]?.habitatNote ?? 'No habitat note recorded.'
+  return abilityByPrimaryType[pokemon.types[0]] ?? 'Unknown ability'
+}
+
+export const getHabitatNote = (pokemonId: number) => {
+  const pokemon = getPokemonById(pokemonId)
+  const primaryType = pokemon.types[0]
+
+  if (primaryType === 'water') {
+    return 'Usually stays close to rivers, ponds, or damp campsites.'
+  }
+
+  if (primaryType === 'ground' || primaryType === 'rock') {
+    return 'Feels most at home around dry ground, dust, and loose soil.'
+  }
+
+  if (primaryType === 'grass' || primaryType === 'bug') {
+    return 'Often keeps to brush, roots, and shaded patches near camp.'
+  }
+
+  if (primaryType === 'fire') {
+    return 'Prefers warm paths, campsites, and dry resting spots.'
+  }
+
+  if (primaryType === 'flying') {
+    return 'Tends to watch from branches, rooftops, or high perches.'
+  }
+
+  if (primaryType === 'ghost' || primaryType === 'dark') {
+    return 'Moves best in quiet corners and after the lanterns go dim.'
+  }
+
+  if (pokemon.heightM <= 0.6) {
+    return 'Small enough to slip around campsites and tight spaces unnoticed.'
+  }
+
+  if (pokemon.heightM >= 1.4 || pokemon.weightKg >= 45) {
+    return 'Would stand out in a cramped campsite and leave a stronger trail behind.'
+  }
+
+  return 'Can move comfortably through camp paths, brush, and open ground.'
+}
 
 export const getEvolutionLineText = (pokemon: Pokemon) =>
   evolutionLineByPokemonId[pokemon.id] ??
@@ -124,5 +158,8 @@ export const getSuspectGroupDetails = (pokemonId: number) => {
       prompt: 'Check whether an ability could explain the evidence.',
       rows: [{ label: 'Ability', value: getAbilityText(pokemonId) }],
     },
-  } satisfies Record<SuspectInvestigationGroup, { icon: string; title: string; prompt: string; rows: Array<{ label: string; value: string }> }>
+  } satisfies Record<
+    SuspectInvestigationGroup,
+    { icon: string; title: string; prompt: string; rows: Array<{ label: string; value: string }> }
+  >
 }
