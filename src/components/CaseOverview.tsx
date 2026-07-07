@@ -7,12 +7,14 @@ interface CaseOverviewProps {
   gameCase: Case
   attemptsLeft: number
   startInvestigation?: () => void
+  onSelectSuspect?: (suspectId: number) => void
 }
 
 export function CaseOverview({
   gameCase: selectedCase,
   attemptsLeft,
   startInvestigation,
+  onSelectSuspect,
 }: CaseOverviewProps) {
   const suspectBoardStyles = [
     'is-tilted-left has-tape',
@@ -42,6 +44,10 @@ export function CaseOverview({
                 <div
                   key={suspect.pokemonId}
                   className={`suspect-card notebook-card overview-suspect-card ${suspectBoardStyles[index % suspectBoardStyles.length]}`}
+                  onClick={() => onSelectSuspect?.(suspect.pokemonId)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelectSuspect?.(suspect.pokemonId) }}
                 >
                   <div className="suspect-card-top">
                     <MugShot suspect={suspect} />

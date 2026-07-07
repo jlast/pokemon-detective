@@ -8,15 +8,6 @@ export function Header({ currentCase }: HeaderProps) {
   return (
     <header className="app-header notebook-card">
       <div className="brand-lockup">
-        <div className="brand-icon" aria-hidden="true">
-          <span className="hat"></span>
-          <span className="ear ear-left"></span>
-          <span className="ear ear-right"></span>
-          <span className="face"></span>
-          <span className="glass"></span>
-          <span className="handle"></span>
-        </div>
-
         <div>
           <p className="eyebrow">Pokemon Detective</p>
           <h1>{currentCase.title}</h1>

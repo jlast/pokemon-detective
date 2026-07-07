@@ -85,6 +85,91 @@
   transform: none;
 }
 
+.case-overview-backlink {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  color: var(--text-dim);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color 140ms ease;
+  user-select: none;
+}
+
+.case-overview-backlink:hover {
+  color: var(--text-main);
+}
+
+.case-flow-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.case-flow-tab {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.65rem 1.1rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-dim);
+  background: transparent;
+  border: 2px solid transparent;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+  white-space: nowrap;
+}
+
+.case-flow-tab:hover {
+  color: var(--text-main);
+  background: rgba(197, 186, 165, 0.12);
+}
+
+.case-flow-tab.is-active {
+  color: var(--text-main);
+  background: #eef4d9;
+  border-color: var(--border);
+  position: relative;
+  top: 2px;
+  margin-bottom: -2px;
+}
+
+.detail-back-link {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  color: var(--text-dim);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color 140ms ease;
+  user-select: none;
+}
+
+.detail-back-link:hover {
+  color: var(--text-main);
+}
+
+.case-flow-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1.25rem 0 0.5rem;
+  border-top: 1px solid var(--border);
+  margin-top: 1.5rem;
+}
+
+.placeholder-page {
+  text-align: center;
+  color: var(--text-dim);
+  padding: 3rem 1rem;
+  font-style: italic;
+}
+
 .main-layout {
   display: grid;
   gap: 1rem;
@@ -1452,6 +1537,17 @@
   background-color: #b5c5c4;
   border: 2px solid #c3bfad;
   flex: 0 0 auto;
+  position: relative;
+}
+
+.shiny-stamp {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 18px;
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 }
 
 .suspect-sprite {

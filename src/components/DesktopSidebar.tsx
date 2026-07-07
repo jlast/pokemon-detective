@@ -1,24 +1,18 @@
 interface DesktopSidebarProps {
-  activeSection: 'overview' | 'investigation' | 'suspects'
-  canGiveUp: boolean
-  onSelectOverview: () => void
-  onSelectInvestigation: () => void
-  onSelectSuspects: () => void
-  onGiveUp: () => void
+  activeSection: string
+  onSelectHome: () => void
+  onSelectCase: () => void
+  onSelectHowToPlay: () => void
+  onSelectLogin: () => void
 }
 
 export function DesktopSidebar({
   activeSection,
-  canGiveUp,
-  onSelectOverview,
-  onSelectInvestigation,
-  onSelectSuspects,
-  onGiveUp,
+  onSelectHome,
+  onSelectCase,
+  onSelectHowToPlay,
+  onSelectLogin,
 }: DesktopSidebarProps) {
-  const isOverviewActive = activeSection === 'overview'
-  const isInvestigationActive = activeSection === 'investigation'
-  const isSuspectsActive = activeSection === 'suspects'
-
   return (
     <aside className="desktop-sidebar notebook-card" aria-label="Primary navigation">
       <div className="desktop-sidebar-brand">
@@ -44,38 +38,36 @@ export function DesktopSidebar({
       <div className="desktop-sidebar-section">
         <button
           type="button"
-          className={`sidebar-nav-button ${isOverviewActive ? 'is-active' : ''}`}
-          onClick={onSelectOverview}
+          className={`sidebar-nav-button ${activeSection === 'home' ? 'is-active' : ''}`}
+          onClick={onSelectHome}
         >
-          Overview
+          Home
         </button>
 
         <button
           type="button"
-          className={`sidebar-nav-button ${isInvestigationActive ? 'is-active' : ''}`}
-          onClick={onSelectInvestigation}
+          className={`sidebar-nav-button ${activeSection === 'case' ? 'is-active' : ''}`}
+          onClick={onSelectCase}
         >
-          Investigation
+          Today's case
         </button>
 
         <button
           type="button"
-          className={`sidebar-nav-button ${isSuspectsActive ? 'is-active' : ''}`}
-          onClick={onSelectSuspects}
+          className="sidebar-nav-button"
+          onClick={onSelectHowToPlay}
         >
-          Suspects
+          How to play
         </button>
-
       </div>
 
       <div className="desktop-sidebar-section desktop-sidebar-actions">
         <button
           type="button"
-          className="secondary-button danger-button"
-          onClick={onGiveUp}
-          disabled={!canGiveUp}
+          className="sidebar-nav-button"
+          onClick={onSelectLogin}
         >
-          Give up
+          Login
         </button>
       </div>
     </aside>

@@ -19,6 +19,7 @@ export interface Suspect {
   pokemonId: number
   name: string
   sprite: string
+  isShiny: boolean
   manuallyRuledOut: boolean
   noteStatus: SuspectNoteStatus
   inspectedGroups: Record<SuspectInvestigationGroup, boolean>
@@ -39,6 +40,9 @@ export interface LocationAction {
   evidenceTitle?: string | null
   evidenceText?: string | null
   observationText: string
+  observationTextSmall?: string
+  observationTextMedium?: string
+  observationTextLarge?: string
   implicationText?: string
   unlocksLocationIds?: string[]
   isUseful: boolean

@@ -19,23 +19,32 @@ export type CaseTrait =
   | 'metal_scrape'
   | 'toxic_residue'
 
-const traitPriority: CaseTrait[] = [
-  'small_stature',
-  'large_stature',
-  'ground_affinity',
-  'burrowing',
-  'claw_or_scratch',
-  'dry_environment',
-  'water_affinity',
-  'moisture_residue',
-  'fire_heat',
-  'ash_or_scorch',
-  'air_movement',
-  'plant_residue',
-  'psychic_trace',
-  'metal_scrape',
-  'toxic_residue',
+type TraitRule = {
+  trait: CaseTrait
+  types?: PokemonType[]
+  requirePrimary?: boolean
+  check?: (pokemon: Pokemon) => boolean
+}
+
+const traitRules: TraitRule[] = [
+  { trait: 'small_stature', check: (p) => p.heightM <= 1.0 && p.weightKg <= 35 },
+  { trait: 'large_stature', check: (p) => p.heightM >= 1.4 || p.weightKg >= 45 },
+  { trait: 'ground_affinity', types: ['ground', 'rock', 'fighting', 'normal', 'dragon'] },
+  { trait: 'burrowing', types: ['ground', 'rock', 'bug'] },
+  { trait: 'claw_or_scratch', types: ['ground', 'rock', 'bug', 'dark', 'fighting', 'steel', 'normal'] },
+  { trait: 'dry_environment', types: ['ground', 'rock', 'fire'], requirePrimary: true },
+  { trait: 'water_affinity', types: ['water', 'ice'] },
+  { trait: 'moisture_residue', types: ['water', 'ice', 'grass', 'poison'] },
+  { trait: 'fire_heat', types: ['fire', 'electric', 'dragon'] },
+  { trait: 'ash_or_scorch', types: ['fire', 'electric'] },
+  { trait: 'air_movement', types: ['flying', 'psychic', 'ghost', 'fairy'] },
+  { trait: 'plant_residue', types: ['grass', 'bug'] },
+  { trait: 'psychic_trace', types: ['psychic', 'ghost', 'dark', 'fairy'] },
+  { trait: 'metal_scrape', types: ['steel'] },
+  { trait: 'toxic_residue', types: ['poison'] },
 ]
+
+const traitPriority: CaseTrait[] = traitRules.map((rule) => rule.trait)
 
 const evidenceTraitById: Record<string, CaseTrait> = {
   'cookie-crumbs': 'small_stature',
@@ -161,100 +170,22 @@ const shuffle = <T,>(items: T[]) => {
 
 export const getPokemonCaseTraits = (pokemon: Pokemon): Set<CaseTrait> => {
   const traits = new Set<CaseTrait>()
-
-  if (pokemon.heightM <= 1.0 && pokemon.weightKg <= 35) {
-    traits.add('small_stature')
-  }
-
-  if (pokemon.heightM >= 1.4 || pokemon.weightKg >= 45) {
-    traits.add('large_stature')
-  }
-
   const allTypes = pokemon.types
   const primaryType = allTypes[0]
 
-  if (allTypes.includes('ground') || allTypes.includes('rock')) {
-    traits.add('ground_affinity')
-    traits.add('burrowing')
-    traits.add('claw_or_scratch')
-    if (primaryType === 'ground' || primaryType === 'rock') {
-      traits.add('dry_environment')
+  for (const rule of traitRules) {
+    if (rule.check) {
+      if (rule.check(pokemon)) {
+        traits.add(rule.trait)
+      }
+    } else if (rule.types) {
+      const matches = rule.requirePrimary
+        ? primaryType && rule.types.includes(primaryType)
+        : rule.types.some((type) => allTypes.includes(type))
+      if (matches) {
+        traits.add(rule.trait)
+      }
     }
-  }
-
-  if (allTypes.includes('water') || allTypes.includes('ice')) {
-    traits.add('water_affinity')
-    traits.add('moisture_residue')
-  }
-
-  if (allTypes.includes('fire')) {
-    traits.add('fire_heat')
-    traits.add('ash_or_scorch')
-    if (primaryType === 'fire') {
-      traits.add('dry_environment')
-    }
-  }
-
-  if (allTypes.includes('electric')) {
-    traits.add('fire_heat')
-    traits.add('ash_or_scorch')
-  }
-
-  if (allTypes.includes('grass')) {
-    traits.add('plant_residue')
-    traits.add('moisture_residue')
-  }
-
-  if (allTypes.includes('bug')) {
-    traits.add('plant_residue')
-    traits.add('burrowing')
-    traits.add('claw_or_scratch')
-  }
-
-  if (allTypes.includes('flying')) {
-    traits.add('air_movement')
-  }
-
-  if (allTypes.includes('psychic') || allTypes.includes('ghost') || allTypes.includes('dark') || allTypes.includes('fairy')) {
-    traits.add('psychic_trace')
-  }
-  if (allTypes.includes('psychic')) {
-    traits.add('air_movement')
-  }
-  if (allTypes.includes('ghost')) {
-    traits.add('air_movement')
-  }
-  if (allTypes.includes('dark')) {
-    traits.add('claw_or_scratch')
-  }
-
-  if (allTypes.includes('fighting')) {
-    traits.add('claw_or_scratch')
-    traits.add('ground_affinity')
-  }
-
-  if (allTypes.includes('steel')) {
-    traits.add('metal_scrape')
-    traits.add('claw_or_scratch')
-  }
-
-  if (allTypes.includes('poison')) {
-    traits.add('toxic_residue')
-    traits.add('moisture_residue')
-  }
-
-  if (allTypes.includes('normal')) {
-    traits.add('claw_or_scratch')
-    traits.add('ground_affinity')
-  }
-
-  if (allTypes.includes('dragon')) {
-    traits.add('ground_affinity')
-    traits.add('fire_heat')
-  }
-
-  if (allTypes.includes('fairy')) {
-    traits.add('air_movement')
   }
 
   return traits
@@ -528,6 +459,14 @@ const buildEvidenceFromTrait = (evidenceId: string, culprit: Pokemon) => {
   }
 }
 
+const fillNarrativeTemplate = (template: string, profile: PokemonCaseProfile): string => {
+  return template
+    .replace(/\{movementWord\}/g, profile.movementWord)
+    .replace(/\{textureWord\}/g, profile.textureWord)
+    .replace(/\{groundWord\}/g, profile.groundWord)
+    .replace(/\{waterAvoidanceWord\}/g, profile.waterAvoidanceWord)
+}
+
 const buildActionNarrative = (
   action: LocationAction,
   culprit: Pokemon,
@@ -539,126 +478,62 @@ const buildActionNarrative = (
     ? generatedEvidence.get(action.evidenceId)?.deductionText
     : null
 
-  if (action.outcomeType === 'nothing') {
-    switch (action.id) {
-      case 'tents':
-        return {
-          observationText: 'The tents are messy, but nothing ties the scene to a suspect.',
-          implicationText: undefined,
-        }
-      case 'photograph-tracks':
-        return {
-          observationText: 'The picture is clear, but it does not add anything you can use.',
-          implicationText: undefined,
-        }
-      case 'search-branches':
-        return {
-          observationText: 'The branches shake loose a few leaves, but nothing sharpens the case.',
-          implicationText: undefined,
-        }
-      case 'listen-quietly':
-        return {
-          observationText: 'The woods stay still. If someone was here, they are long gone.',
-          implicationText: undefined,
-        }
-      case 'smell-jar':
-        return {
-          observationText: 'It only smells sweet and stale. Nothing useful lingers in the jar.',
-          implicationText: undefined,
-        }
-      case 'search-bedding':
-        return {
-          observationText: 'The bedding is warm and crumpled, but it hides nothing useful.',
-          implicationText: undefined,
-        }
-      default:
-        return {
-          observationText: 'The lead looked promising, but it did not produce anything usable.',
-          implicationText: undefined,
-        }
-    }
-  }
+  const sizeSpecificTemplate =
+    profile.size === 'small'
+      ? action.observationTextSmall
+      : profile.size === 'large'
+        ? action.observationTextLarge
+        : action.observationTextMedium
 
-  switch (action.id) {
-    case 'crumbs':
-      return {
-        observationText: `The snack area was disturbed ${profile.movementWord}.`,
-        implicationText: deductionText ?? (trait ? getTraitDeductionText(trait) : 'The culprit may have stayed close to the ground.'),
-      }
-    case 'campers':
-      return {
-        observationText: 'The witness sounded sleepy, but consistent.',
-        implicationText: deductionText ?? (trait ? getTraitDeductionText(trait) : undefined),
-      }
-    case 'measure-tracks':
-      return {
-        observationText:
-          profile.size === 'small'
-            ? 'The prints stay tight and shallow beside the tents.'
-            : profile.size === 'large'
-              ? 'The prints press deeper into the dirt than expected.'
-              : 'The tracks are steady and medium-sized through the dirt.',
-        implicationText: deductionText ?? (trait ? getTraitDeductionText(trait) : undefined),
-      }
-    case 'follow-tracks':
-      return {
-        observationText: `The tracks break apart into ${profile.textureWord} behind the tents.`,
-        implicationText: deductionText ?? (trait ? getTraitDeductionText(trait) : undefined),
-      }
-    case 'check-roots':
-      return {
-        observationText: `Something recently worked through the ${profile.groundWord} under the roots.`,
-        implicationText: deductionText ?? (trait ? getTraitDeductionText(trait) : undefined),
-      }
-    case 'inspect-lid':
-      return {
-        observationText: 'Something scraped hard against the lid before it gave way.',
-        implicationText: deductionText ?? (trait ? getTraitDeductionText(trait) : undefined),
-      }
-    case 'check-table':
-      return {
-        observationText: `Whoever reached the jar left crumbs ${profile.movementWord} along the edge.`,
-        implicationText: deductionText ?? (trait ? getTraitDeductionText(trait) : undefined),
-      }
-    case 'interview-camper':
-      return {
-        observationText: 'The witness is tired, but certain about that detail.',
-        implicationText: deductionText ?? (trait ? getTraitDeductionText(trait) : undefined),
-      }
-    case 'check-wash-bucket':
-      return {
-        observationText: `Even near the water, a line of ${profile.textureWord} stayed behind.`,
-        implicationText: deductionText ?? (trait ? getTraitDeductionText(trait) : undefined),
-      }
-    default:
-      return {
-        observationText: 'The scene gives up one more useful clue.',
-        implicationText: deductionText ?? (trait ? getTraitDeductionText(trait) : undefined),
-      }
+  const template = sizeSpecificTemplate ?? action.observationText
+  const observationText = fillNarrativeTemplate(template, profile)
+
+  return {
+    observationText,
+    implicationText: deductionText ?? (trait ? getTraitDeductionText(trait) : undefined),
   }
 }
 
-const generateCaseEvidence = (culprit: Pokemon, baseEvidence: Evidence[]) => {
+const generateCaseEvidence = (
+  culprit: Pokemon,
+  baseEvidence: Evidence[],
+  evidenceOverrides?: Record<string, { title?: string; clueText?: string; endExplanation?: string }>,
+) => {
   const generatedEvidenceById = new Map<string, ReturnType<typeof buildEvidenceFromTrait>>()
+  const profile = getPokemonCaseProfile(culprit)
 
   const generatedEvidence = baseEvidence.map((evidenceItem) => {
     const generated = buildEvidenceFromTrait(evidenceItem.id, culprit)
     generatedEvidenceById.set(evidenceItem.id, generated)
+    const override = evidenceOverrides?.[evidenceItem.id]
 
     return {
       ...evidenceItem,
-      title: generated.title,
-      clueText: generated.clueText,
-      endExplanation: generated.endExplanation,
+      title: override?.title ? fillNarrativeTemplate(override.title, profile) : generated.title,
+      clueText: override?.clueText ? fillNarrativeTemplate(override.clueText, profile) : generated.clueText,
+      endExplanation: override?.endExplanation ? fillNarrativeTemplate(override.endExplanation, profile) : generated.endExplanation,
     }
   })
 
   return { generatedEvidence, generatedEvidenceById }
 }
 
-const generateCaseLocations = (culprit: Pokemon, baseLocations: Location[]) => {
+const generateCaseLocations = (
+  culprit: Pokemon,
+  baseLocations: Location[],
+  evidenceOverrides?: Record<string, { title?: string; clueText?: string; endExplanation?: string }>,
+) => {
+  const profile = getPokemonCaseProfile(culprit)
   const generatedEvidence = new Map(
-    Object.keys(evidenceTraitById).map((evidenceId) => [evidenceId, buildEvidenceFromTrait(evidenceId, culprit)]),
+    Object.keys(evidenceTraitById).map((evidenceId) => {
+      const generated = buildEvidenceFromTrait(evidenceId, culprit)
+      const override = evidenceOverrides?.[evidenceId]
+      return [evidenceId, {
+        ...generated,
+        title: override?.title ? fillNarrativeTemplate(override.title, profile) : generated.title,
+        clueText: override?.clueText ? fillNarrativeTemplate(override.clueText, profile) : generated.clueText,
+      }] as const
+    }),
   )
 
   return baseLocations.map((location) => ({
@@ -684,15 +559,15 @@ const getMismatchReason = (suspectId: number, relevantTraits: CaseTrait[]) => {
 
   switch (missingTrait) {
     case 'small_stature':
-      return 'Did not fit the small, low clues around camp.'
+      return 'Did not fit the small, low clues left at the scene.'
     case 'large_stature':
       return 'Did not fit the signs of a larger, heavier suspect.'
     case 'ground_affinity':
       return 'Did not fit the dry grit and loose-soil evidence.'
     case 'burrowing':
-      return 'Did not explain the digging signs found around camp.'
+      return 'Did not explain the digging signs found at the scene.'
     case 'claw_or_scratch':
-      return 'Did not fit the scratch marks around the jar.'
+      return 'Did not fit the scratch marks found at the scene.'
     case 'dry_environment':
       return 'Did not fit the clues pointing toward dry ground and avoided water.'
     case 'water_affinity':
@@ -786,7 +661,11 @@ const buildSolution = (
   }
 }
 
-export const generateMissingCookiesLineup = (evidence: Evidence[], locations: Location[]) => {
+export const generateCaseLineup = (
+  evidence: Evidence[],
+  locations: Location[],
+  evidenceOverrides?: Record<string, { title?: string; clueText?: string; endExplanation?: string }>,
+) => {
   const candidates = pokemonData.filter((pokemon) => !pokemon.isLegendary && !pokemon.isMythical)
 
   for (let attempt = 0; attempt < 1000; attempt += 1) {
@@ -855,8 +734,8 @@ export const generateMissingCookiesLineup = (evidence: Evidence[], locations: Lo
     }))
 
     const suspectIds = shuffle([culprit.id, ...uniqueDistractors])
-    const { generatedEvidence, generatedEvidenceById } = generateCaseEvidence(culprit, evidence)
-    const generatedLocations = generateCaseLocations(culprit, overriddenLocations)
+    const { generatedEvidence, generatedEvidenceById } = generateCaseEvidence(culprit, evidence, evidenceOverrides)
+    const generatedLocations = generateCaseLocations(culprit, overriddenLocations, evidenceOverrides)
 
     return {
       culpritPokemonId: culprit.id,

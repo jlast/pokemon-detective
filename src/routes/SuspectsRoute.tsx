@@ -8,7 +8,6 @@ interface SuspectsRouteProps {
   currentCase: Case
   wrongAccusationIds: number[]
   inspectSuspect: (suspectId: number) => void
-  setActivePanel: (panel: 'investigation' | 'suspects') => void
   startNewCase: () => void
   giveUp: () => void
   children?: ReactNode
@@ -19,18 +18,15 @@ export function SuspectsRoute({
   currentCase,
   wrongAccusationIds,
   inspectSuspect,
-  setActivePanel,
   startNewCase,
   giveUp,
   children,
 }: SuspectsRouteProps) {
   return (
     <InvestigationRouteFrame
-      activePanel="suspects"
       layout="none"
       attemptsLeft={attemptsLeft}
       currentCase={currentCase}
-      setActivePanel={setActivePanel}
       startNewCase={startNewCase}
       giveUp={giveUp}
     >

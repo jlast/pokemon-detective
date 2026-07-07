@@ -13,7 +13,6 @@ export function SuspectsPanel({
   inspectSuspect,
 }: SuspectsProps) {
   const discoveredEvidence = currentCase.evidence.filter((evidenceItem) => evidenceItem.discovered)
-  const totalEvidence = currentCase.evidence.length
 
   return (
     <section className={`notebook-card evidence-board mobile-section`}>
@@ -26,21 +25,6 @@ export function SuspectsPanel({
       <section className="suspect-evidence-strip suspect-evidence-board inspect-item">
         <div className="suspect-evidence-board-header">
           <strong>📎 Evidence Collected</strong>
-          <span className="suspect-evidence-counter">
-            {discoveredEvidence.length} / {totalEvidence} clues
-          </span>
-        </div>
-
-        <div className="suspect-evidence-progress" aria-hidden="true">
-          {currentCase.evidence.map((evidenceItem) => (
-            <span
-              key={evidenceItem.id}
-              className={`suspect-evidence-slot ${evidenceItem.discovered ? 'is-collected' : ''}`}
-            >
-              <span className="suspect-evidence-slot-pin" />
-              <span className="suspect-evidence-slot-mark">{evidenceItem.discovered ? '✓' : '?'}</span>
-            </span>
-          ))}
         </div>
 
         {discoveredEvidence.length > 0 ? (
@@ -77,6 +61,7 @@ export function SuspectsPanel({
           />
         ))}
       </div>
+
     </section>
   )
 }

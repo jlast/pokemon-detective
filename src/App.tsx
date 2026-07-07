@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import './App.css'
 import { DesktopSidebar } from './components/DesktopSidebar'
-import { createMissingCookiesCase } from './game/cases'
+import { createCaseById, getCaseList } from './game/cases'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from './game/caseModel'
 import { Header } from './components/Header'
 import { AccuseRoute } from './routes/AccuseRoute'
@@ -16,7 +16,13 @@ import { SuspectsRoute } from './routes/SuspectsRoute'
 function App() {
   const location = useLocation()
   const navigate = useNavigate()
-  const [currentCase, setCurrentCase] = useState<Case>(() => createMissingCookiesCase())
+  const pickRandomCase = (): Case => {
+    const cases = getCaseList()
+    const chosen = cases[Math.floor(Math.random() * cases.length)]
+    return createCaseById(chosen.id)!
+  }
+
+  const [currentCase, setCurrentCase] = useState<Case>(() => pickRandomCase())
   const [, setHasStartedCase] = useState(false)
   const [attemptsLeft, setAttemptsLeft] = useState(3)
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null)
@@ -29,13 +35,7 @@ function App() {
   const culpritSuspect =
     currentCase.suspects.find((suspect) => suspect.pokemonId === currentCase.culpritPokemonId) ?? null
   const currentRoute = location.pathname
-  const activeSidebarSection =
-    currentRoute === '/overview'
-      ? 'overview'
-      : currentRoute === '/suspects' || currentRoute.startsWith('/suspects/') || currentRoute.startsWith('/accuse/')
-        ? 'suspects'
-        : 'investigation'
-  const canGiveUp = currentCase.status === 'active' && !currentRoute.startsWith('/ending/')
+  const activeSidebarSection = currentRoute === '/' ? 'home' : ''
 
   const updateSuspect = (pokemonId: number, updater: (suspect: Suspect) => Suspect) => {
     setCurrentCase((caseState) => ({
@@ -57,7 +57,7 @@ function App() {
   }
 
   const startNewCase = () => {
-    setCurrentCase(createMissingCookiesCase())
+    setCurrentCase(pickRandomCase())
     setHasStartedCase(false)
     setAttemptsLeft(3)
     setWrongAccusationIds([])
@@ -193,7 +193,7 @@ function App() {
       return
     }
 
-    if (currentRoute === '/overview') {
+    if (currentRoute === '/') {
       clearScreenState()
       setHasStartedCase(true)
       setActivePanel('investigation')
@@ -259,11 +259,6 @@ function App() {
     navigate('/ending/gave-up')
   }
 
-  const setPrimaryPanel = (panel: 'investigation' | 'suspects') => {
-    setActivePanel(panel)
-    navigate(panel === 'suspects' ? '/suspects' : '/investigation')
-  }
-
   const sharedInvestigationRouteProps = {
     attemptsLeft,
     currentCase,
@@ -276,7 +271,6 @@ function App() {
     openAccusation,
     investigateLocation,
     openLocation,
-    setActivePanel: setPrimaryPanel,
     startNewCase,
     giveUp,
   }
@@ -285,11 +279,10 @@ function App() {
     <main className="app-shell">
       <DesktopSidebar
         activeSection={activeSidebarSection}
-        canGiveUp={canGiveUp}
-        onSelectOverview={() => navigate('/overview')}
-        onSelectInvestigation={() => navigate('/investigation')}
-        onSelectSuspects={() => navigate('/suspects')}
-        onGiveUp={giveUp}
+        onSelectHome={() => navigate('/')}
+        onSelectCase={() => navigate('/')}
+        onSelectHowToPlay={() => navigate('/how-to-play')}
+        onSelectLogin={() => navigate('/login')}
       />
 
       <div className="app-content">
@@ -297,15 +290,20 @@ function App() {
 
         <Routes>
           <Route
-            path="/overview"
+            path="/"
             element={
               <CaseOverviewRoute
                 attemptsLeft={attemptsLeft}
                 currentCase={currentCase}
                 startInvestigation={startInvestigation}
+                startNewCase={startNewCase}
+                giveUp={giveUp}
+                inspectSuspect={inspectSuspect}
               />
             }
           />
+          <Route path="/home" element={<Navigate to="/" replace />} />
+          <Route path="/case" element={<Navigate to="/" replace />} />
           <Route path="/investigation" element={<CaseRoute {...sharedInvestigationRouteProps} />} />
           <Route
             path="/investigation/:locationId"
@@ -316,7 +314,6 @@ function App() {
                 investigateLocation={investigateLocation}
                 openLocation={openLocation}
                 selectedLocationId={selectedLocationId}
-                setActivePanel={setPrimaryPanel}
                 startNewCase={startNewCase}
                 giveUp={giveUp}
               />
@@ -369,7 +366,9 @@ function App() {
               />
             }
           />
-          <Route path="*" element={<Navigate to="/investigation" replace />} />
+          <Route path="/how-to-play" element={<div className="main-layout-single"><p className="placeholder-page">How to play — coming soon</p></div>} />
+          <Route path="/login" element={<div className="main-layout-single"><p className="placeholder-page">Login — coming soon</p></div>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
     </main>

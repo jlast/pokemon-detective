@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { InvestigationLocationPage } from '../components/Evidence/InvestigationLocationPage'
 import type { Case } from '../game/caseModel'
 import { InvestigationRouteFrame } from './InvestigationRouteFrame'
@@ -9,7 +10,6 @@ interface InvestigationLocationRouteProps {
   investigateLocation: (locationId: string, actionId: string) => void
   openLocation: (locationId: string) => void
   selectedLocationId: string | null
-  setActivePanel: (panel: 'investigation' | 'suspects') => void
   startNewCase: () => void
   giveUp: () => void
 }
@@ -20,7 +20,6 @@ export function InvestigationLocationRoute({
   investigateLocation,
   openLocation,
   selectedLocationId,
-  setActivePanel,
   startNewCase,
   giveUp,
 }: InvestigationLocationRouteProps) {
@@ -43,17 +42,19 @@ export function InvestigationLocationRoute({
     }, 650)
   }
 
+  const navigate = useNavigate()
+
   return (
     <InvestigationRouteFrame
-      activePanel="investigation"
       layout="none"
       attemptsLeft={attemptsLeft}
       currentCase={currentCase}
       openLocation={openLocation}
-      setActivePanel={setActivePanel}
       startNewCase={startNewCase}
       giveUp={giveUp}
+      showCaseFlowNav={false}
     >
+      <div className="detail-back-link" onClick={() => navigate('/investigation')}>← Back to Investigation Board</div>
       <InvestigationLocationPage
         location={selectedLocation}
         pointsLeft={pointsLeft}

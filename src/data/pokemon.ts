@@ -34,7 +34,11 @@ export interface Pokemon {
   isLegendary: boolean
   isMythical: boolean
   sprite: string
+  shinySprite?: string
 }
+
+export const getShinySpriteUrl = (pokemonId: number): string =>
+  `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokemonId}.png`
 
 export const pokemonData: Pokemon[] = [
   {
@@ -8654,3 +8658,7 @@ export const pokemonData: Pokemon[] = [
     "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/493.png"
   }
 ]
+
+pokemonData.forEach((p) => {
+  p.shinySprite = getShinySpriteUrl(p.id)
+})

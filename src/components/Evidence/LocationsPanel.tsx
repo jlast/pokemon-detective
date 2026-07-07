@@ -151,6 +151,7 @@ export function LocationsPanel({
           />
         ))}
       </div>
+
     </section>
   )
 }

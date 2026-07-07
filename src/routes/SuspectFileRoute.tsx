@@ -40,13 +40,13 @@ export function SuspectFileRoute({
     return (
       <section className="suspect-file-page notebook-card">
         <Link to={backLinkTo} className="subtle-link">
-          ← Back to suspects
+          ← Back to Suspects Lineup
         </Link>
         <div className="inspect-item">
           <strong>Suspect not found</strong>
           <p className="overview-section-hook">This suspect file could not be opened.</p>
           <Link to={backLinkTo} className="secondary-button suspect-file-back-button">
-            Back to suspects
+            Back to Suspects Lineup
           </Link>
         </div>
       </section>
@@ -56,7 +56,7 @@ export function SuspectFileRoute({
   return (
     <section className="suspect-file-page">
       <Link to={backLinkTo} className="subtle-link suspect-file-back-link">
-        ← Back to suspects
+        ← Back to Suspects Lineup
       </Link>
 
       <div className="dossier-shell">
