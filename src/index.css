@@ -11,6 +11,15 @@
   --danger: #c94949;
   --success: #439663;
   --shadow-soft: 0 12px 32px rgba(38, 36, 31, 0.08);
+  --paper: #fffaf0;
+  --paper-dark: #f0e8d4;
+  --cork: #d4a76a;
+  --cork-dark: #b8894e;
+  --ink: #1f2d47;
+  --gold: #d9b13f;
+  --pin-red: #c94949;
+  --pin-blue: #4a7bc9;
+  --shadow-card: 0 4px 12px rgba(60, 50, 30, 0.12);
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.5;
   font-weight: 500;

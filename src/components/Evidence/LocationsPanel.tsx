@@ -5,23 +5,18 @@ const getRemainingInvestigationCopy = (remainingActions: number) => {
   if (remainingActions <= 0) {
     return 'No investigations left.'
   }
-
   if (remainingActions === 1) {
     return 'Final investigation.'
   }
-
   if (remainingActions === 2) {
     return 'Two investigations remain.'
   }
-
   if (remainingActions === 3) {
     return 'The case is taking shape.'
   }
-
   if (remainingActions === 4) {
     return 'Plenty of time left.'
   }
-
   return 'Full budget available.'
 }
 
@@ -29,28 +24,42 @@ const getCurrentTheoryCopy = (evidenceCount: number, remainingActions: number) =
   if (remainingActions <= 0) {
     return 'Investigation is over. Make your call.'
   }
-
   if (evidenceCount === 0) {
     return 'No suspect stands out yet.'
   }
-
   if (evidenceCount === 1) {
     return 'One clue has surfaced.'
   }
-
   if (evidenceCount === 2) {
     return 'A pattern may be forming.'
   }
-
   if (evidenceCount === 3) {
     return 'Several leads point in the same direction.'
   }
-
   if (evidenceCount === 4) {
     return 'You may be ready to inspect suspect files.'
   }
-
   return 'The case is ready for a final accusation.'
+}
+
+const evidenceIcons: Record<string, string> = {
+  'cookie-crumbs': '🍪',
+  'low-crumbs': '🍪',
+  'ash-scatter': '🔥',
+  'pollen-scent': '🌸',
+  'quiet-digging': '🕳️',
+  'psychic-echo': '🔮',
+  'slime-trail': '🫧',
+  'small-tracks': '👣',
+  'sand-trail': '🏖️',
+  'frost-trail': '❄️',
+  'feather-drift': '🪶',
+  'dry-trail': '🏜️',
+  'loose-soil': '🪨',
+  'scratch-marks': '🔪',
+  'metal-shaving': '⚙️',
+  'static-mark': '⚡',
+  'avoided-water': '💧',
 }
 
 export function LocationsPanel({
@@ -75,83 +84,71 @@ export function LocationsPanel({
     <section
       className={`notebook-card evidence-board mobile-section ${isEvidenceTab ? 'is-active' : ''}`}
     >
-      <div className="investigation-board-heading">
-        <div>
-          <h2>Investigation Board</h2>
-          <p className="investigation-board-subtitle">Each location may reveal valuable evidence.</p>
+      <div className="investigation-pinboard">
+        <div className="string-layer" aria-hidden="true">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="string-svg">
+            <line x1="15%" y1="5%" x2="85%" y2="20%" stroke="#b8894e" strokeWidth="0.3" opacity="0.3" />
+            <line x1="5%" y1="30%" x2="70%" y2="80%" stroke="#b8894e" strokeWidth="0.25" opacity="0.25" />
+            <line x1="30%" y1="15%" x2="95%" y2="70%" stroke="#b8894e" strokeWidth="0.2" opacity="0.2" />
+            <line x1="50%" y1="5%" x2="20%" y2="90%" stroke="#b8894e" strokeWidth="0.3" opacity="0.2" />
+          </svg>
         </div>
-      </div>
 
-      <div className="detective-desk-shell">
-        <div className="detective-desk-tab">Detective Desk</div>
-        <section className="detective-desk notebook-card">
-          <div className="detective-desk-grid">
-            <section className="detective-desk-section">
-              <strong>Investigation Budget</strong>
-
-              <div className="investigation-token-row" aria-hidden="true">
-                {Array.from({ length: maxInvestigations }, (_, index) => (
-                  <span
-                    key={index}
-                    className={`investigation-token ${index < pointsLeft ? 'is-available' : 'is-spent'}`}
-                  />
-                ))}
-              </div>
-
-              <p className="detective-desk-copy">{remainingCopy}</p>
-              <p className="detective-desk-meta">Actions used: {actionsUsed} / {maxInvestigations}</p>
-              <p className="detective-desk-meta">Locations resolved: {investigatedCount} / {currentCase.locations.length}</p>
-            </section>
-
-            <section className="detective-desk-section detective-desk-evidence-board">
-              <strong>Evidence Board</strong>
-
-              {discoveredEvidence.length > 0 ? (
-                <>
-                  <div className="detective-desk-evidence-tags">
-                    {discoveredEvidence.map((evidenceItem) => (
-                      <span key={evidenceItem.id} className="detective-desk-evidence-tag">
-                        <span aria-hidden="true">📎</span>
-                        <span>{evidenceItem.title}</span>
-                      </span>
-                    ))}
-                  </div>
-                  <p className="detective-desk-meta">
-                    {evidenceCollectedCount} {evidenceCollectedCount === 1 ? 'clue' : 'clues'} collected
-                  </p>
-                </>
-              ) : (
-                <div className="detective-desk-empty-state">
-                  <p className="detective-desk-copy">No clues yet.</p>
-                  <p className="detective-desk-meta">Search a location.</p>
-                </div>
-              )}
-            </section>
-
-            <section className="detective-desk-section">
-              <strong>Current Theory</strong>
-              <p className="detective-desk-meta">Detective note</p>
-              <p className="detective-desk-copy">{currentTheoryCopy}</p>
-              <p className="detective-desk-meta">Every action costs time. Choose carefully.</p>
-            </section>
+        <div className="pinboard-card budget-card" style={{ gridArea: 'budget' }}>
+          <div className="budget-card-pin" aria-hidden="true" />
+          <strong className="budget-card-title">Budget</strong>
+          <div className="budget-token-row" aria-hidden="true">
+            {Array.from({ length: maxInvestigations }, (_, index) => (
+              <span
+                key={index}
+                className={`budget-token ${index < pointsLeft ? 'is-available' : 'is-spent'}`}
+              />
+            ))}
           </div>
-        </section>
-      </div>
+          <p className="budget-card-text">{remainingCopy}</p>
+          <p className="budget-card-meta">{actionsUsed} / {maxInvestigations} used</p>
+        </div>
 
-      <div className="locations-grid">
-        {currentCase.locations.map((location) => (
-          <InvestigationLocationCard
-            key={location.id}
-            location={location}
-            isActiveLocation={false}
-            isSearching={false}
-            isNewEvidence={false}
-            pointsLeft={pointsLeft}
-            openPanel={openLocation}
-          />
-        ))}
-      </div>
+        <div className="pinboard-card evidence-card" style={{ gridArea: 'evidence' }}>
+          <strong className="evidence-card-title">Evidence</strong>
+          {discoveredEvidence.length > 0 ? (
+            <ul className="evidence-card-list">
+              {discoveredEvidence.slice(0, 5).map((item) => (
+                <li key={item.id} className="evidence-card-item">
+                  <span aria-hidden="true">{evidenceIcons[item.id] ?? '📎'}</span>
+                  <span>{item.title}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="evidence-card-empty">No clues yet.</p>
+          )}
+          <p className="budget-card-meta">{evidenceCollectedCount} clue{evidenceCollectedCount !== 1 ? 's' : ''} collected</p>
+        </div>
 
+        <div className="pinboard-card theory-card" style={{ gridArea: 'theory' }}>
+          <div className="theory-card-stack" aria-hidden="true" />
+          <strong className="theory-card-title">Current Theory</strong>
+          <p className="theory-card-text">{currentTheoryCopy}</p>
+        </div>
+
+        {currentCase.locations.map((location, index) => {
+          const gridAreas = ['pantry', 'kitchen', 'storage', 'photo', 'counter']
+          const area = gridAreas[index] ?? `loc-${index}`
+          return (
+            <InvestigationLocationCard
+              key={location.id}
+              location={location}
+              isActiveLocation={false}
+              isSearching={false}
+              isNewEvidence={false}
+              pointsLeft={pointsLeft}
+              openPanel={openLocation}
+              style={{ gridArea: area }}
+            />
+          )
+        })}
+      </div>
     </section>
   )
 }

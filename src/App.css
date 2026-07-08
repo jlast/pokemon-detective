@@ -463,151 +463,7 @@
   flex-wrap: wrap;
 }
 
-.investigation-board-heading {
-  display: grid;
-  gap: 0.35rem;
-}
 
-.investigation-board-subtitle {
-  margin: 0.15rem 0 0;
-  color: var(--muted);
-}
-
-.investigation-board-summary {
-  display: grid;
-  gap: 0.85rem;
-  margin-top: 1rem;
-}
-
-.detective-desk-shell {
-  display: grid;
-  margin-top: 1rem;
-}
-
-.detective-desk {
-  display: grid;
-  gap: 0.7rem;
-  padding: 0.85rem 0.9rem 0.8rem;
-  background: linear-gradient(180deg, #f8f1df 0%, #f0e5c7 100%);
-}
-
-.detective-desk-tab {
-  margin-left: 2em;
-  justify-self: start;
-  padding: 0.38rem 0.8rem 0.42rem;
-  border-radius: 12px 12px 0 0;
-  background: #dccaa3;
-  color: #5f533d;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.detective-desk-grid {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.detective-desk-section {
-  position: relative;
-  display: grid;
-  gap: 0.45rem;
-  padding-left: 0.55rem;
-}
-
-.detective-desk-copy,
-.detective-desk-meta {
-  margin: 0;
-}
-
-.detective-desk-copy {
-  color: var(--text-main);
-}
-
-.detective-desk-meta {
-  color: var(--muted);
-  font-size: 0.88rem;
-}
-
-.investigation-token-row {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.55rem;
-  max-width: 220px;
-}
-
-.investigation-token {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 1.55rem;
-  border-radius: 8px;
-  justify-self: start;
-  border: 1px solid #b8ab8f;
-  background: rgba(255, 251, 239, 0.68);
-}
-
-.investigation-token::before {
-  content: '✓';
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: #8b7e65;
-  opacity: 0;
-}
-
-.investigation-token.is-available::before {
-  content: '';
-}
-
-.investigation-token.is-spent::before {
-  opacity: 1;
-}
-
-.detective-desk-evidence-board {
-  gap: 0.8rem;
-}
-
-.detective-desk-evidence-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-}
-
-.detective-desk-evidence-tag {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  min-height: 2rem;
-  padding: 0.45rem 0.7rem;
-  border-radius: 12px;
-  background: rgba(255, 251, 239, 0.88);
-  border: 1px solid #d4c5a6;
-  transition: transform 140ms ease, box-shadow 140ms ease;
-}
-
-.detective-desk-evidence-tag:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 14px rgba(82, 66, 38, 0.1);
-}
-
-.detective-desk-evidence-tag::before {
-  content: '';
-  position: absolute;
-  top: -0.24rem;
-  left: 0.75rem;
-  width: 1rem;
-  height: 0.5rem;
-  border-radius: 999px;
-  background: rgba(188, 180, 155, 0.58);
-}
-
-.detective-desk-empty-state {
-  display: grid;
-  gap: 0.2rem;
-}
 
 .active-investigation-panel {
   display: grid;
@@ -718,120 +574,7 @@
   gap: 0.4rem;
 }
 
-.locations-grid {
-  display: grid;
-  gap: 0.85rem;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  margin-top: 1rem;
-}
 
-.locations-grid.has-expanded-location {
-  align-items: start;
-}
-
-.location-card {
-  position: relative;
-  display: grid;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #fbf0c9 0%, #f2df9f 100%);
-  border: 1px solid #d5bc76;
-  box-shadow: 0 10px 20px rgba(98, 79, 44, 0.08);
-  transition:
-    transform 150ms ease,
-    box-shadow 150ms ease,
-    border-color 150ms ease,
-    opacity 180ms ease;
-  overflow: hidden;
-}
-
-.location-card.is-expanded-card {
-  gap: 0.8rem;
-  padding: 1.15rem 1rem 0.95rem;
-}
-
-.location-card.is-secondary-card {
-  gap: 0.65rem;
-  opacity: 0.84;
-}
-
-.location-card.is-secondary-card .location-evidence-preview {
-  display: none;
-}
-
-.location-card.is-secondary-card .location-action-button {
-  justify-self: start;
-  min-width: 0;
-  width: auto;
-}
-
-.location-card::before {
-  content: '';
-  position: absolute;
-  top: 0.8rem;
-  right: 1rem;
-  width: 2.75rem;
-  height: 0.95rem;
-  background: rgba(246, 232, 178, 0.82);
-  border-left: 1px solid rgba(255, 255, 255, 0.4);
-  border-right: 1px solid rgba(183, 162, 110, 0.28);
-  transform: rotate(4deg);
-}
-
-.location-card::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 1.1rem;
-  height: 1.1rem;
-  background: linear-gradient(135deg, rgba(196, 180, 136, 0.2) 0%, rgba(196, 180, 136, 0.55) 100%);
-  clip-path: polygon(0 0, 100% 0, 100% 100%);
-}
-
-.location-card.is-complete,
-.location-card.is-new-evidence {
-  background: linear-gradient(180deg, #ece7d7 0%, #ddd6c0 100%);
-  border-color: #bfb59b;
-}
-
-.location-card.is-complete::before,
-.location-card.is-new-evidence::before {
-  background: rgba(216, 210, 191, 0.82);
-  border-right-color: rgba(153, 141, 114, 0.28);
-}
-
-.location-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 28px rgba(98, 79, 44, 0.14);
-  border-color: #c3b08b;
-}
-
-.location-card.is-searching {
-  animation: clue-fade 220ms ease;
-  box-shadow: 0 0 0 2px rgba(217, 177, 63, 0.16), 0 18px 28px rgba(98, 79, 44, 0.14);
-}
-
-.location-card.is-disabled {
-  opacity: 0.66;
-}
-
-.location-card.is-active-location {
-  border-color: #8a7448;
-  box-shadow: 0 0 0 3px rgba(245, 234, 191, 0.78), 0 18px 28px rgba(98, 79, 44, 0.14);
-}
-
-.location-card.is-new-evidence .location-status-stamp {
-  animation: stamp-pop 260ms ease;
-}
-
-.location-card-top {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 0.85rem;
-}
 
 .location-heading-copy {
   display: grid;
@@ -988,15 +731,6 @@
   background: rgba(255, 252, 244, 0.76);
 }
 
-.location-evidence-preview.is-hidden {
-  background: rgba(255, 251, 240, 0.72);
-  border-style: solid;
-}
-
-.compact-location-preview {
-  padding: 0.55rem 0.7rem;
-}
-
 .location-evidence-preview.is-revealed {
   animation: clue-fade 320ms ease;
 }
@@ -1026,26 +760,6 @@
   letter-spacing: 0.05em;
 }
 
-.location-action-button {
-  width: 100%;
-  justify-content: center;
-  gap: 0.5rem;
-  border-color: #bcae8d;
-}
-
-.location-card:hover .location-action-button {
-  box-shadow: var(--shadow-soft);
-}
-
-.location-action-button.is-review {
-  background: #fffdf7;
-  color: var(--text-main);
-}
-
-.location-action-button.is-review:not(:hover) {
-  box-shadow: none;
-}
-
 .location-cancel-button {
   justify-self: start;
   padding: 0;
@@ -1060,15 +774,6 @@
 .location-continue-button {
   justify-self: start;
   margin-top: 0.15rem;
-}
-
-.location-button-spinner {
-  width: 0.95rem;
-  height: 0.95rem;
-  border-radius: 999px;
-  border: 2px solid rgba(31, 45, 71, 0.2);
-  border-top-color: rgba(31, 45, 71, 0.7);
-  animation: spin 700ms linear infinite;
 }
 
 .suspect-grid {
@@ -2540,6 +2245,317 @@
   border: 0;
 }
 
+/* === INVESTIGATION PINBOARD === */
+.investigation-pinboard {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(180deg, #d4a76a 0%, #b8894e 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.string-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.string-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.pinboard-card {
+  position: relative;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(60, 50, 30, 0.12);
+  z-index: 1;
+}
+
+.budget-card {
+  background: linear-gradient(180deg, #fff5a8 0%, #f6df73 100%);
+  color: #4f4321;
+}
+
+.budget-card-pin {
+  position: absolute;
+  top: 0.5rem;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--pin-red);
+  transform: translateX(-50%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.budget-card-title,
+.evidence-card-title,
+.theory-card-title {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.budget-token-row {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+
+.budget-token {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(79, 67, 33, 0.2);
+  background: rgba(255, 251, 239, 0.5);
+}
+
+.budget-token.is-available {
+  background: var(--gold);
+  border-color: rgba(79, 67, 33, 0.3);
+}
+
+.budget-token.is-spent {
+  opacity: 0.4;
+  background: rgba(255, 251, 239, 0.3);
+}
+
+.budget-card-text {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.budget-card-meta {
+  margin: 0.3rem 0 0;
+  font-size: 0.78rem;
+  opacity: 0.7;
+}
+
+.evidence-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+}
+
+.evidence-card-list {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.evidence-card-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.evidence-card-empty {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 0.88rem;
+}
+
+.theory-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+}
+
+.theory-card-stack {
+  position: absolute;
+  top: 0.3rem;
+  left: 0.3rem;
+  right: 0.3rem;
+  bottom: 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--paper-dark);
+  z-index: -1;
+}
+
+.theory-card-text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* === PINBOARD LOCATION CARDS === */
+.investigation-location-card {
+  position: relative;
+  display: grid;
+  gap: 0.6rem;
+  padding: 1rem 1rem 0.8rem;
+  background: linear-gradient(180deg, #fffaf0 0%, #f5edd6 100%);
+  border: 1px solid #d8cbb6;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(60, 50, 30, 0.12);
+  transform: rotate(var(--tilt, 0deg));
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  z-index: 1;
+}
+
+.investigation-location-card:hover {
+  transform: rotate(var(--tilt, 0deg)) translateY(-3px);
+  box-shadow: 0 8px 20px rgba(60, 50, 30, 0.18);
+}
+
+.investigation-location-card:focus-visible {
+  outline: 3px solid var(--pin-blue);
+  outline-offset: 2px;
+}
+
+.investigation-location-card.is-complete {
+  opacity: 0.85;
+  border-color: #bfb59b;
+  background: linear-gradient(180deg, #f0ebdb 0%, #e5ddc7 100%);
+  cursor: default;
+}
+
+.investigation-location-card.is-disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.investigation-location-card.is-disabled:hover {
+  transform: rotate(var(--tilt, 0deg));
+}
+
+.investigation-location-card.is-active-location {
+  border-color: #8a7448;
+  box-shadow: 0 0 0 3px rgba(245, 234, 191, 0.78), 0 4px 12px rgba(60, 50, 30, 0.12);
+}
+
+.investigation-location-card::before {
+  content: '';
+  position: absolute;
+  top: -0.35rem;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--pin-red);
+  transform: translateX(-50%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+.pin-location-dot {
+  display: none;
+}
+
+.pin-location-status {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.pin-location-status.is-searching {
+  color: #8c6f29;
+  border-color: var(--gold);
+}
+
+.pin-location-status.is-complete {
+  color: #5a8b4f;
+  border-color: var(--success);
+}
+
+.pin-location-status.is-disabled {
+  color: var(--muted);
+}
+
+.pin-location-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 10px;
+  background: rgba(255, 253, 247, 0.8);
+  border: 1px solid #d0c5b1;
+  font-size: 1.3rem;
+}
+
+.pin-location-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.pin-location-evidence-slots {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.pin-location-evidence-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  border: 1px dashed #c7b999;
+  background: rgba(255, 252, 244, 0.5);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.pin-location-button {
+  width: 100%;
+  min-height: 2rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid #bcae8d;
+  background: var(--accent-yellow);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.pin-location-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.pin-location-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.pin-location-button.is-review {
+  background: var(--paper);
+}
+
 @keyframes clue-fade {
   from {
     opacity: 0;
@@ -2628,29 +2644,8 @@
     align-items: start;
   }
 
-  .detective-desk-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .investigation-action-list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .locations-grid.has-expanded-location {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .location-card.is-expanded-card {
-    grid-column: 1 / -1;
-  }
-
-  .detective-desk-section:not(:first-child) {
-    border-left: 1px solid rgba(203, 185, 146, 0.8);
-    padding-left: 1rem;
-  }
-
-  .investigation-board-summary {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
   .overview-meta-grid {
@@ -2689,10 +2684,6 @@
 
   .suspect-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .locations-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .bottom-bar {
@@ -2766,4 +2757,70 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .investigation-pinboard {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-areas:
+      "budget   pantry   kitchen  theory"
+      "storage  photo    counter  evidence";
+  }
+
+}
+
+@media (max-width: 759px) {
+  .investigation-pinboard {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas: unset;
+  }
+
+  .budget-card {
+    grid-column: 1 / -1;
+  }
+
+  .evidence-card {
+    grid-column: 1 / -1;
+  }
+
+  .theory-card {
+    grid-column: 1 / -1;
+  }
+
+  .investigation-location-card {
+    --tilt: 0deg !important;
+  }
+
+  .pin-location-evidence-slot {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .investigation-pinboard {
+    grid-template-columns: 1fr;
+  }
+
+  .string-layer {
+    display: none;
+  }
+
+  .pin-location-status {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.4rem;
+  }
+
+  .pin-location-icon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .pin-location-name {
+    font-size: 0.85rem;
+  }
+
+  .pin-location-evidence-slot {
+    width: 1.4rem;
+    height: 1.4rem;
+    font-size: 0.7rem;
+  }
 }

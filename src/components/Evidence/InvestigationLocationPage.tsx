@@ -18,9 +18,6 @@ export function InvestigationLocationPage({
   if (!location) {
     return (
       <section className="notebook-card active-investigation-panel">
-        <Link to="/investigation" className="subtle-link suspect-file-back-link">
-          ← Back to Investigation Board
-        </Link>
         <div className="inspect-item">
           <strong>Location not found</strong>
           <p className="overview-section-hook">This investigation lead could not be opened.</p>
@@ -44,10 +41,6 @@ export function InvestigationLocationPage({
 
   return (
     <section className="notebook-card active-investigation-panel investigation-location-page">
-      <Link to="/investigation" className="subtle-link suspect-file-back-link">
-        ← Back to Investigation Board
-      </Link>
-
       <div className="active-investigation-location">
         <span className="location-icon" aria-hidden="true">
           {location.icon}
@@ -74,9 +67,6 @@ export function InvestigationLocationPage({
           <div className="inspect-item">
             <strong>No investigation points left.</strong>
             <p className="overview-section-hook">Review your evidence or inspect suspects.</p>
-            <Link to="/investigation" className="secondary-button suspect-file-back-button">
-              Back to Investigation Board
-            </Link>
           </div>
         )
       ) : selectedAction ? (
