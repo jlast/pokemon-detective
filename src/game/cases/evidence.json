@@ -4,7 +4,7 @@
     "title": "Cookie Crumbs",
     "clueText": "Fresh crumbs were scattered low across the ground.",
     "hiddenTrait": "small_low",
-    "endExplanation": "The culprit moved close to the ground while eating near the campfire.",
+    "endExplanation": "The culprit moved close to the ground while eating near the scene.",
     "discovered": false
   },
   {
@@ -26,7 +26,7 @@
   {
     "id": "sand-trail",
     "title": "Sand Trail",
-    "clueText": "A faint trail of dry grit pulled away from the camp.",
+    "clueText": "A faint trail of dry grit pulled away from the scene.",
     "hiddenTrait": "ground_or_sand",
     "endExplanation": "The culprit carried dry grit away from the tracks.",
     "discovered": false
@@ -58,9 +58,9 @@
   {
     "id": "avoided-water",
     "title": "Avoided Water",
-    "clueText": "The camper remembered the culprit skirting around the water bucket.",
+    "clueText": "The witness remembered the culprit skirting around the water bucket.",
     "hiddenTrait": "dry_ground_dislike_water",
-    "endExplanation": "The culprit deliberately avoided the wettest part of camp.",
+    "endExplanation": "The culprit deliberately avoided the wettest part of the scene.",
     "discovered": false
   },
   {
@@ -122,7 +122,7 @@
   {
     "id": "slime-trail",
     "title": "Slime Trail",
-    "clueText": "A slick ribbon of residue traced away from the camp.",
+    "clueText": "A slick ribbon of residue traced away from the scene.",
     "hiddenTrait": "toxic_residue",
     "endExplanation": "The culprit left a viscous trail as it moved through the scene.",
     "discovered": false

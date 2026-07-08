@@ -507,7 +507,7 @@ const buildEvidenceFromTrait = (evidenceId: string, culprit: Pokemon) => {
       return {
         title: 'Cookie Crumbs',
         clueText: `Fresh crumbs were scattered ${profile.movementWord}.`,
-        endExplanation: `The culprit moved ${profile.movementWord} while eating near the campfire.`,
+        endExplanation: `The culprit moved ${profile.movementWord} while eating near the scene.`,
         deductionText:
           profile.size === 'small'
             ? 'This pointed toward a small Pokemon that stayed low.'
@@ -547,7 +547,7 @@ const buildEvidenceFromTrait = (evidenceId: string, culprit: Pokemon) => {
     case 'sand-trail':
       return {
         title: profile.textureWord === 'damp residue' ? 'Damp Trail' : 'Dry Trail',
-        clueText: `A faint line of ${profile.textureWord} pulled away from the camp.`,
+        clueText: `A faint line of ${profile.textureWord} pulled away from the scene.`,
         endExplanation: `The culprit carried ${profile.textureWord} away from the tracks.`,
         deductionText:
           profile.textureWord === 'damp residue'
@@ -583,12 +583,12 @@ const buildEvidenceFromTrait = (evidenceId: string, culprit: Pokemon) => {
     case 'avoided-water':
       return {
         title: 'Avoided Water',
-        clueText: `The camper remembered the culprit ${profile.waterAvoidanceWord}.`,
-        endExplanation: `The culprit deliberately avoided the wettest part of camp by ${profile.waterAvoidanceWord}.`,
+        clueText: `The witness remembered the culprit ${profile.waterAvoidanceWord}.`,
+        endExplanation: `The culprit deliberately avoided the wettest part of the scene by ${profile.waterAvoidanceWord}.`,
         deductionText:
           profile.textureWord === 'damp residue'
             ? 'This suggested the culprit moved near water differently than expected.'
-            : 'This suggested the culprit preferred the driest path through camp.',
+            : 'This suggested the culprit preferred the driest path through the scene.',
       }
     case 'dry-trail':
       return {
@@ -645,7 +645,7 @@ const buildEvidenceFromTrait = (evidenceId: string, culprit: Pokemon) => {
     case 'slime-trail':
       return {
         title: 'Slime Trail',
-        clueText: `A slick ribbon of ${profile.textureWord} traced away from the camp.`,
+        clueText: `A slick ribbon of ${profile.textureWord} traced away from the scene.`,
         endExplanation: `The culprit left a trail of ${profile.textureWord} as it moved through the scene.`,
         deductionText: 'This suggested the culprit left a caustic or viscous trail.',
       }

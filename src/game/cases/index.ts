@@ -5,6 +5,7 @@ import purloinedPageRaw from './purloinedPage.json'
 import missingMedalRaw from './missingMedal.json'
 import ravagedPantryRaw from './ravagedPantry.json'
 import stolenArtifactRaw from './stolenArtifact.json'
+import additionalCasesRaw from './additionalCases.json'
 import { generateCaseLineup } from '../caseGeneration'
 
 const allCases: CaseConfig[] = [
@@ -13,6 +14,7 @@ const allCases: CaseConfig[] = [
   hydrateCaseConfig(missingMedalRaw as RawCaseConfig),
   hydrateCaseConfig(ravagedPantryRaw as RawCaseConfig),
   hydrateCaseConfig(stolenArtifactRaw as RawCaseConfig),
+  ...(additionalCasesRaw as RawCaseConfig[]).map(hydrateCaseConfig),
 ]
 
 const buildCase = (caseConfig: CaseConfig): Case => {

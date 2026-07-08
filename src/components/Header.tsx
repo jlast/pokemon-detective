@@ -14,7 +14,6 @@ export function Header({ currentCase }: HeaderProps) {
           <p className="subtle-text">{currentCase.shortStory}</p>
         </div>
       </div>
-
     </header>
   )
 }
