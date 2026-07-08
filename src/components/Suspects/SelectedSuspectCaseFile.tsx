@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from '../../game/caseModel'
-import { getSuspectGroupDetails } from '../../game/suspectCaseFile'
+import { getSuspectGroupDetails, getPokemonById } from '../../game/suspectCaseFile'
+import { getPokemonCaseTraits, evidenceTraitById } from '../../game/caseGeneration'
 import { MugShot } from './MugShot'
 
 type SuspectNotebookTab = 'overview' | 'investigations'
@@ -54,7 +55,11 @@ export function SelectedSuspectCaseFile({
   }
 
   const groupDetails = getSuspectGroupDetails(selectedSuspect.pokemonId)
-  const discoveredEvidence = currentCase.evidence.filter((evidenceItem) => evidenceItem.discovered)
+  const suspectPokemon = getPokemonById(selectedSuspect.pokemonId)
+  const suspectTraits = getPokemonCaseTraits(suspectPokemon)
+  const discoveredEvidence = currentCase.evidence.filter(
+    (evidenceItem) => evidenceItem.discovered && suspectTraits.has(evidenceTraitById[evidenceItem.id])
+  )
   const noteOptions: Array<{ value: SuspectNoteStatus; label: string }> = [
     { value: 'suspect', label: 'Suspect' },
     { value: 'ruled-out', label: 'Cleared' },
@@ -138,7 +143,7 @@ export function SelectedSuspectCaseFile({
               </section>
 
               <section className="selected-suspect-section inspect-item suspect-overview-evidence">
-                <strong>Evidence Summary</strong>
+                <strong>Relevant Evidence</strong>
                 {discoveredEvidence.length > 0 ? (
                   <div className="notebook-sublist">
                     {discoveredEvidence.map((evidenceItem) => (

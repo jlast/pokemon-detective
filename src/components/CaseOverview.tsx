@@ -37,7 +37,7 @@ export function CaseOverview({
         <div className="inspect-item overview-suspects-panel">
           <div className="overview-section-copy">
             <strong>Suspects</strong>
-            <p className="overview-section-hook">These 6 Pokemon were seen near camp.</p>
+            <p className="overview-section-hook">These Pokemon are the persons of interest.</p>
           </div>
           <div className="overview-suspect-row">
             {selectedCase.suspects.map((suspect, index) => (
@@ -112,7 +112,7 @@ export function CaseOverview({
             </div>
           </LinedOverview>
           <PostIt title="Known scene notes">
-            <span>The camp woke up to a missing stash of cookies.</span>
+            <span>{selectedCase.shortStory}</span>
             <span>
               You will need to search locations, inspect suspects, and decide who
               does not belong.
@@ -120,7 +120,7 @@ export function CaseOverview({
           </PostIt>
           {startInvestigation ? (
             <div className="case-overview-cta">
-              <p className="case-overview-cta-lead">Your first task is to search the campsite for clues.</p>
+              <p className="case-overview-cta-lead">Your first task is to search the area for clues.</p>
               <p className="case-overview-cta-copy">Search locations and collect your first clue.</p>
               <p className="case-overview-cta-copy">
                 The culprit won't reveal themselves. Search locations, collect evidence, then inspect the suspects.

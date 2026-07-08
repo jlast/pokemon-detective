@@ -46,7 +46,7 @@ const traitRules: TraitRule[] = [
 
 const traitPriority: CaseTrait[] = traitRules.map((rule) => rule.trait)
 
-const evidenceTraitById: Record<string, CaseTrait> = {
+export const evidenceTraitById: Record<string, CaseTrait> = {
   'cookie-crumbs': 'small_stature',
   'quiet-digging': 'burrowing',
   'small-tracks': 'small_stature',
@@ -621,30 +621,27 @@ const buildSolution = (
   locations: Location[],
   relevantTraits: CaseTrait[],
   generatedEvidenceById: Map<string, ReturnType<typeof buildEvidenceFromTrait>>,
-  primaryEvidenceByLocation: Map<string, string>,
 ) => {
   const culprit = getPokemonById(culpritId)
   const evidenceById = new Map(evidence.map((item) => [item.id, item]))
 
-  const evidenceExplanation: CaseEvidenceExplanation[] = Array.from(primaryEvidenceByLocation.entries())
-    .map(([locationId, evidenceId]) => {
-      const location = locations.find((entry) => entry.id === locationId)
-      const evidenceItem = evidenceById.get(evidenceId)
-
-      if (!location || !evidenceItem) {
-        return null
-      }
-
-      return {
-        locationId,
-        evidenceTitle: evidenceItem.title,
-        clueText: evidenceItem.clueText,
+  const evidenceExplanation: CaseEvidenceExplanation[] = locations
+    .flatMap((location) => {
+      const primaryAction = location.actions.find(
+        (action) => action.evidenceId && (action.outcomeType === 'evidence' || action.outcomeType === 'witness')
+      )
+      if (!primaryAction) return []
+      const evidenceItem = evidenceById.get(primaryAction.evidenceId)
+      if (!evidenceItem) return []
+      return [{
+        locationId: location.id,
+        evidenceTitle: primaryAction.evidenceTitle ?? evidenceItem.title,
+        clueText: primaryAction.evidenceText ?? evidenceItem.clueText,
         deductionText:
-          generatedEvidenceById.get(evidenceId)?.deductionText ??
+          generatedEvidenceById.get(primaryAction.evidenceId)?.deductionText ??
           getTraitDeductionText(evidenceItem.hiddenTrait as CaseTrait),
-      }
+      }]
     })
-    .filter((item): item is CaseEvidenceExplanation => item !== null)
 
   const clearedSuspects: ClearedSuspectExplanation[] = suspectIds
     .filter((suspectId) => suspectId !== culpritId)
@@ -715,14 +712,10 @@ export const generateCaseLineup = (
 
     const culpritTraits = getPokemonCaseTraits(culprit)
     const actionEvidenceMap = new Map<string, string>()
-    const primaryEvidenceByLocation = new Map<string, string>()
 
     for (const slot of actionEvidencePools) {
       const chosenId = pickEvidenceForAction(slot, culpritTraits)
       actionEvidenceMap.set(slot.actionId, chosenId)
-      if (slot.isPrimary) {
-        primaryEvidenceByLocation.set(slot.locationId, chosenId)
-      }
     }
 
     const overriddenLocations = locations.map((location) => ({
@@ -749,7 +742,6 @@ export const generateCaseLineup = (
         generatedLocations,
         relevantTraits,
         generatedEvidenceById,
-        primaryEvidenceByLocation,
       ),
     }
   }

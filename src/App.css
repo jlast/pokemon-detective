@@ -367,6 +367,11 @@
   gap: 0.75rem;
 }
 
+.investigation-location-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
 .primary-button,
 .secondary-button {
   min-height: 2.75rem;
