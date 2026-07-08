@@ -5,6 +5,8 @@ import { InvestigationActionChooser } from './InvestigationActionChooser'
 interface InvestigationLocationPageProps {
   location: Location | null
   pointsLeft: number
+  resolvedCount: number
+  maxInvestigations: number
   isSearching: boolean
   chooseAction: (locationId: string, actionId: string) => void
 }
@@ -12,6 +14,8 @@ interface InvestigationLocationPageProps {
 export function InvestigationLocationPage({
   location,
   pointsLeft,
+  resolvedCount,
+  maxInvestigations,
   isSearching,
   chooseAction,
 }: InvestigationLocationPageProps) {
@@ -38,6 +42,7 @@ export function InvestigationLocationPage({
       ? selectedAction.implicationText ?? 'The new clue should be compared against the suspect files.'
       : 'This lead does not narrow the suspect list.'
     : null
+  const progressSlots = Array.from({ length: maxInvestigations }, (_, index) => index < resolvedCount)
 
   return (
     <section className="notebook-card active-investigation-panel investigation-location-page">
@@ -71,49 +76,75 @@ export function InvestigationLocationPage({
         )
       ) : selectedAction ? (
         <>
-          <section className="investigation-report">
-            <div className="investigation-report-section">
-              <strong>Investigation complete</strong>
+          <section className="investigation-result-card">
+            <div className="result-location-header">
+              <div>
+                <h3>{location.name}</h3>
+                <p className="result-action-used">Action used: {selectedAction.label}</p>
+              </div>
+              <div className="result-status-stack">
+                <span className="result-status-pill">Investigation complete</span>
+                <span className="result-evidence-count">{hasEvidence ? '+1 evidence added' : 'No evidence added'}</span>
+              </div>
             </div>
 
-            <div className="investigation-report-divider" aria-hidden="true" />
+            <section className="evidence-hero">
+              <div className="evidence-hero-icon" aria-hidden="true">
+                {hasEvidence ? '👣' : '🔎'}
+              </div>
+              <div className="evidence-hero-copy">
+                <p className="eyebrow">New Evidence Discovered</p>
+                <h3>{hasEvidence ? selectedAction.evidenceTitle : 'No Useful Evidence'}</h3>
+                <p>{hasEvidence ? selectedAction.evidenceText : selectedAction.observationText}</p>
+                {hasEvidence ? <span className="result-board-badge">Pinned to evidence board</span> : null}
+              </div>
+            </section>
 
-            <div className="investigation-report-section investigation-report-finding">
-              <strong>Finding</strong>
-              {hasEvidence ? (
-                <>
-                  <p className="investigation-report-evidence-title">📎 {selectedAction.evidenceTitle}</p>
-                  <p>{selectedAction.evidenceText}</p>
-                </>
-              ) : (
-                <>
-                  <p className="investigation-report-evidence-title">No useful evidence was recovered.</p>
-                  <p>{selectedAction.observationText}</p>
-                </>
-              )}
+            <div className="result-section-grid">
+              <section className="result-info-card">
+                <strong>Observation</strong>
+                <p>{selectedAction.observationText}</p>
+              </section>
+
+              <section className="result-info-card deduction-card">
+                <strong>Detective&apos;s Deduction</strong>
+                <p>{detectiveNote}</p>
+              </section>
+
+              <section className="result-info-card board-updated-card">
+                <strong>Board Updated</strong>
+                {hasEvidence ? (
+                  <span className="evidence-chip-new">
+                    <span aria-hidden="true">✓ 👣</span>
+                    {selectedAction.evidenceTitle}
+                    <span className="new-badge">NEW</span>
+                  </span>
+                ) : (
+                  <p>No new evidence was pinned.</p>
+                )}
+              </section>
             </div>
 
-            <div className="investigation-report-divider" aria-hidden="true" />
-
-            <div className="investigation-report-section investigation-report-notes">
-              <strong>Detective&apos;s Notes</strong>
-              <p>{detectiveNote}</p>
-            </div>
-
-            <div className="investigation-report-divider" aria-hidden="true" />
-
-            <div className="investigation-report-section">
-              <strong>Evidence Board</strong>
-              <p>{hasEvidence ? `✓ ${selectedAction.evidenceTitle} added` : 'No new evidence added.'}</p>
-            </div>
+            <section className="progress-strip">
+              <div>
+                <strong>Investigation Progress</strong>
+                <p>{resolvedCount} / {maxInvestigations} locations resolved</p>
+                <p>{pointsLeft} / {maxInvestigations} actions remaining</p>
+              </div>
+              <div className="progress-dots" aria-hidden="true">
+                {progressSlots.map((isUsed, index) => (
+                  <span key={index} className={isUsed ? 'is-used' : ''} />
+                ))}
+              </div>
+            </section>
           </section>
 
-          <div className="investigation-location-actions">
-            <Link to="/investigation" className="secondary-button suspect-file-back-button">
-              Back to Board
-            </Link>
+          <div className="result-actions">
             <Link to="/suspects" className="primary-button suspect-file-back-button">
-              Inspect Suspects
+              Review Suspects →
+            </Link>
+            <Link to="/investigation" className="secondary-button suspect-file-back-button">
+              ← Continue Investigation
             </Link>
           </div>
         </>

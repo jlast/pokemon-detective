@@ -1,6 +1,26 @@
 import { useMemo } from 'react'
 import type { Location } from '../../game/caseModel'
 
+const evidenceIcons: Record<string, string> = {
+  'cookie-crumbs': '🍪',
+  'low-crumbs': '🍪',
+  'ash-scatter': '🔥',
+  'pollen-scent': '🌸',
+  'quiet-digging': '🕳️',
+  'psychic-echo': '🔮',
+  'slime-trail': '🫧',
+  'small-tracks': '👣',
+  'sand-trail': '🏖️',
+  'frost-trail': '❄️',
+  'feather-drift': '🪶',
+  'dry-trail': '🏜️',
+  'loose-soil': '🪨',
+  'scratch-marks': '🔪',
+  'metal-shaving': '⚙️',
+  'static-mark': '⚡',
+  'avoided-water': '💧',
+}
+
 interface InvestigationLocationCardProps {
   location: Location
   isActiveLocation: boolean
@@ -27,7 +47,7 @@ export function InvestigationLocationCard({
     : isComplete
       ? 'Complete'
       : pointsLeft <= 0
-        ? 'No actions left'
+        ? 'Locked'
         : 'Not searched'
   const statusClassName = isSearching
     ? 'is-searching'
@@ -40,6 +60,10 @@ export function InvestigationLocationCard({
   const tiltAngle = useMemo(() => (Math.random() * 4 - 2).toFixed(1), [location.id])
 
   const actionable = !isSearching && !(!isComplete && pointsLeft <= 0)
+
+  const evidenceIcon = selectedAction?.evidenceId
+    ? evidenceIcons[selectedAction.evidenceId] ?? '🔍'
+    : '🔍'
 
   return (
     <article
@@ -55,12 +79,26 @@ export function InvestigationLocationCard({
       <span className={`pin-location-status ${statusClassName}`}>{statusLabel}</span>
       <span className="pin-location-icon" aria-hidden="true">{location.icon}</span>
       <h3 className="pin-location-name">{location.name}</h3>
-      <div className="pin-location-evidence-slots" aria-hidden="true">
-        {Array.from({ length: 3 }, (_, i) => (
-          <span key={i} className="pin-location-evidence-slot">
-            {isComplete && selectedAction?.outcomeType === 'evidence' && i === 0 ? '🔍' : '?'}
+      <div className="location-card__evidence">
+        <span className="location-card__evidence-label">
+          {isComplete ? 'Evidence found' : 'Evidence'}
+        </span>
+        {isComplete && selectedAction ? (
+          selectedAction.outcomeType === 'evidence' ? (
+            <span className="location-card__evidence-item">
+              <span aria-hidden="true">{evidenceIcon}</span>
+              <span>{selectedAction.evidenceTitle}</span>
+            </span>
+          ) : (
+            <span className="location-card__evidence-item location-card__evidence-item--empty">
+              Nothing found.
+            </span>
+          )
+        ) : (
+          <span className="location-card__evidence-item location-card__evidence-item--empty">
+            {pointsLeft <= 0 ? 'Not available yet.' : 'Investigate to discover a clue.'}
           </span>
-        ))}
+        )}
       </div>
       <button
         type="button"

@@ -28,7 +28,7 @@ const getCurrentTheoryCopy = (evidenceCount: number, remainingActions: number) =
     return 'No suspect stands out yet.'
   }
   if (evidenceCount === 1) {
-    return 'One clue has surfaced.'
+    return 'One piece of evidence found.'
   }
   if (evidenceCount === 2) {
     return 'A pattern may be forming.'
@@ -121,9 +121,9 @@ export function LocationsPanel({
               ))}
             </ul>
           ) : (
-            <p className="evidence-card-empty">No clues yet.</p>
+            <p className="evidence-card-empty">No evidence collected yet.</p>
           )}
-          <p className="budget-card-meta">{evidenceCollectedCount} clue{evidenceCollectedCount !== 1 ? 's' : ''} collected</p>
+          <p className="budget-card-meta">{evidenceCollectedCount} evidence item{evidenceCollectedCount !== 1 ? 's' : ''} collected</p>
         </div>
 
         <div className="pinboard-card theory-card" style={{ gridArea: 'theory' }}>

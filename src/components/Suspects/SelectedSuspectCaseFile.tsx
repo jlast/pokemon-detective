@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from '../../game/caseModel'
-import { getSuspectGroupDetails, getPokemonById } from '../../game/suspectCaseFile'
-import { getPokemonCaseTraits, evidenceTraitById } from '../../game/caseGeneration'
+import { getSuspectGroupDetails } from '../../game/suspectCaseFile'
 import { MugShot } from './MugShot'
 
 type SuspectNotebookTab = 'overview' | 'investigations'
@@ -10,9 +9,6 @@ interface SelectedSuspectCaseFileProps {
   selectedSuspect: Suspect | null
   currentCase: Case
   wrongAccusationIds: number[]
-  expandedGroup: SuspectInvestigationGroup | null
-  inspectGroup: (suspectId: number, groupKey: SuspectInvestigationGroup) => void
-  setExpandedGroup: (groupKey: SuspectInvestigationGroup | null) => void
   setSuspectNoteStatus: (suspectId: number, noteStatus: SuspectNoteStatus) => void
   openAccusation: (suspectId: number) => void
   attemptsLeft: number
@@ -22,9 +18,6 @@ export function SelectedSuspectCaseFile({
   selectedSuspect,
   currentCase,
   wrongAccusationIds,
-  expandedGroup,
-  inspectGroup,
-  setExpandedGroup,
   setSuspectNoteStatus,
   openAccusation,
   attemptsLeft,
@@ -55,16 +48,11 @@ export function SelectedSuspectCaseFile({
   }
 
   const groupDetails = getSuspectGroupDetails(selectedSuspect.pokemonId)
-  const suspectPokemon = getPokemonById(selectedSuspect.pokemonId)
-  const suspectTraits = getPokemonCaseTraits(suspectPokemon)
-  const discoveredEvidence = currentCase.evidence.filter(
-    (evidenceItem) => evidenceItem.discovered && suspectTraits.has(evidenceTraitById[evidenceItem.id])
-  )
   const noteOptions: Array<{ value: SuspectNoteStatus; label: string }> = [
     { value: 'suspect', label: 'Suspect' },
     { value: 'ruled-out', label: 'Cleared' },
   ]
-  const investigationGroups: SuspectInvestigationGroup[] = ['appearance', 'records', 'habitat', 'ability']
+  const investigationGroups: SuspectInvestigationGroup[] = ['appearance', 'records', 'habitat']
   const notebookTabs: Array<{ key: SuspectNotebookTab; label: string }> = [
     { key: 'overview', label: 'Overview' },
     { key: 'investigations', label: 'Investigations' },
@@ -142,19 +130,6 @@ export function SelectedSuspectCaseFile({
                 )}
               </section>
 
-              <section className="selected-suspect-section inspect-item suspect-overview-evidence">
-                <strong>Relevant Evidence</strong>
-                {discoveredEvidence.length > 0 ? (
-                  <div className="notebook-sublist">
-                    {discoveredEvidence.map((evidenceItem) => (
-                      <span key={evidenceItem.id}>• {evidenceItem.title}</span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="overview-section-hook">• No evidence collected yet.</p>
-                )}
-              </section>
-
               {!isFalseLead ? (
                 <div className="selected-suspect-actions suspect-overview-decision">
                   <button
@@ -179,19 +154,13 @@ export function SelectedSuspectCaseFile({
               <div className="suspect-group-list">
                 {investigationGroups.map((groupKey) => {
                   const group = groupDetails[groupKey]
-                  const isInspected = selectedSuspect.inspectedGroups[groupKey]
-                  const isExpanded = expandedGroup === groupKey
 
                   return (
                     <article
                       key={groupKey}
-                      className={`suspect-group-card folder-section ${isInspected ? 'folder-section-open is-open' : 'is-closed'}`}
+                      className="suspect-group-card folder-section folder-section-open is-open"
                     >
-                      <button
-                        type="button"
-                        className="suspect-group-toggle"
-                        onClick={() => setExpandedGroup(isExpanded ? null : groupKey)}
-                      >
+                      <div className="suspect-group-toggle">
                         <div>
                           <strong>
                             <span className="suspect-group-icon" aria-hidden="true">📂</span>
@@ -199,42 +168,16 @@ export function SelectedSuspectCaseFile({
                           </strong>
                           <p className="subtle-text">{group.prompt}</p>
                         </div>
-                        <span className="suspect-group-chevron" aria-hidden="true">
-                          {isExpanded ? '−' : '+'}
-                        </span>
-                      </button>
+                      </div>
 
-                      {isExpanded ? (
-                        isInspected ? (
-                          <div className="suspect-group-details">
-                            {group.rows.map((row) => (
-                              <div key={row.label} className="suspect-group-row">
-                                <span className="suspect-group-label">{row.label}</span>
-                                <span>{row.value}</span>
-                              </div>
-                            ))}
+                      <div className="suspect-group-details">
+                        {group.rows.map((row) => (
+                          <div key={row.label} className="suspect-group-row">
+                            <span className="suspect-group-label">{row.label}</span>
+                            <span>{row.value}</span>
                           </div>
-                        ) : (
-                          <div className="suspect-group-action-row">
-                            <span className="suspect-group-locked">Not investigated yet.</span>
-                            <button
-                              type="button"
-                              className="secondary-button"
-                              onClick={() => inspectGroup(selectedSuspect.pokemonId, groupKey)}
-                            >
-                              Inspect
-                            </button>
-                          </div>
-                        )
-                      ) : isInspected ? (
-                        <div className="suspect-group-summary">
-                          {group.rows.slice(0, 2).map((row) => (
-                            <span key={row.label}>
-                              {row.label}: {row.value}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
+                        ))}
+                      </div>
                     </article>
                   )
                 })}

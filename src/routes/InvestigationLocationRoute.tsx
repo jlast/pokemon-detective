@@ -56,6 +56,8 @@ export function InvestigationLocationRoute({
       <InvestigationLocationPage
         location={selectedLocation}
         pointsLeft={pointsLeft}
+        resolvedCount={actionsUsed}
+        maxInvestigations={currentCase.maxInvestigations}
         isSearching={searchingLocationId === selectedLocationId}
         chooseAction={chooseAction}
       />

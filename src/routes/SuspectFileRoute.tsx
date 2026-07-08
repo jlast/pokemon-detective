@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { SelectedSuspectCaseFile } from '../components/Suspects/SelectedSuspectCaseFile'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from '../game/caseModel'
@@ -19,27 +18,21 @@ export function SuspectFileRoute({
   selectedSuspectOverride = null,
   backLinkTo = '/suspects',
   wrongAccusationIds,
-  inspectGroup,
   setSuspectNoteStatus,
   openAccusation,
   attemptsLeft,
 }: SuspectFileRouteProps) {
   const { id } = useParams()
-  const [expandedGroup, setExpandedGroup] = useState<SuspectInvestigationGroup | null>(null)
   const suspectId = Number(id)
   const selectedSuspect =
     selectedSuspectOverride ??
     currentCase.suspects.find((suspect) => suspect.pokemonId === suspectId) ??
     null
 
-  useEffect(() => {
-    setExpandedGroup(null)
-  }, [selectedSuspect?.pokemonId])
-
   if (!selectedSuspect) {
     return (
       <section className="suspect-file-page notebook-card">
-        <Link to={backLinkTo} className="subtle-link">
+        <Link to={backLinkTo} className="subtle-link suspect-file-back-link">
           ← Back to Suspects Lineup
         </Link>
         <div className="inspect-item">
@@ -64,9 +57,6 @@ export function SuspectFileRoute({
           selectedSuspect={selectedSuspect}
           currentCase={currentCase}
           wrongAccusationIds={wrongAccusationIds}
-          expandedGroup={expandedGroup}
-          inspectGroup={inspectGroup}
-          setExpandedGroup={setExpandedGroup}
           setSuspectNoteStatus={setSuspectNoteStatus}
           openAccusation={openAccusation}
           attemptsLeft={attemptsLeft}

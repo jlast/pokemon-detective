@@ -1036,10 +1036,8 @@ export const generateCaseLineup = (
   locations: Location[],
   evidenceOverrides?: Record<string, { title?: string; clueText?: string; endExplanation?: string }>,
 ) => {
-  const candidates = pokemonData.filter((pokemon) => !pokemon.isLegendary && !pokemon.isMythical)
-
   for (let attempt = 0; attempt < 1000; attempt += 1) {
-    const culprit = candidates[Math.floor(Math.random() * candidates.length)]
+    const culprit = pokemonData[Math.floor(Math.random() * pokemonData.length)]
     const relevantTraits = getRelevantTraits(culprit.id)
 
     if (relevantTraits.length < 2) {
@@ -1047,7 +1045,7 @@ export const generateCaseLineup = (
     }
 
     const scoredDistractors = shuffle(
-      candidates
+      pokemonData
         .filter((pokemon) => pokemon.id !== culprit.id)
         .map((pokemon) => ({
           pokemonId: pokemon.id,

@@ -51,6 +51,41 @@ const evolutionLineByPokemonId: Record<number, string> = {
 
 const toTitle = (value: string) => value[0].toUpperCase() + value.slice(1)
 
+const getHeightCategory = (pokemon: Pokemon) => pokemon.heightM <= 1.0 ? 'Small' : 'Tall'
+
+const getWeightCategory = (pokemon: Pokemon) => pokemon.weightKg <= 35 ? 'Light' : 'Heavy'
+
+const statLabels = {
+  hp: 'HP',
+  attack: 'Attack',
+  defense: 'Defense',
+  specialAttack: 'Special Attack',
+  specialDefense: 'Special Defense',
+  speed: 'Speed',
+} as const
+
+type StatName = keyof typeof statLabels
+
+const highestStatPriority: StatName[] = ['speed', 'attack', 'specialAttack', 'defense', 'specialDefense', 'hp']
+const lowestStatPriority: StatName[] = ['hp', 'defense', 'specialDefense', 'attack', 'specialAttack', 'speed']
+
+const getStatValue = (pokemon: Pokemon, statName: StatName) => pokemon[statName]
+
+const pickStat = (pokemon: Pokemon, priority: StatName[], mode: 'highest' | 'lowest') => {
+  let selected = priority[0]
+  let selectedValue = getStatValue(pokemon, selected)
+
+  for (const statName of priority.slice(1)) {
+    const value = getStatValue(pokemon, statName)
+    if ((mode === 'highest' && value > selectedValue) || (mode === 'lowest' && value < selectedValue)) {
+      selected = statName
+      selectedValue = value
+    }
+  }
+
+  return statLabels[selected]
+}
+
 export const getPokemonById = (pokemonId: number): Pokemon => {
   const pokemon = pokemonData.find((entry) => entry.id === pokemonId)
 
@@ -128,11 +163,11 @@ export const getSuspectGroupDetails = (pokemonId: number) => {
   return {
     appearance: {
       icon: '🔎',
-      title: 'Appearance check',
+      title: 'Appearance',
       prompt: 'Look for size, weight, and track clues.',
       rows: [
-        { label: 'Height', value: `${pokemon.heightM} m` },
-        { label: 'Weight', value: `${pokemon.weightKg} kg` },
+        { label: 'Height', value: `${pokemon.heightM} m (${getHeightCategory(pokemon)})` },
+        { label: 'Weight', value: `${pokemon.weightKg} kg (${getWeightCategory(pokemon)})` },
         { label: 'Observation', value: getAppearanceObservation(pokemon) },
       ],
     },
@@ -144,6 +179,8 @@ export const getSuspectGroupDetails = (pokemonId: number) => {
         { label: 'Type', value: pokemon.types.map(toTitle).join(' / ') },
         { label: 'Region', value: pokemon.region },
         { label: 'Evolution line', value: getEvolutionLineText(pokemon) },
+        { label: 'Highest stat', value: pickStat(pokemon, highestStatPriority, 'highest') },
+        { label: 'Lowest stat', value: pickStat(pokemon, lowestStatPriority, 'lowest') },
       ],
     },
     habitat: {
