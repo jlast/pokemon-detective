@@ -73,7 +73,7 @@ export function EndingScreen({
       <section className="case-closed-hero culprit-reveal-card">
         <div className="ending-hero-copy">
           <p className="eyebrow">{isSolved ? 'Case closed' : 'The culprit got away'}</p>
-          <h2>{isSolved ? 'Culprit identified' : 'Case escaped'}</h2>
+          <h2>{isSolved ? 'Culprit identified' : 'Investigation failed'}</h2>
           <p className="ending-case-title">{currentCase.title}</p>
           <div className="ending-status-row">
             <span className={`status-stamp ${isSolved ? 'is-cleared' : 'is-false-lead'}`}>

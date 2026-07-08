@@ -1,0 +1,92 @@
+{
+  "id": "purloined-page",
+  "title": "The Purloined Page",
+  "shortStory": "A rare page was torn from a locked book in the library.",
+  "crimeIcon": "📖",
+  "difficulty": "easy",
+  "maxInvestigations": 5,
+  "locations": [
+    {
+      "id": "reading-room",
+      "name": "Reading Room",
+      "icon": "📚",
+      "teaserText": "Books are scattered across the floor.",
+      "actions": [
+        { "kind": "evidence", "id": "crumbs", "label": "Check the floor", "description": "Look for dropped items near the shelves.", "observationText": "Books were disturbed {movementWord} from their shelves." },
+        { "kind": "nothing", "id": "tents", "label": "Search the armchairs", "description": "Check between the cushions.", "observationText": "The armchairs are rumpled, but nothing is hidden here." },
+        { "kind": "witness", "id": "campers", "label": "Interview the librarian", "description": "Ask what they heard last night.", "observationText": "The librarian overheard soft footsteps after hours." }
+      ]
+    },
+    {
+      "id": "front-desk",
+      "name": "Front Desk",
+      "icon": "📋",
+      "teaserText": "The desk surface looks disturbed.",
+      "actions": [
+        {
+          "kind": "evidence",
+          "id": "measure-tracks",
+          "label": "Measure the marks",
+          "description": "Check the scuff marks on the counter.",
+          "observationText": "The scuffs are even and mid-height across the counter.",
+          "sizeOverrides": {
+            "small": "Small scuff marks sit low on the desk front.",
+            "large": "Deep scuff marks line the top of the counter."
+          }
+        },
+        { "kind": "evidence", "id": "follow-tracks", "label": "Follow the traces", "description": "See where the trail leads.", "observationText": "A thin line of {textureWord} trails away from the desk." },
+        { "kind": "nothing", "id": "photograph-tracks", "label": "Photograph the desk", "description": "Capture the surface before it is cleaned.", "observationText": "The photo shows nothing beyond what you already saw." }
+      ]
+    },
+    {
+      "id": "rare-books",
+      "name": "Rare Books",
+      "icon": "📜",
+      "teaserText": "The restricted section has been disturbed.",
+      "actions": [
+        { "kind": "evidence", "id": "check-roots", "label": "Check the bookcase base", "description": "Inspect the floor under the shelves.", "observationText": "The {groundWord} near the bookcase has been disturbed." },
+        { "kind": "nothing", "id": "search-branches", "label": "Search the high shelves", "description": "Check the topmost books.", "observationText": "The high shelves are dusty but undisturbed." },
+        { "kind": "nothing", "id": "listen-quietly", "label": "Listen for sounds", "description": "Pause and listen.", "observationText": "The library is silent. No one is hiding here." }
+      ]
+    },
+    {
+      "id": "study-nook",
+      "name": "Study Nook",
+      "icon": "🪑",
+      "teaserText": "The display case latch looks damaged.",
+      "actions": [
+        { "kind": "evidence", "id": "inspect-lid", "label": "Inspect the display case", "description": "Check where the latch was forced.", "observationText": "Fresh scoring marks scratch the glass case latch." },
+        { "kind": "nothing", "id": "smell-jar", "label": "Check the inkwell", "description": "Sniff for any unusual scent.", "observationText": "It smells only of old paper and dust. Nothing stands out." },
+        { "kind": "evidence", "id": "check-table", "label": "Check the desk", "description": "Look along the writing desk.", "observationText": "Whoever took the book left traces {movementWord} along the desk." }
+      ]
+    },
+    {
+      "id": "staff-office",
+      "name": "Staff Office",
+      "icon": "🚪",
+      "teaserText": "A staff member remembers something odd.",
+      "actions": [
+        { "kind": "witness", "id": "interview-camper", "label": "Talk to the assistant", "description": "Ask what they noticed.", "observationText": "The assistant is certain about that detail." },
+        { "kind": "evidence", "id": "check-wash-bucket", "label": "Check the coat rack", "description": "Inspect the floor by the rack.", "observationText": "Even by the door, a line of {textureWord} stayed behind." },
+        { "kind": "nothing", "id": "search-bedding", "label": "Search the staff cot", "description": "Check the rest area.", "observationText": "The cot is undisturbed and holds no clues." }
+      ]
+    }
+  ],
+  "evidenceOverrides": {
+    "cookie-crumbs": { "title": "Scattered Pages", "clueText": "Torn pages were scattered {movementWord} near the shelf." },
+    "low-crumbs": { "title": "Paper Fragments", "clueText": "Paper fragments fell {movementWord} beside the desk." },
+    "quiet-digging": { "title": "Quiet Rustling", "clueText": "Someone heard soft rustling after closing hours." },
+    "small-tracks": { "title": "Small Impressions", "clueText": "Small impressions dented the library carpet {movementWord}." },
+    "sand-trail": { "title": "Dust Trail", "clueText": "A trail of {textureWord} led between the shelves." },
+    "loose-soil": { "title": "Binding Dust", "clueText": "Fine dust from the binding settled {movementWord} under the shelf." },
+    "scratch-marks": { "title": "Score Marks", "clueText": "Fine score marks circled the display case lock." },
+    "dry-trail": { "title": "Dry Trace", "clueText": "A line of {textureWord} led away from the reading nook." },
+    "ash-scatter": { "title": "Debris", "clueText": "A fine dusting of {textureWord} settled near the reference desk." },
+    "frost-trail": { "clueText": "A trail of {textureWord} glistened down the aisle." },
+    "pollen-scent": { "clueText": "The air carried a strange hint of {textureWord} from the old paper." },
+    "slime-trail": { "clueText": "A slick ribbon of {textureWord} traced across the reading room floor." },
+    "static-mark": { "clueText": "A faint scorch mark blackened the edge of the bookcase." },
+    "metal-shaving": { "clueText": "Thin curls of metal were found near the display lock." },
+    "feather-drift": { "clueText": "A few specks of {textureWord} drifted down near the stacks." }
+  }
+}

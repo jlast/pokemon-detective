@@ -15,7 +15,6 @@ interface InvestigationLocationRouteProps {
 }
 
 export function InvestigationLocationRoute({
-  attemptsLeft,
   currentCase,
   investigateLocation,
   openLocation,
@@ -47,7 +46,6 @@ export function InvestigationLocationRoute({
   return (
     <InvestigationRouteFrame
       layout="none"
-      attemptsLeft={attemptsLeft}
       currentCase={currentCase}
       openLocation={openLocation}
       startNewCase={startNewCase}

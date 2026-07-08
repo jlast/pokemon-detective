@@ -18,6 +18,25 @@ export type CaseTrait =
   | 'psychic_trace'
   | 'metal_scrape'
   | 'toxic_residue'
+  | 'electrical_interference'
+  | 'heavy_impact'
+  | 'light_or_glow'
+  | 'water_displacement'
+  | 'stone_fragment'
+  | 'cold_aura'
+  | 'hp_focus'
+  | 'attack_focus'
+  | 'defense_focus'
+  | 'special_attack_focus'
+  | 'special_defense_focus'
+  | 'speed_focus'
+  | 'hp_poor'
+  | 'attack_poor'
+  | 'defense_poor'
+  | 'special_attack_poor'
+  | 'special_defense_poor'
+  | 'speed_poor'
+  | 'any'
 
 type TraitRule = {
   trait: CaseTrait
@@ -37,14 +56,35 @@ const traitRules: TraitRule[] = [
   { trait: 'moisture_residue', types: ['water', 'ice', 'grass', 'poison'] },
   { trait: 'fire_heat', types: ['fire', 'electric', 'dragon'] },
   { trait: 'ash_or_scorch', types: ['fire', 'electric'] },
-  { trait: 'air_movement', types: ['flying', 'psychic', 'ghost', 'fairy'] },
+  { trait: 'air_movement', types: ['flying', 'ghost'] },
   { trait: 'plant_residue', types: ['grass', 'bug'] },
   { trait: 'psychic_trace', types: ['psychic', 'ghost', 'dark', 'fairy'] },
   { trait: 'metal_scrape', types: ['steel'] },
   { trait: 'toxic_residue', types: ['poison'] },
+  { trait: 'electrical_interference', types: ['electric'] },
+  { trait: 'heavy_impact', check: (p) => p.weightKg >= 70 },
+  { trait: 'light_or_glow', types: ['electric', 'fairy', 'psychic', 'fire', 'ghost'] },
+  { trait: 'water_displacement', types: ['water'], requirePrimary: true },
+  { trait: 'stone_fragment', types: ['rock', 'ground', 'steel'] },
+  { trait: 'cold_aura', types: ['ice', 'ghost'] },
 ]
 
-const traitPriority: CaseTrait[] = traitRules.map((rule) => rule.trait)
+const statTraitPriority: CaseTrait[] = [
+  'speed_focus',
+  'attack_focus',
+  'special_attack_focus',
+  'defense_focus',
+  'special_defense_focus',
+  'hp_focus',
+  'speed_poor',
+  'attack_poor',
+  'special_attack_poor',
+  'defense_poor',
+  'special_defense_poor',
+  'hp_poor',
+]
+
+const traitPriority: CaseTrait[] = [...traitRules.map((rule) => rule.trait), ...statTraitPriority]
 
 export const evidenceTraitById: Record<string, CaseTrait> = {
   'cookie-crumbs': 'small_stature',
@@ -64,6 +104,24 @@ export const evidenceTraitById: Record<string, CaseTrait> = {
   'metal-shaving': 'metal_scrape',
   'slime-trail': 'toxic_residue',
   'feather-drift': 'air_movement',
+  'flicker-surge': 'electrical_interference',
+  'heavy-dent': 'heavy_impact',
+  'glow-dust': 'light_or_glow',
+  'splash-burst': 'water_displacement',
+  'stone-chips': 'stone_fragment',
+  'cold-spot': 'cold_aura',
+  'steady-endurance': 'hp_focus',
+  'forceful-entry': 'attack_focus',
+  'braced-tracks': 'defense_focus',
+  'energy-bloom': 'special_attack_focus',
+  'weathered-calm': 'special_defense_focus',
+  'swift-pass': 'speed_focus',
+  'winded-pause': 'hp_poor',
+  'gentle-handling': 'attack_poor',
+  'brittle-pass': 'defense_poor',
+  'faded-surge': 'special_attack_poor',
+  'shaken-focus': 'special_defense_poor',
+  'slow-route': 'speed_poor',
 }
 
 type ActionEvidencePool = {
@@ -79,48 +137,99 @@ const actionEvidencePools: ActionEvidencePool[] = [
     { evidenceId: 'low-crumbs', trait: 'large_stature' },
     { evidenceId: 'ash-scatter', trait: 'ash_or_scorch' },
     { evidenceId: 'pollen-scent', trait: 'plant_residue' },
+    { evidenceId: 'glow-dust', trait: 'light_or_glow' },
+    { evidenceId: 'steady-endurance', trait: 'hp_focus' },
   ]},
   { actionId: 'campers', locationId: 'campsite', isPrimary: false, pool: [
     { evidenceId: 'quiet-digging', trait: 'burrowing' },
     { evidenceId: 'psychic-echo', trait: 'psychic_trace' },
     { evidenceId: 'slime-trail', trait: 'toxic_residue' },
+    { evidenceId: 'flicker-surge', trait: 'electrical_interference' },
+    { evidenceId: 'shaken-focus', trait: 'special_defense_poor' },
+    { evidenceId: 'cookie-crumbs', trait: 'any' },
   ]},
   { actionId: 'measure-tracks', locationId: 'tracks', isPrimary: true, pool: [
     { evidenceId: 'small-tracks', trait: 'small_stature' },
     { evidenceId: 'sand-trail', trait: 'ground_affinity' },
     { evidenceId: 'frost-trail', trait: 'moisture_residue' },
     { evidenceId: 'feather-drift', trait: 'air_movement' },
+    { evidenceId: 'stone-chips', trait: 'stone_fragment' },
+    { evidenceId: 'swift-pass', trait: 'speed_focus' },
   ]},
   { actionId: 'follow-tracks', locationId: 'tracks', isPrimary: false, pool: [
     { evidenceId: 'sand-trail', trait: 'ground_affinity' },
     { evidenceId: 'dry-trail', trait: 'dry_environment' },
     { evidenceId: 'feather-drift', trait: 'air_movement' },
+    { evidenceId: 'splash-burst', trait: 'water_displacement' },
+    { evidenceId: 'slow-route', trait: 'speed_poor' },
+    { evidenceId: 'small-tracks', trait: 'any' },
   ]},
   { actionId: 'check-roots', locationId: 'forest-edge', isPrimary: true, pool: [
     { evidenceId: 'loose-soil', trait: 'burrowing' },
     { evidenceId: 'pollen-scent', trait: 'plant_residue' },
     { evidenceId: 'feather-drift', trait: 'air_movement' },
+    { evidenceId: 'stone-chips', trait: 'stone_fragment' },
+    { evidenceId: 'braced-tracks', trait: 'defense_focus' },
+    { evidenceId: 'cookie-crumbs', trait: 'any' },
   ]},
   { actionId: 'inspect-lid', locationId: 'cookie-jar', isPrimary: true, pool: [
     { evidenceId: 'scratch-marks', trait: 'claw_or_scratch' },
     { evidenceId: 'metal-shaving', trait: 'metal_scrape' },
     { evidenceId: 'static-mark', trait: 'fire_heat' },
+    { evidenceId: 'heavy-dent', trait: 'heavy_impact' },
+    { evidenceId: 'flicker-surge', trait: 'electrical_interference' },
+    { evidenceId: 'forceful-entry', trait: 'attack_focus' },
+    { evidenceId: 'cookie-crumbs', trait: 'any' },
   ]},
   { actionId: 'check-table', locationId: 'cookie-jar', isPrimary: false, pool: [
     { evidenceId: 'low-crumbs', trait: 'large_stature' },
     { evidenceId: 'cookie-crumbs', trait: 'small_stature' },
+    { evidenceId: 'gentle-handling', trait: 'attack_poor' },
+    { evidenceId: 'winded-pause', trait: 'hp_poor' },
   ]},
   { actionId: 'interview-camper', locationId: 'witness-tent', isPrimary: true, pool: [
     { evidenceId: 'avoided-water', trait: 'dry_environment' },
     { evidenceId: 'psychic-echo', trait: 'psychic_trace' },
     { evidenceId: 'ash-scatter', trait: 'ash_or_scorch' },
     { evidenceId: 'quiet-digging', trait: 'burrowing' },
+    { evidenceId: 'glow-dust', trait: 'light_or_glow' },
+    { evidenceId: 'weathered-calm', trait: 'special_defense_focus' },
+    { evidenceId: 'faded-surge', trait: 'special_attack_poor' },
+    { evidenceId: 'cookie-crumbs', trait: 'any' },
   ]},
   { actionId: 'check-wash-bucket', locationId: 'witness-tent', isPrimary: false, pool: [
     { evidenceId: 'dry-trail', trait: 'ground_affinity' },
     { evidenceId: 'slime-trail', trait: 'toxic_residue' },
+    { evidenceId: 'splash-burst', trait: 'water_displacement' },
+    { evidenceId: 'cold-spot', trait: 'cold_aura' },
+    { evidenceId: 'energy-bloom', trait: 'special_attack_focus' },
+    { evidenceId: 'brittle-pass', trait: 'defense_poor' },
+    { evidenceId: 'cookie-crumbs', trait: 'any' },
   ]},
 ]
+
+type StatName = 'hp' | 'attack' | 'defense' | 'specialAttack' | 'specialDefense' | 'speed'
+
+const strongestStatPriority: StatName[] = ['speed', 'attack', 'specialAttack', 'defense', 'specialDefense', 'hp']
+const weakestStatPriority: StatName[] = ['hp', 'defense', 'specialDefense', 'attack', 'specialAttack', 'speed']
+
+const focusTraitByStat: Record<StatName, CaseTrait> = {
+  hp: 'hp_focus',
+  attack: 'attack_focus',
+  defense: 'defense_focus',
+  specialAttack: 'special_attack_focus',
+  specialDefense: 'special_defense_focus',
+  speed: 'speed_focus',
+}
+
+const poorTraitByStat: Record<StatName, CaseTrait> = {
+  hp: 'hp_poor',
+  attack: 'attack_poor',
+  defense: 'defense_poor',
+  specialAttack: 'special_attack_poor',
+  specialDefense: 'special_defense_poor',
+  speed: 'speed_poor',
+}
 
 type PokemonCaseProfile = {
   size: 'small' | 'medium' | 'large'
@@ -168,6 +277,23 @@ const shuffle = <T,>(items: T[]) => {
   return copy
 }
 
+const getStatValue = (pokemon: Pokemon, statName: StatName): number => pokemon[statName]
+
+const pickPriorityStat = (pokemon: Pokemon, priority: StatName[], mode: 'max' | 'min'): StatName => {
+  let selected = priority[0]
+  let selectedValue = getStatValue(pokemon, selected)
+
+  for (const statName of priority.slice(1)) {
+    const value = getStatValue(pokemon, statName)
+    if ((mode === 'max' && value > selectedValue) || (mode === 'min' && value < selectedValue)) {
+      selected = statName
+      selectedValue = value
+    }
+  }
+
+  return selected
+}
+
 export const getPokemonCaseTraits = (pokemon: Pokemon): Set<CaseTrait> => {
   const traits = new Set<CaseTrait>()
   const allTypes = pokemon.types
@@ -187,6 +313,11 @@ export const getPokemonCaseTraits = (pokemon: Pokemon): Set<CaseTrait> => {
       }
     }
   }
+
+  traits.add(focusTraitByStat[pickPriorityStat(pokemon, strongestStatPriority, 'max')])
+  traits.add(poorTraitByStat[pickPriorityStat(pokemon, weakestStatPriority, 'min')])
+
+  traits.add('any')
 
   return traits
 }
@@ -222,7 +353,7 @@ const scorePokemonAgainstTraits = (pokemonId: number, traits: CaseTrait[]) => {
   return traits.reduce((score, trait) => score + (pokemonTraits.has(trait) ? 1 : 0), 0)
 }
 
-const getTraitConclusionFragment = (trait: CaseTrait) => {
+const getTraitConclusionFragment = (trait: CaseTrait): string => {
   switch (trait) {
     case 'small_stature':
       return 'small and close to the ground'
@@ -254,10 +385,48 @@ const getTraitConclusionFragment = (trait: CaseTrait) => {
       return 'capable of scraping hard metal'
     case 'toxic_residue':
       return 'carrying a caustic or viscous trace'
+    case 'electrical_interference':
+      return 'disturbing lights or nearby devices'
+    case 'heavy_impact':
+      return 'heavy enough to leave dents or deep impressions'
+    case 'light_or_glow':
+      return 'leaving a faint glow or shimmer behind'
+    case 'water_displacement':
+      return 'disturbing water or splashing through it'
+    case 'stone_fragment':
+      return 'tracking chips of stone or grit through the scene'
+    case 'cold_aura':
+      return 'leaving a chill in the air around the clue'
+    case 'hp_focus':
+      return 'sturdy enough to keep going without slowing'
+    case 'attack_focus':
+      return 'forcing things open with direct physical power'
+    case 'defense_focus':
+      return 'braced well enough to push through obstacles'
+    case 'special_attack_focus':
+      return 'leaving signs of unusual energy rather than blunt force'
+    case 'special_defense_focus':
+      return 'staying calm in strange or uncomfortable conditions'
+    case 'speed_focus':
+      return 'moving faster than most suspects could manage'
+    case 'hp_poor':
+      return 'unlikely to keep up a long chase or extended effort'
+    case 'attack_poor':
+      return 'unlikely to rely on brute force'
+    case 'defense_poor':
+      return 'unlikely to handle heavy impact or rough surfaces well'
+    case 'special_attack_poor':
+      return 'unlikely to leave strong unusual energy traces'
+    case 'special_defense_poor':
+      return 'more easily rattled by strange surroundings'
+    case 'speed_poor':
+      return 'moving more slowly and deliberately than a fast suspect'
+    default:
+      return ''
   }
 }
 
-const getTraitDeductionText = (trait: CaseTrait) => {
+const getTraitDeductionText = (trait: CaseTrait): string => {
   switch (trait) {
     case 'small_stature':
       return 'This pointed toward a small Pokemon that stayed low.'
@@ -289,6 +458,44 @@ const getTraitDeductionText = (trait: CaseTrait) => {
       return 'This pointed toward a suspect capable of scraping metal.'
     case 'toxic_residue':
       return 'This suggested the culprit left a caustic or viscous trail.'
+    case 'electrical_interference':
+      return 'This pointed toward a culprit that disrupted lights or nearby devices.'
+    case 'heavy_impact':
+      return 'This pointed toward a heavier culprit capable of leaving dents or deep impressions.'
+    case 'light_or_glow':
+      return 'This suggested the culprit left behind a faint glow or shimmer.'
+    case 'water_displacement':
+      return 'This suggested the culprit moved directly through water and splashed it outward.'
+    case 'stone_fragment':
+      return 'This suggested the culprit carried stone grit or chipped hard surfaces nearby.'
+    case 'cold_aura':
+      return 'This suggested the culprit left an unusual cold patch at the scene.'
+    case 'hp_focus':
+      return 'This suggested the culprit had the stamina to keep moving without slowing.'
+    case 'attack_focus':
+      return 'This pointed toward a culprit that relied on direct physical force.'
+    case 'defense_focus':
+      return 'This suggested the culprit handled rough contact and obstacles well.'
+    case 'special_attack_focus':
+      return 'This suggested the culprit left stronger unusual energy traces than blunt physical damage.'
+    case 'special_defense_focus':
+      return 'This suggested the culprit stayed calm in strange or uncomfortable conditions.'
+    case 'speed_focus':
+      return 'This pointed toward a culprit that moved faster than most suspects could manage.'
+    case 'hp_poor':
+      return 'This suggested the culprit was less suited to a long chase or extended effort.'
+    case 'attack_poor':
+      return 'This suggested the culprit relied on access or finesse rather than brute force.'
+    case 'defense_poor':
+      return 'This suggested the culprit would avoid heavy impacts or rough surfaces.'
+    case 'special_attack_poor':
+      return 'This suggested the culprit was unlikely to leave strong unusual energy traces.'
+    case 'special_defense_poor':
+      return 'This suggested the culprit would be more easily rattled by strange surroundings.'
+    case 'speed_poor':
+      return 'This suggested the culprit moved more slowly and deliberately than a fast suspect.'
+    default:
+      return ''
   }
 }
 
@@ -449,6 +656,132 @@ const buildEvidenceFromTrait = (evidenceId: string, culprit: Pokemon) => {
         endExplanation: `The culprit scattered ${profile.textureWord} while moving overhead or through the brush.`,
         deductionText: 'This suggested the culprit moved through the air or struck from above.',
       }
+    case 'flicker-surge':
+      return {
+        title: 'Flicker Surge',
+        clueText: 'Nearby lights flickered just before the scene was disturbed.',
+        endExplanation: 'The culprit disrupted the nearby light or wiring while moving through.',
+        deductionText: 'This pointed toward a culprit that disrupted lights or nearby devices.',
+      }
+    case 'heavy-dent':
+      return {
+        title: 'Heavy Dent',
+        clueText: 'A deep dent had sunk into the surface beside the disturbance.',
+        endExplanation: 'The culprit hit or leaned hard enough to leave a deep impression behind.',
+        deductionText: 'This pointed toward a heavier culprit capable of leaving dents or deep impressions.',
+      }
+    case 'glow-dust':
+      return {
+        title: 'Glow Dust',
+        clueText: 'A faint shimmer lingered over the disturbed area.',
+        endExplanation: 'The culprit left a soft glowing trace hanging at the scene.',
+        deductionText: 'This suggested the culprit left behind a faint glow or shimmer.',
+      }
+    case 'splash-burst':
+      return {
+        title: 'Splash Burst',
+        clueText: 'Water had splashed outward in a sudden burst near the clue.',
+        endExplanation: 'The culprit moved directly through the water and kicked it wide around the scene.',
+        deductionText: 'This suggested the culprit moved directly through water and splashed it outward.',
+      }
+    case 'stone-chips':
+      return {
+        title: 'Stone Chips',
+        clueText: 'Tiny chips of grit and broken stone were scattered nearby.',
+        endExplanation: 'The culprit carried stone fragments or knocked them loose while passing through.',
+        deductionText: 'This suggested the culprit carried stone grit or chipped hard surfaces nearby.',
+      }
+    case 'steady-endurance':
+      return {
+        title: 'Steady Endurance',
+        clueText: 'The trail held steady farther than expected before it showed any hesitation.',
+        endExplanation: 'The culprit kept moving at a consistent pace without obvious slowdown.',
+        deductionText: 'This suggested the culprit had the stamina to keep moving without slowing.',
+      }
+    case 'cold-spot':
+      return {
+        title: 'Cold Spot',
+        clueText: 'The air around the clue felt unnaturally cold.',
+        endExplanation: 'The culprit left a lingering cold patch around the scene after moving on.',
+        deductionText: 'This suggested the culprit left an unusual cold patch at the scene.',
+      }
+    case 'forceful-entry':
+      return {
+        title: 'Forceful Entry',
+        clueText: 'The object looked forced aside with direct physical power, not delicate handling.',
+        endExplanation: 'The culprit relied on blunt physical force while getting through the scene.',
+        deductionText: 'This pointed toward a culprit that relied on direct physical force.',
+      }
+    case 'braced-tracks':
+      return {
+        title: 'Braced Tracks',
+        clueText: 'The route suggested the culprit pushed through rough footing without losing balance.',
+        endExplanation: 'The culprit handled contact and resistance better than a fragile suspect would have.',
+        deductionText: 'This suggested the culprit handled rough contact and obstacles well.',
+      }
+    case 'energy-bloom':
+      return {
+        title: 'Energy Bloom',
+        clueText: 'An unusual flare of residual energy seemed stronger than the physical damage around it.',
+        endExplanation: 'The culprit left an outsized energy trace compared with the blunt impact at the scene.',
+        deductionText: 'This suggested the culprit left stronger unusual energy traces than blunt physical damage.',
+      }
+    case 'weathered-calm':
+      return {
+        title: 'Weathered Calm',
+        clueText: 'The trail stayed oddly composed through an area most suspects would find uncomfortable.',
+        endExplanation: 'The culprit moved through the strange conditions without obvious hesitation.',
+        deductionText: 'This suggested the culprit stayed calm in strange or uncomfortable conditions.',
+      }
+    case 'swift-pass':
+      return {
+        title: 'Swift Pass',
+        clueText: 'The signs suggested the culprit crossed the area faster than expected.',
+        endExplanation: 'The culprit covered the scene quickly enough to leave only a short, sharp disturbance.',
+        deductionText: 'This pointed toward a culprit that moved faster than most suspects could manage.',
+      }
+    case 'winded-pause':
+      return {
+        title: 'Winded Pause',
+        clueText: 'The trail suggested the culprit slowed sooner than expected during the escape.',
+        endExplanation: 'The culprit likely could not keep up a long push without losing pace.',
+        deductionText: 'This suggested the culprit was less suited to a long chase or extended effort.',
+      }
+    case 'gentle-handling':
+      return {
+        title: 'Gentle Handling',
+        clueText: 'The scene showed access without the kind of brute-force damage a stronger suspect would leave.',
+        endExplanation: 'The culprit got through by position or timing rather than raw power.',
+        deductionText: 'This suggested the culprit relied on access or finesse rather than brute force.',
+      }
+    case 'brittle-pass':
+      return {
+        title: 'Brittle Pass',
+        clueText: 'The route avoided the roughest footing, as if the culprit could not risk a hard impact.',
+        endExplanation: 'The culprit seemed less suited to taking heavy knocks or rough contact.',
+        deductionText: 'This suggested the culprit would avoid heavy impacts or rough surfaces.',
+      }
+    case 'faded-surge':
+      return {
+        title: 'Faded Surge',
+        clueText: 'Any unusual energy at the scene was faint compared with the rest of the disturbance.',
+        endExplanation: 'The culprit did not leave the kind of strong energy trace a more forceful special attacker would.',
+        deductionText: 'This suggested the culprit was unlikely to leave strong unusual energy traces.',
+      }
+    case 'shaken-focus':
+      return {
+        title: 'Shaken Focus',
+        clueText: 'The trail looked more hesitant in the strange part of the scene than it did elsewhere.',
+        endExplanation: 'The culprit seemed more easily rattled by unusual surroundings than a calm specialist would be.',
+        deductionText: 'This suggested the culprit would be more easily rattled by strange surroundings.',
+      }
+    case 'slow-route':
+      return {
+        title: 'Slow Route',
+        clueText: 'The path through the scene was deliberate and slow rather than quick and direct.',
+        endExplanation: 'The culprit moved more carefully and slowly than a fast suspect would have.',
+        deductionText: 'This suggested the culprit moved more slowly and deliberately than a fast suspect.',
+      }
     default:
       return {
         title: 'Strange Trace',
@@ -588,6 +921,42 @@ const getMismatchReason = (suspectId: number, relevantTraits: CaseTrait[]) => {
       return 'Did not match the signs of metal scraping.'
     case 'toxic_residue':
       return 'Did not match the caustic or viscous trail.'
+    case 'electrical_interference':
+      return 'Did not fit the clues pointing to disturbed lights or nearby devices.'
+    case 'heavy_impact':
+      return 'Did not fit the heavy dents or deep impressions at the scene.'
+    case 'light_or_glow':
+      return 'Did not match the faint glowing residue left behind.'
+    case 'water_displacement':
+      return 'Did not match the splashed water and disturbed wet ground.'
+    case 'stone_fragment':
+      return 'Did not fit the stone chips and grit left behind.'
+    case 'cold_aura':
+      return 'Did not match the unusual chill left at the scene.'
+    case 'hp_focus':
+      return 'Did not fit the signs of a suspect with stronger endurance.'
+    case 'attack_focus':
+      return 'Did not fit the direct-force clues found at the scene.'
+    case 'defense_focus':
+      return 'Did not fit the clues suggesting a sturdier, better-braced suspect.'
+    case 'special_attack_focus':
+      return 'Did not fit the unusual energy traces left at the scene.'
+    case 'special_defense_focus':
+      return 'Did not fit the signs that the culprit stayed calm in strange conditions.'
+    case 'speed_focus':
+      return 'Did not fit the clues pointing to a faster-moving suspect.'
+    case 'hp_poor':
+      return 'Did not fit the signs that the culprit would tire more quickly.'
+    case 'attack_poor':
+      return 'Did not fit the lighter, less forceful handling implied by the scene.'
+    case 'defense_poor':
+      return 'Did not fit the clues suggesting a more fragile suspect avoided rough contact.'
+    case 'special_attack_poor':
+      return 'Did not fit the weaker unusual-energy signature left behind.'
+    case 'special_defense_poor':
+      return 'Did not fit the signs that the culprit was more easily rattled by the surroundings.'
+    case 'speed_poor':
+      return 'Did not fit the slower, more deliberate route through the scene.'
     default:
       return 'The collected clues did not support this suspect strongly enough.'
   }
@@ -605,13 +974,15 @@ const joinFragments = (fragments: string[]) => {
   return `${fragments.slice(0, -1).join(', ')}, and ${fragments.at(-1)}`
 }
 
-const pickEvidenceForAction = (pool: ActionEvidencePool, culpritTraits: Set<CaseTrait>): string => {
+const pickEvidenceForAction = (
+  pool: ActionEvidencePool,
+  culpritTraits: Set<CaseTrait>,
+  usedEvidenceIds: Set<string>,
+): string => {
   const matching = pool.pool.filter((entry) => culpritTraits.has(entry.trait))
-  const chosen = matching.length > 0
-    ? matching[Math.floor(Math.random() * matching.length)]
-    : pool.pool[Math.floor(Math.random() * pool.pool.length)]
-
-  return chosen.evidenceId
+  const unusedMatching = matching.filter((entry) => !usedEvidenceIds.has(entry.evidenceId))
+  const candidates = unusedMatching.length > 0 ? unusedMatching : matching
+  return candidates[Math.floor(Math.random() * candidates.length)]!.evidenceId
 }
 
 const buildSolution = (
@@ -631,14 +1002,16 @@ const buildSolution = (
         (action) => action.evidenceId && (action.outcomeType === 'evidence' || action.outcomeType === 'witness')
       )
       if (!primaryAction) return []
-      const evidenceItem = evidenceById.get(primaryAction.evidenceId)
+      const evidenceId = primaryAction.evidenceId
+      if (!evidenceId) return []
+      const evidenceItem = evidenceById.get(evidenceId)
       if (!evidenceItem) return []
       return [{
         locationId: location.id,
         evidenceTitle: primaryAction.evidenceTitle ?? evidenceItem.title,
         clueText: primaryAction.evidenceText ?? evidenceItem.clueText,
         deductionText:
-          generatedEvidenceById.get(primaryAction.evidenceId)?.deductionText ??
+          generatedEvidenceById.get(evidenceId)?.deductionText ??
           getTraitDeductionText(evidenceItem.hiddenTrait as CaseTrait),
       }]
     })
@@ -652,7 +1025,7 @@ const buildSolution = (
 
   return {
     culpritRevealText: `${culprit.name} was behind the case.`,
-    detectiveConclusion: `The culprit had to be ${joinFragments(relevantTraits.map(getTraitConclusionFragment))}. ${culprit.name} best fit the collected evidence.`,
+    detectiveConclusion: `The culprit had to be ${joinFragments(relevantTraits.map(getTraitConclusionFragment).filter((fragment) => fragment.length > 0))}. ${culprit.name} best fit the collected evidence.`,
     evidenceExplanation,
     clearedSuspects,
   }
@@ -712,10 +1085,12 @@ export const generateCaseLineup = (
 
     const culpritTraits = getPokemonCaseTraits(culprit)
     const actionEvidenceMap = new Map<string, string>()
+    const usedEvidenceIds = new Set<string>()
 
     for (const slot of actionEvidencePools) {
-      const chosenId = pickEvidenceForAction(slot, culpritTraits)
+      const chosenId = pickEvidenceForAction(slot, culpritTraits, usedEvidenceIds)
       actionEvidenceMap.set(slot.actionId, chosenId)
+      usedEvidenceIds.add(chosenId)
     }
 
     const overriddenLocations = locations.map((location) => ({

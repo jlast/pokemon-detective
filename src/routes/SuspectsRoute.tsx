@@ -14,7 +14,6 @@ interface SuspectsRouteProps {
 }
 
 export function SuspectsRoute({
-  attemptsLeft,
   currentCase,
   wrongAccusationIds,
   inspectSuspect,
@@ -25,7 +24,6 @@ export function SuspectsRoute({
   return (
     <InvestigationRouteFrame
       layout="none"
-      attemptsLeft={attemptsLeft}
       currentCase={currentCase}
       startNewCase={startNewCase}
       giveUp={giveUp}

@@ -106,7 +106,7 @@ const serializeDataFile = (pokemonEntries) => {
 
   return `export type PokemonType =\n${typeUnion
     .map((type) => `  | '${type}'`)
-    .join('\n')}\n\nexport type PokemonRegion = 'Kanto' | 'Johto' | 'Hoenn' | 'Sinnoh'\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n}\n\nexport const pokemonData: Pokemon[] = ${JSON.stringify(pokemonEntries, null, 2)}\n`
+    .join('\n')}\n\nexport type PokemonRegion = 'Kanto' | 'Johto' | 'Hoenn' | 'Sinnoh'\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite?: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/\${pokemonId}.png\`\n\nexport const pokemonData: Pokemon[] = ${JSON.stringify(pokemonEntries, null, 2)}\n`
 }
 
 const main = async () => {
@@ -144,6 +144,7 @@ const main = async () => {
     const pokemon = pokemonDetails[index]
     const species = speciesDetails[index]
     const evolution = evolutionMap.get(id) ?? createEmptyEvolutionEntry()
+    const statByName = Object.fromEntries(pokemon.stats.map((entry) => [entry.stat.name, entry.base_stat]))
     const types = pokemon.types
       .slice()
       .sort((left, right) => left.slot - right.slot)
@@ -162,6 +163,12 @@ const main = async () => {
       types,
       heightM: pokemon.height / 10,
       weightKg: pokemon.weight / 10,
+      hp: statByName.hp,
+      attack: statByName.attack,
+      defense: statByName.defense,
+      specialAttack: statByName['special-attack'],
+      specialDefense: statByName['special-defense'],
+      speed: statByName.speed,
       evolutionStage: Math.min(evolution.stage, 3),
       evolutionLineStages: Math.min(evolution.lineStages, 3),
       evolvesByStone: evolution.evolvesByStone,
