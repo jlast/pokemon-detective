@@ -12,32 +12,26 @@ provider "aws" {
   region = var.region
 }
 
-# S3 bucket to host the static site
+# ─── S3 + CloudFront for static site ─────────────────────────────────────────
+
 resource "aws_s3_bucket" "site" {
   bucket = var.bucket_name
   tags   = var.tags
 }
 
-# Block all public access — CloudFront OAC is the only access path
 resource "aws_s3_bucket_public_access_block" "site" {
   bucket = aws_s3_bucket.site.id
-
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
 
-# Disable ACLs (use bucket policies instead)
 resource "aws_s3_bucket_ownership_controls" "site" {
   bucket = aws_s3_bucket.site.id
-
-  rule {
-    object_ownership = "BucketOwnerEnforced"
-  }
+  rule { object_ownership = "BucketOwnerEnforced" }
 }
 
-# CloudFront Origin Access Control — the secure way to let CloudFront read S3
 resource "aws_cloudfront_origin_access_control" "site" {
   name                              = "${var.project_name}-oac"
   description                       = "OAC for ${var.project_name}"
@@ -46,7 +40,6 @@ resource "aws_cloudfront_origin_access_control" "site" {
   signing_protocol                  = "sigv4"
 }
 
-# Bucket policy allowing only CloudFront to read objects
 resource "aws_s3_bucket_policy" "cloudfront_oac" {
   bucket = aws_s3_bucket.site.id
   policy = data.aws_iam_policy_document.cloudfront_oac.json
@@ -56,12 +49,10 @@ data "aws_iam_policy_document" "cloudfront_oac" {
   statement {
     actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.site.arn}/*"]
-
     principals {
       type        = "Service"
       identifiers = ["cloudfront.amazonaws.com"]
     }
-
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"
@@ -70,7 +61,161 @@ data "aws_iam_policy_document" "cloudfront_oac" {
   }
 }
 
-# CloudFront distribution
+# ─── DynamoDB ─────────────────────────────────────────────────────────────────
+
+resource "aws_dynamodb_table" "daily_sessions" {
+  name         = var.dynamodb_table_name
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "sessionId"
+
+  attribute {
+    name = "sessionId"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
+
+  tags = var.tags
+}
+
+# ─── Lambda IAM ───────────────────────────────────────────────────────────────
+
+resource "aws_iam_role" "lambda" {
+  name = "${var.project_name}-api-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = { Service = "lambda.amazonaws.com" }
+    }]
+  })
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy" "lambda_dynamodb" {
+  name = "${var.project_name}-api-dynamodb"
+  role = aws_iam_role.lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+      ]
+      Resource = aws_dynamodb_table.daily_sessions.arn
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "lambda_logs" {
+  name = "${var.project_name}-api-logs"
+  role = aws_iam_role.lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+      ]
+      Resource = "arn:aws:logs:*:*:*"
+    }]
+  })
+}
+
+# ─── Lambda function ──────────────────────────────────────────────────────────
+
+resource "aws_lambda_function" "api" {
+  filename         = var.lambda_zip_path
+  function_name    = "${var.project_name}-api"
+  role             = aws_iam_role.lambda.arn
+  handler          = "handler.handler"
+  runtime          = "nodejs22.x"
+  timeout          = 30
+  memory_size      = 256
+  source_code_hash = filebase64sha256(var.lambda_zip_path)
+
+  environment {
+    variables = {
+      TABLE_NAME = aws_dynamodb_table.daily_sessions.name
+    }
+  }
+
+  tags = var.tags
+}
+
+resource "aws_lambda_permission" "api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.api.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*"
+}
+
+# ─── API Gateway (REST) — single proxy resource ──────────────────────────────
+
+resource "aws_api_gateway_rest_api" "api" {
+  name  = "${var.project_name}-api"
+  tags  = var.tags
+}
+
+resource "aws_api_gateway_resource" "api" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+  path_part   = "api"
+}
+
+resource "aws_api_gateway_resource" "proxy" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id   = aws_api_gateway_resource.api.id
+  path_part   = "{proxy+}"
+}
+
+resource "aws_api_gateway_method" "proxy_any" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.proxy.id
+  http_method   = "ANY"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "proxy_any" {
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.proxy.id
+  http_method             = aws_api_gateway_method.proxy_any.http_method
+  type                    = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri                     = aws_lambda_function.api.invoke_arn
+}
+
+resource "aws_api_gateway_deployment" "api" {
+  depends_on = [aws_api_gateway_integration.proxy_any]
+
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  stage_name  = "prod"
+
+  triggers = {
+    redeployment = sha1(jsonencode([
+      aws_api_gateway_rest_api.api.body,
+      aws_lambda_function.api.source_code_hash,
+    ]))
+  }
+
+  lifecycle { create_before_destroy = true }
+}
+
+# ─── CloudFront ──────────────────────────────────────────────────────────────
+
 resource "aws_cloudfront_distribution" "site" {
   enabled             = true
   is_ipv6_enabled     = true
@@ -78,12 +223,28 @@ resource "aws_cloudfront_distribution" "site" {
   price_class         = var.price_class
   tags                = var.tags
 
+  # S3 origin for static assets
   origin {
     domain_name              = aws_s3_bucket.site.bucket_regional_domain_name
     origin_id                = "s3-${aws_s3_bucket.site.id}"
     origin_access_control_id = aws_cloudfront_origin_access_control.site.id
   }
 
+  # API Gateway origin for API requests
+  origin {
+    domain_name = "${aws_api_gateway_rest_api.api.id}.execute-api.${var.region}.amazonaws.com"
+    origin_id   = "api-gateway-${aws_api_gateway_rest_api.api.id}"
+    origin_path = "/prod"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  # Default behavior: S3 static files
   default_cache_behavior {
     target_origin_id       = "s3-${aws_s3_bucket.site.id}"
     viewer_protocol_policy = "redirect-to-https"
@@ -93,9 +254,7 @@ resource "aws_cloudfront_distribution" "site" {
 
     forwarded_values {
       query_string = false
-      cookies {
-        forward = "none"
-      }
+      cookies { forward = "none" }
     }
 
     min_ttl     = 0
@@ -103,7 +262,27 @@ resource "aws_cloudfront_distribution" "site" {
     max_ttl     = 86400
   }
 
-  # SPA routing: serve index.html for 403 (DirectoryList) and 404
+  # API behavior: forward to API Gateway, don't cache
+  ordered_cache_behavior {
+    path_pattern           = "/api/*"
+    target_origin_id       = "api-gateway-${aws_api_gateway_rest_api.api.id}"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    compress               = true
+
+    forwarded_values {
+      query_string = true
+      headers      = ["Origin", "Authorization", "Content-Type"]
+      cookies { forward = "all" }
+    }
+
+    min_ttl     = 0
+    default_ttl = 0
+    max_ttl     = 0
+  }
+
+  # SPA routing: serve index.html for 403 and 404
   custom_error_response {
     error_code         = 403
     response_code      = 200
@@ -116,11 +295,8 @@ resource "aws_cloudfront_distribution" "site" {
     response_page_path = "/index.html"
   }
 
-  # Restrict viewer access to the US/Canada/Europe (PriceClass_100 default)
   restrictions {
-    geo_restriction {
-      restriction_type = "none"
-    }
+    geo_restriction { restriction_type = "none" }
   }
 
   viewer_certificate {

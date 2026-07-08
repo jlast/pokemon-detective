@@ -1,2 +1,3 @@
-bucket_name = "pokemon-detective-your-unique-suffix"
-region      = "us-east-1"
+bucket_name      = "pokemon-detective-your-unique-suffix"
+region           = "us-east-1"
+lambda_zip_path  = "../api/dist/handler.zip"

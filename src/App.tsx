@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import './App.css'
 import { DesktopSidebar } from './components/DesktopSidebar'
-import { createCaseById, getCaseList } from './game/cases'
-import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from './game/caseModel'
 import { Header } from './components/Header'
 import { AccuseRoute } from './routes/AccuseRoute'
 import { CaseOverviewRoute } from './routes/CaseOverviewRoute'
@@ -12,39 +10,85 @@ import { EndingRoute } from './routes/EndingRoute'
 import { InvestigationLocationRoute } from './routes/InvestigationLocationRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
+import { startDaily, investigate as apiInvestigate, accuse as apiAccuse } from './api'
+import type { SessionData } from './api'
+import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from './game/caseModel'
+
+const SESSION_STORAGE_KEY = 'daily-session-id'
 
 function App() {
   const location = useLocation()
   const navigate = useNavigate()
-  const pickRandomCase = (): Case => {
-    const cases = getCaseList()
-    const chosen = cases[Math.floor(Math.random() * cases.length)]
-    return createCaseById(chosen.id)!
+
+  const [session, setSession] = useState<SessionData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  const wrongAccusationIds = useMemo(() => {
+    if (!session) return []
+    if (session.status === 'solved' && session.accusationHistory.length > 0) {
+      return session.accusationHistory.slice(0, -1)
+    }
+    return session.accusationHistory
+  }, [session])
+
+  const [suspectNotes, setSuspectNotes] = useState<Map<number, {
+    noteStatus: SuspectNoteStatus
+    inspectedGroups: Record<SuspectInvestigationGroup, boolean>
+  }>>(new Map())
+
+  const updateSuspectNote = (
+    pokemonId: number,
+    updater: (prev: {
+      noteStatus: SuspectNoteStatus
+      inspectedGroups: Record<SuspectInvestigationGroup, boolean>
+    }) => {
+      noteStatus: SuspectNoteStatus
+      inspectedGroups: Record<SuspectInvestigationGroup, boolean>
+    },
+  ) => {
+    setSuspectNotes((prev) => {
+      const next = new Map(prev)
+      const current = next.get(pokemonId) ?? {
+        noteStatus: 'suspect' as const,
+        inspectedGroups: { appearance: false, records: false, habitat: false, ability: false },
+      }
+      next.set(pokemonId, updater(current))
+      return next
+    })
   }
 
-  const [currentCase, setCurrentCase] = useState<Case>(() => pickRandomCase())
-  const [, setHasStartedCase] = useState(false)
-  const [attemptsLeft, setAttemptsLeft] = useState(3)
+  const currentCase: Case | null = useMemo(() => {
+    if (!session) return null
+    const c = JSON.parse(JSON.stringify(session.case)) as Case
+    c.suspects = c.suspects.map((s) => {
+      const notes = suspectNotes.get(s.pokemonId)
+      if (!notes) return s
+      return {
+        ...s,
+        noteStatus: notes.noteStatus,
+        inspectedGroups: notes.inspectedGroups,
+        manuallyRuledOut: s.manuallyRuledOut || notes.noteStatus === 'ruled-out',
+      }
+    })
+    return c
+  }, [session, suspectNotes])
+
+  const attemptsLeft = session?.accusationsRemaining ?? 0
+
+  const culpritSuspect: Suspect | null = useMemo(() => {
+    if (!currentCase || currentCase.culpritPokemonId === -1) return null
+    return currentCase.suspects.find((s) => s.pokemonId === currentCase.culpritPokemonId) ?? null
+  }, [currentCase])
+
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null)
   const [accusationTargetId, setAccusationTargetId] = useState<number | null>(null)
-  const [wrongAccusationIds, setWrongAccusationIds] = useState<number[]>([])
   const [lastInvestigatedLocationId, setLastInvestigatedLocationId] = useState<string | null>(null)
   const [, setActivePanel] = useState<'investigation' | 'suspects'>('investigation')
-  const accusationTarget =
-    currentCase.suspects.find((suspect) => suspect.pokemonId === accusationTargetId) ?? null
-  const culpritSuspect =
-    currentCase.suspects.find((suspect) => suspect.pokemonId === currentCase.culpritPokemonId) ?? null
+
+  const accusationTarget = currentCase?.suspects.find((s) => s.pokemonId === accusationTargetId) ?? null
+
   const currentRoute = location.pathname
   const activeSidebarSection = currentRoute === '/' ? 'home' : ''
-
-  const updateSuspect = (pokemonId: number, updater: (suspect: Suspect) => Suspect) => {
-    setCurrentCase((caseState) => ({
-      ...caseState,
-      suspects: caseState.suspects.map((suspect) =>
-        suspect.pokemonId === pokemonId ? updater(suspect) : suspect,
-      ),
-    }))
-  }
 
   const clearScreenState = () => {
     setSelectedLocationId(null)
@@ -56,41 +100,59 @@ function App() {
     setActivePanel('investigation')
   }
 
-  const startNewCase = () => {
-    setCurrentCase(pickRandomCase())
-    setHasStartedCase(false)
-    setAttemptsLeft(3)
-    setWrongAccusationIds([])
-    setLastInvestigatedLocationId(null)
+  const loadSession = useCallback(async (sessionId?: string) => {
+    setLoading(true)
+    try {
+      const data = await startDaily(sessionId)
+      localStorage.setItem(SESSION_STORAGE_KEY, data.sessionId)
+      setSession(data)
+    } catch (err) {
+      console.error('Failed to load daily puzzle:', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    const savedId = localStorage.getItem(SESSION_STORAGE_KEY)
+    loadSession(savedId || undefined)
+  }, [loadSession])
+
+  const startNewCase = async () => {
+    localStorage.removeItem(SESSION_STORAGE_KEY)
+    setSuspectNotes(new Map())
     resetTransientUi()
+    await loadSession()
     navigate('/investigation')
   }
 
   const startInvestigation = () => {
-    setHasStartedCase(true)
-    setActivePanel('investigation')
     navigate('/investigation')
   }
 
   const toggleRuledOut = (suspectId: number) => {
-    updateSuspect(suspectId, (suspect) => ({
-      ...suspect,
-      manuallyRuledOut: !suspect.manuallyRuledOut,
-      noteStatus: suspect.manuallyRuledOut ? 'suspect' : 'ruled-out',
+    updateSuspectNote(suspectId, (prev) => ({
+      noteStatus: prev.noteStatus === 'ruled-out' ? 'suspect' : 'ruled-out',
+      inspectedGroups: prev.inspectedGroups,
     }))
   }
 
   const setSuspectNoteStatus = (suspectId: number, noteStatus: SuspectNoteStatus) => {
-    updateSuspect(suspectId, (suspect) => ({
-      ...suspect,
+    updateSuspectNote(suspectId, (prev) => ({
       noteStatus,
-      manuallyRuledOut: noteStatus === 'ruled-out',
+      inspectedGroups: prev.inspectedGroups,
     }))
   }
 
   const inspectSuspect = (suspectId: number) => {
-    setActivePanel('suspects')
     navigate(`/suspects/${suspectId}`)
+  }
+
+  const inspectGroup = (suspectId: number, groupKey: SuspectInvestigationGroup) => {
+    updateSuspectNote(suspectId, (prev) => ({
+      ...prev,
+      inspectedGroups: { ...prev.inspectedGroups, [groupKey]: true },
+    }))
   }
 
   const openAccusation = (suspectId: number) => {
@@ -104,123 +166,77 @@ function App() {
     navigate(suspectId ? `/suspects/${suspectId}` : '/suspects')
   }
 
-  const confirmAccusation = () => {
-    if (!accusationTarget) {
-      return
+  const confirmAccusation = async () => {
+    if (!session || !accusationTarget) return
+
+    try {
+      const data = await apiAccuse(session.sessionId, accusationTarget.pokemonId)
+      setSession(data)
+      setAccusationTargetId(null)
+
+      updateSuspectNote(accusationTarget.pokemonId, (prev) => ({
+        ...prev,
+        noteStatus: 'ruled-out',
+      }))
+
+      if (data.status === 'solved') {
+        resetTransientUi()
+        navigate('/ending/solved')
+      } else if (data.status === 'failed') {
+        resetTransientUi()
+        navigate('/ending/failed')
+      } else {
+        navigate(`/suspects/${accusationTarget.pokemonId}`)
+      }
+    } catch (err) {
+      console.error('Accusation failed:', err)
     }
-
-    if (accusationTarget.pokemonId === currentCase.culpritPokemonId) {
-      setCurrentCase((caseState) => ({ ...caseState, status: 'solved' }))
-      resetTransientUi()
-      navigate('/ending/solved')
-      return
-    }
-
-    const nextAttempts = attemptsLeft - 1
-
-    updateSuspect(accusationTarget.pokemonId, (suspect) => ({
-      ...suspect,
-      manuallyRuledOut: true,
-      noteStatus: 'ruled-out',
-    }))
-
-    setWrongAccusationIds((ids) =>
-      ids.includes(accusationTarget.pokemonId) ? ids : [...ids, accusationTarget.pokemonId],
-    )
-    setAttemptsLeft(nextAttempts)
-    setAccusationTargetId(null)
-
-    if (nextAttempts <= 0) {
-      setCurrentCase((caseState) => ({ ...caseState, status: 'failed' }))
-      resetTransientUi()
-      navigate('/ending/failed')
-      return
-    }
-
-    navigate(`/suspects/${accusationTarget.pokemonId}`)
-  }
-
-  const inspectGroup = (suspectId: number, groupKey: SuspectInvestigationGroup) => {
-    updateSuspect(suspectId, (suspect) => ({
-      ...suspect,
-      inspectedGroups: {
-        ...suspect.inspectedGroups,
-        [groupKey]: true,
-      },
-    }))
   }
 
   const openLocation = (locationId: string) => {
     setSelectedLocationId(locationId)
-    setActivePanel('investigation')
     navigate(`/investigation/${locationId}`)
   }
 
-  const investigateLocation = (locationId: string, actionId: string) => {
-    const location = currentCase.locations.find((locationItem) => locationItem.id === locationId)
-    const selectedAction = location?.actions.find((action) => action.id === actionId) ?? null
+  const investigateLocation = async (locationId: string, actionId: string) => {
+    if (!session) return
 
-    if (location && selectedAction && !location.investigated) {
-      setCurrentCase((caseState) => ({
-        ...caseState,
-        locations: caseState.locations.map((locationItem) =>
-          locationItem.id === locationId
-            ? {
-                ...locationItem,
-                investigated: true,
-                selectedActionId: actionId,
-                observationText: selectedAction.observationText,
-                evidenceTitle: selectedAction.evidenceTitle ?? undefined,
-                evidenceText: selectedAction.evidenceText ?? undefined,
-              }
-            : locationItem,
-        ),
-        evidence: caseState.evidence.map((evidenceItem) =>
-          evidenceItem.id === selectedAction.evidenceId && (selectedAction.outcomeType === 'evidence' || selectedAction.outcomeType === 'witness')
-            ? { ...evidenceItem, discovered: true }
-            : evidenceItem,
-        ),
-      }))
+    try {
+      const data = await apiInvestigate(session.sessionId, locationId, actionId)
+      setSession(data)
       setLastInvestigatedLocationId(locationId)
+    } catch (err) {
+      console.error('Investigation failed:', err)
     }
   }
 
-  useEffect(() => {
-    if (currentRoute === '/investigation') {
-      clearScreenState()
-      setHasStartedCase(true)
-      setActivePanel('investigation')
-      return
-    }
+  const giveUp = () => {
+    if (!currentCase) return
+    navigate('/ending/gave-up')
+  }
 
-    if (currentRoute === '/') {
+  useEffect(() => {
+    if (!currentCase) return
+
+    if (currentRoute === '/investigation' || currentRoute === '/') {
       clearScreenState()
-      setHasStartedCase(true)
-      setActivePanel('investigation')
       return
     }
 
     if (currentRoute === '/suspects') {
       clearScreenState()
-      setHasStartedCase(true)
-      setActivePanel('suspects')
       return
     }
 
     if (currentRoute.startsWith('/suspects/')) {
       clearScreenState()
-      setHasStartedCase(true)
-      setActivePanel('suspects')
       return
     }
 
     if (currentRoute.startsWith('/investigation/')) {
       const locationId = currentRoute.replace('/investigation/', '')
-
-      if (currentCase.locations.some((locationItem) => locationItem.id === locationId)) {
+      if (currentCase.locations.some((loc) => loc.id === locationId)) {
         clearScreenState()
-        setHasStartedCase(true)
-        setActivePanel('investigation')
         setSelectedLocationId(locationId)
       }
       return
@@ -228,35 +244,30 @@ function App() {
 
     if (currentRoute.startsWith('/accuse/')) {
       const suspectId = Number(currentRoute.replace('/accuse/', ''))
-
-      if (currentCase.suspects.some((suspect) => suspect.pokemonId === suspectId)) {
-        clearScreenState()
-        setHasStartedCase(true)
-        setActivePanel('suspects')
+      if (currentCase.suspects.some((s) => s.pokemonId === suspectId)) {
         setAccusationTargetId(suspectId)
       }
       return
     }
+  }, [currentCase, currentRoute])
 
-    if (currentRoute === '/ending/solved' && currentCase.status === 'solved') {
-      clearScreenState()
-      return
-    }
-
-    if (currentRoute === '/ending/failed' && currentCase.status === 'failed') {
-      clearScreenState()
-      return
-    }
-
-    if (currentRoute === '/ending/gave-up' && currentCase.status === 'gave-up') {
-      clearScreenState()
-    }
-  }, [currentCase.locations, currentCase.status, currentCase.suspects, currentRoute])
-
-  const giveUp = () => {
-    setCurrentCase((caseState) => ({ ...caseState, status: 'gave-up' }))
-    resetTransientUi()
-    navigate('/ending/gave-up')
+  if (loading || !currentCase) {
+    return (
+      <main className="app-shell">
+        <DesktopSidebar
+          activeSection=""
+          onSelectHome={() => {}}
+          onSelectCase={() => {}}
+          onSelectHowToPlay={() => {}}
+          onSelectLogin={() => {}}
+        />
+        <div className="app-content">
+          <div className="main-layout-single">
+            <p className="placeholder-page">Loading today's puzzle...</p>
+          </div>
+        </div>
+      </main>
+    )
   }
 
   const sharedInvestigationRouteProps = {
@@ -347,8 +358,6 @@ function App() {
                 <Navigate to="/ending/solved" replace />
               ) : currentCase.status === 'failed' ? (
                 <Navigate to="/ending/failed" replace />
-              ) : currentCase.status === 'gave-up' ? (
-                <Navigate to="/ending/gave-up" replace />
               ) : (
                 <Navigate to="/suspects" replace />
               )

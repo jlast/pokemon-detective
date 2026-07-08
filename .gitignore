@@ -28,3 +28,7 @@ terraform/.terraform*
 terraform/terraform.tfvars
 terraform/*.tfstate
 terraform/*.tfstate.*
+
+# API / Lambda
+api/dist
+api/node_modules

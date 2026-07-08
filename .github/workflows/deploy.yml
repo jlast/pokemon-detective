@@ -15,18 +15,41 @@ jobs:
           node-version: 22
           cache: npm
 
+      # ── Build client ──
       - run: npm ci
-
       - run: npm run build
 
+      # ── Build Lambda ──
+      - working-directory: api
+        run: npm ci
+
+      - working-directory: api
+        run: npx esbuild src/handler.ts --bundle --platform=node --target=node22 --outfile=dist/handler.js
+
+      - name: Package Lambda
+        working-directory: api
+        run: |
+          mkdir -p dist
+          cd dist
+          zip -r handler.zip handler.js
+
+      # ── AWS auth ──
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      # ── Deploy client to S3 ──
       - run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }}/ --delete
 
+      # ── Deploy Lambda ──
+      - run: >
+          aws lambda update-function-code
+          --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }}
+          --zip-file fileb://api/dist/handler.zip
+
+      # ── Invalidate CloudFront cache ──
       - run: >
           aws cloudfront create-invalidation
           --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
