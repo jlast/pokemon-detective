@@ -105,3 +105,23 @@ export interface Case {
   solution?: CaseSolution
   status: CaseStatus
 }
+
+export function getDiscoveredEvidence(caseData: Case): Evidence[] {
+  const discovered: Evidence[] = []
+  for (const location of caseData.locations) {
+    if (location.investigated && location.selectedActionId && location.evidenceId) {
+      const action = location.actions.find((a) => a.id === location.selectedActionId)
+      if (action && action.evidenceId) {
+        discovered.push({
+          id: action.evidenceId,
+          title: location.evidenceTitle ?? action.evidenceTitle ?? 'Unknown',
+          clueText: location.evidenceText ?? action.evidenceText ?? '',
+          hiddenTrait: '',
+          endExplanation: '',
+          discovered: true,
+        })
+      }
+    }
+  }
+  return discovered
+}

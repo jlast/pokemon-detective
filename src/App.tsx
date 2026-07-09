@@ -307,11 +307,6 @@ function App() {
               }
             : l,
         ),
-        evidence: action.evidenceId
-          ? caseData.evidence.map((e) =>
-              e.id === action.evidenceId ? { ...e, discovered: true } : e,
-            )
-          : caseData.evidence,
       })
       setInvestigationsRemaining(investigationsRemaining - 1)
       setLastInvestigatedLocationId(locationId)

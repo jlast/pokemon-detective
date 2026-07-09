@@ -1,4 +1,4 @@
-import type { Case } from '../../game/caseModel'
+import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
 import { SuspectCard } from './SuspectCard'
 
 interface SuspectsProps {
@@ -12,7 +12,7 @@ export function SuspectsPanel({
   wrongAccusationIds,
   inspectSuspect,
 }: SuspectsProps) {
-  const discoveredEvidence = currentCase.evidence.filter((evidenceItem) => evidenceItem.discovered)
+  const discoveredEvidence = getDiscoveredEvidence(currentCase)
 
   return (
     <section className={`notebook-card evidence-board mobile-section`}>

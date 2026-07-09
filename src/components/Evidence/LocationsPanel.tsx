@@ -1,4 +1,4 @@
-import type { Case } from '../../game/caseModel'
+import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
 import { InvestigationLocationCard } from './InvestigationLocationCard'
 
 const getRemainingInvestigationCopy = (remainingActions: number) => {
@@ -72,8 +72,8 @@ export function LocationsPanel({
   openLocation: (locationId: string) => void
 }) {
   const investigatedCount = currentCase.locations.filter((location) => location.investigated).length
-  const evidenceCollectedCount = currentCase.evidence.filter((evidenceItem) => evidenceItem.discovered).length
-  const discoveredEvidence = currentCase.evidence.filter((evidenceItem) => evidenceItem.discovered)
+  const discoveredEvidence = getDiscoveredEvidence(currentCase)
+  const evidenceCollectedCount = discoveredEvidence.length
   const actionsUsed = investigatedCount
   const maxInvestigations = currentCase.maxInvestigations
   const pointsLeft = Math.max(maxInvestigations - actionsUsed, 0)

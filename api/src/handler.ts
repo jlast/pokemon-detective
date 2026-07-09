@@ -120,7 +120,6 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
         selectedActionId: null,
         actions: l.actions.map(stripActionOutcome),
       })),
-      evidence: fullCase.evidence.map((e) => ({ ...e, discovered: false })),
       suspects: fullCase.suspects.map((s) => ({
         ...s,
         manuallyRuledOut: false,
@@ -162,10 +161,6 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
         actions: loc.actions.map(stripActionOutcome),
       }
     }),
-    evidence: fullCase.evidence.map((ev) => ({
-      ...ev,
-      discovered: progress.investigatedLocations.some((r) => r.evidenceId === ev.id),
-    })),
     suspects: fullCase.suspects.map((s) => ({
       ...s,
       manuallyRuledOut: accusedSet.has(s.pokemonId) || s.manuallyRuledOut,

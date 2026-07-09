@@ -1,4 +1,4 @@
-import type { Case, Suspect } from '../game/caseModel'
+import { getDiscoveredEvidence, type Case, type Suspect } from '../game/caseModel'
 import { MugShot } from './Suspects/MugShot'
 
 interface EndingScreenProps {
@@ -53,7 +53,7 @@ export function EndingScreen({
   startNewCase,
 }: EndingScreenProps) {
   const isSolved = currentCase.status === 'solved'
-  const evidenceCollectedCount = currentCase.evidence.filter((evidenceItem) => evidenceItem.discovered).length
+  const evidenceCollectedCount = getDiscoveredEvidence(currentCase).length
   const locationsInvestigatedCount = currentCase.locations.filter((location) => location.investigated).length
   const solution = currentCase.solution
   const starRating = getStarRating(currentCase.status, wrongAccusationCount, attemptsLeft)
