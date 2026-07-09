@@ -1,6 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { allCases, createCaseById, rebuildFullCase } from '../../src/game/cases/index'
-import type { Case, CaseStatus } from '../../src/game/caseModel'
+import type { Case, CaseStatus, LocationAction } from '../../src/game/caseModel'
 import { getCaseData, putCaseData } from './caseDataDb'
 import { getProgress, createProgress, updateProgress, type PlayerProgressRecord, type InvestigatedLocationRecord } from './playerDb'
 
@@ -90,6 +90,20 @@ const getTodayUtc = (): string => {
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`
 }
 
+const stripActionOutcome = (action: LocationAction): LocationAction => ({
+  ...action,
+  observationText: undefined,
+  observationTextSmall: undefined,
+  observationTextMedium: undefined,
+  observationTextLarge: undefined,
+  evidenceId: null,
+  evidenceTitle: null,
+  evidenceText: null,
+  implicationText: undefined,
+  unlocksLocationIds: [],
+  isUseful: false,
+})
+
 const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null): Case => {
   if (!progress) {
     return {
@@ -97,7 +111,12 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
       culpritPokemonId: -1,
       solution: undefined,
       status: 'active' as CaseStatus,
-      locations: fullCase.locations.map((l) => ({ ...l, investigated: false, selectedActionId: null })),
+      locations: fullCase.locations.map((l) => ({
+        ...l,
+        investigated: false,
+        selectedActionId: null,
+        actions: l.actions.map(stripActionOutcome),
+      })),
       evidence: fullCase.evidence.map((e) => ({ ...e, discovered: false })),
       suspects: fullCase.suspects.map((s) => ({
         ...s,
@@ -137,6 +156,7 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
         evidenceTitle: null,
         evidenceText: null,
         evidenceId: null,
+        actions: loc.actions.map(stripActionOutcome),
       }
     }),
     evidence: fullCase.evidence.map((ev) => ({
