@@ -65,7 +65,7 @@ export const login = (): void => {
     state,
     identity_provider: 'Google',
   })
-  window.location.href = `${COGNITO_URL}/login?${params.toString()}`
+  window.location.href = `${COGNITO_URL}/oauth2/authorize?${params.toString()}`
 }
 
 export const logout = (): void => {
