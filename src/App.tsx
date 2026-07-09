@@ -11,7 +11,7 @@ import { EndingRoute } from './routes/EndingRoute'
 import { InvestigationLocationRoute } from './routes/InvestigationLocationRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
-import { startDaily, investigate as apiInvestigate, accuse as apiAccuse } from './api'
+import { getDailyCase, startDaily, investigate as apiInvestigate, accuse as apiAccuse } from './api'
 import type { SessionData } from './api'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from './game/caseModel'
 import {
@@ -22,8 +22,6 @@ import {
   getUserProfile,
   type UserProfile,
 } from './auth'
-
-const SESSION_STORAGE_KEY = 'daily-session-id'
 
 function App() {
   const location = useLocation()
@@ -42,7 +40,6 @@ function App() {
   }, [navigate])
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem(SESSION_STORAGE_KEY)
     authLogout()
   }, [])
 
@@ -123,12 +120,30 @@ function App() {
     setActivePanel('investigation')
   }
 
-  const loadSession = useCallback(async (sessionId?: string) => {
+  const startAnonSession = async () => {
+    const caseData = await getDailyCase()
+    const sessionData: SessionData = {
+      sessionId: '',
+      date: new Date().toISOString().slice(0, 10),
+      userSub: '',
+      status: 'playing',
+      investigationsRemaining: caseData.maxInvestigations,
+      accusationsRemaining: 3,
+      accusationHistory: [],
+      case: caseData,
+    }
+    setSession(sessionData)
+  }
+
+  const loadSession = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await startDaily(sessionId)
-      localStorage.setItem(SESSION_STORAGE_KEY, data.sessionId)
-      setSession(data)
+      if (isAuthenticated()) {
+        const data = await startDaily()
+        setSession(data)
+      } else {
+        await startAnonSession()
+      }
     } catch (err) {
       console.error('Failed to load daily puzzle:', err)
     } finally {
@@ -149,12 +164,10 @@ function App() {
   }, [currentRoute, navigate])
 
   useEffect(() => {
-    const savedId = localStorage.getItem(SESSION_STORAGE_KEY)
-    loadSession(savedId || undefined)
+    loadSession()
   }, [loadSession])
 
   const startNewCase = async () => {
-    localStorage.removeItem(SESSION_STORAGE_KEY)
     setSuspectNotes(new Map())
     resetTransientUi()
     await loadSession()
@@ -204,9 +217,59 @@ function App() {
   const confirmAccusation = async () => {
     if (!session || !accusationTarget) return
 
-    try {
-      const data = await apiAccuse(session.sessionId, accusationTarget.pokemonId)
-      setSession(data)
+    if (authed) {
+      try {
+        const data = await apiAccuse(session.sessionId, accusationTarget.pokemonId)
+        setSession(data)
+        setAccusationTargetId(null)
+
+        updateSuspectNote(accusationTarget.pokemonId, (prev) => ({
+          ...prev,
+          noteStatus: 'ruled-out',
+        }))
+
+        if (data.status === 'solved') {
+          resetTransientUi()
+          navigate('/ending/solved')
+        } else if (data.status === 'failed') {
+          resetTransientUi()
+          navigate('/ending/failed')
+        } else {
+          navigate(`/suspects/${accusationTarget.pokemonId}`)
+        }
+      } catch (err) {
+        console.error('Accusation failed:', err)
+      }
+    } else {
+      const correct = accusationTarget.pokemonId === session.case.culpritPokemonId
+      const accusationHistory = [...session.accusationHistory, accusationTarget.pokemonId]
+      const accusationsRemaining = correct
+        ? session.accusationsRemaining
+        : session.accusationsRemaining - 1
+      let status: 'playing' | 'solved' | 'failed' = 'playing'
+      if (correct) status = 'solved'
+      else if (accusationsRemaining <= 0) status = 'failed'
+
+      const culpritPokemonId = status !== 'playing' ? accusationTarget.pokemonId : -1
+      const solution = status !== 'playing'
+        ? { culpritRevealText: '', detectiveConclusion: '', evidenceExplanation: [], clearedSuspects: [] }
+        : undefined
+
+      const mapStatus = (s: 'playing' | 'solved' | 'failed'): 'active' | 'solved' | 'failed' =>
+        s === 'playing' ? 'active' : s
+
+      setSession({
+        ...session,
+        accusationHistory,
+        accusationsRemaining,
+        status,
+        case: {
+          ...session.case,
+          status: mapStatus(status),
+          culpritPokemonId,
+          solution,
+        },
+      })
       setAccusationTargetId(null)
 
       updateSuspectNote(accusationTarget.pokemonId, (prev) => ({
@@ -214,17 +277,15 @@ function App() {
         noteStatus: 'ruled-out',
       }))
 
-      if (data.status === 'solved') {
+      if (status === 'solved') {
         resetTransientUi()
         navigate('/ending/solved')
-      } else if (data.status === 'failed') {
+      } else if (status === 'failed') {
         resetTransientUi()
         navigate('/ending/failed')
       } else {
         navigate(`/suspects/${accusationTarget.pokemonId}`)
       }
-    } catch (err) {
-      console.error('Accusation failed:', err)
     }
   }
 
@@ -236,12 +297,46 @@ function App() {
   const investigateLocation = async (locationId: string, actionId: string) => {
     if (!session) return
 
-    try {
-      const data = await apiInvestigate(session.sessionId, locationId, actionId)
-      setSession(data)
+    if (authed) {
+      try {
+        const data = await apiInvestigate(session.sessionId, locationId, actionId)
+        setSession(data)
+        setLastInvestigatedLocationId(locationId)
+      } catch (err) {
+        console.error('Investigation failed:', err)
+      }
+    } else {
+      if (session.investigationsRemaining <= 0) return
+      const location = session.case.locations.find((l) => l.id === locationId)
+      if (!location || location.investigated) return
+      const action = location.actions.find((a) => a.id === actionId)
+      if (!action) return
+      setSession({
+        ...session,
+        investigationsRemaining: session.investigationsRemaining - 1,
+        case: {
+          ...session.case,
+          locations: session.case.locations.map((l) =>
+            l.id === locationId
+              ? {
+                  ...l,
+                  investigated: true,
+                  selectedActionId: actionId,
+                  observationText: action.observationText,
+                  evidenceId: action.evidenceId ?? undefined,
+                  evidenceTitle: action.evidenceTitle ?? undefined,
+                  evidenceText: action.evidenceText ?? undefined,
+                }
+              : l,
+          ),
+          evidence: action.evidenceId
+            ? session.case.evidence.map((e) =>
+                e.id === action.evidenceId ? { ...e, discovered: true } : e,
+              )
+            : session.case.evidence,
+        },
+      })
       setLastInvestigatedLocationId(locationId)
-    } catch (err) {
-      console.error('Investigation failed:', err)
     }
   }
 

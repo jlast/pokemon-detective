@@ -1,4 +1,5 @@
 import { getToken, isAuthenticated } from './auth'
+import type { Case } from './game/caseModel'
 
 const BASE = import.meta.env.VITE_API_BASE ?? ''
 
@@ -10,7 +11,7 @@ export interface SessionData {
   investigationsRemaining: number
   accusationsRemaining: number
   accusationHistory: number[]
-  case: import('./game/caseModel').Case
+  case: Case
 }
 
 const authHeaders = (): Record<string, string> => {
@@ -18,18 +19,20 @@ const authHeaders = (): Record<string, string> => {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-export const startDaily = async (sessionId?: string): Promise<SessionData> => {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...authHeaders(),
-  }
-  const body: Record<string, unknown> = {}
-  if (sessionId) body.sessionId = sessionId
+export const getDailyCase = async (): Promise<Case> => {
+  const res = await fetch(`${BASE}/api/daily/case`)
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
 
+export const startDaily = async (): Promise<SessionData> => {
   const res = await fetch(`${BASE}/api/daily/start`, {
     method: 'POST',
-    headers,
-    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+      ...authHeaders(),
+    },
+    body: '{}',
   })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()

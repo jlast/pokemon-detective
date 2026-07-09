@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto'
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose'
 import { createCaseById } from '../../src/game/cases/index'
 import {
@@ -269,39 +268,31 @@ const buildCaseStateJsonRaw = (gameCase: {
   status: 'active',
 })
 
+const handleGetDailyCase = async (dateStr: string) => {
+  const { gameCase, caseId } = generateDailyCase(dateStr)
+  const caseStateJson = buildCaseStateJsonRaw(gameCase)
+  const data = JSON.parse(caseStateJson) as Record<string, unknown>
+  data.culpritPokemonId = -1
+  data.solution = null
+  return ok(data)
+}
+
 const handleStart = async (
   dateStr: string,
   event: ApiGatewayEvent,
-  body: Record<string, unknown>,
 ) => {
   const userInfo = await getUserInfo(event)
+  if (!userInfo.sub) return err(401, 'Authentication required')
 
-  if (userInfo.sub) {
-    const sessionId = getDateSessionKey(userInfo.sub, dateStr)
-    const existing = await getSession(sessionId)
-    if (existing) {
-      return ok(serializeSession(existing))
-    }
-
-    const { gameCase, caseId } = generateDailyCase(dateStr)
-    const caseStateJson = buildCaseStateJsonRaw(gameCase)
-    const session = buildSessionRecord(sessionId, dateStr, userInfo.sub, gameCase, caseId, caseStateJson)
-    await createSession(session)
-    return ok(serializeSession(session))
-  }
-
-  const bodySessionId = body.sessionId as string | undefined
-  if (bodySessionId) {
-    const existing = await getSession(bodySessionId)
-    if (existing && existing.date === dateStr) {
-      return ok(serializeSession(existing))
-    }
+  const sessionId = getDateSessionKey(userInfo.sub, dateStr)
+  const existing = await getSession(sessionId)
+  if (existing) {
+    return ok(serializeSession(existing))
   }
 
   const { gameCase, caseId } = generateDailyCase(dateStr)
-  const sessionId = bodySessionId ?? randomUUID()
   const caseStateJson = buildCaseStateJsonRaw(gameCase)
-  const session = buildSessionRecord(sessionId, dateStr, '', gameCase, caseId, caseStateJson)
+  const session = buildSessionRecord(sessionId, dateStr, userInfo.sub, gameCase, caseId, caseStateJson)
   await createSession(session)
   return ok(serializeSession(session))
 }
@@ -424,8 +415,12 @@ export const handler = async (
   const body = parseBody(event)
 
   try {
+    if (method === 'GET' && path === '/api/daily/case') {
+      return await handleGetDailyCase(dateStr)
+    }
+
     if (method === 'POST' && path === '/api/daily/start') {
-      return await handleStart(dateStr, event, body)
+      return await handleStart(dateStr, event)
     }
 
     if (method === 'GET' && path === '/api/daily/state') {
