@@ -210,6 +210,8 @@ resource "aws_cognito_user_pool_client" "client" {
   callback_urls                        = ["${var.app_url}/callback"]
   logout_urls                          = [var.app_url]
   supported_identity_providers         = ["Google", "COGNITO"]
+
+  depends_on = [aws_cognito_identity_provider.google]
 }
 
 resource "aws_cognito_identity_provider" "google" {
