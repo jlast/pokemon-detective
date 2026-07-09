@@ -127,6 +127,7 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
         Effect = "Allow"
         Action = [
           "dynamodb:GetItem",
+          "dynamodb:PutItem",
         ]
         Resource = aws_dynamodb_table.case_data.arn
       },
