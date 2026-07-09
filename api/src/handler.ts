@@ -1,5 +1,5 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
-import { createCaseById, rebuildFullCase } from '../../src/game/cases/index'
+import { allCases, createCaseById, rebuildFullCase } from '../../src/game/cases/index'
 import type { Case, CaseStatus } from '../../src/game/caseModel'
 import { getCaseData, putCaseData } from './caseDataDb'
 import { getProgress, createProgress, updateProgress, type PlayerProgressRecord, type InvestigatedLocationRecord } from './playerDb'
@@ -173,9 +173,9 @@ const loadCase = async (caseId: string) => {
 }
 
 const generateAndStoreCase = async (caseId: string) => {
-  const configs = ['missing-cookies', 'purloined-page', 'missing-medal', 'ravaged-pantry', 'stolen-artifact']
-  const configIndex = Math.floor(Math.random() * configs.length)
-  const gameCase = createCaseById(configs[configIndex]!)
+  const config = allCases[Math.floor(Math.random() * allCases.length)]
+  if (!config) return null
+  const gameCase = createCaseById(config.id)
   if (!gameCase) return null
 
   const actionEvidenceMap: Record<string, string> = {}
