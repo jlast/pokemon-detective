@@ -230,7 +230,7 @@ const generateAndStoreCase = async (caseId: string) => {
   return gameCase
 }
 
-const handleGetCurrentCase = async (): Promise<ApiGatewayResult> => {
+const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
   const result = await getTodayCaseData()
   const caseId = getTodayUtc()
 
@@ -245,6 +245,15 @@ const handleGetCurrentCase = async (): Promise<ApiGatewayResult> => {
   }
 
   if (!fullCase) return err(500, 'Failed to build case')
+
+  const userInfo = await getUserInfo(event)
+  if (userInfo.sub) {
+    const userId = getDateUserId(userInfo.sub, caseId)
+    const progress = await getProgress(userId)
+    if (progress) {
+      return ok({ case: buildResponseCase(fullCase, progress) })
+    }
+  }
 
   return ok({ case: buildResponseCase(fullCase, null) })
 }
@@ -412,12 +421,12 @@ export const handler = async (
 
   try {
     if (method === 'GET' && path === '/api/cases/current') {
-      return await handleGetCurrentCase()
+      return await handleGetCurrentCase(event)
     }
 
     const apiCasesMatch = path.match(/^\/api\/cases\/([^/]+)$/)
     if (method === 'GET' && apiCasesMatch) {
-      return await handleGetCurrentCase()
+      return await handleGetCurrentCase(event)
     }
 
     const investigateMatch = path.match(/^\/api\/cases\/([^/]+)\/investigate\/([^/]+)\/([^/]+)$/)
