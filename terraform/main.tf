@@ -63,13 +63,31 @@ data "aws_iam_policy_document" "cloudfront_oac" {
 
 # ─── DynamoDB ─────────────────────────────────────────────────────────────────
 
-resource "aws_dynamodb_table" "daily_sessions" {
-  name         = var.dynamodb_table_name
+resource "aws_dynamodb_table" "case_data" {
+  name         = var.case_data_table_name
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "sessionId"
+  hash_key     = "caseId"
 
   attribute {
-    name = "sessionId"
+    name = "caseId"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
+
+  tags = var.tags
+}
+
+resource "aws_dynamodb_table" "player_progress" {
+  name         = var.player_progress_table_name
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "userId"
+
+  attribute {
+    name = "userId"
     type = "S"
   }
 
@@ -104,15 +122,24 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = [
-        "dynamodb:GetItem",
-        "dynamodb:PutItem",
-        "dynamodb:UpdateItem",
-      ]
-      Resource = aws_dynamodb_table.daily_sessions.arn
-    }]
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+        ]
+        Resource = aws_dynamodb_table.case_data.arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+        ]
+        Resource = aws_dynamodb_table.player_progress.arn
+      },
+    ]
   })
 }
 
@@ -148,9 +175,10 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      TABLE_NAME   = aws_dynamodb_table.daily_sessions.name
-      USER_POOL_ID = aws_cognito_user_pool.main.id
-      REGION       = var.region
+      CASE_DATA_TABLE       = aws_dynamodb_table.case_data.name
+      PLAYER_PROGRESS_TABLE = aws_dynamodb_table.player_progress.name
+      USER_POOL_ID          = aws_cognito_user_pool.main.id
+      REGION                = var.region
     }
   }
 
@@ -163,6 +191,95 @@ resource "aws_lambda_permission" "api_gateway" {
   function_name = aws_lambda_function.api.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*"
+}
+
+# ─── Cron Lambda (daily case generation) ─────────────────────────────────────
+
+resource "aws_iam_role" "cron" {
+  name = "${var.project_name}-cron-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = { Service = "lambda.amazonaws.com" }
+    }]
+  })
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy" "cron_dynamodb" {
+  name = "${var.project_name}-cron-dynamodb"
+  role = aws_iam_role.cron.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "dynamodb:PutItem",
+      ]
+      Resource = aws_dynamodb_table.case_data.arn
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "cron_logs" {
+  name = "${var.project_name}-cron-logs"
+  role = aws_iam_role.cron.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+      ]
+      Resource = "arn:aws:logs:*:*:*"
+    }]
+  })
+}
+
+resource "aws_lambda_function" "cron" {
+  filename         = var.cron_zip_path
+  function_name    = "${var.project_name}-cron"
+  role             = aws_iam_role.cron.arn
+  handler          = "cron.handler"
+  runtime          = "nodejs22.x"
+  timeout          = 120
+  memory_size      = 512
+  source_code_hash = filebase64sha256(var.cron_zip_path)
+
+  environment {
+    variables = {
+      CASE_DATA_TABLE = aws_dynamodb_table.case_data.name
+    }
+  }
+
+  tags = var.tags
+}
+
+resource "aws_cloudwatch_event_rule" "daily_case" {
+  name                = "${var.project_name}-daily-case"
+  description         = "Trigger daily case generation at midnight UTC"
+  schedule_expression = "cron(0 0 * * ? *)"
+}
+
+resource "aws_cloudwatch_event_target" "daily_case" {
+  rule      = aws_cloudwatch_event_rule.daily_case.name
+  arn       = aws_lambda_function.cron.arn
+}
+
+resource "aws_lambda_permission" "cron_events" {
+  statement_id  = "AllowCloudWatchEventsInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.cron.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.daily_case.arn
 }
 
 # ─── Cognito User Pool ────────────────────────────────────────────────────────
@@ -292,6 +409,35 @@ resource "aws_api_gateway_deployment" "api" {
   lifecycle { create_before_destroy = true }
 }
 
+# ─── CloudFront Function for SPA routing ─────────────────────────────────────
+
+resource "aws_cloudfront_function" "spa_routing" {
+  name    = "${var.project_name}-spa-routing"
+  runtime = "cloudfront-js-2.0"
+  comment = "Rewrite non-asset, non-API paths to index.html for SPA routing"
+  publish = true
+  code    = <<-EOF
+function handler(event) {
+  var request = event.request;
+  var uri = request.uri;
+
+  // Pass API requests through unchanged
+  if (uri.startsWith('/api/')) {
+    return request;
+  }
+
+  // Pass static assets through unchanged
+  if (uri.match(/\\.\\w+$/)) {
+    return request;
+  }
+
+  // Rewrite everything else to index.html for SPA routing
+  request.uri = '/index.html';
+  return request;
+}
+EOF
+}
+
 # ─── CloudFront ──────────────────────────────────────────────────────────────
 
 resource "aws_cloudfront_distribution" "site" {
@@ -333,6 +479,11 @@ resource "aws_cloudfront_distribution" "site" {
     forwarded_values {
       query_string = false
       cookies { forward = "none" }
+    }
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.spa_routing.arn
     }
 
     min_ttl     = 0
@@ -377,19 +528,6 @@ resource "aws_cloudfront_distribution" "site" {
     min_ttl     = 0
     default_ttl = 0
     max_ttl     = 0
-  }
-
-  # SPA routing: serve index.html for 403 and 404
-  custom_error_response {
-    error_code         = 403
-    response_code      = 200
-    response_page_path = "/index.html"
-  }
-
-  custom_error_response {
-    error_code         = 404
-    response_code      = 200
-    response_page_path = "/index.html"
   }
 
   restrictions {

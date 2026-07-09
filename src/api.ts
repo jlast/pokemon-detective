@@ -3,15 +3,12 @@ import type { Case } from './game/caseModel'
 
 const BASE = import.meta.env.VITE_API_BASE ?? ''
 
-export interface SessionData {
-  sessionId: string
-  date: string
-  userSub: string
-  status: 'playing' | 'solved' | 'failed'
+export interface SessionResponse {
+  case: Case
   investigationsRemaining: number
   accusationsRemaining: number
   accusationHistory: number[]
-  case: Case
+  status: 'playing' | 'solved' | 'failed'
 }
 
 const authHeaders = (): Record<string, string> => {
@@ -19,56 +16,36 @@ const authHeaders = (): Record<string, string> => {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-export const getDailyCase = async (): Promise<Case> => {
-  const res = await fetch(`${BASE}/api/daily/case`)
-  if (!res.ok) throw new Error(`API error: ${res.status}`)
-  return res.json()
-}
-
-export const startDaily = async (): Promise<SessionData> => {
-  const res = await fetch(`${BASE}/api/daily/start`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...authHeaders(),
-    },
-    body: '{}',
-  })
-  if (!res.ok) throw new Error(`API error: ${res.status}`)
-  return res.json()
-}
-
 const enc = encodeURIComponent
 
+export const getCurrentCase = async (): Promise<Case> => {
+  const res = await fetch(`${BASE}/api/cases/current`)
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  const data = await res.json()
+  return data.case
+}
+
 export const investigate = async (
-  sessionId: string,
+  caseId: string,
   locationId: string,
   actionId: string,
-): Promise<SessionData> => {
+): Promise<SessionResponse> => {
   const res = await fetch(
-    `${BASE}/api/daily/${enc(sessionId)}/investigate/${enc(locationId)}/${enc(actionId)}`,
-    { method: 'POST', headers: authHeaders() },
+    `${BASE}/api/cases/${enc(caseId)}/investigate/${enc(locationId)}/${enc(actionId)}`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() } },
   )
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }
 
 export const accuse = async (
-  sessionId: string,
+  caseId: string,
   suspectId: number,
-): Promise<SessionData> => {
+): Promise<SessionResponse> => {
   const res = await fetch(
-    `${BASE}/api/daily/${enc(sessionId)}/accuse/${suspectId}`,
-    { method: 'POST', headers: authHeaders() },
+    `${BASE}/api/cases/${enc(caseId)}/accuse/${suspectId}`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() } },
   )
-  if (!res.ok) throw new Error(`API error: ${res.status}`)
-  return res.json()
-}
-
-export const getSession = async (sessionId: string): Promise<SessionData> => {
-  const res = await fetch(`${BASE}/api/daily/${enc(sessionId)}`, {
-    headers: authHeaders(),
-  })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }

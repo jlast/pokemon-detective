@@ -9,10 +9,16 @@ variable "bucket_name" {
   type        = string
 }
 
-variable "dynamodb_table_name" {
-  description = "DynamoDB table name for daily puzzle sessions"
+variable "case_data_table_name" {
+  description = "DynamoDB table name for daily case data"
   type        = string
-  default     = "DailyPuzzleSession"
+  default     = "CaseData"
+}
+
+variable "player_progress_table_name" {
+  description = "DynamoDB table name for player progress"
+  type        = string
+  default     = "PlayerProgress"
 }
 
 variable "handler_zip_path" {
@@ -48,6 +54,12 @@ variable "google_client_id" {
   description = "Google OAuth 2.0 Client ID"
   type        = string
   sensitive   = true
+}
+
+variable "cron_zip_path" {
+  description = "Path to the cron Lambda deployment zip (relative to terraform directory)"
+  type        = string
+  default     = "../api/dist/cron.zip"
 }
 
 variable "google_client_secret" {

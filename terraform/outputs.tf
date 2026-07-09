@@ -28,9 +28,14 @@ output "lambda_function_name" {
   value       = aws_lambda_function.api.function_name
 }
 
-output "dynamodb_table_name" {
-  description = "Name of the DynamoDB table"
-  value       = aws_dynamodb_table.daily_sessions.name
+output "case_data_table_name" {
+  description = "Name of the CaseData DynamoDB table"
+  value       = aws_dynamodb_table.case_data.name
+}
+
+output "player_progress_table_name" {
+  description = "Name of the PlayerProgress DynamoDB table"
+  value       = aws_dynamodb_table.player_progress.name
 }
 
 output "cognito_user_pool_id" {

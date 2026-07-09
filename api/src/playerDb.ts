@@ -14,41 +14,33 @@ export interface InvestigatedLocationRecord {
   evidenceText?: string
 }
 
-export interface SessionRecord {
-  sessionId: string
-  date: string
-  userSub: string
+export interface PlayerProgressRecord {
+  userId: string
+  caseId: string
   status: 'playing' | 'solved' | 'failed'
   investigationsRemaining: number
-  maxInvestigations: number
   accusationsRemaining: number
-  maxAccusations: number
-  caseId: string
-  culpritPokemonId: number
-  investigatedLocations: InvestigatedLocationRecord[]
   accusationHistory: number[]
-  caseStateJson: string
-  solutionCulpritReveal: string
-  solutionConclusion: string
+  investigatedLocations: InvestigatedLocationRecord[]
   ttl: number
 }
 
-const TABLE = process.env.TABLE_NAME ?? 'DailyPuzzleSession'
+const TABLE = process.env.PLAYER_PROGRESS_TABLE ?? 'PlayerProgress'
 
-export const getSession = async (sessionId: string): Promise<SessionRecord | null> => {
-  const result = await doc.send(new GetCommand({ TableName: TABLE, Key: { sessionId } }))
-  return (result.Item as SessionRecord) ?? null
+export const getProgress = async (userId: string): Promise<PlayerProgressRecord | null> => {
+  const result = await doc.send(new GetCommand({ TableName: TABLE, Key: { userId } }))
+  return (result.Item as PlayerProgressRecord) ?? null
 }
 
-export const createSession = async (record: SessionRecord): Promise<void> => {
+export const createProgress = async (record: PlayerProgressRecord): Promise<void> => {
   await doc.send(new PutCommand({ TableName: TABLE, Item: record }))
 }
 
-export const updateSession = async (
-  sessionId: string,
-  updates: Partial<SessionRecord>,
+export const updateProgress = async (
+  userId: string,
+  updates: Partial<PlayerProgressRecord>,
 ): Promise<void> => {
-  const keys = Object.keys(updates) as (keyof SessionRecord)[]
+  const keys = Object.keys(updates) as (keyof PlayerProgressRecord)[]
   if (keys.length === 0) return
 
   const setExpr = keys.map((k) => `#${k} = :${k}`).join(', ')
@@ -57,7 +49,7 @@ export const updateSession = async (
 
   await doc.send(new UpdateCommand({
     TableName: TABLE,
-    Key: { sessionId },
+    Key: { userId },
     UpdateExpression: `SET ${setExpr}`,
     ExpressionAttributeNames: attrNames,
     ExpressionAttributeValues: attrValues,

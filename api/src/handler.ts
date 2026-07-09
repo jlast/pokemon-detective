@@ -1,13 +1,8 @@
-import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose'
-import { createCaseById } from '../../src/game/cases/index'
-import {
-  getSession,
-  createSession,
-  updateSession,
-  type InvestigatedLocationRecord,
-  type SessionRecord,
-} from './db'
-import { getDailySeed, createSeededRng, getTodayUtc } from './seeds'
+import { createRemoteJWKSet, jwtVerify } from 'jose'
+import { rebuildFullCase } from '../../src/game/cases/index'
+import type { Case, CaseStatus } from '../../src/game/caseModel'
+import { getCaseData } from './caseDataDb'
+import { getProgress, createProgress, updateProgress, type PlayerProgressRecord, type InvestigatedLocationRecord } from './playerDb'
 
 const USER_POOL_ID = process.env.USER_POOL_ID ?? ''
 const REGION = process.env.REGION ?? 'us-east-1'
@@ -17,6 +12,10 @@ const jwksUrl = new URL(
 )
 const jwks = createRemoteJWKSet(jwksUrl)
 
+const SESSION_TTL_DAYS = 7
+const MAX_ACCUSATIONS = 3
+const DEFAULT_INVESTIGATIONS = 6
+
 interface ApiGatewayEvent {
   path: string
   httpMethod: string
@@ -24,12 +23,6 @@ interface ApiGatewayEvent {
   body?: string | null
   requestContext: {
     httpMethod: string
-    authorizer?: {
-      sub: string
-      email?: string
-      name?: string
-      picture?: string
-    }
   }
 }
 
@@ -39,10 +32,7 @@ interface ApiGatewayResult {
   body: string
 }
 
-const SESSION_TTL_DAYS = 7
-const MAX_ACCUSATIONS = 3
-
-const corsHeaders = {
+const corsHeaders: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -59,14 +49,6 @@ const err = (statusCode: number, message: string): ApiGatewayResult => ({
   headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   body: JSON.stringify({ error: message }),
 })
-
-const parseBody = (event: ApiGatewayEvent): Record<string, unknown> => {
-  try {
-    return JSON.parse(event.body ?? '{}') as Record<string, unknown>
-  } catch {
-    return {}
-  }
-}
 
 interface UserInfo {
   sub: string
@@ -101,269 +83,222 @@ const getUserInfo = async (event: ApiGatewayEvent): Promise<UserInfo> => {
   }
 }
 
-const getDateSessionKey = (sub: string, dateStr: string): string =>
-  `${sub}:${dateStr}`
+const getDateUserId = (sub: string, caseId: string): string => `${sub}:${caseId}`
 
-const CASE_IDS = [
-  'missing-cookies',
-  'purloined-page',
-  'missing-medal',
-  'ravaged-pantry',
-  'stolen-artifact',
-]
-
-const generateDailyCase = (dateStr: string) => {
-  const seed = getDailySeed(dateStr)
-  const rng = createSeededRng(seed)
-
-  const origRandom = Math.random
-  Math.random = rng
-  try {
-    const caseIndex = Math.abs(seed) % CASE_IDS.length
-    const caseId = CASE_IDS[caseIndex]
-    const gameCase = createCaseById(caseId)!
-    return { gameCase, caseId }
-  } finally {
-    Math.random = origRandom
-  }
+const getTodayUtc = (): string => {
+  const now = new Date()
+  return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`
 }
 
-const buildCaseStateJson = (session: SessionRecord): string => {
-  const sessionData = JSON.parse(session.caseStateJson)
-  const investigatedMap = new Map(
-    session.investigatedLocations.map((r) => [r.locationId, r]),
-  )
+const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null): Case => {
+  if (!progress) {
+    return {
+      ...fullCase,
+      culpritPokemonId: -1,
+      solution: undefined,
+      status: 'active' as CaseStatus,
+      locations: fullCase.locations.map((l) => ({ ...l, investigated: false, selectedActionId: null })),
+      evidence: fullCase.evidence.map((e) => ({ ...e, discovered: false })),
+      suspects: fullCase.suspects.map((s) => ({
+        ...s,
+        manuallyRuledOut: false,
+        noteStatus: 'suspect' as const,
+      })),
+    }
+  }
 
-  const locations = sessionData.locations.map((loc: Record<string, unknown>) => {
-    if (investigatedMap.has(loc.id)) {
-      const record = investigatedMap.get(loc.id)!
+  const investigatedMap = new Map(progress.investigatedLocations.map((r) => [r.locationId, r]))
+  const accusedSet = new Set(progress.accusationHistory)
+  const isOver = progress.status === 'solved' || progress.status === 'failed'
+
+  return {
+    ...fullCase,
+    status: (progress.status === 'playing' ? 'active' : progress.status) as CaseStatus,
+    culpritPokemonId: isOver ? fullCase.culpritPokemonId : -1,
+    solution: isOver ? fullCase.solution : undefined,
+    locations: fullCase.locations.map((loc) => {
+      if (investigatedMap.has(loc.id)) {
+        const record = investigatedMap.get(loc.id)!
+        return {
+          ...loc,
+          investigated: true,
+          selectedActionId: record.actionId,
+          observationText: record.observationText,
+          evidenceTitle: record.evidenceTitle ?? null,
+          evidenceText: record.evidenceText ?? null,
+          evidenceId: record.evidenceId ?? null,
+        }
+      }
       return {
         ...loc,
-        investigated: true,
-        selectedActionId: record.actionId,
-        observationText: record.observationText,
-        evidenceTitle: record.evidenceTitle ?? null,
-        evidenceText: record.evidenceText ?? null,
-        evidenceId: record.evidenceId ?? null,
+        investigated: false,
+        selectedActionId: null,
+        observationText: undefined,
+        evidenceTitle: null,
+        evidenceText: null,
+        evidenceId: null,
       }
-    }
-    return loc
-  })
-
-  const evidence = sessionData.evidence.map((ev: Record<string, unknown>) => ({
-    ...ev,
-    discovered: session.investigatedLocations.some(
-      (r) => r.evidenceId === ev.id,
-    ),
-  }))
-
-  const accusedSet = new Set(session.accusationHistory)
-  const suspects = sessionData.suspects.map((s: Record<string, unknown>) => ({
-    ...s,
-    manuallyRuledOut: accusedSet.has(s.pokemonId as number),
-    noteStatus: accusedSet.has(s.pokemonId as number) ? 'ruled-out' : 'suspect',
-  }))
-
-  const result: Record<string, unknown> = {
-    ...sessionData,
-    locations,
-    evidence,
-    suspects,
-    status: session.status === 'solved' || session.status === 'failed'
-      ? session.status
-      : 'active',
+    }),
+    evidence: fullCase.evidence.map((ev) => ({
+      ...ev,
+      discovered: progress.investigatedLocations.some((r) => r.evidenceId === ev.id),
+    })),
+    suspects: fullCase.suspects.map((s) => ({
+      ...s,
+      manuallyRuledOut: accusedSet.has(s.pokemonId) || s.manuallyRuledOut,
+      noteStatus: accusedSet.has(s.pokemonId) ? 'ruled-out' as const : s.noteStatus,
+    })),
   }
-
-  if (session.status === 'solved' || session.status === 'failed') {
-    result.culpritPokemonId = session.culpritPokemonId
-    result.solution = {
-      culpritRevealText: session.solutionCulpritReveal,
-      detectiveConclusion: session.solutionConclusion,
-    }
-  } else {
-    result.culpritPokemonId = -1
-    result.solution = null
-  }
-
-  return JSON.stringify(result)
 }
 
-const serializeSession = (session: SessionRecord) => ({
-  sessionId: session.sessionId,
-  date: session.date,
-  userSub: session.userSub,
-  status: session.status,
-  investigationsRemaining: session.investigationsRemaining,
-  accusationsRemaining: session.accusationsRemaining,
-  accusationHistory: session.accusationHistory,
-  case: JSON.parse(buildCaseStateJson(session)),
-})
-
-const buildSessionRecord = (
-  sessionId: string,
-  dateStr: string,
-  userSub: string,
-  gameCase: { maxInvestigations: number; culpritPokemonId: number; solution?: { culpritRevealText?: string; detectiveConclusion?: string } },
-  caseId: string,
-  caseStateJson: string,
-): SessionRecord => ({
-  sessionId,
-  date: dateStr,
-  userSub,
-  status: 'playing',
-  investigationsRemaining: gameCase.maxInvestigations,
-  maxInvestigations: gameCase.maxInvestigations,
-  accusationsRemaining: MAX_ACCUSATIONS,
-  maxAccusations: MAX_ACCUSATIONS,
-  caseId,
-  culpritPokemonId: gameCase.culpritPokemonId,
-  investigatedLocations: [],
-  accusationHistory: [],
-  caseStateJson,
-  solutionCulpritReveal: gameCase.solution?.culpritRevealText ?? '',
-  solutionConclusion: gameCase.solution?.detectiveConclusion ?? '',
-  ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
-})
-
-const buildCaseStateJsonRaw = (gameCase: {
-  id: string; title: string; shortStory: string; crimeIcon: string; difficulty: string; maxInvestigations: number
-  suspects: { pokemonId: number; name: string; sprite: string; isShiny: boolean; inspectedGroups: Record<string, boolean>; inspectedFacts: unknown[] }[]
-  locations: { id: string; name: string; icon: string; teaserText?: string; description?: string; actions: unknown[] }[]
-  evidence: { id: string; title: string; clueText: string; hiddenTrait: string; endExplanation: string }[]
-}) => JSON.stringify({
-  id: gameCase.id,
-  title: gameCase.title,
-  shortStory: gameCase.shortStory,
-  crimeIcon: gameCase.crimeIcon,
-  difficulty: gameCase.difficulty,
-  maxInvestigations: gameCase.maxInvestigations,
-  suspects: gameCase.suspects.map((s) => ({
-    pokemonId: s.pokemonId,
-    name: s.name,
-    sprite: s.sprite,
-    isShiny: s.isShiny,
-    manuallyRuledOut: false,
-    noteStatus: 'suspect',
-    inspectedGroups: s.inspectedGroups,
-    inspectedFacts: s.inspectedFacts,
-  })),
-  locations: gameCase.locations.map((l) => ({
-    id: l.id,
-    name: l.name,
-    icon: l.icon,
-    teaserText: l.teaserText,
-    description: l.description,
-    investigated: false,
-    selectedActionId: null,
-    actions: l.actions,
-  })),
-  evidence: gameCase.evidence.map((e) => ({
-    id: e.id,
-    title: e.title,
-    clueText: e.clueText,
-    hiddenTrait: e.hiddenTrait,
-    endExplanation: e.endExplanation,
-    discovered: false,
-  })),
-  status: 'active',
-})
-
-const handleGetDailyCase = async (dateStr: string) => {
-  const { gameCase, caseId } = generateDailyCase(dateStr)
-  const caseStateJson = buildCaseStateJsonRaw(gameCase)
-  const data = JSON.parse(caseStateJson) as Record<string, unknown>
-  data.culpritPokemonId = -1
-  data.solution = null
-  return ok(data)
+const getTodayCaseData = async () => {
+  const caseId = getTodayUtc()
+  const record = await getCaseData(caseId)
+  if (!record) return null
+  return { record, caseId }
 }
 
-const handleStart = async (
-  dateStr: string,
-  event: ApiGatewayEvent,
-) => {
-  const userInfo = await getUserInfo(event)
-  if (!userInfo.sub) return err(401, 'Authentication required')
+const loadCase = async (caseId: string) => {
+  const record = await getCaseData(caseId)
+  if (!record) return null
+  const fullCase = rebuildFullCase(
+    record.configId,
+    record.culpritPokemonId,
+    record.suspectPokemonIds,
+    record.suspectShinyMap,
+    record.actionEvidenceMap,
+    record.solution,
+  )
+  return fullCase
+}
 
-  const sessionId = getDateSessionKey(userInfo.sub, dateStr)
-  const existing = await getSession(sessionId)
-  if (existing) {
-    return ok(serializeSession(existing))
-  }
+const handleGetCurrentCase = async (): Promise<ApiGatewayResult> => {
+  const result = await getTodayCaseData()
+  if (!result) return err(404, 'No case available for today')
 
-  const { gameCase, caseId } = generateDailyCase(dateStr)
-  const caseStateJson = buildCaseStateJsonRaw(gameCase)
-  const session = buildSessionRecord(sessionId, dateStr, userInfo.sub, gameCase, caseId, caseStateJson)
-  await createSession(session)
-  return ok(serializeSession(session))
+  const fullCase = await loadCase(result.caseId)
+  if (!fullCase) return err(500, 'Failed to build case')
+
+  return ok({ case: buildResponseCase(fullCase, null) })
 }
 
 const handleInvestigate = async (
-  sessionId: string,
+  caseId: string,
   locationId: string,
   actionId: string,
-) => {
-  const session = await getSession(sessionId)
-  if (!session) return err(404, 'Session not found')
-  if (session.status !== 'playing') return err(400, 'Game is already over')
-  if (session.investigationsRemaining <= 0) return err(400, 'No investigations remaining')
+  event: ApiGatewayEvent,
+): Promise<ApiGatewayResult> => {
+  const userInfo = await getUserInfo(event)
+  if (!userInfo.sub) return err(401, 'Authentication required')
 
-  if (session.investigatedLocations.some((l) => l.locationId === locationId)) {
+  const fullCase = await loadCase(caseId)
+  if (!fullCase) return err(404, 'Case not found')
+
+  const userId = getDateUserId(userInfo.sub, caseId)
+  let progress = await getProgress(userId)
+
+  if (!progress) {
+    progress = {
+      userId,
+      caseId,
+      status: 'playing',
+      investigationsRemaining: fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS,
+      accusationsRemaining: MAX_ACCUSATIONS,
+      accusationHistory: [],
+      investigatedLocations: [],
+      ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
+    }
+    await createProgress(progress)
+  }
+
+  if (progress.status !== 'playing') return err(400, 'Game is already over')
+  if (progress.investigationsRemaining <= 0) return err(400, 'No investigations remaining')
+  if (progress.investigatedLocations.some((l) => l.locationId === locationId)) {
     return err(400, 'Location already investigated')
   }
 
-  const data = JSON.parse(session.caseStateJson)
-  const location = data.locations.find(
-    (l: Record<string, unknown>) => l.id === locationId,
-  )
+  const location = fullCase.locations.find((l) => l.id === locationId)
   if (!location) return err(404, 'Location not found')
 
-  const action = (location.actions as Record<string, unknown>[]).find(
-    (a) => a.id === actionId,
-  )
+  const action = location.actions.find((a) => a.id === actionId)
   if (!action) return err(404, 'Action not found')
 
   const record: InvestigatedLocationRecord = {
     locationId,
     actionId,
-    outcomeType: action.outcomeType as string,
-    observationText: action.observationText as string,
-    evidenceId: action.evidenceId as string | undefined,
-    evidenceTitle: action.evidenceTitle as string | undefined,
-    evidenceText: action.evidenceText as string | undefined,
+    outcomeType: action.outcomeType,
+    observationText: action.observationText,
+    evidenceId: action.evidenceId ?? undefined,
+    evidenceTitle: action.evidenceTitle ?? undefined,
+    evidenceText: action.evidenceText ?? undefined,
   }
 
-  const investigatedLocations = [...session.investigatedLocations, record]
-  const investigationsRemaining = session.investigationsRemaining - 1
+  const investigatedLocations = [...progress.investigatedLocations, record]
+  const investigationsRemaining = progress.investigationsRemaining - 1
 
-  await updateSession(sessionId, {
+  await updateProgress(userId, {
     investigatedLocations,
     investigationsRemaining,
     ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
   })
 
-  session.investigatedLocations = investigatedLocations
-  session.investigationsRemaining = investigationsRemaining
+  progress = {
+    ...progress,
+    investigatedLocations,
+    investigationsRemaining,
+  }
 
-  return ok(serializeSession(session))
+  return ok({
+    case: buildResponseCase(fullCase, progress),
+    investigationsRemaining: progress.investigationsRemaining,
+    accusationsRemaining: progress.accusationsRemaining,
+    accusationHistory: progress.accusationHistory,
+    status: progress.status,
+  })
 }
 
-const handleAccuse = async (sessionId: string, suspectIdStr: string) => {
-  const session = await getSession(sessionId)
-  if (!session) return err(404, 'Session not found')
-  if (session.status !== 'playing') return err(400, 'Game is already over')
+const handleAccuse = async (
+  caseId: string,
+  suspectIdStr: string,
+  event: ApiGatewayEvent,
+): Promise<ApiGatewayResult> => {
+  const userInfo = await getUserInfo(event)
+  if (!userInfo.sub) return err(401, 'Authentication required')
+
+  const record = await getCaseData(caseId)
+  if (!record) return err(404, 'Case not found')
+
+  const userId = getDateUserId(userInfo.sub, caseId)
+  let progress = await getProgress(userId)
+
+  if (!progress) {
+    progress = {
+      userId,
+      caseId,
+      status: 'playing',
+      investigationsRemaining: 0,
+      accusationsRemaining: MAX_ACCUSATIONS,
+      accusationHistory: [],
+      investigatedLocations: [],
+      ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
+    }
+    await createProgress(progress)
+  }
+
+  if (progress.status !== 'playing') return err(400, 'Game is already over')
 
   const suspectId = Number(suspectIdStr)
   if (Number.isNaN(suspectId)) return err(400, 'Invalid suspect ID')
 
-  if (session.accusationHistory.includes(suspectId)) {
+  if (progress.accusationHistory.includes(suspectId)) {
     return err(400, 'Already accused this suspect')
   }
 
-  const correct = suspectId === session.culpritPokemonId
-  const accusationHistory = [...session.accusationHistory, suspectId]
+  const correct = suspectId === record.culpritPokemonId
+  const accusationHistory = [...progress.accusationHistory, suspectId]
   const accusationsRemaining = correct
-    ? session.accusationsRemaining
-    : session.accusationsRemaining - 1
+    ? progress.accusationsRemaining
+    : progress.accusationsRemaining - 1
 
   let status: 'playing' | 'solved' | 'failed' = 'playing'
   if (correct) {
@@ -372,33 +307,29 @@ const handleAccuse = async (sessionId: string, suspectIdStr: string) => {
     status = 'failed'
   }
 
-  await updateSession(sessionId, {
+  await updateProgress(userId, {
     accusationHistory,
     accusationsRemaining,
     status,
     ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
   })
 
-  session.accusationHistory = accusationHistory
-  session.accusationsRemaining = accusationsRemaining
-  session.status = status
+  progress = {
+    ...progress,
+    accusationHistory,
+    accusationsRemaining,
+    status,
+  }
 
-  return ok(serializeSession(session))
-}
+  const fullCase = await loadCase(caseId)
 
-const handleGetSession = async (sessionId: string) => {
-  const session = await getSession(sessionId)
-  if (!session) return err(404, 'Session not found')
-  if (session.date !== getTodayUtc()) return err(404, 'Session expired')
-  return ok(serializeSession(session))
-}
-
-const handleState = async (event: ApiGatewayEvent) => {
-  const userInfo = await getUserInfo(event)
-  if (!userInfo.sub) return err(401, 'Authentication required')
-  const dateStr = getTodayUtc()
-  const sessionId = getDateSessionKey(userInfo.sub, dateStr)
-  return handleGetSession(sessionId)
+  return ok({
+    case: fullCase ? buildResponseCase(fullCase, progress) : null,
+    investigationsRemaining: progress.investigationsRemaining,
+    accusationsRemaining: progress.accusationsRemaining,
+    accusationHistory: progress.accusationHistory,
+    status: progress.status,
+  })
 }
 
 export const handler = async (
@@ -409,47 +340,27 @@ export const handler = async (
     return { statusCode: 204, headers: corsHeaders, body: '' }
   }
 
-  const dateStr = getTodayUtc()
   const path = event.path.replace(/\/+$/, '')
   const method = event.requestContext.httpMethod
-  const body = parseBody(event)
 
   try {
-    if (method === 'GET' && path === '/api/daily/case') {
-      return await handleGetDailyCase(dateStr)
+    if (method === 'GET' && path === '/api/cases/current') {
+      return await handleGetCurrentCase()
     }
 
-    if (method === 'POST' && path === '/api/daily/start') {
-      return await handleStart(dateStr, event)
+    const apiCasesMatch = path.match(/^\/api\/cases\/([^/]+)$/)
+    if (method === 'GET' && apiCasesMatch) {
+      return await handleGetCurrentCase()
     }
 
-    if (method === 'GET' && path === '/api/daily/state') {
-      return await handleState(event)
+    const investigateMatch = path.match(/^\/api\/cases\/([^/]+)\/investigate\/([^/]+)\/([^/]+)$/)
+    if (method === 'POST' && investigateMatch) {
+      return await handleInvestigate(investigateMatch[1], investigateMatch[2], investigateMatch[3], event)
     }
 
-    if (method === 'GET' && path.startsWith('/api/daily/')) {
-      const sessionId = path.replace('/api/daily/', '').split('/')[0]
-      if (sessionId && !sessionId.includes('/')) {
-        return await handleGetSession(sessionId)
-      }
-    }
-
-    if (method === 'POST' && path.includes('/investigate/')) {
-      const parts = path.replace('/api/daily/', '').split('/')
-      const sessionId = parts[0]
-      const locIdx = parts.indexOf('investigate')
-      if (sessionId && locIdx !== -1 && parts[locIdx + 1] && parts[locIdx + 2]) {
-        return await handleInvestigate(sessionId, parts[locIdx + 1], parts[locIdx + 2])
-      }
-    }
-
-    if (method === 'POST' && path.includes('/accuse/')) {
-      const parts = path.replace('/api/daily/', '').split('/')
-      const sessionId = parts[0]
-      const accIdx = parts.indexOf('accuse')
-      if (sessionId && accIdx !== -1 && parts[accIdx + 1]) {
-        return await handleAccuse(sessionId, parts[accIdx + 1])
-      }
+    const accuseMatch = path.match(/^\/api\/cases\/([^/]+)\/accuse\/(\d+)$/)
+    if (method === 'POST' && accuseMatch) {
+      return await handleAccuse(accuseMatch[1], accuseMatch[2], event)
     }
 
     return err(404, 'Not found')

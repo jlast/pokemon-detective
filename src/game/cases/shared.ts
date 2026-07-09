@@ -116,9 +116,9 @@ export const createHiddenFacts = (pokemonId: number): InspectedFact[] => {
   ]
 }
 
-export const createSuspect = (pokemonId: number): Suspect => {
+export const createSuspect = (pokemonId: number, isShinyOverride?: boolean): Suspect => {
   const pokemon = getPokemon(pokemonId)
-  const isShiny = Math.random() < 0.01
+  const isShiny = isShinyOverride ?? (Math.random() < 0.01)
 
   return {
     pokemonId,

@@ -11,8 +11,7 @@ import { EndingRoute } from './routes/EndingRoute'
 import { InvestigationLocationRoute } from './routes/InvestigationLocationRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
-import { getDailyCase, startDaily, investigate as apiInvestigate, accuse as apiAccuse } from './api'
-import type { SessionData } from './api'
+import { getCurrentCase, investigate as apiInvestigate, accuse as apiAccuse } from './api'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from './game/caseModel'
 import {
   isAuthenticated,
@@ -23,12 +22,17 @@ import {
   type UserProfile,
 } from './auth'
 
+const getTodayCaseId = () => new Date().toISOString().slice(0, 10)
+
 function App() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const [session, setSession] = useState<SessionData | null>(null)
+  const [caseData, setCaseData] = useState<Case | null>(null)
   const [loading, setLoading] = useState(true)
+  const [investigationsRemaining, setInvestigationsRemaining] = useState(0)
+  const [accusationsRemaining, setAccusationsRemaining] = useState(3)
+  const [accusationHistory, setAccusationHistory] = useState<number[]>([])
 
   const [authed, setAuthed] = useState(() => isAuthenticated())
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() =>
@@ -44,12 +48,8 @@ function App() {
   }, [])
 
   const wrongAccusationIds = useMemo(() => {
-    if (!session) return []
-    if (session.status === 'solved' && session.accusationHistory.length > 0) {
-      return session.accusationHistory.slice(0, -1)
-    }
-    return session.accusationHistory
-  }, [session])
+    return accusationHistory
+  }, [accusationHistory])
 
   const [suspectNotes, setSuspectNotes] = useState<Map<number, {
     noteStatus: SuspectNoteStatus
@@ -78,8 +78,8 @@ function App() {
   }
 
   const currentCase: Case | null = useMemo(() => {
-    if (!session) return null
-    const c = JSON.parse(JSON.stringify(session.case)) as Case
+    if (!caseData) return null
+    const c = JSON.parse(JSON.stringify(caseData)) as Case
     c.suspects = c.suspects.map((s) => {
       const notes = suspectNotes.get(s.pokemonId)
       if (!notes) return s
@@ -91,9 +91,9 @@ function App() {
       }
     })
     return c
-  }, [session, suspectNotes])
+  }, [caseData, suspectNotes])
 
-  const attemptsLeft = session?.accusationsRemaining ?? 0
+  const attemptsLeft = accusationsRemaining
 
   const culpritSuspect: Suspect | null = useMemo(() => {
     if (!currentCase || currentCase.culpritPokemonId === -1) return null
@@ -120,32 +120,16 @@ function App() {
     setActivePanel('investigation')
   }
 
-  const startAnonSession = async () => {
-    const caseData = await getDailyCase()
-    const sessionData: SessionData = {
-      sessionId: '',
-      date: new Date().toISOString().slice(0, 10),
-      userSub: '',
-      status: 'playing',
-      investigationsRemaining: caseData.maxInvestigations,
-      accusationsRemaining: 3,
-      accusationHistory: [],
-      case: caseData,
-    }
-    setSession(sessionData)
-  }
-
-  const loadSession = useCallback(async () => {
+  const loadCase = useCallback(async () => {
     setLoading(true)
     try {
-      if (isAuthenticated()) {
-        const data = await startDaily()
-        setSession(data)
-      } else {
-        await startAnonSession()
-      }
+      const data = await getCurrentCase()
+      setCaseData(data)
+      setInvestigationsRemaining(data.maxInvestigations)
+      setAccusationsRemaining(3)
+      setAccusationHistory([])
     } catch (err) {
-      console.error('Failed to load daily puzzle:', err)
+      console.error('Failed to load daily case:', err)
     } finally {
       setLoading(false)
     }
@@ -157,22 +141,22 @@ function App() {
       if (ok) {
         setAuthed(true)
         setUserProfile(getUserProfile())
-        loadSession().then(() => navigate('/', { replace: true }))
+        loadCase().then(() => navigate('/', { replace: true }))
       } else {
         navigate('/', { replace: true })
       }
       return
     }
-  }, [currentRoute, navigate, loadSession])
+  }, [currentRoute, navigate, loadCase])
 
   useEffect(() => {
-    loadSession()
-  }, [loadSession])
+    loadCase()
+  }, [loadCase])
 
   const startNewCase = async () => {
     setSuspectNotes(new Map())
     resetTransientUi()
-    await loadSession()
+    await loadCase()
     navigate('/investigation')
   }
 
@@ -217,12 +201,15 @@ function App() {
   }
 
   const confirmAccusation = async () => {
-    if (!session || !accusationTarget) return
+    if (!caseData || !accusationTarget) return
 
     if (authed) {
       try {
-        const data = await apiAccuse(session.sessionId, accusationTarget.pokemonId)
-        setSession(data)
+        const caseId = getTodayCaseId()
+        const data = await apiAccuse(caseId, accusationTarget.pokemonId)
+        setCaseData(data.case)
+        setAccusationHistory(data.accusationHistory)
+        setAccusationsRemaining(data.accusationsRemaining)
         setAccusationTargetId(null)
 
         updateSuspectNote(accusationTarget.pokemonId, (prev) => ({
@@ -243,34 +230,22 @@ function App() {
         console.error('Accusation failed:', err)
       }
     } else {
-      const correct = accusationTarget.pokemonId === session.case.culpritPokemonId
-      const accusationHistory = [...session.accusationHistory, accusationTarget.pokemonId]
-      const accusationsRemaining = correct
-        ? session.accusationsRemaining
-        : session.accusationsRemaining - 1
+      const correct = accusationTarget.pokemonId === caseData.culpritPokemonId
+      const newHistory = [...accusationHistory, accusationTarget.pokemonId]
+      const remaining = correct ? accusationsRemaining : accusationsRemaining - 1
       let status: 'playing' | 'solved' | 'failed' = 'playing'
       if (correct) status = 'solved'
-      else if (accusationsRemaining <= 0) status = 'failed'
+      else if (remaining <= 0) status = 'failed'
 
-      const culpritPokemonId = status !== 'playing' ? accusationTarget.pokemonId : -1
-      const solution = status !== 'playing'
-        ? { culpritRevealText: '', detectiveConclusion: '', evidenceExplanation: [], clearedSuspects: [] }
-        : undefined
-
-      const mapStatus = (s: 'playing' | 'solved' | 'failed'): 'active' | 'solved' | 'failed' =>
-        s === 'playing' ? 'active' : s
-
-      setSession({
-        ...session,
-        accusationHistory,
-        accusationsRemaining,
-        status,
-        case: {
-          ...session.case,
-          status: mapStatus(status),
-          culpritPokemonId,
-          solution,
-        },
+      setAccusationHistory(newHistory)
+      setAccusationsRemaining(remaining)
+      setCaseData({
+        ...caseData,
+        status: status === 'playing' ? 'active' : status,
+        culpritPokemonId: status !== 'playing' ? accusationTarget.pokemonId : -1,
+        solution: status !== 'playing'
+          ? { culpritRevealText: '', detectiveConclusion: '', evidenceExplanation: [], clearedSuspects: [] }
+          : undefined,
       })
       setAccusationTargetId(null)
 
@@ -297,47 +272,48 @@ function App() {
   }
 
   const investigateLocation = async (locationId: string, actionId: string) => {
-    if (!session) return
+    if (!caseData) return
 
     if (authed) {
       try {
-        const data = await apiInvestigate(session.sessionId, locationId, actionId)
-        setSession(data)
+        const caseId = getTodayCaseId()
+        const data = await apiInvestigate(caseId, locationId, actionId)
+        setCaseData(data.case)
+        setInvestigationsRemaining(data.investigationsRemaining)
+        setAccusationsRemaining(data.accusationsRemaining)
+        setAccusationHistory(data.accusationHistory)
         setLastInvestigatedLocationId(locationId)
       } catch (err) {
         console.error('Investigation failed:', err)
       }
     } else {
-      if (session.investigationsRemaining <= 0) return
-      const location = session.case.locations.find((l) => l.id === locationId)
+      if (investigationsRemaining <= 0) return
+      const location = caseData.locations.find((l) => l.id === locationId)
       if (!location || location.investigated) return
       const action = location.actions.find((a) => a.id === actionId)
       if (!action) return
-      setSession({
-        ...session,
-        investigationsRemaining: session.investigationsRemaining - 1,
-        case: {
-          ...session.case,
-          locations: session.case.locations.map((l) =>
-            l.id === locationId
-              ? {
-                  ...l,
-                  investigated: true,
-                  selectedActionId: actionId,
-                  observationText: action.observationText,
-                  evidenceId: action.evidenceId ?? undefined,
-                  evidenceTitle: action.evidenceTitle ?? undefined,
-                  evidenceText: action.evidenceText ?? undefined,
-                }
-              : l,
-          ),
-          evidence: action.evidenceId
-            ? session.case.evidence.map((e) =>
-                e.id === action.evidenceId ? { ...e, discovered: true } : e,
-              )
-            : session.case.evidence,
-        },
+      setCaseData({
+        ...caseData,
+        locations: caseData.locations.map((l) =>
+          l.id === locationId
+            ? {
+                ...l,
+                investigated: true,
+                selectedActionId: actionId,
+                observationText: action.observationText,
+                evidenceId: action.evidenceId ?? undefined,
+                evidenceTitle: action.evidenceTitle ?? undefined,
+                evidenceText: action.evidenceText ?? undefined,
+              }
+            : l,
+        ),
+        evidence: action.evidenceId
+          ? caseData.evidence.map((e) =>
+              e.id === action.evidenceId ? { ...e, discovered: true } : e,
+            )
+          : caseData.evidence,
       })
+      setInvestigationsRemaining(investigationsRemaining - 1)
       setLastInvestigatedLocationId(locationId)
     }
   }

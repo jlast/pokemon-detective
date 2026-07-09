@@ -1,4 +1,6 @@
-import type { Case } from '../caseModel'
+import type { Case, CaseSolution } from '../caseModel'
+import { getPokemonById } from '../suspectCaseFile'
+import { generateCaseEvidence, generateCaseLineup, generateCaseLocations } from '../caseGeneration'
 import { createBaseCase, createSuspect, hydrateCaseConfig, type CaseConfig, type RawCaseConfig } from './shared'
 import missingCookiesRaw from './missingCookies.json'
 import purloinedPageRaw from './purloinedPage.json'
@@ -6,9 +8,8 @@ import missingMedalRaw from './missingMedal.json'
 import ravagedPantryRaw from './ravagedPantry.json'
 import stolenArtifactRaw from './stolenArtifact.json'
 import additionalCasesRaw from './additionalCases.json'
-import { generateCaseLineup } from '../caseGeneration'
 
-const allCases: CaseConfig[] = [
+export const allCases: CaseConfig[] = [
   hydrateCaseConfig(missingCookiesRaw as RawCaseConfig),
   hydrateCaseConfig(purloinedPageRaw as RawCaseConfig),
   hydrateCaseConfig(missingMedalRaw as RawCaseConfig),
@@ -24,7 +25,7 @@ const buildCase = (caseConfig: CaseConfig): Case => {
   return {
     ...baseCase,
     culpritPokemonId: generated.culpritPokemonId,
-    suspects: generated.suspectPokemonIds.map(createSuspect).map((suspect) => ({
+    suspects: generated.suspectPokemonIds.map((id) => createSuspect(id)).map((suspect) => ({
       ...suspect,
       inspectedGroups: { ...suspect.inspectedGroups },
       inspectedFacts: suspect.inspectedFacts.map((fact) => ({ ...fact })),
@@ -53,4 +54,42 @@ export const getCaseList = () => allCases.map((c) => ({ id: c.id, title: c.title
 export const createCaseById = (id: string): Case | undefined => {
   const config = allCases.find((c) => c.id === id)
   return config ? buildCase(config) : undefined
+}
+
+export const rebuildFullCase = (
+  configId: string,
+  culpritPokemonId: number,
+  suspectPokemonIds: number[],
+  suspectShinyMap: Record<number, boolean>,
+  actionEvidenceMap: Record<string, string>,
+  solution: CaseSolution,
+): Case => {
+  const config = allCases.find((c) => c.id === configId)
+  if (!config) throw new Error(`Case config not found: ${configId}`)
+
+  const baseCase = createBaseCase(config)
+  const culprit = getPokemonById(culpritPokemonId)
+
+  const overriddenLocations = baseCase.locations.map((location) => ({
+    ...location,
+    actions: location.actions.map((action) => {
+      const chosenId = actionEvidenceMap[action.id]
+      return chosenId ? { ...action, evidenceId: chosenId } : action
+    }),
+  }))
+
+  const { generatedEvidence } = generateCaseEvidence(culprit, baseCase.evidence, config.evidenceOverrides)
+  const generatedLocations = generateCaseLocations(culprit, overriddenLocations, config.evidenceOverrides)
+
+  const suspects = suspectPokemonIds.map((id) => createSuspect(id, suspectShinyMap[id]))
+
+  return {
+    ...baseCase,
+    culpritPokemonId,
+    suspects,
+    locations: generatedLocations,
+    evidence: generatedEvidence,
+    solution,
+    status: 'active' as const,
+  }
 }

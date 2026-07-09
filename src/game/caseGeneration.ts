@@ -827,7 +827,7 @@ const buildActionNarrative = (
   }
 }
 
-const generateCaseEvidence = (
+export const generateCaseEvidence = (
   culprit: Pokemon,
   baseEvidence: Evidence[],
   evidenceOverrides?: Record<string, { title?: string; clueText?: string; endExplanation?: string }>,
@@ -851,7 +851,7 @@ const generateCaseEvidence = (
   return { generatedEvidence, generatedEvidenceById }
 }
 
-const generateCaseLocations = (
+export const generateCaseLocations = (
   culprit: Pokemon,
   baseLocations: Location[],
   evidenceOverrides?: Record<string, { title?: string; clueText?: string; endExplanation?: string }>,
