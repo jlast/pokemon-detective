@@ -1,17 +1,25 @@
+import type { UserProfile } from '../auth'
+
 interface DesktopSidebarProps {
   activeSection: string
+  authed: boolean
+  userProfile: UserProfile | null
   onSelectHome: () => void
   onSelectCase: () => void
   onSelectHowToPlay: () => void
-  onSelectLogin: () => void
+  onLogin: () => void
+  onLogout: () => void
 }
 
 export function DesktopSidebar({
   activeSection,
+  authed,
+  userProfile,
   onSelectHome,
   onSelectCase,
   onSelectHowToPlay,
-  onSelectLogin,
+  onLogin,
+  onLogout,
 }: DesktopSidebarProps) {
   return (
     <aside className="desktop-sidebar notebook-card" aria-label="Primary navigation">
@@ -62,13 +70,30 @@ export function DesktopSidebar({
       </div>
 
       <div className="desktop-sidebar-section desktop-sidebar-actions">
-        <button
-          type="button"
-          className="sidebar-nav-button"
-          onClick={onSelectLogin}
-        >
-          Login
-        </button>
+        {authed && userProfile ? (
+          <div className="sidebar-user">
+            <div className="sidebar-user-info">
+              <span className="sidebar-user-name">
+                {userProfile.name ?? userProfile.email ?? 'User'}
+              </span>
+            </div>
+            <button
+              type="button"
+              className="sidebar-nav-button sidebar-logout"
+              onClick={onLogout}
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="sidebar-nav-button"
+            onClick={onLogin}
+          >
+            Login
+          </button>
+        )}
       </div>
     </aside>
   )

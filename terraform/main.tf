@@ -137,14 +137,14 @@ resource "aws_iam_role_policy" "lambda_logs" {
 # ─── Lambda function ──────────────────────────────────────────────────────────
 
 resource "aws_lambda_function" "api" {
-  filename         = var.lambda_zip_path
+  filename         = var.handler_zip_path
   function_name    = "${var.project_name}-api"
   role             = aws_iam_role.lambda.arn
   handler          = "handler.handler"
   runtime          = "nodejs22.x"
   timeout          = 30
   memory_size      = 256
-  source_code_hash = filebase64sha256(var.lambda_zip_path)
+  source_code_hash = filebase64sha256(var.handler_zip_path)
 
   environment {
     variables = {
@@ -161,6 +161,157 @@ resource "aws_lambda_permission" "api_gateway" {
   function_name = aws_lambda_function.api.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*"
+}
+
+# ─── Cognito User Pool ────────────────────────────────────────────────────────
+
+resource "aws_cognito_user_pool" "main" {
+  name = "${var.project_name}-users"
+
+  auto_verified_attributes = ["email"]
+
+  account_recovery_setting {
+    recovery_mechanism {
+      name     = "verified_email"
+      priority = 1
+    }
+  }
+
+  username_configuration {
+    case_sensitive = false
+  }
+
+  schema {
+    name                = "email"
+    attribute_data_type = "String"
+    required            = true
+    mutable             = true
+  }
+
+  admin_create_user_config {
+    allow_admin_create_user_only = false
+  }
+
+  tags = var.tags
+}
+
+resource "aws_cognito_user_pool_domain" "main" {
+  domain       = var.cognito_domain
+  user_pool_id = aws_cognito_user_pool.main.id
+}
+
+resource "aws_cognito_user_pool_client" "client" {
+  name                                 = "${var.project_name}-client"
+  user_pool_id                         = aws_cognito_user_pool.main.id
+  generate_secret                      = false
+  allowed_oauth_flows                  = ["code", "implicit"]
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_scopes                 = ["email", "openid", "profile"]
+  callback_urls                        = ["${var.app_url}/callback"]
+  logout_urls                          = [var.app_url]
+  supported_identity_providers         = ["Google", "COGNITO"]
+}
+
+resource "aws_cognito_identity_provider" "google" {
+  user_pool_id  = aws_cognito_user_pool.main.id
+  provider_name = "Google"
+  provider_type = "Google"
+
+  attribute_mapping = {
+    email    = "email"
+    name     = "name"
+    picture  = "picture"
+    username = "sub"
+  }
+
+  provider_details = {
+    authorize_scopes              = "email profile openid"
+    client_id                     = var.google_client_id
+    client_secret                 = var.google_client_secret
+    attributes_url                = "https://people.googleapis.com/v1/people/me?personFields="
+    attributes_url_add_attributes = "true"
+    authorize_url                 = "https://accounts.google.com/o/oauth2/v2/auth"
+    oidc_issuer                   = "https://accounts.google.com"
+    token_request_method          = "POST"
+    token_url                     = "https://oauth2.googleapis.com/token"
+  }
+}
+
+# ─── Lambda Authorizer IAM ────────────────────────────────────────────────────
+
+resource "aws_iam_role" "authorizer" {
+  name = "${var.project_name}-authorizer-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = { Service = "lambda.amazonaws.com" }
+    }]
+  })
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy" "authorizer_logs" {
+  name = "${var.project_name}-authorizer-logs"
+  role = aws_iam_role.authorizer.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+      ]
+      Resource = "arn:aws:logs:*:*:*"
+    }]
+  })
+}
+
+# ─── Lambda Authorizer function ───────────────────────────────────────────────
+
+resource "aws_lambda_function" "authorizer" {
+  filename         = var.authorizer_zip_path
+  function_name    = "${var.project_name}-authorizer"
+  role             = aws_iam_role.authorizer.arn
+  handler          = "authorizer.handler"
+  runtime          = "nodejs22.x"
+  timeout          = 10
+  memory_size      = 128
+  source_code_hash = filebase64sha256(var.authorizer_zip_path)
+
+  environment {
+    variables = {
+      USER_POOL_ID = aws_cognito_user_pool.main.id
+      REGION       = var.region
+    }
+  }
+
+  tags = var.tags
+}
+
+resource "aws_lambda_permission" "authorizer" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.authorizer.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*"
+}
+
+# ─── API Gateway Authorizer ───────────────────────────────────────────────────
+
+resource "aws_api_gateway_authorizer" "cognito" {
+  name                   = "${var.project_name}-cognito-auth"
+  rest_api_id            = aws_api_gateway_rest_api.api.id
+  authorizer_uri         = aws_lambda_function.authorizer.invoke_arn
+  authorizer_credentials = aws_iam_role.authorizer.arn
+  type                   = "REQUEST"
+  identity_source        = "method.request.header.Authorization"
+  authorizer_result_ttl_in_seconds = 0
 }
 
 # ─── API Gateway (REST) — single proxy resource ──────────────────────────────
@@ -186,7 +337,8 @@ resource "aws_api_gateway_method" "proxy_any" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.proxy.id
   http_method   = "ANY"
-  authorization = "NONE"
+  authorization = "CUSTOM"
+  authorizer_id = aws_api_gateway_authorizer.cognito.id
 }
 
 resource "aws_api_gateway_integration" "proxy_any" {

@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
 
+env:
+  VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN || 'pokemon-detective' }}
+  VITE_COGNITO_REGION: ${{ vars.VITE_COGNITO_REGION || 'us-east-1' }}
+  VITE_COGNITO_CLIENT_ID: ${{ secrets.VITE_COGNITO_CLIENT_ID }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,20 +23,30 @@ jobs:
       # ── Build client ──
       - run: npm ci
       - run: npm run build
+        env:
+          VITE_COGNITO_DOMAIN: ${{ env.VITE_COGNITO_DOMAIN }}
+          VITE_COGNITO_REGION: ${{ env.VITE_COGNITO_REGION }}
+          VITE_COGNITO_CLIENT_ID: ${{ env.VITE_COGNITO_CLIENT_ID }}
 
-      # ── Build Lambda ──
+      # ── Build Lambdas ──
       - working-directory: api
         run: npm ci
 
-      - working-directory: api
-        run: npx esbuild src/handler.ts --bundle --platform=node --target=node22 --outfile=dist/handler.js
+      - name: Build handler Lambda
+        working-directory: api
+        run: npm run build:handler
 
-      - name: Package Lambda
+      - name: Build authorizer Lambda
+        working-directory: api
+        run: npm run build:authorizer
+
+      - name: Package Lambdas
         working-directory: api
         run: |
           mkdir -p dist
           cd dist
           zip -r handler.zip handler.js
+          zip -r authorizer.zip authorizer.js
 
       # ── AWS auth ──
       - uses: aws-actions/configure-aws-credentials@v4
@@ -43,11 +58,16 @@ jobs:
       # ── Deploy client to S3 ──
       - run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }}/ --delete
 
-      # ── Deploy Lambda ──
+      # ── Deploy Lambdas ──
       - run: >
           aws lambda update-function-code
           --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }}
           --zip-file fileb://api/dist/handler.zip
+
+      - run: >
+          aws lambda update-function-code
+          --function-name ${{ secrets.LAMBDA_AUTHORIZER_FUNCTION_NAME }}
+          --zip-file fileb://api/dist/authorizer.zip
 
       # ── Invalidate CloudFront cache ──
       - run: >

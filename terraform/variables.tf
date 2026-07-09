@@ -15,10 +15,16 @@ variable "dynamodb_table_name" {
   default     = "DailyPuzzleSession"
 }
 
-variable "lambda_zip_path" {
-  description = "Path to the Lambda deployment zip file (relative to terraform directory)"
+variable "handler_zip_path" {
+  description = "Path to the Lambda handler deployment zip (relative to terraform directory)"
   type        = string
   default     = "../api/dist/handler.zip"
+}
+
+variable "authorizer_zip_path" {
+  description = "Path to the Lambda authorizer deployment zip (relative to terraform directory)"
+  type        = string
+  default     = "../api/dist/authorizer.zip"
 }
 
 variable "region" {
@@ -31,6 +37,29 @@ variable "price_class" {
   description = "CloudFront price class (PriceClass_100, PriceClass_200, PriceClass_All)"
   type        = string
   default     = "PriceClass_100"
+}
+
+variable "cognito_domain" {
+  description = "Cognito Hosted UI domain prefix (must be globally unique)"
+  type        = string
+  default     = "pokemon-detective"
+}
+
+variable "app_url" {
+  description = "Base URL of the application (e.g. https://d123.cloudfront.net)"
+  type        = string
+}
+
+variable "google_client_id" {
+  description = "Google OAuth 2.0 Client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "google_client_secret" {
+  description = "Google OAuth 2.0 Client Secret"
+  type        = string
+  sensitive   = true
 }
 
 variable "tags" {

@@ -17,6 +17,7 @@ export interface InvestigatedLocationRecord {
 export interface SessionRecord {
   sessionId: string
   date: string
+  userSub: string
   status: 'playing' | 'solved' | 'failed'
   investigationsRemaining: number
   maxInvestigations: number

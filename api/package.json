@@ -4,13 +4,15 @@
   "type": "module",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.700.0",
-    "@aws-sdk/lib-dynamodb": "^3.700.0"
+    "@aws-sdk/lib-dynamodb": "^3.700.0",
+    "jose": "^5.9.0"
   },
   "devDependencies": {
     "esbuild": "^0.24.0",
     "typescript": "~5.7.0"
   },
   "scripts": {
-    "build": "esbuild src/handler.ts --bundle --platform=node --target=node22 --outfile=dist/handler.js"
+    "build:handler": "esbuild src/handler.ts --bundle --platform=node --target=node22 --outfile=dist/handler.js",
+    "build:authorizer": "esbuild src/authorizer.ts --bundle --platform=node --target=node22 --outfile=dist/authorizer.js"
   }
 }

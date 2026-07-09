@@ -13,6 +13,14 @@ import { SuspectsRoute } from './routes/SuspectsRoute'
 import { startDaily, investigate as apiInvestigate, accuse as apiAccuse } from './api'
 import type { SessionData } from './api'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from './game/caseModel'
+import {
+  isAuthenticated,
+  login,
+  logout as authLogout,
+  handleCallback,
+  getUserProfile,
+  type UserProfile,
+} from './auth'
 
 const SESSION_STORAGE_KEY = 'daily-session-id'
 
@@ -22,6 +30,20 @@ function App() {
 
   const [session, setSession] = useState<SessionData | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const [authed, setAuthed] = useState(() => isAuthenticated())
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(() =>
+    authed ? getUserProfile() : null,
+  )
+
+  const handleLogin = useCallback(() => {
+    login()
+  }, [])
+
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem(SESSION_STORAGE_KEY)
+    authLogout()
+  }, [])
 
   const wrongAccusationIds = useMemo(() => {
     if (!session) return []
@@ -112,6 +134,18 @@ function App() {
       setLoading(false)
     }
   }, [])
+
+  useEffect(() => {
+    if (currentRoute === '/callback') {
+      const ok = handleCallback()
+      if (ok) {
+        setAuthed(true)
+        setUserProfile(getUserProfile())
+      }
+      navigate('/', { replace: true })
+      return
+    }
+  }, [currentRoute, navigate])
 
   useEffect(() => {
     const savedId = localStorage.getItem(SESSION_STORAGE_KEY)
@@ -256,10 +290,13 @@ function App() {
       <main className="app-shell">
         <DesktopSidebar
           activeSection=""
+          authed={authed}
+          userProfile={userProfile}
           onSelectHome={() => {}}
           onSelectCase={() => {}}
           onSelectHowToPlay={() => {}}
-          onSelectLogin={() => {}}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
         />
         <div className="app-content">
           <div className="main-layout-single">
@@ -290,10 +327,13 @@ function App() {
     <main className="app-shell">
       <DesktopSidebar
         activeSection={activeSidebarSection}
+        authed={authed}
+        userProfile={userProfile}
         onSelectHome={() => navigate('/')}
         onSelectCase={() => navigate('/')}
         onSelectHowToPlay={() => navigate('/how-to-play')}
-        onSelectLogin={() => navigate('/login')}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
       />
 
       <div className="app-content">
@@ -316,6 +356,7 @@ function App() {
           <Route path="/home" element={<Navigate to="/" replace />} />
           <Route path="/case" element={<Navigate to="/" replace />} />
           <Route path="/investigation" element={<CaseRoute {...sharedInvestigationRouteProps} />} />
+          <Route path="/callback" element={null} />
           <Route
             path="/investigation/:locationId"
             element={
@@ -376,7 +417,6 @@ function App() {
             }
           />
           <Route path="/how-to-play" element={<div className="main-layout-single"><p className="placeholder-page">How to play — coming soon</p></div>} />
-          <Route path="/login" element={<div className="main-layout-single"><p className="placeholder-page">Login — coming soon</p></div>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

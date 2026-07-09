@@ -1,3 +1,8 @@
-bucket_name      = "pokemon-detective-your-unique-suffix"
-region           = "us-east-1"
-lambda_zip_path  = "../api/dist/handler.zip"
+bucket_name           = "pokemon-detective-your-unique-suffix"
+region                = "us-east-1"
+app_url               = "https://d123.cloudfront.net"    # CloudFront distribution domain name
+handler_zip_path      = "../api/dist/handler.zip"
+authorizer_zip_path   = "../api/dist/authorizer.zip"
+cognito_domain        = "pokemon-detective"
+google_client_id      = "your-google-client-id.apps.googleusercontent.com"
+google_client_secret  = "your-google-client-secret"

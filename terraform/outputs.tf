@@ -32,3 +32,23 @@ output "dynamodb_table_name" {
   description = "Name of the DynamoDB table"
   value       = aws_dynamodb_table.daily_sessions.name
 }
+
+output "cognito_user_pool_id" {
+  description = "Cognito User Pool ID"
+  value       = aws_cognito_user_pool.main.id
+}
+
+output "cognito_user_pool_client_id" {
+  description = "Cognito User Pool Client ID"
+  value       = aws_cognito_user_pool_client.client.id
+}
+
+output "cognito_domain" {
+  description = "Cognito Hosted UI domain"
+  value       = "${aws_cognito_user_pool_domain.main.domain}.auth.${var.region}.amazoncognito.com"
+}
+
+output "lambda_authorizer_function_name" {
+  description = "Name of the Lambda authorizer function"
+  value       = aws_lambda_function.authorizer.function_name
+}
