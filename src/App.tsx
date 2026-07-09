@@ -4,6 +4,7 @@ import './App.css'
 import { DesktopSidebar } from './components/DesktopSidebar'
 import { Header } from './components/Header'
 import { AccuseRoute } from './routes/AccuseRoute'
+import { LoginRoute } from './routes/LoginRoute'
 import { CaseOverviewRoute } from './routes/CaseOverviewRoute'
 import { CaseRoute } from './routes/CaseRoute'
 import { EndingRoute } from './routes/EndingRoute'
@@ -37,8 +38,8 @@ function App() {
   )
 
   const handleLogin = useCallback(() => {
-    login()
-  }, [])
+    navigate('/login')
+  }, [navigate])
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem(SESSION_STORAGE_KEY)
@@ -416,6 +417,7 @@ function App() {
               />
             }
           />
+          <Route path="/login" element={<LoginRoute onLogin={() => login()} />} />
           <Route path="/how-to-play" element={<div className="main-layout-single"><p className="placeholder-page">How to play — coming soon</p></div>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

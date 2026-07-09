@@ -63,6 +63,7 @@ export const login = (): void => {
     scope: 'openid email profile',
     redirect_uri: redirectUri,
     state,
+    identity_provider: 'Google',
   })
   window.location.href = `${COGNITO_URL}/login?${params.toString()}`
 }
