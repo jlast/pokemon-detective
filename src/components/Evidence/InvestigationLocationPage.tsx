@@ -35,13 +35,10 @@ export function InvestigationLocationPage({
 
   const selectedAction = location.actions.find((action) => action.id === location.selectedActionId) ?? null
   const statusLabel = location.investigated ? 'Complete' : 'Not searched'
-  const hasEvidence =
-    selectedAction?.outcomeType === 'evidence' || selectedAction?.outcomeType === 'witness'
-  const detectiveNote = selectedAction
-    ? hasEvidence
-      ? selectedAction.implicationText ?? 'The new clue should be compared against the suspect files.'
-      : 'This lead does not narrow the suspect list.'
-    : null
+  const hasEvidence = !!location.evidenceId
+  const detectiveNote = hasEvidence
+    ? selectedAction?.implicationText ?? 'The new clue should be compared against the suspect files.'
+    : 'This lead does not narrow the suspect list.'
   const progressSlots = Array.from({ length: maxInvestigations }, (_, index) => index < resolvedCount)
 
   return (
@@ -94,8 +91,8 @@ export function InvestigationLocationPage({
               </div>
               <div className="evidence-hero-copy">
                 <p className="eyebrow">New Evidence Discovered</p>
-                <h3>{hasEvidence ? selectedAction.evidenceTitle : 'No Useful Evidence'}</h3>
-                <p>{hasEvidence ? selectedAction.evidenceText : selectedAction.observationText}</p>
+                <h3>{hasEvidence ? (location.evidenceTitle ?? selectedAction?.evidenceTitle) : 'No Useful Evidence'}</h3>
+                <p>{hasEvidence ? (location.evidenceText ?? selectedAction?.evidenceText) : (location.observationText ?? selectedAction?.observationText)}</p>
                 {hasEvidence ? <span className="result-board-badge">Pinned to evidence board</span> : null}
               </div>
             </section>
@@ -103,7 +100,7 @@ export function InvestigationLocationPage({
             <div className="result-section-grid">
               <section className="result-info-card">
                 <strong>Observation</strong>
-                <p>{selectedAction.observationText}</p>
+                <p>{location.observationText ?? selectedAction?.observationText}</p>
               </section>
 
               <section className="result-info-card deduction-card">
@@ -116,7 +113,7 @@ export function InvestigationLocationPage({
                 {hasEvidence ? (
                   <span className="evidence-chip-new">
                     <span aria-hidden="true">✓ 👣</span>
-                    {selectedAction.evidenceTitle}
+                    {location.evidenceTitle ?? selectedAction?.evidenceTitle}
                     <span className="new-badge">NEW</span>
                   </span>
                 ) : (
