@@ -96,7 +96,7 @@ function App() {
   const attemptsLeft = accusationsRemaining
 
   const culpritSuspect: Suspect | null = useMemo(() => {
-    if (!currentCase || currentCase.culpritPokemonId === -1) return null
+    if (!currentCase || currentCase.culpritPokemonId == null) return null
     return currentCase.suspects.find((s) => s.pokemonId === currentCase.culpritPokemonId) ?? null
   }, [currentCase])
 
@@ -242,7 +242,7 @@ function App() {
       setCaseData({
         ...caseData,
         status: status === 'playing' ? 'active' : status,
-        culpritPokemonId: status !== 'playing' ? accusationTarget.pokemonId : -1,
+        ...(status !== 'playing' ? { culpritPokemonId: accusationTarget.pokemonId } : {}),
         solution: status !== 'playing'
           ? { culpritRevealText: '', detectiveConclusion: '', evidenceExplanation: [], clearedSuspects: [] }
           : undefined,

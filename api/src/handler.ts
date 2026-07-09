@@ -109,11 +109,10 @@ const stripActionOutcome = (action: LocationAction): LocationAction => {
 }
 
 const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null): Case => {
-  const { evidence: _ev, ...caseWithoutEvidence } = fullCase
+  const { evidence: _ev, culpritPokemonId: _cp, ...caseWithoutEvidence } = fullCase
   if (!progress) {
     return {
       ...caseWithoutEvidence,
-      culpritPokemonId: -1,
       solution: undefined,
       status: 'active' as CaseStatus,
       locations: fullCase.locations.map((l) => ({
@@ -136,8 +135,8 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
 
   return {
     ...caseWithoutEvidence,
+    ...(isOver ? { culpritPokemonId: fullCase.culpritPokemonId } : {}),
     status: (progress.status === 'playing' ? 'active' : progress.status) as CaseStatus,
-    culpritPokemonId: isOver ? fullCase.culpritPokemonId : -1,
     solution: isOver ? fullCase.solution : undefined,
     locations: fullCase.locations.map((loc) => {
       if (investigatedMap.has(loc.id)) {
