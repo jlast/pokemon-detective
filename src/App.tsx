@@ -157,11 +157,13 @@ function App() {
       if (ok) {
         setAuthed(true)
         setUserProfile(getUserProfile())
+        loadSession().then(() => navigate('/', { replace: true }))
+      } else {
+        navigate('/', { replace: true })
       }
-      navigate('/', { replace: true })
       return
     }
-  }, [currentRoute, navigate])
+  }, [currentRoute, navigate, loadSession])
 
   useEffect(() => {
     loadSession()
