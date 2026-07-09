@@ -92,6 +92,7 @@ const getTodayUtc = (): string => {
 
 const stripActionOutcome = (action: LocationAction): LocationAction => {
   const {
+    outcomeType,
     observationText,
     observationTextSmall,
     observationTextMedium,
