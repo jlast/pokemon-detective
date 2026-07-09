@@ -38,13 +38,15 @@ export const startDaily = async (): Promise<SessionData> => {
   return res.json()
 }
 
+const enc = encodeURIComponent
+
 export const investigate = async (
   sessionId: string,
   locationId: string,
   actionId: string,
 ): Promise<SessionData> => {
   const res = await fetch(
-    `${BASE}/api/daily/${sessionId}/investigate/${locationId}/${actionId}`,
+    `${BASE}/api/daily/${enc(sessionId)}/investigate/${enc(locationId)}/${enc(actionId)}`,
     { method: 'POST', headers: authHeaders() },
   )
   if (!res.ok) throw new Error(`API error: ${res.status}`)
@@ -56,7 +58,7 @@ export const accuse = async (
   suspectId: number,
 ): Promise<SessionData> => {
   const res = await fetch(
-    `${BASE}/api/daily/${sessionId}/accuse/${suspectId}`,
+    `${BASE}/api/daily/${enc(sessionId)}/accuse/${suspectId}`,
     { method: 'POST', headers: authHeaders() },
   )
   if (!res.ok) throw new Error(`API error: ${res.status}`)
@@ -64,7 +66,7 @@ export const accuse = async (
 }
 
 export const getSession = async (sessionId: string): Promise<SessionData> => {
-  const res = await fetch(`${BASE}/api/daily/${sessionId}`, {
+  const res = await fetch(`${BASE}/api/daily/${enc(sessionId)}`, {
     headers: authHeaders(),
   })
   if (!res.ok) throw new Error(`API error: ${res.status}`)

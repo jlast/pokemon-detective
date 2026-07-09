@@ -102,7 +102,7 @@ const getUserInfo = async (event: ApiGatewayEvent): Promise<UserInfo> => {
 }
 
 const getDateSessionKey = (sub: string, dateStr: string): string =>
-  `${sub}#${dateStr}`
+  `${sub}:${dateStr}`
 
 const CASE_IDS = [
   'missing-cookies',
