@@ -44,7 +44,7 @@ export interface Pokemon {
 }
 
 export const getShinySpriteUrl = (pokemonId: number): string =>
-  `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokemonId}.png`
+  `/sprites/shiny/${pokemonId}.png`
 
 export const pokemonData: Pokemon[] = [
   {
@@ -69,7 +69,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
+    "sprite": "/sprites/1.png"
   },
   {
     "id": 2,
@@ -93,7 +93,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png"
+    "sprite": "/sprites/2.png"
   },
   {
     "id": 3,
@@ -117,7 +117,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png"
+    "sprite": "/sprites/3.png"
   },
   {
     "id": 4,
@@ -140,7 +140,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"
+    "sprite": "/sprites/4.png"
   },
   {
     "id": 5,
@@ -163,7 +163,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/5.png"
+    "sprite": "/sprites/5.png"
   },
   {
     "id": 6,
@@ -187,7 +187,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png"
+    "sprite": "/sprites/6.png"
   },
   {
     "id": 7,
@@ -210,7 +210,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png"
+    "sprite": "/sprites/7.png"
   },
   {
     "id": 8,
@@ -233,7 +233,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/8.png"
+    "sprite": "/sprites/8.png"
   },
   {
     "id": 9,
@@ -256,7 +256,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/9.png"
+    "sprite": "/sprites/9.png"
   },
   {
     "id": 10,
@@ -279,7 +279,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10.png"
+    "sprite": "/sprites/10.png"
   },
   {
     "id": 11,
@@ -302,7 +302,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/11.png"
+    "sprite": "/sprites/11.png"
   },
   {
     "id": 12,
@@ -326,7 +326,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/12.png"
+    "sprite": "/sprites/12.png"
   },
   {
     "id": 13,
@@ -350,7 +350,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/13.png"
+    "sprite": "/sprites/13.png"
   },
   {
     "id": 14,
@@ -374,7 +374,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/14.png"
+    "sprite": "/sprites/14.png"
   },
   {
     "id": 15,
@@ -398,7 +398,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/15.png"
+    "sprite": "/sprites/15.png"
   },
   {
     "id": 16,
@@ -422,7 +422,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/16.png"
+    "sprite": "/sprites/16.png"
   },
   {
     "id": 17,
@@ -446,7 +446,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/17.png"
+    "sprite": "/sprites/17.png"
   },
   {
     "id": 18,
@@ -470,7 +470,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/18.png"
+    "sprite": "/sprites/18.png"
   },
   {
     "id": 19,
@@ -493,7 +493,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/19.png"
+    "sprite": "/sprites/19.png"
   },
   {
     "id": 20,
@@ -516,7 +516,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/20.png"
+    "sprite": "/sprites/20.png"
   },
   {
     "id": 21,
@@ -540,7 +540,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/21.png"
+    "sprite": "/sprites/21.png"
   },
   {
     "id": 22,
@@ -564,7 +564,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/22.png"
+    "sprite": "/sprites/22.png"
   },
   {
     "id": 23,
@@ -587,7 +587,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/23.png"
+    "sprite": "/sprites/23.png"
   },
   {
     "id": 24,
@@ -610,7 +610,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/24.png"
+    "sprite": "/sprites/24.png"
   },
   {
     "id": 25,
@@ -633,7 +633,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
+    "sprite": "/sprites/25.png"
   },
   {
     "id": 26,
@@ -656,7 +656,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/26.png"
+    "sprite": "/sprites/26.png"
   },
   {
     "id": 27,
@@ -679,7 +679,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/27.png"
+    "sprite": "/sprites/27.png"
   },
   {
     "id": 28,
@@ -702,7 +702,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/28.png"
+    "sprite": "/sprites/28.png"
   },
   {
     "id": 29,
@@ -725,7 +725,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/29.png"
+    "sprite": "/sprites/29.png"
   },
   {
     "id": 30,
@@ -748,7 +748,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/30.png"
+    "sprite": "/sprites/30.png"
   },
   {
     "id": 31,
@@ -772,7 +772,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/31.png"
+    "sprite": "/sprites/31.png"
   },
   {
     "id": 32,
@@ -795,7 +795,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/32.png"
+    "sprite": "/sprites/32.png"
   },
   {
     "id": 33,
@@ -818,7 +818,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/33.png"
+    "sprite": "/sprites/33.png"
   },
   {
     "id": 34,
@@ -842,7 +842,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/34.png"
+    "sprite": "/sprites/34.png"
   },
   {
     "id": 35,
@@ -865,7 +865,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/35.png"
+    "sprite": "/sprites/35.png"
   },
   {
     "id": 36,
@@ -888,7 +888,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/36.png"
+    "sprite": "/sprites/36.png"
   },
   {
     "id": 37,
@@ -911,7 +911,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/37.png"
+    "sprite": "/sprites/37.png"
   },
   {
     "id": 38,
@@ -934,7 +934,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/38.png"
+    "sprite": "/sprites/38.png"
   },
   {
     "id": 39,
@@ -958,7 +958,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/39.png"
+    "sprite": "/sprites/39.png"
   },
   {
     "id": 40,
@@ -982,7 +982,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/40.png"
+    "sprite": "/sprites/40.png"
   },
   {
     "id": 41,
@@ -1006,7 +1006,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/41.png"
+    "sprite": "/sprites/41.png"
   },
   {
     "id": 42,
@@ -1030,7 +1030,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/42.png"
+    "sprite": "/sprites/42.png"
   },
   {
     "id": 43,
@@ -1054,7 +1054,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/43.png"
+    "sprite": "/sprites/43.png"
   },
   {
     "id": 44,
@@ -1078,7 +1078,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/44.png"
+    "sprite": "/sprites/44.png"
   },
   {
     "id": 45,
@@ -1102,7 +1102,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/45.png"
+    "sprite": "/sprites/45.png"
   },
   {
     "id": 46,
@@ -1126,7 +1126,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/46.png"
+    "sprite": "/sprites/46.png"
   },
   {
     "id": 47,
@@ -1150,7 +1150,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/47.png"
+    "sprite": "/sprites/47.png"
   },
   {
     "id": 48,
@@ -1174,7 +1174,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/48.png"
+    "sprite": "/sprites/48.png"
   },
   {
     "id": 49,
@@ -1198,7 +1198,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/49.png"
+    "sprite": "/sprites/49.png"
   },
   {
     "id": 50,
@@ -1221,7 +1221,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/50.png"
+    "sprite": "/sprites/50.png"
   },
   {
     "id": 51,
@@ -1244,7 +1244,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/51.png"
+    "sprite": "/sprites/51.png"
   },
   {
     "id": 52,
@@ -1267,7 +1267,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/52.png"
+    "sprite": "/sprites/52.png"
   },
   {
     "id": 53,
@@ -1290,7 +1290,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/53.png"
+    "sprite": "/sprites/53.png"
   },
   {
     "id": 54,
@@ -1313,7 +1313,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/54.png"
+    "sprite": "/sprites/54.png"
   },
   {
     "id": 55,
@@ -1336,7 +1336,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/55.png"
+    "sprite": "/sprites/55.png"
   },
   {
     "id": 56,
@@ -1359,7 +1359,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/56.png"
+    "sprite": "/sprites/56.png"
   },
   {
     "id": 57,
@@ -1382,7 +1382,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/57.png"
+    "sprite": "/sprites/57.png"
   },
   {
     "id": 58,
@@ -1405,7 +1405,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/58.png"
+    "sprite": "/sprites/58.png"
   },
   {
     "id": 59,
@@ -1428,7 +1428,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/59.png"
+    "sprite": "/sprites/59.png"
   },
   {
     "id": 60,
@@ -1451,7 +1451,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/60.png"
+    "sprite": "/sprites/60.png"
   },
   {
     "id": 61,
@@ -1474,7 +1474,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/61.png"
+    "sprite": "/sprites/61.png"
   },
   {
     "id": 62,
@@ -1498,7 +1498,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/62.png"
+    "sprite": "/sprites/62.png"
   },
   {
     "id": 63,
@@ -1521,7 +1521,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/63.png"
+    "sprite": "/sprites/63.png"
   },
   {
     "id": 64,
@@ -1544,7 +1544,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/64.png"
+    "sprite": "/sprites/64.png"
   },
   {
     "id": 65,
@@ -1567,7 +1567,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/65.png"
+    "sprite": "/sprites/65.png"
   },
   {
     "id": 66,
@@ -1590,7 +1590,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/66.png"
+    "sprite": "/sprites/66.png"
   },
   {
     "id": 67,
@@ -1613,7 +1613,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/67.png"
+    "sprite": "/sprites/67.png"
   },
   {
     "id": 68,
@@ -1636,7 +1636,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/68.png"
+    "sprite": "/sprites/68.png"
   },
   {
     "id": 69,
@@ -1660,7 +1660,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/69.png"
+    "sprite": "/sprites/69.png"
   },
   {
     "id": 70,
@@ -1684,7 +1684,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/70.png"
+    "sprite": "/sprites/70.png"
   },
   {
     "id": 71,
@@ -1708,7 +1708,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/71.png"
+    "sprite": "/sprites/71.png"
   },
   {
     "id": 72,
@@ -1732,7 +1732,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/72.png"
+    "sprite": "/sprites/72.png"
   },
   {
     "id": 73,
@@ -1756,7 +1756,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/73.png"
+    "sprite": "/sprites/73.png"
   },
   {
     "id": 74,
@@ -1780,7 +1780,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/74.png"
+    "sprite": "/sprites/74.png"
   },
   {
     "id": 75,
@@ -1804,7 +1804,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/75.png"
+    "sprite": "/sprites/75.png"
   },
   {
     "id": 76,
@@ -1828,7 +1828,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/76.png"
+    "sprite": "/sprites/76.png"
   },
   {
     "id": 77,
@@ -1851,7 +1851,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/77.png"
+    "sprite": "/sprites/77.png"
   },
   {
     "id": 78,
@@ -1874,7 +1874,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/78.png"
+    "sprite": "/sprites/78.png"
   },
   {
     "id": 79,
@@ -1898,7 +1898,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/79.png"
+    "sprite": "/sprites/79.png"
   },
   {
     "id": 80,
@@ -1922,7 +1922,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/80.png"
+    "sprite": "/sprites/80.png"
   },
   {
     "id": 81,
@@ -1946,7 +1946,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/81.png"
+    "sprite": "/sprites/81.png"
   },
   {
     "id": 82,
@@ -1970,7 +1970,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/82.png"
+    "sprite": "/sprites/82.png"
   },
   {
     "id": 83,
@@ -1994,7 +1994,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/83.png"
+    "sprite": "/sprites/83.png"
   },
   {
     "id": 84,
@@ -2018,7 +2018,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/84.png"
+    "sprite": "/sprites/84.png"
   },
   {
     "id": 85,
@@ -2042,7 +2042,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/85.png"
+    "sprite": "/sprites/85.png"
   },
   {
     "id": 86,
@@ -2065,7 +2065,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/86.png"
+    "sprite": "/sprites/86.png"
   },
   {
     "id": 87,
@@ -2089,7 +2089,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/87.png"
+    "sprite": "/sprites/87.png"
   },
   {
     "id": 88,
@@ -2112,7 +2112,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/88.png"
+    "sprite": "/sprites/88.png"
   },
   {
     "id": 89,
@@ -2135,7 +2135,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/89.png"
+    "sprite": "/sprites/89.png"
   },
   {
     "id": 90,
@@ -2158,7 +2158,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/90.png"
+    "sprite": "/sprites/90.png"
   },
   {
     "id": 91,
@@ -2182,7 +2182,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/91.png"
+    "sprite": "/sprites/91.png"
   },
   {
     "id": 92,
@@ -2206,7 +2206,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/92.png"
+    "sprite": "/sprites/92.png"
   },
   {
     "id": 93,
@@ -2230,7 +2230,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/93.png"
+    "sprite": "/sprites/93.png"
   },
   {
     "id": 94,
@@ -2254,7 +2254,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png"
+    "sprite": "/sprites/94.png"
   },
   {
     "id": 95,
@@ -2278,7 +2278,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/95.png"
+    "sprite": "/sprites/95.png"
   },
   {
     "id": 96,
@@ -2301,7 +2301,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/96.png"
+    "sprite": "/sprites/96.png"
   },
   {
     "id": 97,
@@ -2324,7 +2324,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/97.png"
+    "sprite": "/sprites/97.png"
   },
   {
     "id": 98,
@@ -2347,7 +2347,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/98.png"
+    "sprite": "/sprites/98.png"
   },
   {
     "id": 99,
@@ -2370,7 +2370,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/99.png"
+    "sprite": "/sprites/99.png"
   },
   {
     "id": 100,
@@ -2393,7 +2393,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/100.png"
+    "sprite": "/sprites/100.png"
   },
   {
     "id": 101,
@@ -2416,7 +2416,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/101.png"
+    "sprite": "/sprites/101.png"
   },
   {
     "id": 102,
@@ -2440,7 +2440,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/102.png"
+    "sprite": "/sprites/102.png"
   },
   {
     "id": 103,
@@ -2464,7 +2464,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/103.png"
+    "sprite": "/sprites/103.png"
   },
   {
     "id": 104,
@@ -2487,7 +2487,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/104.png"
+    "sprite": "/sprites/104.png"
   },
   {
     "id": 105,
@@ -2510,7 +2510,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/105.png"
+    "sprite": "/sprites/105.png"
   },
   {
     "id": 106,
@@ -2533,7 +2533,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/106.png"
+    "sprite": "/sprites/106.png"
   },
   {
     "id": 107,
@@ -2556,7 +2556,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/107.png"
+    "sprite": "/sprites/107.png"
   },
   {
     "id": 108,
@@ -2579,7 +2579,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/108.png"
+    "sprite": "/sprites/108.png"
   },
   {
     "id": 109,
@@ -2602,7 +2602,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/109.png"
+    "sprite": "/sprites/109.png"
   },
   {
     "id": 110,
@@ -2625,7 +2625,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/110.png"
+    "sprite": "/sprites/110.png"
   },
   {
     "id": 111,
@@ -2649,7 +2649,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/111.png"
+    "sprite": "/sprites/111.png"
   },
   {
     "id": 112,
@@ -2673,7 +2673,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/112.png"
+    "sprite": "/sprites/112.png"
   },
   {
     "id": 113,
@@ -2696,7 +2696,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/113.png"
+    "sprite": "/sprites/113.png"
   },
   {
     "id": 114,
@@ -2719,7 +2719,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/114.png"
+    "sprite": "/sprites/114.png"
   },
   {
     "id": 115,
@@ -2742,7 +2742,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/115.png"
+    "sprite": "/sprites/115.png"
   },
   {
     "id": 116,
@@ -2765,7 +2765,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/116.png"
+    "sprite": "/sprites/116.png"
   },
   {
     "id": 117,
@@ -2788,7 +2788,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/117.png"
+    "sprite": "/sprites/117.png"
   },
   {
     "id": 118,
@@ -2811,7 +2811,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/118.png"
+    "sprite": "/sprites/118.png"
   },
   {
     "id": 119,
@@ -2834,7 +2834,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/119.png"
+    "sprite": "/sprites/119.png"
   },
   {
     "id": 120,
@@ -2857,7 +2857,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/120.png"
+    "sprite": "/sprites/120.png"
   },
   {
     "id": 121,
@@ -2881,7 +2881,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/121.png"
+    "sprite": "/sprites/121.png"
   },
   {
     "id": 122,
@@ -2905,7 +2905,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/122.png"
+    "sprite": "/sprites/122.png"
   },
   {
     "id": 123,
@@ -2929,7 +2929,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/123.png"
+    "sprite": "/sprites/123.png"
   },
   {
     "id": 124,
@@ -2953,7 +2953,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/124.png"
+    "sprite": "/sprites/124.png"
   },
   {
     "id": 125,
@@ -2976,7 +2976,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/125.png"
+    "sprite": "/sprites/125.png"
   },
   {
     "id": 126,
@@ -2999,7 +2999,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/126.png"
+    "sprite": "/sprites/126.png"
   },
   {
     "id": 127,
@@ -3022,7 +3022,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/127.png"
+    "sprite": "/sprites/127.png"
   },
   {
     "id": 128,
@@ -3045,7 +3045,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/128.png"
+    "sprite": "/sprites/128.png"
   },
   {
     "id": 129,
@@ -3068,7 +3068,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/129.png"
+    "sprite": "/sprites/129.png"
   },
   {
     "id": 130,
@@ -3092,7 +3092,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/130.png"
+    "sprite": "/sprites/130.png"
   },
   {
     "id": 131,
@@ -3116,7 +3116,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/131.png"
+    "sprite": "/sprites/131.png"
   },
   {
     "id": 132,
@@ -3139,7 +3139,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png"
+    "sprite": "/sprites/132.png"
   },
   {
     "id": 133,
@@ -3162,7 +3162,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png"
+    "sprite": "/sprites/133.png"
   },
   {
     "id": 134,
@@ -3185,7 +3185,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/134.png"
+    "sprite": "/sprites/134.png"
   },
   {
     "id": 135,
@@ -3208,7 +3208,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/135.png"
+    "sprite": "/sprites/135.png"
   },
   {
     "id": 136,
@@ -3231,7 +3231,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/136.png"
+    "sprite": "/sprites/136.png"
   },
   {
     "id": 137,
@@ -3254,7 +3254,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/137.png"
+    "sprite": "/sprites/137.png"
   },
   {
     "id": 138,
@@ -3278,7 +3278,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/138.png"
+    "sprite": "/sprites/138.png"
   },
   {
     "id": 139,
@@ -3302,7 +3302,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/139.png"
+    "sprite": "/sprites/139.png"
   },
   {
     "id": 140,
@@ -3326,7 +3326,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/140.png"
+    "sprite": "/sprites/140.png"
   },
   {
     "id": 141,
@@ -3350,7 +3350,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/141.png"
+    "sprite": "/sprites/141.png"
   },
   {
     "id": 142,
@@ -3374,7 +3374,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/142.png"
+    "sprite": "/sprites/142.png"
   },
   {
     "id": 143,
@@ -3397,7 +3397,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png"
+    "sprite": "/sprites/143.png"
   },
   {
     "id": 144,
@@ -3421,7 +3421,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/144.png"
+    "sprite": "/sprites/144.png"
   },
   {
     "id": 145,
@@ -3445,7 +3445,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/145.png"
+    "sprite": "/sprites/145.png"
   },
   {
     "id": 146,
@@ -3469,7 +3469,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/146.png"
+    "sprite": "/sprites/146.png"
   },
   {
     "id": 147,
@@ -3492,7 +3492,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png"
+    "sprite": "/sprites/147.png"
   },
   {
     "id": 148,
@@ -3515,7 +3515,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/148.png"
+    "sprite": "/sprites/148.png"
   },
   {
     "id": 149,
@@ -3539,7 +3539,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png"
+    "sprite": "/sprites/149.png"
   },
   {
     "id": 150,
@@ -3562,7 +3562,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/150.png"
+    "sprite": "/sprites/150.png"
   },
   {
     "id": 151,
@@ -3585,7 +3585,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": true,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/151.png"
+    "sprite": "/sprites/151.png"
   },
   {
     "id": 152,
@@ -3608,7 +3608,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/152.png"
+    "sprite": "/sprites/152.png"
   },
   {
     "id": 153,
@@ -3631,7 +3631,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/153.png"
+    "sprite": "/sprites/153.png"
   },
   {
     "id": 154,
@@ -3654,7 +3654,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/154.png"
+    "sprite": "/sprites/154.png"
   },
   {
     "id": 155,
@@ -3677,7 +3677,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/155.png"
+    "sprite": "/sprites/155.png"
   },
   {
     "id": 156,
@@ -3700,7 +3700,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/156.png"
+    "sprite": "/sprites/156.png"
   },
   {
     "id": 157,
@@ -3723,7 +3723,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/157.png"
+    "sprite": "/sprites/157.png"
   },
   {
     "id": 158,
@@ -3746,7 +3746,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/158.png"
+    "sprite": "/sprites/158.png"
   },
   {
     "id": 159,
@@ -3769,7 +3769,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/159.png"
+    "sprite": "/sprites/159.png"
   },
   {
     "id": 160,
@@ -3792,7 +3792,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/160.png"
+    "sprite": "/sprites/160.png"
   },
   {
     "id": 161,
@@ -3815,7 +3815,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/161.png"
+    "sprite": "/sprites/161.png"
   },
   {
     "id": 162,
@@ -3838,7 +3838,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/162.png"
+    "sprite": "/sprites/162.png"
   },
   {
     "id": 163,
@@ -3862,7 +3862,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/163.png"
+    "sprite": "/sprites/163.png"
   },
   {
     "id": 164,
@@ -3886,7 +3886,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/164.png"
+    "sprite": "/sprites/164.png"
   },
   {
     "id": 165,
@@ -3910,7 +3910,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/165.png"
+    "sprite": "/sprites/165.png"
   },
   {
     "id": 166,
@@ -3934,7 +3934,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/166.png"
+    "sprite": "/sprites/166.png"
   },
   {
     "id": 167,
@@ -3958,7 +3958,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/167.png"
+    "sprite": "/sprites/167.png"
   },
   {
     "id": 168,
@@ -3982,7 +3982,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/168.png"
+    "sprite": "/sprites/168.png"
   },
   {
     "id": 169,
@@ -4006,7 +4006,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/169.png"
+    "sprite": "/sprites/169.png"
   },
   {
     "id": 170,
@@ -4030,7 +4030,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/170.png"
+    "sprite": "/sprites/170.png"
   },
   {
     "id": 171,
@@ -4054,7 +4054,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/171.png"
+    "sprite": "/sprites/171.png"
   },
   {
     "id": 172,
@@ -4077,7 +4077,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/172.png"
+    "sprite": "/sprites/172.png"
   },
   {
     "id": 173,
@@ -4100,7 +4100,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/173.png"
+    "sprite": "/sprites/173.png"
   },
   {
     "id": 174,
@@ -4124,7 +4124,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/174.png"
+    "sprite": "/sprites/174.png"
   },
   {
     "id": 175,
@@ -4147,7 +4147,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/175.png"
+    "sprite": "/sprites/175.png"
   },
   {
     "id": 176,
@@ -4171,7 +4171,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/176.png"
+    "sprite": "/sprites/176.png"
   },
   {
     "id": 177,
@@ -4195,7 +4195,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/177.png"
+    "sprite": "/sprites/177.png"
   },
   {
     "id": 178,
@@ -4219,7 +4219,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/178.png"
+    "sprite": "/sprites/178.png"
   },
   {
     "id": 179,
@@ -4242,7 +4242,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/179.png"
+    "sprite": "/sprites/179.png"
   },
   {
     "id": 180,
@@ -4265,7 +4265,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/180.png"
+    "sprite": "/sprites/180.png"
   },
   {
     "id": 181,
@@ -4288,7 +4288,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/181.png"
+    "sprite": "/sprites/181.png"
   },
   {
     "id": 182,
@@ -4311,7 +4311,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/182.png"
+    "sprite": "/sprites/182.png"
   },
   {
     "id": 183,
@@ -4335,7 +4335,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/183.png"
+    "sprite": "/sprites/183.png"
   },
   {
     "id": 184,
@@ -4359,7 +4359,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/184.png"
+    "sprite": "/sprites/184.png"
   },
   {
     "id": 185,
@@ -4382,7 +4382,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/185.png"
+    "sprite": "/sprites/185.png"
   },
   {
     "id": 186,
@@ -4405,7 +4405,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/186.png"
+    "sprite": "/sprites/186.png"
   },
   {
     "id": 187,
@@ -4429,7 +4429,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/187.png"
+    "sprite": "/sprites/187.png"
   },
   {
     "id": 188,
@@ -4453,7 +4453,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/188.png"
+    "sprite": "/sprites/188.png"
   },
   {
     "id": 189,
@@ -4477,7 +4477,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/189.png"
+    "sprite": "/sprites/189.png"
   },
   {
     "id": 190,
@@ -4500,7 +4500,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/190.png"
+    "sprite": "/sprites/190.png"
   },
   {
     "id": 191,
@@ -4523,7 +4523,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/191.png"
+    "sprite": "/sprites/191.png"
   },
   {
     "id": 192,
@@ -4546,7 +4546,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/192.png"
+    "sprite": "/sprites/192.png"
   },
   {
     "id": 193,
@@ -4570,7 +4570,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/193.png"
+    "sprite": "/sprites/193.png"
   },
   {
     "id": 194,
@@ -4594,7 +4594,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/194.png"
+    "sprite": "/sprites/194.png"
   },
   {
     "id": 195,
@@ -4618,7 +4618,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/195.png"
+    "sprite": "/sprites/195.png"
   },
   {
     "id": 196,
@@ -4641,7 +4641,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/196.png"
+    "sprite": "/sprites/196.png"
   },
   {
     "id": 197,
@@ -4664,7 +4664,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/197.png"
+    "sprite": "/sprites/197.png"
   },
   {
     "id": 198,
@@ -4688,7 +4688,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/198.png"
+    "sprite": "/sprites/198.png"
   },
   {
     "id": 199,
@@ -4712,7 +4712,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/199.png"
+    "sprite": "/sprites/199.png"
   },
   {
     "id": 200,
@@ -4735,7 +4735,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/200.png"
+    "sprite": "/sprites/200.png"
   },
   {
     "id": 201,
@@ -4758,7 +4758,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/201.png"
+    "sprite": "/sprites/201.png"
   },
   {
     "id": 202,
@@ -4781,7 +4781,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/202.png"
+    "sprite": "/sprites/202.png"
   },
   {
     "id": 203,
@@ -4805,7 +4805,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/203.png"
+    "sprite": "/sprites/203.png"
   },
   {
     "id": 204,
@@ -4828,7 +4828,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/204.png"
+    "sprite": "/sprites/204.png"
   },
   {
     "id": 205,
@@ -4852,7 +4852,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/205.png"
+    "sprite": "/sprites/205.png"
   },
   {
     "id": 206,
@@ -4875,7 +4875,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/206.png"
+    "sprite": "/sprites/206.png"
   },
   {
     "id": 207,
@@ -4899,7 +4899,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/207.png"
+    "sprite": "/sprites/207.png"
   },
   {
     "id": 208,
@@ -4923,7 +4923,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/208.png"
+    "sprite": "/sprites/208.png"
   },
   {
     "id": 209,
@@ -4946,7 +4946,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/209.png"
+    "sprite": "/sprites/209.png"
   },
   {
     "id": 210,
@@ -4969,7 +4969,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/210.png"
+    "sprite": "/sprites/210.png"
   },
   {
     "id": 211,
@@ -4993,7 +4993,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/211.png"
+    "sprite": "/sprites/211.png"
   },
   {
     "id": 212,
@@ -5017,7 +5017,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/212.png"
+    "sprite": "/sprites/212.png"
   },
   {
     "id": 213,
@@ -5041,7 +5041,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/213.png"
+    "sprite": "/sprites/213.png"
   },
   {
     "id": 214,
@@ -5065,7 +5065,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/214.png"
+    "sprite": "/sprites/214.png"
   },
   {
     "id": 215,
@@ -5089,7 +5089,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/215.png"
+    "sprite": "/sprites/215.png"
   },
   {
     "id": 216,
@@ -5112,7 +5112,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/216.png"
+    "sprite": "/sprites/216.png"
   },
   {
     "id": 217,
@@ -5135,7 +5135,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/217.png"
+    "sprite": "/sprites/217.png"
   },
   {
     "id": 218,
@@ -5158,7 +5158,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/218.png"
+    "sprite": "/sprites/218.png"
   },
   {
     "id": 219,
@@ -5182,7 +5182,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/219.png"
+    "sprite": "/sprites/219.png"
   },
   {
     "id": 220,
@@ -5206,7 +5206,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/220.png"
+    "sprite": "/sprites/220.png"
   },
   {
     "id": 221,
@@ -5230,7 +5230,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/221.png"
+    "sprite": "/sprites/221.png"
   },
   {
     "id": 222,
@@ -5254,7 +5254,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/222.png"
+    "sprite": "/sprites/222.png"
   },
   {
     "id": 223,
@@ -5277,7 +5277,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/223.png"
+    "sprite": "/sprites/223.png"
   },
   {
     "id": 224,
@@ -5300,7 +5300,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/224.png"
+    "sprite": "/sprites/224.png"
   },
   {
     "id": 225,
@@ -5324,7 +5324,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/225.png"
+    "sprite": "/sprites/225.png"
   },
   {
     "id": 226,
@@ -5348,7 +5348,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/226.png"
+    "sprite": "/sprites/226.png"
   },
   {
     "id": 227,
@@ -5372,7 +5372,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/227.png"
+    "sprite": "/sprites/227.png"
   },
   {
     "id": 228,
@@ -5396,7 +5396,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/228.png"
+    "sprite": "/sprites/228.png"
   },
   {
     "id": 229,
@@ -5420,7 +5420,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/229.png"
+    "sprite": "/sprites/229.png"
   },
   {
     "id": 230,
@@ -5444,7 +5444,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/230.png"
+    "sprite": "/sprites/230.png"
   },
   {
     "id": 231,
@@ -5467,7 +5467,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/231.png"
+    "sprite": "/sprites/231.png"
   },
   {
     "id": 232,
@@ -5490,7 +5490,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/232.png"
+    "sprite": "/sprites/232.png"
   },
   {
     "id": 233,
@@ -5513,7 +5513,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/233.png"
+    "sprite": "/sprites/233.png"
   },
   {
     "id": 234,
@@ -5536,7 +5536,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/234.png"
+    "sprite": "/sprites/234.png"
   },
   {
     "id": 235,
@@ -5559,7 +5559,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/235.png"
+    "sprite": "/sprites/235.png"
   },
   {
     "id": 236,
@@ -5582,7 +5582,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/236.png"
+    "sprite": "/sprites/236.png"
   },
   {
     "id": 237,
@@ -5605,7 +5605,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/237.png"
+    "sprite": "/sprites/237.png"
   },
   {
     "id": 238,
@@ -5629,7 +5629,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/238.png"
+    "sprite": "/sprites/238.png"
   },
   {
     "id": 239,
@@ -5652,7 +5652,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/239.png"
+    "sprite": "/sprites/239.png"
   },
   {
     "id": 240,
@@ -5675,7 +5675,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/240.png"
+    "sprite": "/sprites/240.png"
   },
   {
     "id": 241,
@@ -5698,7 +5698,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/241.png"
+    "sprite": "/sprites/241.png"
   },
   {
     "id": 242,
@@ -5721,7 +5721,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/242.png"
+    "sprite": "/sprites/242.png"
   },
   {
     "id": 243,
@@ -5744,7 +5744,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/243.png"
+    "sprite": "/sprites/243.png"
   },
   {
     "id": 244,
@@ -5767,7 +5767,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/244.png"
+    "sprite": "/sprites/244.png"
   },
   {
     "id": 245,
@@ -5790,7 +5790,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/245.png"
+    "sprite": "/sprites/245.png"
   },
   {
     "id": 246,
@@ -5814,7 +5814,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/246.png"
+    "sprite": "/sprites/246.png"
   },
   {
     "id": 247,
@@ -5838,7 +5838,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/247.png"
+    "sprite": "/sprites/247.png"
   },
   {
     "id": 248,
@@ -5862,7 +5862,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/248.png"
+    "sprite": "/sprites/248.png"
   },
   {
     "id": 249,
@@ -5886,7 +5886,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/249.png"
+    "sprite": "/sprites/249.png"
   },
   {
     "id": 250,
@@ -5910,7 +5910,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/250.png"
+    "sprite": "/sprites/250.png"
   },
   {
     "id": 251,
@@ -5934,7 +5934,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": true,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/251.png"
+    "sprite": "/sprites/251.png"
   },
   {
     "id": 252,
@@ -5957,7 +5957,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/252.png"
+    "sprite": "/sprites/252.png"
   },
   {
     "id": 253,
@@ -5980,7 +5980,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/253.png"
+    "sprite": "/sprites/253.png"
   },
   {
     "id": 254,
@@ -6003,7 +6003,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/254.png"
+    "sprite": "/sprites/254.png"
   },
   {
     "id": 255,
@@ -6026,7 +6026,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/255.png"
+    "sprite": "/sprites/255.png"
   },
   {
     "id": 256,
@@ -6050,7 +6050,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/256.png"
+    "sprite": "/sprites/256.png"
   },
   {
     "id": 257,
@@ -6074,7 +6074,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/257.png"
+    "sprite": "/sprites/257.png"
   },
   {
     "id": 258,
@@ -6097,7 +6097,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/258.png"
+    "sprite": "/sprites/258.png"
   },
   {
     "id": 259,
@@ -6121,7 +6121,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/259.png"
+    "sprite": "/sprites/259.png"
   },
   {
     "id": 260,
@@ -6145,7 +6145,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/260.png"
+    "sprite": "/sprites/260.png"
   },
   {
     "id": 261,
@@ -6168,7 +6168,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/261.png"
+    "sprite": "/sprites/261.png"
   },
   {
     "id": 262,
@@ -6191,7 +6191,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/262.png"
+    "sprite": "/sprites/262.png"
   },
   {
     "id": 263,
@@ -6214,7 +6214,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/263.png"
+    "sprite": "/sprites/263.png"
   },
   {
     "id": 264,
@@ -6237,7 +6237,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/264.png"
+    "sprite": "/sprites/264.png"
   },
   {
     "id": 265,
@@ -6260,7 +6260,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/265.png"
+    "sprite": "/sprites/265.png"
   },
   {
     "id": 266,
@@ -6283,7 +6283,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/266.png"
+    "sprite": "/sprites/266.png"
   },
   {
     "id": 267,
@@ -6307,7 +6307,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/267.png"
+    "sprite": "/sprites/267.png"
   },
   {
     "id": 268,
@@ -6330,7 +6330,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/268.png"
+    "sprite": "/sprites/268.png"
   },
   {
     "id": 269,
@@ -6354,7 +6354,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/269.png"
+    "sprite": "/sprites/269.png"
   },
   {
     "id": 270,
@@ -6378,7 +6378,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/270.png"
+    "sprite": "/sprites/270.png"
   },
   {
     "id": 271,
@@ -6402,7 +6402,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/271.png"
+    "sprite": "/sprites/271.png"
   },
   {
     "id": 272,
@@ -6426,7 +6426,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/272.png"
+    "sprite": "/sprites/272.png"
   },
   {
     "id": 273,
@@ -6449,7 +6449,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/273.png"
+    "sprite": "/sprites/273.png"
   },
   {
     "id": 274,
@@ -6473,7 +6473,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/274.png"
+    "sprite": "/sprites/274.png"
   },
   {
     "id": 275,
@@ -6497,7 +6497,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/275.png"
+    "sprite": "/sprites/275.png"
   },
   {
     "id": 276,
@@ -6521,7 +6521,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/276.png"
+    "sprite": "/sprites/276.png"
   },
   {
     "id": 277,
@@ -6545,7 +6545,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/277.png"
+    "sprite": "/sprites/277.png"
   },
   {
     "id": 278,
@@ -6569,7 +6569,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/278.png"
+    "sprite": "/sprites/278.png"
   },
   {
     "id": 279,
@@ -6593,7 +6593,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/279.png"
+    "sprite": "/sprites/279.png"
   },
   {
     "id": 280,
@@ -6617,7 +6617,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/280.png"
+    "sprite": "/sprites/280.png"
   },
   {
     "id": 281,
@@ -6641,7 +6641,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/281.png"
+    "sprite": "/sprites/281.png"
   },
   {
     "id": 282,
@@ -6665,7 +6665,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/282.png"
+    "sprite": "/sprites/282.png"
   },
   {
     "id": 283,
@@ -6689,7 +6689,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/283.png"
+    "sprite": "/sprites/283.png"
   },
   {
     "id": 284,
@@ -6713,7 +6713,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/284.png"
+    "sprite": "/sprites/284.png"
   },
   {
     "id": 285,
@@ -6736,7 +6736,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/285.png"
+    "sprite": "/sprites/285.png"
   },
   {
     "id": 286,
@@ -6760,7 +6760,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/286.png"
+    "sprite": "/sprites/286.png"
   },
   {
     "id": 287,
@@ -6783,7 +6783,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/287.png"
+    "sprite": "/sprites/287.png"
   },
   {
     "id": 288,
@@ -6806,7 +6806,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/288.png"
+    "sprite": "/sprites/288.png"
   },
   {
     "id": 289,
@@ -6829,7 +6829,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/289.png"
+    "sprite": "/sprites/289.png"
   },
   {
     "id": 290,
@@ -6853,7 +6853,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/290.png"
+    "sprite": "/sprites/290.png"
   },
   {
     "id": 291,
@@ -6877,7 +6877,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/291.png"
+    "sprite": "/sprites/291.png"
   },
   {
     "id": 292,
@@ -6901,7 +6901,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/292.png"
+    "sprite": "/sprites/292.png"
   },
   {
     "id": 293,
@@ -6924,7 +6924,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/293.png"
+    "sprite": "/sprites/293.png"
   },
   {
     "id": 294,
@@ -6947,7 +6947,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/294.png"
+    "sprite": "/sprites/294.png"
   },
   {
     "id": 295,
@@ -6970,7 +6970,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/295.png"
+    "sprite": "/sprites/295.png"
   },
   {
     "id": 296,
@@ -6993,7 +6993,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/296.png"
+    "sprite": "/sprites/296.png"
   },
   {
     "id": 297,
@@ -7016,7 +7016,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/297.png"
+    "sprite": "/sprites/297.png"
   },
   {
     "id": 298,
@@ -7040,7 +7040,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/298.png"
+    "sprite": "/sprites/298.png"
   },
   {
     "id": 299,
@@ -7063,7 +7063,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/299.png"
+    "sprite": "/sprites/299.png"
   },
   {
     "id": 300,
@@ -7086,7 +7086,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/300.png"
+    "sprite": "/sprites/300.png"
   },
   {
     "id": 301,
@@ -7109,7 +7109,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/301.png"
+    "sprite": "/sprites/301.png"
   },
   {
     "id": 302,
@@ -7133,7 +7133,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/302.png"
+    "sprite": "/sprites/302.png"
   },
   {
     "id": 303,
@@ -7157,7 +7157,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/303.png"
+    "sprite": "/sprites/303.png"
   },
   {
     "id": 304,
@@ -7181,7 +7181,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/304.png"
+    "sprite": "/sprites/304.png"
   },
   {
     "id": 305,
@@ -7205,7 +7205,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/305.png"
+    "sprite": "/sprites/305.png"
   },
   {
     "id": 306,
@@ -7229,7 +7229,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/306.png"
+    "sprite": "/sprites/306.png"
   },
   {
     "id": 307,
@@ -7253,7 +7253,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/307.png"
+    "sprite": "/sprites/307.png"
   },
   {
     "id": 308,
@@ -7277,7 +7277,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/308.png"
+    "sprite": "/sprites/308.png"
   },
   {
     "id": 309,
@@ -7300,7 +7300,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/309.png"
+    "sprite": "/sprites/309.png"
   },
   {
     "id": 310,
@@ -7323,7 +7323,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/310.png"
+    "sprite": "/sprites/310.png"
   },
   {
     "id": 311,
@@ -7346,7 +7346,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/311.png"
+    "sprite": "/sprites/311.png"
   },
   {
     "id": 312,
@@ -7369,7 +7369,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/312.png"
+    "sprite": "/sprites/312.png"
   },
   {
     "id": 313,
@@ -7392,7 +7392,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/313.png"
+    "sprite": "/sprites/313.png"
   },
   {
     "id": 314,
@@ -7415,7 +7415,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/314.png"
+    "sprite": "/sprites/314.png"
   },
   {
     "id": 315,
@@ -7439,7 +7439,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/315.png"
+    "sprite": "/sprites/315.png"
   },
   {
     "id": 316,
@@ -7462,7 +7462,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/316.png"
+    "sprite": "/sprites/316.png"
   },
   {
     "id": 317,
@@ -7485,7 +7485,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/317.png"
+    "sprite": "/sprites/317.png"
   },
   {
     "id": 318,
@@ -7509,7 +7509,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/318.png"
+    "sprite": "/sprites/318.png"
   },
   {
     "id": 319,
@@ -7533,7 +7533,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/319.png"
+    "sprite": "/sprites/319.png"
   },
   {
     "id": 320,
@@ -7556,7 +7556,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/320.png"
+    "sprite": "/sprites/320.png"
   },
   {
     "id": 321,
@@ -7579,7 +7579,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/321.png"
+    "sprite": "/sprites/321.png"
   },
   {
     "id": 322,
@@ -7603,7 +7603,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/322.png"
+    "sprite": "/sprites/322.png"
   },
   {
     "id": 323,
@@ -7627,7 +7627,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/323.png"
+    "sprite": "/sprites/323.png"
   },
   {
     "id": 324,
@@ -7650,7 +7650,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/324.png"
+    "sprite": "/sprites/324.png"
   },
   {
     "id": 325,
@@ -7673,7 +7673,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/325.png"
+    "sprite": "/sprites/325.png"
   },
   {
     "id": 326,
@@ -7696,7 +7696,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/326.png"
+    "sprite": "/sprites/326.png"
   },
   {
     "id": 327,
@@ -7719,7 +7719,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/327.png"
+    "sprite": "/sprites/327.png"
   },
   {
     "id": 328,
@@ -7742,7 +7742,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/328.png"
+    "sprite": "/sprites/328.png"
   },
   {
     "id": 329,
@@ -7766,7 +7766,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/329.png"
+    "sprite": "/sprites/329.png"
   },
   {
     "id": 330,
@@ -7790,7 +7790,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/330.png"
+    "sprite": "/sprites/330.png"
   },
   {
     "id": 331,
@@ -7813,7 +7813,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/331.png"
+    "sprite": "/sprites/331.png"
   },
   {
     "id": 332,
@@ -7837,7 +7837,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/332.png"
+    "sprite": "/sprites/332.png"
   },
   {
     "id": 333,
@@ -7861,7 +7861,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/333.png"
+    "sprite": "/sprites/333.png"
   },
   {
     "id": 334,
@@ -7885,7 +7885,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/334.png"
+    "sprite": "/sprites/334.png"
   },
   {
     "id": 335,
@@ -7908,7 +7908,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/335.png"
+    "sprite": "/sprites/335.png"
   },
   {
     "id": 336,
@@ -7931,7 +7931,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/336.png"
+    "sprite": "/sprites/336.png"
   },
   {
     "id": 337,
@@ -7955,7 +7955,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/337.png"
+    "sprite": "/sprites/337.png"
   },
   {
     "id": 338,
@@ -7979,7 +7979,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/338.png"
+    "sprite": "/sprites/338.png"
   },
   {
     "id": 339,
@@ -8003,7 +8003,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/339.png"
+    "sprite": "/sprites/339.png"
   },
   {
     "id": 340,
@@ -8027,7 +8027,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/340.png"
+    "sprite": "/sprites/340.png"
   },
   {
     "id": 341,
@@ -8050,7 +8050,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/341.png"
+    "sprite": "/sprites/341.png"
   },
   {
     "id": 342,
@@ -8074,7 +8074,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/342.png"
+    "sprite": "/sprites/342.png"
   },
   {
     "id": 343,
@@ -8098,7 +8098,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/343.png"
+    "sprite": "/sprites/343.png"
   },
   {
     "id": 344,
@@ -8122,7 +8122,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/344.png"
+    "sprite": "/sprites/344.png"
   },
   {
     "id": 345,
@@ -8146,7 +8146,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/345.png"
+    "sprite": "/sprites/345.png"
   },
   {
     "id": 346,
@@ -8170,7 +8170,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/346.png"
+    "sprite": "/sprites/346.png"
   },
   {
     "id": 347,
@@ -8194,7 +8194,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/347.png"
+    "sprite": "/sprites/347.png"
   },
   {
     "id": 348,
@@ -8218,7 +8218,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/348.png"
+    "sprite": "/sprites/348.png"
   },
   {
     "id": 349,
@@ -8241,7 +8241,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/349.png"
+    "sprite": "/sprites/349.png"
   },
   {
     "id": 350,
@@ -8264,7 +8264,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/350.png"
+    "sprite": "/sprites/350.png"
   },
   {
     "id": 351,
@@ -8287,7 +8287,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/351.png"
+    "sprite": "/sprites/351.png"
   },
   {
     "id": 352,
@@ -8310,7 +8310,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/352.png"
+    "sprite": "/sprites/352.png"
   },
   {
     "id": 353,
@@ -8333,7 +8333,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/353.png"
+    "sprite": "/sprites/353.png"
   },
   {
     "id": 354,
@@ -8356,7 +8356,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/354.png"
+    "sprite": "/sprites/354.png"
   },
   {
     "id": 355,
@@ -8379,7 +8379,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/355.png"
+    "sprite": "/sprites/355.png"
   },
   {
     "id": 356,
@@ -8402,7 +8402,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/356.png"
+    "sprite": "/sprites/356.png"
   },
   {
     "id": 357,
@@ -8426,7 +8426,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/357.png"
+    "sprite": "/sprites/357.png"
   },
   {
     "id": 358,
@@ -8449,7 +8449,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/358.png"
+    "sprite": "/sprites/358.png"
   },
   {
     "id": 359,
@@ -8472,7 +8472,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/359.png"
+    "sprite": "/sprites/359.png"
   },
   {
     "id": 360,
@@ -8495,7 +8495,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/360.png"
+    "sprite": "/sprites/360.png"
   },
   {
     "id": 361,
@@ -8518,7 +8518,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/361.png"
+    "sprite": "/sprites/361.png"
   },
   {
     "id": 362,
@@ -8541,7 +8541,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/362.png"
+    "sprite": "/sprites/362.png"
   },
   {
     "id": 363,
@@ -8565,7 +8565,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/363.png"
+    "sprite": "/sprites/363.png"
   },
   {
     "id": 364,
@@ -8589,7 +8589,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/364.png"
+    "sprite": "/sprites/364.png"
   },
   {
     "id": 365,
@@ -8613,7 +8613,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/365.png"
+    "sprite": "/sprites/365.png"
   },
   {
     "id": 366,
@@ -8636,7 +8636,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/366.png"
+    "sprite": "/sprites/366.png"
   },
   {
     "id": 367,
@@ -8659,7 +8659,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/367.png"
+    "sprite": "/sprites/367.png"
   },
   {
     "id": 368,
@@ -8682,7 +8682,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/368.png"
+    "sprite": "/sprites/368.png"
   },
   {
     "id": 369,
@@ -8706,7 +8706,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/369.png"
+    "sprite": "/sprites/369.png"
   },
   {
     "id": 370,
@@ -8729,7 +8729,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/370.png"
+    "sprite": "/sprites/370.png"
   },
   {
     "id": 371,
@@ -8752,7 +8752,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/371.png"
+    "sprite": "/sprites/371.png"
   },
   {
     "id": 372,
@@ -8775,7 +8775,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/372.png"
+    "sprite": "/sprites/372.png"
   },
   {
     "id": 373,
@@ -8799,7 +8799,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/373.png"
+    "sprite": "/sprites/373.png"
   },
   {
     "id": 374,
@@ -8823,7 +8823,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/374.png"
+    "sprite": "/sprites/374.png"
   },
   {
     "id": 375,
@@ -8847,7 +8847,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/375.png"
+    "sprite": "/sprites/375.png"
   },
   {
     "id": 376,
@@ -8871,7 +8871,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/376.png"
+    "sprite": "/sprites/376.png"
   },
   {
     "id": 377,
@@ -8894,7 +8894,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/377.png"
+    "sprite": "/sprites/377.png"
   },
   {
     "id": 378,
@@ -8917,7 +8917,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/378.png"
+    "sprite": "/sprites/378.png"
   },
   {
     "id": 379,
@@ -8940,7 +8940,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/379.png"
+    "sprite": "/sprites/379.png"
   },
   {
     "id": 380,
@@ -8964,7 +8964,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/380.png"
+    "sprite": "/sprites/380.png"
   },
   {
     "id": 381,
@@ -8988,7 +8988,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/381.png"
+    "sprite": "/sprites/381.png"
   },
   {
     "id": 382,
@@ -9011,7 +9011,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/382.png"
+    "sprite": "/sprites/382.png"
   },
   {
     "id": 383,
@@ -9034,7 +9034,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/383.png"
+    "sprite": "/sprites/383.png"
   },
   {
     "id": 384,
@@ -9058,7 +9058,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/384.png"
+    "sprite": "/sprites/384.png"
   },
   {
     "id": 385,
@@ -9082,7 +9082,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": true,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/385.png"
+    "sprite": "/sprites/385.png"
   },
   {
     "id": 386,
@@ -9105,7 +9105,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": true,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/386.png"
+    "sprite": "/sprites/386.png"
   },
   {
     "id": 387,
@@ -9128,7 +9128,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/387.png"
+    "sprite": "/sprites/387.png"
   },
   {
     "id": 388,
@@ -9151,7 +9151,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/388.png"
+    "sprite": "/sprites/388.png"
   },
   {
     "id": 389,
@@ -9175,7 +9175,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/389.png"
+    "sprite": "/sprites/389.png"
   },
   {
     "id": 390,
@@ -9198,7 +9198,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/390.png"
+    "sprite": "/sprites/390.png"
   },
   {
     "id": 391,
@@ -9222,7 +9222,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/391.png"
+    "sprite": "/sprites/391.png"
   },
   {
     "id": 392,
@@ -9246,7 +9246,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/392.png"
+    "sprite": "/sprites/392.png"
   },
   {
     "id": 393,
@@ -9269,7 +9269,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": true,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/393.png"
+    "sprite": "/sprites/393.png"
   },
   {
     "id": 394,
@@ -9292,7 +9292,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/394.png"
+    "sprite": "/sprites/394.png"
   },
   {
     "id": 395,
@@ -9316,7 +9316,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/395.png"
+    "sprite": "/sprites/395.png"
   },
   {
     "id": 396,
@@ -9340,7 +9340,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/396.png"
+    "sprite": "/sprites/396.png"
   },
   {
     "id": 397,
@@ -9364,7 +9364,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/397.png"
+    "sprite": "/sprites/397.png"
   },
   {
     "id": 398,
@@ -9388,7 +9388,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/398.png"
+    "sprite": "/sprites/398.png"
   },
   {
     "id": 399,
@@ -9411,7 +9411,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/399.png"
+    "sprite": "/sprites/399.png"
   },
   {
     "id": 400,
@@ -9435,7 +9435,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/400.png"
+    "sprite": "/sprites/400.png"
   },
   {
     "id": 401,
@@ -9458,7 +9458,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/401.png"
+    "sprite": "/sprites/401.png"
   },
   {
     "id": 402,
@@ -9481,7 +9481,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/402.png"
+    "sprite": "/sprites/402.png"
   },
   {
     "id": 403,
@@ -9504,7 +9504,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/403.png"
+    "sprite": "/sprites/403.png"
   },
   {
     "id": 404,
@@ -9527,7 +9527,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/404.png"
+    "sprite": "/sprites/404.png"
   },
   {
     "id": 405,
@@ -9550,7 +9550,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/405.png"
+    "sprite": "/sprites/405.png"
   },
   {
     "id": 406,
@@ -9574,7 +9574,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/406.png"
+    "sprite": "/sprites/406.png"
   },
   {
     "id": 407,
@@ -9598,7 +9598,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/407.png"
+    "sprite": "/sprites/407.png"
   },
   {
     "id": 408,
@@ -9621,7 +9621,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/408.png"
+    "sprite": "/sprites/408.png"
   },
   {
     "id": 409,
@@ -9644,7 +9644,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/409.png"
+    "sprite": "/sprites/409.png"
   },
   {
     "id": 410,
@@ -9668,7 +9668,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/410.png"
+    "sprite": "/sprites/410.png"
   },
   {
     "id": 411,
@@ -9692,7 +9692,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/411.png"
+    "sprite": "/sprites/411.png"
   },
   {
     "id": 412,
@@ -9715,7 +9715,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/412.png"
+    "sprite": "/sprites/412.png"
   },
   {
     "id": 413,
@@ -9739,7 +9739,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/413.png"
+    "sprite": "/sprites/413.png"
   },
   {
     "id": 414,
@@ -9763,7 +9763,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/414.png"
+    "sprite": "/sprites/414.png"
   },
   {
     "id": 415,
@@ -9787,7 +9787,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/415.png"
+    "sprite": "/sprites/415.png"
   },
   {
     "id": 416,
@@ -9811,7 +9811,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/416.png"
+    "sprite": "/sprites/416.png"
   },
   {
     "id": 417,
@@ -9834,7 +9834,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/417.png"
+    "sprite": "/sprites/417.png"
   },
   {
     "id": 418,
@@ -9857,7 +9857,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/418.png"
+    "sprite": "/sprites/418.png"
   },
   {
     "id": 419,
@@ -9880,7 +9880,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/419.png"
+    "sprite": "/sprites/419.png"
   },
   {
     "id": 420,
@@ -9903,7 +9903,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/420.png"
+    "sprite": "/sprites/420.png"
   },
   {
     "id": 421,
@@ -9926,7 +9926,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/421.png"
+    "sprite": "/sprites/421.png"
   },
   {
     "id": 422,
@@ -9949,7 +9949,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/422.png"
+    "sprite": "/sprites/422.png"
   },
   {
     "id": 423,
@@ -9973,7 +9973,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/423.png"
+    "sprite": "/sprites/423.png"
   },
   {
     "id": 424,
@@ -9996,7 +9996,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/424.png"
+    "sprite": "/sprites/424.png"
   },
   {
     "id": 425,
@@ -10020,7 +10020,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/425.png"
+    "sprite": "/sprites/425.png"
   },
   {
     "id": 426,
@@ -10044,7 +10044,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/426.png"
+    "sprite": "/sprites/426.png"
   },
   {
     "id": 427,
@@ -10067,7 +10067,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/427.png"
+    "sprite": "/sprites/427.png"
   },
   {
     "id": 428,
@@ -10090,7 +10090,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/428.png"
+    "sprite": "/sprites/428.png"
   },
   {
     "id": 429,
@@ -10113,7 +10113,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/429.png"
+    "sprite": "/sprites/429.png"
   },
   {
     "id": 430,
@@ -10137,7 +10137,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/430.png"
+    "sprite": "/sprites/430.png"
   },
   {
     "id": 431,
@@ -10160,7 +10160,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/431.png"
+    "sprite": "/sprites/431.png"
   },
   {
     "id": 432,
@@ -10183,7 +10183,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/432.png"
+    "sprite": "/sprites/432.png"
   },
   {
     "id": 433,
@@ -10206,7 +10206,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/433.png"
+    "sprite": "/sprites/433.png"
   },
   {
     "id": 434,
@@ -10230,7 +10230,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/434.png"
+    "sprite": "/sprites/434.png"
   },
   {
     "id": 435,
@@ -10254,7 +10254,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/435.png"
+    "sprite": "/sprites/435.png"
   },
   {
     "id": 436,
@@ -10278,7 +10278,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/436.png"
+    "sprite": "/sprites/436.png"
   },
   {
     "id": 437,
@@ -10302,7 +10302,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/437.png"
+    "sprite": "/sprites/437.png"
   },
   {
     "id": 438,
@@ -10325,7 +10325,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/438.png"
+    "sprite": "/sprites/438.png"
   },
   {
     "id": 439,
@@ -10349,7 +10349,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/439.png"
+    "sprite": "/sprites/439.png"
   },
   {
     "id": 440,
@@ -10372,7 +10372,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/440.png"
+    "sprite": "/sprites/440.png"
   },
   {
     "id": 441,
@@ -10396,7 +10396,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/441.png"
+    "sprite": "/sprites/441.png"
   },
   {
     "id": 442,
@@ -10420,7 +10420,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/442.png"
+    "sprite": "/sprites/442.png"
   },
   {
     "id": 443,
@@ -10444,7 +10444,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/443.png"
+    "sprite": "/sprites/443.png"
   },
   {
     "id": 444,
@@ -10468,7 +10468,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/444.png"
+    "sprite": "/sprites/444.png"
   },
   {
     "id": 445,
@@ -10492,7 +10492,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/445.png"
+    "sprite": "/sprites/445.png"
   },
   {
     "id": 446,
@@ -10515,7 +10515,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/446.png"
+    "sprite": "/sprites/446.png"
   },
   {
     "id": 447,
@@ -10538,7 +10538,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/447.png"
+    "sprite": "/sprites/447.png"
   },
   {
     "id": 448,
@@ -10562,7 +10562,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/448.png"
+    "sprite": "/sprites/448.png"
   },
   {
     "id": 449,
@@ -10585,7 +10585,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/449.png"
+    "sprite": "/sprites/449.png"
   },
   {
     "id": 450,
@@ -10608,7 +10608,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/450.png"
+    "sprite": "/sprites/450.png"
   },
   {
     "id": 451,
@@ -10632,7 +10632,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/451.png"
+    "sprite": "/sprites/451.png"
   },
   {
     "id": 452,
@@ -10656,7 +10656,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/452.png"
+    "sprite": "/sprites/452.png"
   },
   {
     "id": 453,
@@ -10680,7 +10680,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/453.png"
+    "sprite": "/sprites/453.png"
   },
   {
     "id": 454,
@@ -10704,7 +10704,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/454.png"
+    "sprite": "/sprites/454.png"
   },
   {
     "id": 455,
@@ -10727,7 +10727,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/455.png"
+    "sprite": "/sprites/455.png"
   },
   {
     "id": 456,
@@ -10750,7 +10750,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/456.png"
+    "sprite": "/sprites/456.png"
   },
   {
     "id": 457,
@@ -10773,7 +10773,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/457.png"
+    "sprite": "/sprites/457.png"
   },
   {
     "id": 458,
@@ -10797,7 +10797,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/458.png"
+    "sprite": "/sprites/458.png"
   },
   {
     "id": 459,
@@ -10821,7 +10821,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/459.png"
+    "sprite": "/sprites/459.png"
   },
   {
     "id": 460,
@@ -10845,7 +10845,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/460.png"
+    "sprite": "/sprites/460.png"
   },
   {
     "id": 461,
@@ -10869,7 +10869,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/461.png"
+    "sprite": "/sprites/461.png"
   },
   {
     "id": 462,
@@ -10893,7 +10893,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/462.png"
+    "sprite": "/sprites/462.png"
   },
   {
     "id": 463,
@@ -10916,7 +10916,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/463.png"
+    "sprite": "/sprites/463.png"
   },
   {
     "id": 464,
@@ -10940,7 +10940,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/464.png"
+    "sprite": "/sprites/464.png"
   },
   {
     "id": 465,
@@ -10963,7 +10963,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/465.png"
+    "sprite": "/sprites/465.png"
   },
   {
     "id": 466,
@@ -10986,7 +10986,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/466.png"
+    "sprite": "/sprites/466.png"
   },
   {
     "id": 467,
@@ -11009,7 +11009,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/467.png"
+    "sprite": "/sprites/467.png"
   },
   {
     "id": 468,
@@ -11033,7 +11033,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/468.png"
+    "sprite": "/sprites/468.png"
   },
   {
     "id": 469,
@@ -11057,7 +11057,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/469.png"
+    "sprite": "/sprites/469.png"
   },
   {
     "id": 470,
@@ -11080,7 +11080,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/470.png"
+    "sprite": "/sprites/470.png"
   },
   {
     "id": 471,
@@ -11103,7 +11103,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/471.png"
+    "sprite": "/sprites/471.png"
   },
   {
     "id": 472,
@@ -11127,7 +11127,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/472.png"
+    "sprite": "/sprites/472.png"
   },
   {
     "id": 473,
@@ -11151,7 +11151,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/473.png"
+    "sprite": "/sprites/473.png"
   },
   {
     "id": 474,
@@ -11174,7 +11174,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/474.png"
+    "sprite": "/sprites/474.png"
   },
   {
     "id": 475,
@@ -11198,7 +11198,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/475.png"
+    "sprite": "/sprites/475.png"
   },
   {
     "id": 476,
@@ -11222,7 +11222,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/476.png"
+    "sprite": "/sprites/476.png"
   },
   {
     "id": 477,
@@ -11245,7 +11245,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/477.png"
+    "sprite": "/sprites/477.png"
   },
   {
     "id": 478,
@@ -11269,7 +11269,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/478.png"
+    "sprite": "/sprites/478.png"
   },
   {
     "id": 479,
@@ -11293,7 +11293,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/479.png"
+    "sprite": "/sprites/479.png"
   },
   {
     "id": 480,
@@ -11316,7 +11316,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/480.png"
+    "sprite": "/sprites/480.png"
   },
   {
     "id": 481,
@@ -11339,7 +11339,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/481.png"
+    "sprite": "/sprites/481.png"
   },
   {
     "id": 482,
@@ -11362,7 +11362,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/482.png"
+    "sprite": "/sprites/482.png"
   },
   {
     "id": 483,
@@ -11386,7 +11386,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/483.png"
+    "sprite": "/sprites/483.png"
   },
   {
     "id": 484,
@@ -11410,7 +11410,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/484.png"
+    "sprite": "/sprites/484.png"
   },
   {
     "id": 485,
@@ -11434,7 +11434,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/485.png"
+    "sprite": "/sprites/485.png"
   },
   {
     "id": 486,
@@ -11457,7 +11457,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/486.png"
+    "sprite": "/sprites/486.png"
   },
   {
     "id": 487,
@@ -11481,7 +11481,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/487.png"
+    "sprite": "/sprites/487.png"
   },
   {
     "id": 488,
@@ -11504,7 +11504,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": true,
     "isMythical": false,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/488.png"
+    "sprite": "/sprites/488.png"
   },
   {
     "id": 489,
@@ -11527,7 +11527,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": true,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/489.png"
+    "sprite": "/sprites/489.png"
   },
   {
     "id": 490,
@@ -11550,7 +11550,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": true,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/490.png"
+    "sprite": "/sprites/490.png"
   },
   {
     "id": 491,
@@ -11573,7 +11573,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": true,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/491.png"
+    "sprite": "/sprites/491.png"
   },
   {
     "id": 492,
@@ -11596,7 +11596,7 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": true,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/492.png"
+    "sprite": "/sprites/492.png"
   },
   {
     "id": 493,
@@ -11619,6 +11619,6 @@ export const pokemonData: Pokemon[] = [
     "isStarter": false,
     "isLegendary": false,
     "isMythical": true,
-    "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/493.png"
+    "sprite": "/sprites/493.png"
   }
 ]

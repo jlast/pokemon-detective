@@ -340,6 +340,25 @@ resource "aws_cloudfront_distribution" "site" {
     max_ttl     = 86400
   }
 
+  # Sprites behavior: cache for a long time (they never change)
+  ordered_cache_behavior {
+    path_pattern           = "/sprites/*"
+    target_origin_id       = "s3-${aws_s3_bucket.site.id}"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD"]
+    compress               = true
+
+    forwarded_values {
+      query_string = false
+      cookies { forward = "none" }
+    }
+
+    min_ttl     = 86400
+    default_ttl = 604800
+    max_ttl     = 31536000
+  }
+
   # API behavior: forward to API Gateway, don't cache
   ordered_cache_behavior {
     path_pattern           = "/api/*"

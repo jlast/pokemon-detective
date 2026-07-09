@@ -106,7 +106,7 @@ const serializeDataFile = (pokemonEntries) => {
 
   return `export type PokemonType =\n${typeUnion
     .map((type) => `  | '${type}'`)
-    .join('\n')}\n\nexport type PokemonRegion = 'Kanto' | 'Johto' | 'Hoenn' | 'Sinnoh'\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite?: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/\${pokemonId}.png\`\n\nexport const pokemonData: Pokemon[] = ${JSON.stringify(pokemonEntries, null, 2)}\n`
+    .join('\n')}\n\nexport type PokemonRegion = 'Kanto' | 'Johto' | 'Hoenn' | 'Sinnoh'\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`/sprites/shiny/\${pokemonId}.png\`\n\nexport const pokemonData: Pokemon[] = ${JSON.stringify(pokemonEntries, null, 2)}\n`
 }
 
 const main = async () => {
@@ -175,7 +175,8 @@ const main = async () => {
       isStarter: starterIds.has(id),
       isLegendary: species.is_legendary,
       isMythical: species.is_mythical,
-      sprite: pokemon.sprites.front_default,
+      sprite: `/sprites/${id}.png`,
+      shinySprite: `/sprites/shiny/${id}.png`,
     }
   })
 

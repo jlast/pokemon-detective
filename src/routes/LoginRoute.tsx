@@ -24,47 +24,54 @@ export function LoginRoute({ onLogin }: LoginRouteProps) {
           </button>
 
           <p className="login-security-note">
+            <svg className="login-security-lock" width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="2" fill="none" />
+            </svg>
             Your progress is securely linked to your Google account.
           </p>
+
+          <div className="login-note-card__watermark" aria-hidden="true">CASE NO. 2024-001</div>
         </div>
 
         <aside className="login-benefits-note">
-          <h3 className="login-benefits-note__title">Why sign in?</h3>
+          <div className="login-benefits-note__pushpin" aria-hidden="true"></div>
+          <h3 className="login-benefits-note__title">Your detective profile</h3>
 
           <div className="benefit-list">
             <div className="benefit-item">
               <span className="benefit-check" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#439663" />
                 </svg>
               </span>
               <div>
-                <strong>Save your case</strong>
-                <span>Keep your current investigation, actions, and progress.</span>
+                <strong>Track your Pokédex</strong>
+                <span>Keep your living Pokédex up to date as you solve cases.</span>
               </div>
             </div>
 
             <div className="benefit-item">
               <span className="benefit-check" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#439663" />
                 </svg>
               </span>
               <div>
-                <strong>Keep evidence</strong>
-                <span>Your discovered clues stay attached to your account.</span>
+                <strong>Track your shinies</strong>
+                <span>Build your shiny collection and keep rare discoveries saved.</span>
               </div>
             </div>
 
             <div className="benefit-item">
               <span className="benefit-check" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#439663" />
                 </svg>
               </span>
               <div>
-                <strong>Continue anywhere</strong>
-                <span>Resume the same case on another device.</span>
+                <strong>Save your case history</strong>
+                <span>Keep solved cases, streaks, and personal investigation stats.</span>
               </div>
             </div>
           </div>

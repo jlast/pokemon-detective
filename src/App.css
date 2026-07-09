@@ -3099,15 +3099,15 @@
 .login-page {
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
 }
 
 .login-shell {
   display: grid;
-  grid-template-columns: minmax(320px, 1fr) minmax(280px, 0.85fr);
-  gap: 1.25rem;
+  grid-template-columns: minmax(420px, 1.15fr) minmax(340px, 0.85fr);
+  gap: 1.5rem;
   max-width: 900px;
   width: 100%;
+  margin-top: 2rem;
 }
 
 /* ── Left card: notebook note ── */
@@ -3115,14 +3115,23 @@
 .login-note-card {
   position: relative;
   background: #fcf8ee;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(139, 119, 90, 0.018) 2px,
+    rgba(139, 119, 90, 0.018) 3px
+  );
   border: 1px solid var(--border);
   border-radius: 4px 20px 20px 4px;
-  padding: 1.75rem 2rem 1.75rem 2.5rem;
+  padding: 1.25rem 2rem 1.25rem 56px;
   box-shadow: var(--shadow-card);
   display: grid;
   gap: 0;
   overflow: hidden;
 }
+
+/* ── Gutter strip with punched holes ── */
 
 .login-note-card::before {
   content: '';
@@ -3130,29 +3139,28 @@
   top: 0;
   left: 0;
   bottom: 0;
-  width: 28px;
-  background: #fcf8ee;
-  border-right: 1px solid var(--border);
+  width: 40px;
+  background-color: #fcf8ee;
+  background-image:
+    radial-gradient(circle 11px at 11px 29px, rgba(0, 0, 0, 0.035) 9px, transparent 9px),
+    radial-gradient(circle 10px at 10px 28px, var(--page) 9px, transparent 10px);
+  background-size: 100% 44px;
+  background-repeat: repeat-y;
+  z-index: 1;
+  pointer-events: none;
 }
+
+/* ── Red margin line ── */
 
 .login-note-card::after {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
+  left: 28px;
   bottom: 0;
-  width: 28px;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      transparent,
-      transparent 32px,
-      var(--border) 32px,
-      var(--border) 33px,
-      transparent 33px,
-      transparent 40px
-    );
-  background-color: #fcf8ee;
+  width: 2px;
+  background: rgba(200, 80, 70, 0.3);
+  z-index: 1;
   pointer-events: none;
 }
 
@@ -3162,29 +3170,44 @@
   left: 0;
   width: 40px;
   height: 20px;
-  background: rgba(215, 195, 155, 0.5);
-  transform: rotate(-6deg);
+  background: rgba(215, 195, 155, 0.45);
+  transform: rotate(-8deg);
   transform-origin: top left;
   border-radius: 2px;
   pointer-events: none;
+  z-index: 2;
 }
 
 .login-note-card__title {
-  margin: 0 0 0.5rem;
-  font-size: 1.15rem;
-  font-weight: 700;
+  margin: 0 0 0.35rem;
+  font-size: 2.2rem;
+  font-weight: 800;
   color: var(--text-main);
-  line-height: 1.3;
+  line-height: 1.1;
+  max-width: 420px;
   padding-bottom: 0.5rem;
   border-bottom: 3px solid var(--accent-yellow);
   display: inline-block;
 }
 
 .login-note-card__desc {
-  margin: 0;
-  font-size: 0.88rem;
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
   color: var(--muted);
   line-height: 1.5;
+}
+
+.login-note-card__watermark {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-main);
+  opacity: 0.06;
+  pointer-events: none;
+  user-select: none;
 }
 
 /* ── Google button ── */
@@ -3196,7 +3219,7 @@
   gap: 0.75rem;
   width: 100%;
   height: 56px;
-  border-radius: 16px;
+  border-radius: 14px;
   border: 1px solid var(--border);
   padding: 0 1.2rem;
   background: #fff;
@@ -3204,8 +3227,8 @@
   font: inherit;
   font-weight: 800;
   font-size: 0.95rem;
-  margin-top: 1.5rem;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(60, 50, 30, 0.08);
   transition:
     background-color 140ms ease,
     border-color 140ms ease,
@@ -3238,10 +3261,18 @@
 /* ── Security note ── */
 
 .login-security-note {
-  margin: 1rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.75rem 0 0;
   font-size: 0.78rem;
   color: var(--muted);
   line-height: 1.4;
+}
+
+.login-security-lock {
+  flex-shrink: 0;
+  opacity: 0.55;
 }
 
 /* ── Right card: evidence note ── */
@@ -3250,7 +3281,7 @@
   background: #fff8df;
   border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 1.75rem;
+  padding: 1.5rem 1.75rem;
   box-shadow: var(--shadow-card);
   display: grid;
   gap: 0;
@@ -3258,21 +3289,38 @@
   position: relative;
 }
 
-.login-benefits-note::before {
-  content: '\1F4CC';
+.login-benefits-note__pushpin {
   position: absolute;
-  top: -4px;
-  right: 12px;
-  font-size: 1.2rem;
-  transform: rotate(12deg);
+  top: -6px;
+  right: 14px;
+  width: 14px;
+  height: 14px;
+  background: #d32f2f;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
   pointer-events: none;
+  z-index: 1;
+}
+
+.login-benefits-note__pushpin::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  width: 6px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 2px;
 }
 
 .login-benefits-note__title {
-  margin: 0 0 1rem;
+  margin: 0 0 0.15rem;
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-main);
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid var(--accent-yellow);
+  display: inline-block;
 }
 
 /* ── Benefit list ── */
@@ -3280,12 +3328,13 @@
 .benefit-list {
   display: grid;
   gap: 0;
+  margin-top: 0.75rem;
 }
 
 .benefit-item {
   display: grid;
-  grid-template-columns: 44px 1fr;
-  gap: 0.75rem;
+  grid-template-columns: 48px 1fr;
+  gap: 0.85rem;
   align-items: start;
   padding: 1rem 0;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
@@ -3300,11 +3349,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: rgba(217, 177, 63, 0.2);
+  background: rgba(217, 177, 63, 0.22);
   flex-shrink: 0;
+  margin-top: -2px;
 }
 
 .benefit-item strong {
@@ -3331,23 +3381,41 @@
 
   .login-shell {
     grid-template-columns: 1fr;
+    margin-top: 1rem;
   }
 
   .login-note-card {
-    padding: 1.25rem 1.5rem;
+    padding: 1.25rem 1.5rem 1.25rem 46px;
   }
 
-  .login-note-card::before,
+  .login-note-card::before {
+    width: 32px;
+    background-image:
+      radial-gradient(circle 8px at 8px 20px, rgba(0, 0, 0, 0.035) 6px, transparent 6px),
+      radial-gradient(circle 7px at 7px 19px, var(--page) 6px, transparent 7px);
+    background-size: 100% 34px;
+  }
+
   .login-note-card::after {
-    display: none;
+    left: 22px;
   }
 
   .login-note-card__tape {
+    width: 32px;
+    height: 16px;
+  }
+
+  .login-note-card__watermark {
     display: none;
   }
 
+  .login-note-card__title {
+    font-size: 1.6rem;
+    max-width: 100%;
+  }
+
   .login-benefits-note {
-    padding: 1.5rem;
+    padding: 1.25rem 1.5rem;
   }
 
   .google-login-button {
