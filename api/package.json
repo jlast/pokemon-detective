@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build:handler": "esbuild src/handler.ts --bundle --platform=node --target=node22 --outfile=dist/handler.js",
-    "build:authorizer": "esbuild src/authorizer.ts --bundle --platform=node --target=node22 --outfile=dist/authorizer.js"
+    "build:authorizer": "esbuild src/authorizer.ts --bundle --platform=node --target=node22 --outfile=dist/authorizer.js",
+    "dev:server": "npm run build:handler && node dev-server.js"
   }
 }

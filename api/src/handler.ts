@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto'
+import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose'
 import { createCaseById } from '../../src/game/cases/index'
 import {
   getSession,
@@ -8,6 +9,14 @@ import {
   type SessionRecord,
 } from './db'
 import { getDailySeed, createSeededRng, getTodayUtc } from './seeds'
+
+const USER_POOL_ID = process.env.USER_POOL_ID ?? ''
+const REGION = process.env.REGION ?? 'us-east-1'
+
+const jwksUrl = new URL(
+  `https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}/.well-known/jwks.json`,
+)
+const jwks = createRemoteJWKSet(jwksUrl)
 
 interface ApiGatewayEvent {
   path: string
@@ -60,8 +69,37 @@ const parseBody = (event: ApiGatewayEvent): Record<string, unknown> => {
   }
 }
 
-const getUserSub = (event: ApiGatewayEvent): string | null => {
-  return event.requestContext.authorizer?.sub || null
+interface UserInfo {
+  sub: string
+  email?: string
+  name?: string
+  picture?: string
+}
+
+const extractToken = (authHeader: string | undefined): string | null => {
+  if (!authHeader) return null
+  const parts = authHeader.split(' ')
+  if (parts.length !== 2 || parts[0].toLowerCase() !== 'bearer') return null
+  return parts[1]
+}
+
+const getUserInfo = async (event: ApiGatewayEvent): Promise<UserInfo> => {
+  const token = extractToken(event.headers?.Authorization)
+  if (!token) return { sub: '' }
+
+  try {
+    const { payload } = await jwtVerify(token, jwks, {
+      issuer: `https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}`,
+    })
+    return {
+      sub: (payload.sub as string) ?? '',
+      email: payload.email as string | undefined,
+      name: payload.name as string | undefined,
+      picture: payload.picture as string | undefined,
+    }
+  } catch {
+    return { sub: '' }
+  }
 }
 
 const getDateSessionKey = (sub: string, dateStr: string): string =>
@@ -236,10 +274,10 @@ const handleStart = async (
   event: ApiGatewayEvent,
   body: Record<string, unknown>,
 ) => {
-  const sub = getUserSub(event)
+  const userInfo = await getUserInfo(event)
 
-  if (sub) {
-    const sessionId = getDateSessionKey(sub, dateStr)
+  if (userInfo.sub) {
+    const sessionId = getDateSessionKey(userInfo.sub, dateStr)
     const existing = await getSession(sessionId)
     if (existing) {
       return ok(serializeSession(existing))
@@ -247,7 +285,7 @@ const handleStart = async (
 
     const { gameCase, caseId } = generateDailyCase(dateStr)
     const caseStateJson = buildCaseStateJsonRaw(gameCase)
-    const session = buildSessionRecord(sessionId, dateStr, sub, gameCase, caseId, caseStateJson)
+    const session = buildSessionRecord(sessionId, dateStr, userInfo.sub, gameCase, caseId, caseStateJson)
     await createSession(session)
     return ok(serializeSession(session))
   }
@@ -365,10 +403,10 @@ const handleGetSession = async (sessionId: string) => {
 }
 
 const handleState = async (event: ApiGatewayEvent) => {
-  const sub = getUserSub(event)
-  if (!sub) return err(401, 'Authentication required')
+  const userInfo = await getUserInfo(event)
+  if (!userInfo.sub) return err(401, 'Authentication required')
   const dateStr = getTodayUtc()
-  const sessionId = getDateSessionKey(sub, dateStr)
+  const sessionId = getDateSessionKey(userInfo.sub, dateStr)
   return handleGetSession(sessionId)
 }
 

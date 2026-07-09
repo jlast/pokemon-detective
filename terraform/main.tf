@@ -148,7 +148,9 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      TABLE_NAME = aws_dynamodb_table.daily_sessions.name
+      TABLE_NAME   = aws_dynamodb_table.daily_sessions.name
+      USER_POOL_ID = aws_cognito_user_pool.main.id
+      REGION       = var.region
     }
   }
 
@@ -239,83 +241,6 @@ resource "aws_cognito_identity_provider" "google" {
   }
 }
 
-# ─── Lambda Authorizer IAM ────────────────────────────────────────────────────
-
-resource "aws_iam_role" "authorizer" {
-  name = "${var.project_name}-authorizer-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = { Service = "lambda.amazonaws.com" }
-    }]
-  })
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy" "authorizer_logs" {
-  name = "${var.project_name}-authorizer-logs"
-  role = aws_iam_role.authorizer.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents",
-      ]
-      Resource = "arn:aws:logs:*:*:*"
-    }]
-  })
-}
-
-# ─── Lambda Authorizer function ───────────────────────────────────────────────
-
-resource "aws_lambda_function" "authorizer" {
-  filename         = var.authorizer_zip_path
-  function_name    = "${var.project_name}-authorizer"
-  role             = aws_iam_role.authorizer.arn
-  handler          = "authorizer.handler"
-  runtime          = "nodejs22.x"
-  timeout          = 10
-  memory_size      = 128
-  source_code_hash = filebase64sha256(var.authorizer_zip_path)
-
-  environment {
-    variables = {
-      USER_POOL_ID = aws_cognito_user_pool.main.id
-      REGION       = var.region
-    }
-  }
-
-  tags = var.tags
-}
-
-resource "aws_lambda_permission" "authorizer" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.authorizer.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*"
-}
-
-# ─── API Gateway Authorizer ───────────────────────────────────────────────────
-
-resource "aws_api_gateway_authorizer" "cognito" {
-  name                   = "${var.project_name}-cognito-auth"
-  rest_api_id            = aws_api_gateway_rest_api.api.id
-  authorizer_uri         = aws_lambda_function.authorizer.invoke_arn
-  authorizer_credentials = aws_iam_role.authorizer.arn
-  type                   = "REQUEST"
-  identity_source        = "method.request.header.Authorization"
-  authorizer_result_ttl_in_seconds = 0
-}
-
 # ─── API Gateway (REST) — single proxy resource ──────────────────────────────
 
 resource "aws_api_gateway_rest_api" "api" {
@@ -339,8 +264,7 @@ resource "aws_api_gateway_method" "proxy_any" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.proxy.id
   http_method   = "ANY"
-  authorization = "CUSTOM"
-  authorizer_id = aws_api_gateway_authorizer.cognito.id
+  authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "proxy_any" {

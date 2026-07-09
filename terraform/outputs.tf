@@ -48,7 +48,4 @@ output "cognito_domain" {
   value       = "${aws_cognito_user_pool_domain.main.domain}.auth.${var.region}.amazoncognito.com"
 }
 
-output "lambda_authorizer_function_name" {
-  description = "Name of the Lambda authorizer function"
-  value       = aws_lambda_function.authorizer.function_name
-}
+

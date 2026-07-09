@@ -36,17 +36,12 @@ jobs:
         working-directory: api
         run: npm run build:handler
 
-      - name: Build authorizer Lambda
-        working-directory: api
-        run: npm run build:authorizer
-
-      - name: Package Lambdas
+      - name: Package Lambda
         working-directory: api
         run: |
           mkdir -p dist
           cd dist
           zip -r handler.zip handler.js
-          zip -r authorizer.zip authorizer.js
 
       # ── AWS auth ──
       - uses: aws-actions/configure-aws-credentials@v4
@@ -64,12 +59,6 @@ jobs:
           aws lambda update-function-code \
             --function-name pokemon-detective-api \
             --zip-file fileb://api/dist/handler.zip
-
-      - name: Deploy authorizer Lambda
-        run: |
-          aws lambda update-function-code \
-            --function-name pokemon-detective-authorizer \
-            --zip-file fileb://api/dist/authorizer.zip
 
       # ── Invalidate CloudFront cache ──
       - run: >

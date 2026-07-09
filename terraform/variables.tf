@@ -21,12 +21,6 @@ variable "handler_zip_path" {
   default     = "../api/dist/handler.zip"
 }
 
-variable "authorizer_zip_path" {
-  description = "Path to the Lambda authorizer deployment zip (relative to terraform directory)"
-  type        = string
-  default     = "../api/dist/authorizer.zip"
-}
-
 variable "region" {
   description = "AWS region for resources"
   type        = string
