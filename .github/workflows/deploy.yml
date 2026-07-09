@@ -59,15 +59,17 @@ jobs:
       - run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }}/ --delete
 
       # ── Deploy Lambdas ──
-      - run: >
-          aws lambda update-function-code
-          --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }}
-          --zip-file fileb://api/dist/handler.zip
+      - name: Deploy handler Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name pokemon-detective-api \
+            --zip-file fileb://api/dist/handler.zip
 
-      - run: >
-          aws lambda update-function-code
-          --function-name ${{ secrets.LAMBDA_AUTHORIZER_FUNCTION_NAME }}
-          --zip-file fileb://api/dist/authorizer.zip
+      - name: Deploy authorizer Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name pokemon-detective-authorizer \
+            --zip-file fileb://api/dist/authorizer.zip
 
       # ── Invalidate CloudFront cache ──
       - run: >
