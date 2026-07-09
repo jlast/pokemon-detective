@@ -1,7 +1,7 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
-import { rebuildFullCase } from '../../src/game/cases/index'
+import { createCaseById, rebuildFullCase } from '../../src/game/cases/index'
 import type { Case, CaseStatus } from '../../src/game/caseModel'
-import { getCaseData } from './caseDataDb'
+import { getCaseData, putCaseData } from './caseDataDb'
 import { getProgress, createProgress, updateProgress, type PlayerProgressRecord, type InvestigatedLocationRecord } from './playerDb'
 
 const USER_POOL_ID = process.env.USER_POOL_ID ?? ''
@@ -172,11 +172,59 @@ const loadCase = async (caseId: string) => {
   return fullCase
 }
 
+const generateAndStoreCase = async (caseId: string) => {
+  const configs = ['missing-cookies', 'purloined-page', 'missing-medal', 'ravaged-pantry', 'stolen-artifact']
+  const configIndex = Math.floor(Math.random() * configs.length)
+  const gameCase = createCaseById(configs[configIndex]!)
+  if (!gameCase) return null
+
+  const actionEvidenceMap: Record<string, string> = {}
+  for (const location of gameCase.locations) {
+    for (const action of location.actions) {
+      if (action.evidenceId) {
+        actionEvidenceMap[action.id] = action.evidenceId
+      }
+    }
+  }
+
+  const suspectShinyMap: Record<string, boolean> = {}
+  for (const suspect of gameCase.suspects) {
+    suspectShinyMap[String(suspect.pokemonId)] = suspect.isShiny
+  }
+
+  await putCaseData({
+    caseId,
+    configId: gameCase.id,
+    culpritPokemonId: gameCase.culpritPokemonId,
+    suspectPokemonIds: gameCase.suspects.map((s) => s.pokemonId),
+    suspectShinyMap,
+    actionEvidenceMap,
+    solution: {
+      culpritRevealText: gameCase.solution?.culpritRevealText ?? '',
+      detectiveConclusion: gameCase.solution?.detectiveConclusion ?? '',
+      evidenceExplanation: gameCase.solution?.evidenceExplanation ?? [],
+      clearedSuspects: gameCase.solution?.clearedSuspects ?? [],
+    },
+    ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
+  })
+
+  return gameCase
+}
+
 const handleGetCurrentCase = async (): Promise<ApiGatewayResult> => {
   const result = await getTodayCaseData()
-  if (!result) return err(404, 'No case available for today')
+  const caseId = getTodayUtc()
 
-  const fullCase = await loadCase(result.caseId)
+  let fullCase: Case | null = null
+
+  if (result) {
+    fullCase = await loadCase(result.caseId)
+  }
+
+  if (!fullCase) {
+    fullCase = await generateAndStoreCase(caseId)
+  }
+
   if (!fullCase) return err(500, 'Failed to build case')
 
   return ok({ case: buildResponseCase(fullCase, null) })

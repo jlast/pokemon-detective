@@ -427,7 +427,7 @@ function handler(event) {
   }
 
   // Pass static assets through unchanged
-  if (uri.match(/\\.\\w+$/)) {
+  if (uri.match(/\.\w+$/)) {
     return request;
   }
 
