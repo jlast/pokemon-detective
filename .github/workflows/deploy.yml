@@ -39,7 +39,7 @@ jobs:
       - name: Package Lambda
         working-directory: api
         run: |
-          mkdir -p dist
+          cp dist/handler.cjs dist/handler.js
           cd dist
           zip -r handler.zip handler.js
 

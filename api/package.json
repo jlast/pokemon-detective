@@ -12,8 +12,9 @@
     "typescript": "~5.7.0"
   },
   "scripts": {
-    "build:handler": "esbuild src/handler.ts --bundle --platform=node --target=node22 --outfile=dist/handler.js",
+    "build:handler": "esbuild src/handler.ts --bundle --platform=node --target=node22 --out-extension:.js=.cjs --outfile=dist/handler.cjs",
     "build:authorizer": "esbuild src/authorizer.ts --bundle --platform=node --target=node22 --outfile=dist/authorizer.js",
-    "dev:server": "npm run build:handler && node dev-server.js"
+    "dev:server": "npm run build:handler && node dev-server.js",
+    "build:handler:zip": "npm run build:handler && cp dist/handler.cjs dist/handler.js && cd dist && zip -r handler.zip handler.js"
   }
 }

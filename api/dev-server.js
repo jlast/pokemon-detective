@@ -2,7 +2,7 @@ import { createRequire } from 'module'
 import { createServer } from 'http'
 
 const require = createRequire(import.meta.url)
-const { handler } = require('./dist/handler.js')
+const { handler } = require('./dist/handler.cjs')
 
 const PORT = 3001
 

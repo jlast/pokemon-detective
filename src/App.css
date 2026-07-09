@@ -3096,6 +3096,265 @@
   }
 }
 
+.login-page {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.login-shell {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(280px, 0.85fr);
+  gap: 1.25rem;
+  max-width: 900px;
+  width: 100%;
+}
+
+/* ── Left card: notebook note ── */
+
+.login-note-card {
+  position: relative;
+  background: #fcf8ee;
+  border: 1px solid var(--border);
+  border-radius: 4px 20px 20px 4px;
+  padding: 1.75rem 2rem 1.75rem 2.5rem;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+}
+
+.login-note-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 28px;
+  background: #fcf8ee;
+  border-right: 1px solid var(--border);
+}
+
+.login-note-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 28px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 32px,
+      var(--border) 32px,
+      var(--border) 33px,
+      transparent 33px,
+      transparent 40px
+    );
+  background-color: #fcf8ee;
+  pointer-events: none;
+}
+
+.login-note-card__tape {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 20px;
+  background: rgba(215, 195, 155, 0.5);
+  transform: rotate(-6deg);
+  transform-origin: top left;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.login-note-card__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.3;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid var(--accent-yellow);
+  display: inline-block;
+}
+
+.login-note-card__desc {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Google button ── */
+
+.google-login-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  height: 56px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 0 1.2rem;
+  background: #fff;
+  color: var(--text-main);
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-top: 1.5rem;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.google-login-button:hover {
+  background: #fff8df;
+  border-color: var(--button-border);
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.1);
+  transform: translateY(-1px);
+}
+
+.google-login-button:active {
+  transform: scale(0.98);
+}
+
+.google-login-button:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.google-login-logo {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+/* ── Security note ── */
+
+.login-security-note {
+  margin: 1rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ── Right card: evidence note ── */
+
+.login-benefits-note {
+  background: #fff8df;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  gap: 0;
+  align-content: start;
+  position: relative;
+}
+
+.login-benefits-note::before {
+  content: '\1F4CC';
+  position: absolute;
+  top: -4px;
+  right: 12px;
+  font-size: 1.2rem;
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+
+.login-benefits-note__title {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* ── Benefit list ── */
+
+.benefit-list {
+  display: grid;
+  gap: 0;
+}
+
+.benefit-item {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.benefit-item:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.benefit-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(217, 177, 63, 0.2);
+  flex-shrink: 0;
+}
+
+.benefit-item strong {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.15rem;
+}
+
+.benefit-item span:not(.benefit-check) {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 760px) {
+  .login-page {
+    margin-top: 1rem;
+  }
+
+  .login-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .login-note-card {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .login-note-card::before,
+  .login-note-card::after {
+    display: none;
+  }
+
+  .login-note-card__tape {
+    display: none;
+  }
+
+  .login-benefits-note {
+    padding: 1.5rem;
+  }
+
+  .google-login-button {
+    height: 54px;
+  }
+}
+
 @media (max-width: 479px) {
   .investigation-pinboard {
     grid-template-columns: 1fr;
