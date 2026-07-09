@@ -90,19 +90,22 @@ const getTodayUtc = (): string => {
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`
 }
 
-const stripActionOutcome = (action: LocationAction): LocationAction => ({
-  ...action,
-  observationText: undefined,
-  observationTextSmall: undefined,
-  observationTextMedium: undefined,
-  observationTextLarge: undefined,
-  evidenceId: null,
-  evidenceTitle: null,
-  evidenceText: null,
-  implicationText: undefined,
-  unlocksLocationIds: [],
-  isUseful: false,
-})
+const stripActionOutcome = (action: LocationAction): LocationAction => {
+  const {
+    observationText,
+    observationTextSmall,
+    observationTextMedium,
+    observationTextLarge,
+    evidenceId,
+    evidenceTitle,
+    evidenceText,
+    implicationText,
+    unlocksLocationIds,
+    isUseful,
+    ...rest
+  } = action
+  return rest as LocationAction
+}
 
 const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null): Case => {
   if (!progress) {
