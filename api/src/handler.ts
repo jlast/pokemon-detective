@@ -109,9 +109,10 @@ const stripActionOutcome = (action: LocationAction): LocationAction => {
 }
 
 const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null): Case => {
+  const { evidence: _ev, ...caseWithoutEvidence } = fullCase
   if (!progress) {
     return {
-      ...fullCase,
+      ...caseWithoutEvidence,
       culpritPokemonId: -1,
       solution: undefined,
       status: 'active' as CaseStatus,
@@ -134,7 +135,7 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
   const isOver = progress.status === 'solved' || progress.status === 'failed'
 
   return {
-    ...fullCase,
+    ...caseWithoutEvidence,
     status: (progress.status === 'playing' ? 'active' : progress.status) as CaseStatus,
     culpritPokemonId: isOver ? fullCase.culpritPokemonId : -1,
     solution: isOver ? fullCase.solution : undefined,
