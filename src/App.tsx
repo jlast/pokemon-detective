@@ -12,6 +12,7 @@ import { InvestigationLocationRoute } from './routes/InvestigationLocationRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
 import { getCurrentCase, investigate as apiInvestigate, accuse as apiAccuse } from './api'
+import { allCases } from './game/cases'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from './game/caseModel'
 import {
   isAuthenticated,
@@ -292,6 +293,10 @@ function App() {
       if (!location || location.investigated) return
       const action = location.actions.find((a) => a.id === actionId)
       if (!action) return
+      const rawAction = allCases
+        .find((c) => c.id === caseData.id)
+        ?.locations.find((l) => l.id === locationId)
+        ?.actions.find((a) => a.id === actionId)
       setCaseData({
         ...caseData,
         locations: caseData.locations.map((l) =>
@@ -300,10 +305,10 @@ function App() {
                 ...l,
                 investigated: true,
                 selectedActionId: actionId,
-                observationText: action.observationText,
-                evidenceId: action.evidenceId ?? undefined,
-                evidenceTitle: action.evidenceTitle ?? undefined,
-                evidenceText: action.evidenceText ?? undefined,
+                observationText: rawAction?.observationText,
+                evidenceId: rawAction?.evidenceId ?? undefined,
+                evidenceTitle: rawAction?.evidenceTitle ?? undefined,
+                evidenceText: rawAction?.evidenceText ?? undefined,
               }
             : l,
         ),
