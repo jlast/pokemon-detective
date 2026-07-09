@@ -19,7 +19,7 @@ const authHeaders = (): Record<string, string> => {
 const enc = encodeURIComponent
 
 export const getCurrentCase = async (): Promise<Case> => {
-  const res = await fetch(`${BASE}/api/cases/current`)
+  const res = await fetch(`${BASE}/api/cases/current`, { headers: authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   const data = await res.json()
   return data.case
