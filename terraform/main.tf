@@ -324,12 +324,21 @@ resource "aws_cognito_user_pool_client" "client" {
   name                                 = "${var.project_name}-client"
   user_pool_id                         = aws_cognito_user_pool.main.id
   generate_secret                      = false
-  allowed_oauth_flows                  = ["code", "implicit"]
+  allowed_oauth_flows                  = ["code"]
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   callback_urls                        = ["${var.app_url}/callback"]
   logout_urls                          = [var.app_url]
   supported_identity_providers         = ["Google"]
+  access_token_validity                = 1
+  id_token_validity                    = 1
+  refresh_token_validity               = 30
+
+  token_validity_units {
+    access_token  = "hours"
+    id_token      = "hours"
+    refresh_token = "days"
+  }
 
   depends_on = [aws_cognito_identity_provider.google]
 }

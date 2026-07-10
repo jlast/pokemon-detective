@@ -20,6 +20,7 @@ import {
   logout as authLogout,
   handleCallback,
   getUserProfile,
+  ensureValidSession,
   type UserProfile,
 } from './auth'
 
@@ -138,17 +139,28 @@ function App() {
 
   useEffect(() => {
     if (currentRoute === '/callback') {
-      const ok = handleCallback()
-      if (ok) {
-        setAuthed(true)
-        setUserProfile(getUserProfile())
-        loadCase().then(() => navigate('/', { replace: true }))
-      } else {
+      void (async () => {
+        const ok = await handleCallback()
+        if (ok) {
+          setAuthed(true)
+          setUserProfile(getUserProfile())
+          await loadCase()
+        }
         navigate('/', { replace: true })
-      }
+      })()
       return
     }
   }, [currentRoute, navigate, loadCase])
+
+  useEffect(() => {
+    if (currentRoute === '/callback') return
+
+    void (async () => {
+      const ok = await ensureValidSession()
+      setAuthed(ok)
+      setUserProfile(ok ? getUserProfile() : null)
+    })()
+  }, [currentRoute])
 
   useEffect(() => {
     loadCase()
