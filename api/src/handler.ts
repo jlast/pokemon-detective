@@ -1,6 +1,8 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { allCases, createCaseById, rebuildFullCase } from '../../src/game/cases/index'
 import type { Case, CaseStatus, LocationAction } from '../../src/game/caseModel'
+import { getShinySpriteUrl } from '../../src/data/pokemon'
+import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, putCaseData } from './caseDataDb'
 import { getProgress, createProgress, updateProgress, type PlayerProgressRecord, type InvestigatedLocationRecord } from './playerDb'
 
@@ -15,6 +17,7 @@ const jwks = createRemoteJWKSet(jwksUrl)
 const SESSION_TTL_DAYS = 7
 const MAX_ACCUSATIONS = 3
 const DEFAULT_INVESTIGATIONS = 6
+const SHINY_ODDS = 0.01
 
 interface ApiGatewayEvent {
   path: string
@@ -92,21 +95,81 @@ const getTodayUtc = (): string => {
 
 const stripActionOutcome = (action: LocationAction): LocationAction => {
   const {
-    outcomeType,
-    observationText,
-    observationTextSmall,
-    observationTextMedium,
-    observationTextLarge,
-    evidenceId,
-    evidenceTitle,
-    evidenceText,
-    implicationText,
-    unlocksLocationIds,
-    isUseful,
+    outcomeType: _outcomeType,
+    observationText: _observationText,
+    observationTextSmall: _observationTextSmall,
+    observationTextMedium: _observationTextMedium,
+    observationTextLarge: _observationTextLarge,
+    evidenceId: _evidenceId,
+    evidenceTitle: _evidenceTitle,
+    evidenceText: _evidenceText,
+    implicationText: _implicationText,
+    unlocksLocationIds: _unlocksLocationIds,
+    isUseful: _isUseful,
     ...rest
   } = action
   return rest as LocationAction
 }
+
+const getProgressTtl = (): number => Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400
+
+const createSuspectShinyMap = (fullCase: Case): Record<string, boolean> => Object.fromEntries(
+  fullCase.suspects.map((suspect) => [String(suspect.pokemonId), Math.random() < SHINY_ODDS]),
+)
+
+const hasCompleteSuspectShinyMap = (progress: PlayerProgressRecord, fullCase: Case): boolean => (
+  fullCase.suspects.every((suspect) => typeof progress.suspectShinyMap?.[String(suspect.pokemonId)] === 'boolean')
+)
+
+const createCaseProgress = (
+  userId: string,
+  caseId: string,
+  fullCase: Case,
+  investigationsRemaining = fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS,
+): PlayerProgressRecord => ({
+  userId,
+  caseId,
+  status: 'playing',
+  investigationsRemaining,
+  accusationsRemaining: MAX_ACCUSATIONS,
+  accusationHistory: [],
+  investigatedLocations: [],
+  clearedSuspectIds: [],
+  suspectShinyMap: createSuspectShinyMap(fullCase),
+  ttl: getProgressTtl(),
+})
+
+const ensureProgressShinyMap = async (
+  userId: string,
+  progress: PlayerProgressRecord,
+  fullCase: Case,
+): Promise<PlayerProgressRecord> => {
+  if (hasCompleteSuspectShinyMap(progress, fullCase)) return progress
+
+  const suspectShinyMap = {
+    ...(progress.suspectShinyMap ?? {}),
+  }
+
+  for (const suspect of fullCase.suspects) {
+    const key = String(suspect.pokemonId)
+    suspectShinyMap[key] ??= Math.random() < SHINY_ODDS
+  }
+
+  await updateProgress(userId, { suspectShinyMap, ttl: getProgressTtl() })
+
+  return { ...progress, suspectShinyMap }
+}
+
+const applyPlayerShinyMap = (fullCase: Case, progress: PlayerProgressRecord): Case['suspects'] => (
+  fullCase.suspects.map((suspect) => {
+    const isShiny = progress.suspectShinyMap[String(suspect.pokemonId)] ?? false
+    return {
+      ...suspect,
+      isShiny,
+      sprite: isShiny ? getShinySpriteUrl(suspect.pokemonId) : getPokemonById(suspect.pokemonId).sprite,
+    }
+  })
+)
 
 const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null): Case => {
   const { evidence: _ev, culpritPokemonId: _cp, ...caseWithoutEvidence } = fullCase
@@ -163,7 +226,7 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
         actions: loc.actions.map(stripActionOutcome),
       }
     }),
-    suspects: fullCase.suspects.map((s) => ({
+    suspects: applyPlayerShinyMap(fullCase, progress).map((s) => ({
       ...s,
       manuallyRuledOut: accusedSet.has(s.pokemonId) || clearedSet.has(s.pokemonId) || s.manuallyRuledOut,
       noteStatus: accusedSet.has(s.pokemonId) || clearedSet.has(s.pokemonId) ? 'ruled-out' as const : s.noteStatus,
@@ -225,7 +288,7 @@ const generateAndStoreCase = async (caseId: string) => {
       evidenceExplanation: gameCase.solution?.evidenceExplanation ?? [],
       clearedSuspects: gameCase.solution?.clearedSuspects ?? [],
     },
-    ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
+    ttl: getProgressTtl(),
   })
 
   return gameCase
@@ -250,10 +313,15 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
   const userInfo = await getUserInfo(event)
   if (userInfo.sub) {
     const userId = getDateUserId(userInfo.sub, caseId)
-    const progress = await getProgress(userId)
-    if (progress) {
-      return ok({ case: buildResponseCase(fullCase, progress) })
+    let progress = await getProgress(userId)
+    if (!progress) {
+      progress = createCaseProgress(userId, caseId, fullCase)
+      await createProgress(progress)
+    } else {
+      progress = await ensureProgressShinyMap(userId, progress, fullCase)
     }
+
+    return ok({ case: buildResponseCase(fullCase, progress) })
   }
 
   return ok({ case: buildResponseCase(fullCase, null) })
@@ -275,18 +343,10 @@ const handleInvestigate = async (
   let progress = await getProgress(userId)
 
   if (!progress) {
-    progress = {
-      userId,
-      caseId,
-      status: 'playing',
-      investigationsRemaining: fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS,
-      accusationsRemaining: MAX_ACCUSATIONS,
-      accusationHistory: [],
-      investigatedLocations: [],
-      clearedSuspectIds: [],
-      ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
-    }
+    progress = createCaseProgress(userId, caseId, fullCase)
     await createProgress(progress)
+  } else {
+    progress = await ensureProgressShinyMap(userId, progress, fullCase)
   }
 
   if (progress.status !== 'playing') return err(400, 'Game is already over')
@@ -317,7 +377,7 @@ const handleInvestigate = async (
   await updateProgress(userId, {
     investigatedLocations,
     investigationsRemaining,
-    ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
+    ttl: getProgressTtl(),
   })
 
   progress = {
@@ -345,23 +405,17 @@ const handleAccuse = async (
 
   const record = await getCaseData(caseId)
   if (!record) return err(404, 'Case not found')
+  const fullCase = await loadCase(caseId)
+  if (!fullCase) return err(500, 'Failed to load case')
 
   const userId = getDateUserId(userInfo.sub, caseId)
   let progress = await getProgress(userId)
 
   if (!progress) {
-    progress = {
-      userId,
-      caseId,
-      status: 'playing',
-      investigationsRemaining: 0,
-      accusationsRemaining: MAX_ACCUSATIONS,
-      accusationHistory: [],
-      investigatedLocations: [],
-      clearedSuspectIds: [],
-      ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
-    }
+    progress = createCaseProgress(userId, caseId, fullCase, 0)
     await createProgress(progress)
+  } else {
+    progress = await ensureProgressShinyMap(userId, progress, fullCase)
   }
 
   if (progress.status !== 'playing') return err(400, 'Game is already over')
@@ -390,7 +444,7 @@ const handleAccuse = async (
     accusationHistory,
     accusationsRemaining,
     status,
-    ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
+    ttl: getProgressTtl(),
   })
 
   progress = {
@@ -400,10 +454,8 @@ const handleAccuse = async (
     status,
   }
 
-  const fullCase = await loadCase(caseId)
-
   return ok({
-    case: fullCase ? buildResponseCase(fullCase, progress) : null,
+    case: buildResponseCase(fullCase, progress),
     investigationsRemaining: progress.investigationsRemaining,
     accusationsRemaining: progress.accusationsRemaining,
     accusationHistory: progress.accusationHistory,
@@ -431,24 +483,14 @@ const handleClearSuspect = async (
 
   const userId = getDateUserId(userInfo.sub, caseId)
   let progress = await getProgress(userId)
+  const fullCase = await loadCase(caseId)
+  if (!fullCase) return err(404, 'Case not found')
 
   if (!progress) {
-    const record = await getCaseData(caseId)
-    if (!record) return err(404, 'Case not found')
-    const fullCase = await loadCase(caseId)
-    if (!fullCase) return err(500, 'Failed to load case')
-    progress = {
-      userId,
-      caseId,
-      status: 'playing',
-      investigationsRemaining: fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS,
-      accusationsRemaining: MAX_ACCUSATIONS,
-      accusationHistory: [],
-      investigatedLocations: [],
-      clearedSuspectIds: [],
-      ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
-    }
+    progress = createCaseProgress(userId, caseId, fullCase)
     await createProgress(progress)
+  } else {
+    progress = await ensureProgressShinyMap(userId, progress, fullCase)
   }
 
   const clearedSuspectIds = progress.clearedSuspectIds ?? []
@@ -456,14 +498,12 @@ const handleClearSuspect = async (
     ? clearedSuspectIds.includes(suspectId) ? clearedSuspectIds : [...clearedSuspectIds, suspectId]
     : clearedSuspectIds.filter((id) => id !== suspectId)
 
-  await updateProgress(userId, { clearedSuspectIds: updated })
+  await updateProgress(userId, { clearedSuspectIds: updated, ttl: getProgressTtl() })
 
   progress = { ...progress, clearedSuspectIds: updated }
 
-  const fullCase = await loadCase(caseId)
-
   return ok({
-    case: fullCase ? buildResponseCase(fullCase, progress) : null,
+    case: buildResponseCase(fullCase, progress),
     investigationsRemaining: progress.investigationsRemaining,
     accusationsRemaining: progress.accusationsRemaining,
     accusationHistory: progress.accusationHistory,
