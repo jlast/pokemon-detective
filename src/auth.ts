@@ -1,7 +1,9 @@
 const COGNITO_DOMAIN = import.meta.env.VITE_COGNITO_DOMAIN ?? 'pokemon-detective'
 const COGNITO_REGION = import.meta.env.VITE_COGNITO_REGION ?? 'us-east-1'
 const COGNITO_CLIENT_ID = import.meta.env.VITE_COGNITO_CLIENT_ID ?? ''
-const COGNITO_URL = `https://${COGNITO_DOMAIN}.auth.${COGNITO_REGION}.amazoncognito.com`
+const COGNITO_URL = COGNITO_DOMAIN.includes('.')
+  ? `https://${COGNITO_DOMAIN}`
+  : `https://${COGNITO_DOMAIN}.auth.${COGNITO_REGION}.amazoncognito.com`
 
 const TOKEN_KEY = 'cognito-id-token'
 const ACCESS_TOKEN_KEY = 'cognito-access-token'
@@ -147,7 +149,16 @@ export const clearAuth = (): void => {
   sessionStorage.removeItem(PKCE_VERIFIER_KEY)
 }
 
+const hasAuthConfig = (): boolean => {
+  return COGNITO_CLIENT_ID.trim().length > 0
+}
+
 export const login = async (): Promise<void> => {
+  if (!hasAuthConfig()) {
+    window.alert('Missing VITE_COGNITO_CLIENT_ID. Add it to .env.local and restart npm run dev.')
+    return
+  }
+
   const redirectUri = `${window.location.origin}/callback`
   const state = createRandomString(32)
   const verifier = createRandomString(96)
@@ -170,6 +181,8 @@ export const login = async (): Promise<void> => {
 
 export const logout = (): void => {
   clearAuth()
+  if (!hasAuthConfig()) return
+
   const params = new URLSearchParams({
     client_id: COGNITO_CLIENT_ID,
     logout_uri: window.location.origin,
@@ -178,6 +191,8 @@ export const logout = (): void => {
 }
 
 export const handleCallback = async (): Promise<boolean> => {
+  if (!hasAuthConfig()) return false
+
   const params = new URLSearchParams(window.location.search)
   const code = params.get('code')
   const state = params.get('state')

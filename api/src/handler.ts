@@ -68,7 +68,7 @@ const extractToken = (authHeader: string | undefined): string | null => {
 }
 
 const getUserInfo = async (event: ApiGatewayEvent): Promise<UserInfo> => {
-  const token = extractToken(event.headers?.Authorization)
+  const token = extractToken(event.headers?.Authorization ?? event.headers?.authorization)
   if (!token) return { sub: '' }
 
   try {

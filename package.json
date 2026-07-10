@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:api": "npm --prefix api run dev:server",
     "generate:data": "node scripts/generate-pokemon-data.mjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint",

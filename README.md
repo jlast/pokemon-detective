@@ -2,6 +2,24 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
+## Local Development
+
+Run the API and frontend in separate terminals:
+
+```sh
+npm run dev:api
+npm run dev
+```
+
+The frontend expects the API at `http://localhost:3001` by default. If that port is already in use, start the API on another port and point Vite at it:
+
+```sh
+PORT=3002 npm run dev:api
+VITE_API_TARGET=http://localhost:3002 npm run dev
+```
+
+The frontend uses `localhost:5173` for local auth redirects. If that port is already in use, stop the existing Vite process rather than letting the app move to another port.
+
 ## Case Hierarchy
 
 ### `src/game/caseModel.ts`

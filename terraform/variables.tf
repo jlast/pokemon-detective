@@ -50,6 +50,18 @@ variable "app_url" {
   type        = string
 }
 
+variable "additional_callback_urls" {
+  description = "Additional Cognito callback URLs for local development"
+  type        = list(string)
+  default     = ["http://localhost:5173/callback"]
+}
+
+variable "additional_logout_urls" {
+  description = "Additional Cognito logout URLs for local development"
+  type        = list(string)
+  default     = ["http://localhost:5173"]
+}
+
 variable "google_client_id" {
   description = "Google OAuth 2.0 Client ID"
   type        = string

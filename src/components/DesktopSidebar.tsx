@@ -1,9 +1,11 @@
 import type { UserProfile } from '../auth'
+import { SidebarProfile } from './SidebarProfile'
 
 interface DesktopSidebarProps {
   activeSection: string
   authed: boolean
   userProfile: UserProfile | null
+  caseStreak?: number
   onSelectHome: () => void
   onSelectCase: () => void
   onSelectHowToPlay: () => void
@@ -15,6 +17,7 @@ export function DesktopSidebar({
   activeSection,
   authed,
   userProfile,
+  caseStreak,
   onSelectHome,
   onSelectCase,
   onSelectHowToPlay,
@@ -71,20 +74,11 @@ export function DesktopSidebar({
 
       <div className="desktop-sidebar-section desktop-sidebar-actions">
         {authed && userProfile ? (
-          <div className="sidebar-user">
-            <div className="sidebar-user-info">
-              <span className="sidebar-user-name">
-                {userProfile.name ?? userProfile.email ?? 'User'}
-              </span>
-            </div>
-            <button
-              type="button"
-              className="sidebar-nav-button sidebar-logout"
-              onClick={onLogout}
-            >
-              Logout
-            </button>
-          </div>
+          <SidebarProfile
+            name={userProfile.name ?? userProfile.email ?? 'Detective'}
+            streak={caseStreak}
+            onLogout={onLogout}
+          />
         ) : (
           <button
             type="button"

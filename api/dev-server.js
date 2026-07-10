@@ -4,7 +4,7 @@ import { createServer } from 'http'
 const require = createRequire(import.meta.url)
 const { handler } = require('./dist/handler.cjs')
 
-const PORT = 3001
+const PORT = Number(process.env.PORT ?? 3001)
 
 const server = createServer(async (req, res) => {
   const chunks = []
@@ -12,7 +12,7 @@ const server = createServer(async (req, res) => {
   const body = Buffer.concat(chunks).toString('utf-8')
 
   const event = {
-    path: req.url ?? '/',
+    path: new URL(req.url ?? '/', `http://${req.headers.host ?? `localhost:${PORT}`}`).pathname,
     httpMethod: req.method ?? 'GET',
     headers: Object.fromEntries(
       Object.entries(req.headers).map(([k, v]) => [k, Array.isArray(v) ? v.join(', ') : v ?? '']),

@@ -327,8 +327,8 @@ resource "aws_cognito_user_pool_client" "client" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
-  callback_urls                        = ["${var.app_url}/callback"]
-  logout_urls                          = [var.app_url]
+  callback_urls                        = concat(["${var.app_url}/callback"], var.additional_callback_urls)
+  logout_urls                          = concat([var.app_url], var.additional_logout_urls)
   supported_identity_providers         = ["Google"]
   access_token_validity                = 1
   id_token_validity                    = 1
