@@ -7,7 +7,7 @@ import { InvestigationRouteFrame } from './InvestigationRouteFrame'
 interface InvestigationLocationRouteProps {
   attemptsLeft: number
   currentCase: Case
-  investigateLocation: (locationId: string, actionId: string) => void
+  investigateLocation: (locationId: string, actionId: string) => Promise<void>
   openLocation: (locationId: string) => void
   selectedLocationId: string | null
   startNewCase: () => void
@@ -33,11 +33,18 @@ export function InvestigationLocationRoute({
   }, [selectedLocationId])
 
   const chooseAction = (locationId: string, actionId: string) => {
+    if (searchingLocationId !== null) return
+
     setSearchingLocationId(locationId)
 
     window.setTimeout(() => {
-      setSearchingLocationId((currentId) => (currentId === locationId ? null : currentId))
-      investigateLocation(locationId, actionId)
+      void (async () => {
+        try {
+          await investigateLocation(locationId, actionId)
+        } finally {
+          setSearchingLocationId((currentId) => (currentId === locationId ? null : currentId))
+        }
+      })()
     }, 650)
   }
 

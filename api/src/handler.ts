@@ -131,6 +131,7 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
 
   const investigatedMap = new Map(progress.investigatedLocations.map((r) => [r.locationId, r]))
   const accusedSet = new Set(progress.accusationHistory)
+  const clearedSet = new Set(progress.clearedSuspectIds ?? [])
   const isOver = progress.status === 'solved' || progress.status === 'failed'
 
   return {
@@ -164,8 +165,8 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
     }),
     suspects: fullCase.suspects.map((s) => ({
       ...s,
-      manuallyRuledOut: accusedSet.has(s.pokemonId) || s.manuallyRuledOut,
-      noteStatus: accusedSet.has(s.pokemonId) ? 'ruled-out' as const : s.noteStatus,
+      manuallyRuledOut: accusedSet.has(s.pokemonId) || clearedSet.has(s.pokemonId) || s.manuallyRuledOut,
+      noteStatus: accusedSet.has(s.pokemonId) || clearedSet.has(s.pokemonId) ? 'ruled-out' as const : s.noteStatus,
     })),
   }
 }
@@ -282,6 +283,7 @@ const handleInvestigate = async (
       accusationsRemaining: MAX_ACCUSATIONS,
       accusationHistory: [],
       investigatedLocations: [],
+      clearedSuspectIds: [],
       ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
     }
     await createProgress(progress)
@@ -356,6 +358,7 @@ const handleAccuse = async (
       accusationsRemaining: MAX_ACCUSATIONS,
       accusationHistory: [],
       investigatedLocations: [],
+      clearedSuspectIds: [],
       ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
     }
     await createProgress(progress)
@@ -408,6 +411,66 @@ const handleAccuse = async (
   })
 }
 
+const handleClearSuspect = async (
+  caseId: string,
+  suspectIdStr: string,
+  event: ApiGatewayEvent,
+): Promise<ApiGatewayResult> => {
+  const userInfo = await getUserInfo(event)
+  if (!userInfo.sub) return err(401, 'Authentication required')
+
+  const suspectId = Number(suspectIdStr)
+  if (Number.isNaN(suspectId)) return err(400, 'Invalid suspect ID')
+
+  let body: { cleared?: boolean } = {}
+  try {
+    body = JSON.parse(event.body ?? '{}')
+  } catch {}
+
+  const cleared = body.cleared ?? true
+
+  const userId = getDateUserId(userInfo.sub, caseId)
+  let progress = await getProgress(userId)
+
+  if (!progress) {
+    const record = await getCaseData(caseId)
+    if (!record) return err(404, 'Case not found')
+    const fullCase = await loadCase(caseId)
+    if (!fullCase) return err(500, 'Failed to load case')
+    progress = {
+      userId,
+      caseId,
+      status: 'playing',
+      investigationsRemaining: fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS,
+      accusationsRemaining: MAX_ACCUSATIONS,
+      accusationHistory: [],
+      investigatedLocations: [],
+      clearedSuspectIds: [],
+      ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
+    }
+    await createProgress(progress)
+  }
+
+  const clearedSuspectIds = progress.clearedSuspectIds ?? []
+  const updated = cleared
+    ? clearedSuspectIds.includes(suspectId) ? clearedSuspectIds : [...clearedSuspectIds, suspectId]
+    : clearedSuspectIds.filter((id) => id !== suspectId)
+
+  await updateProgress(userId, { clearedSuspectIds: updated })
+
+  progress = { ...progress, clearedSuspectIds: updated }
+
+  const fullCase = await loadCase(caseId)
+
+  return ok({
+    case: fullCase ? buildResponseCase(fullCase, progress) : null,
+    investigationsRemaining: progress.investigationsRemaining,
+    accusationsRemaining: progress.accusationsRemaining,
+    accusationHistory: progress.accusationHistory,
+    status: progress.status,
+  })
+}
+
 export const handler = async (
   event: ApiGatewayEvent,
   _context: unknown,
@@ -437,6 +500,11 @@ export const handler = async (
     const accuseMatch = path.match(/^\/api\/cases\/([^/]+)\/accuse\/(\d+)$/)
     if (method === 'POST' && accuseMatch) {
       return await handleAccuse(accuseMatch[1], accuseMatch[2], event)
+    }
+
+    const clearMatch = path.match(/^\/api\/cases\/([^/]+)\/suspects\/(\d+)\/clear$/)
+    if (method === 'POST' && clearMatch) {
+      return await handleClearSuspect(clearMatch[1], clearMatch[2], event)
     }
 
     return err(404, 'Not found')

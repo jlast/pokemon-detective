@@ -3,8 +3,10 @@ import type { CaseEvidenceExplanation, ClearedSuspectExplanation, Evidence, Loca
 import { getPokemonById } from './suspectCaseFile'
 
 export type CaseTrait =
-  | 'small_stature'
-  | 'large_stature'
+  | 'short_height'
+  | 'tall_height'
+  | 'light_weight'
+  | 'heavy_weight'
   | 'ground_affinity'
   | 'burrowing'
   | 'claw_or_scratch'
@@ -46,8 +48,10 @@ type TraitRule = {
 }
 
 const traitRules: TraitRule[] = [
-  { trait: 'small_stature', check: (p) => p.heightM <= 1.0 && p.weightKg <= 35 },
-  { trait: 'large_stature', check: (p) => p.heightM >= 1.4 || p.weightKg >= 45 },
+  { trait: 'short_height', check: (p) => p.heightM <= 1.0 },
+  { trait: 'tall_height', check: (p) => p.heightM >= 1.4 },
+  { trait: 'light_weight', check: (p) => p.weightKg <= 35 },
+  { trait: 'heavy_weight', check: (p) => p.weightKg >= 45 },
   { trait: 'ground_affinity', types: ['ground', 'rock', 'fighting', 'normal', 'dragon'] },
   { trait: 'burrowing', types: ['ground', 'rock', 'bug'] },
   { trait: 'claw_or_scratch', types: ['ground', 'rock', 'bug', 'dark', 'fighting', 'steel', 'normal'] },
@@ -87,13 +91,16 @@ const statTraitPriority: CaseTrait[] = [
 const traitPriority: CaseTrait[] = [...traitRules.map((rule) => rule.trait), ...statTraitPriority]
 
 export const evidenceTraitById: Record<string, CaseTrait> = {
-  'cookie-crumbs': 'small_stature',
+  'cookie-crumbs': 'short_height',
   'quiet-digging': 'burrowing',
-  'small-tracks': 'small_stature',
+  'small-tracks': 'light_weight',
   'sand-trail': 'ground_affinity',
   'loose-soil': 'burrowing',
   'scratch-marks': 'claw_or_scratch',
-  'low-crumbs': 'small_stature',
+  'low-crumbs': 'short_height',
+  'high-reach': 'tall_height',
+  'deep-prints': 'heavy_weight',
+  'light-tracks': 'light_weight',
   'avoided-water': 'dry_environment',
   'dry-trail': 'ground_affinity',
   'ash-scatter': 'ash_or_scorch',
@@ -133,8 +140,8 @@ type ActionEvidencePool = {
 
 const actionEvidencePools: ActionEvidencePool[] = [
   { actionId: 'crumbs', locationId: 'campsite', isPrimary: true, pool: [
-    { evidenceId: 'cookie-crumbs', trait: 'small_stature' },
-    { evidenceId: 'low-crumbs', trait: 'large_stature' },
+    { evidenceId: 'cookie-crumbs', trait: 'short_height' },
+    { evidenceId: 'high-reach', trait: 'tall_height' },
     { evidenceId: 'ash-scatter', trait: 'ash_or_scorch' },
     { evidenceId: 'pollen-scent', trait: 'plant_residue' },
     { evidenceId: 'glow-dust', trait: 'light_or_glow' },
@@ -149,7 +156,8 @@ const actionEvidencePools: ActionEvidencePool[] = [
     { evidenceId: 'cookie-crumbs', trait: 'any' },
   ]},
   { actionId: 'measure-tracks', locationId: 'tracks', isPrimary: true, pool: [
-    { evidenceId: 'small-tracks', trait: 'small_stature' },
+    { evidenceId: 'small-tracks', trait: 'light_weight' },
+    { evidenceId: 'deep-prints', trait: 'heavy_weight' },
     { evidenceId: 'sand-trail', trait: 'ground_affinity' },
     { evidenceId: 'frost-trail', trait: 'moisture_residue' },
     { evidenceId: 'feather-drift', trait: 'air_movement' },
@@ -182,8 +190,9 @@ const actionEvidencePools: ActionEvidencePool[] = [
     { evidenceId: 'cookie-crumbs', trait: 'any' },
   ]},
   { actionId: 'check-table', locationId: 'cookie-jar', isPrimary: false, pool: [
-    { evidenceId: 'low-crumbs', trait: 'large_stature' },
-    { evidenceId: 'cookie-crumbs', trait: 'small_stature' },
+    { evidenceId: 'high-reach', trait: 'tall_height' },
+    { evidenceId: 'low-crumbs', trait: 'short_height' },
+    { evidenceId: 'light-tracks', trait: 'light_weight' },
     { evidenceId: 'gentle-handling', trait: 'attack_poor' },
     { evidenceId: 'winded-pause', trait: 'hp_poor' },
   ]},
@@ -233,6 +242,7 @@ const poorTraitByStat: Record<StatName, CaseTrait> = {
 
 type PokemonCaseProfile = {
   size: 'small' | 'medium' | 'large'
+  weightSize: 'light' | 'medium' | 'heavy'
   textureWord: string
   movementWord: string
   groundWord: string
@@ -323,18 +333,24 @@ export const getPokemonCaseTraits = (pokemon: Pokemon): Set<CaseTrait> => {
 }
 
 const getPokemonCaseProfile = (pokemon: Pokemon): PokemonCaseProfile => {
-  const size = pokemon.heightM <= 0.7 && pokemon.weightKg <= 15
+  const size = pokemon.heightM <= 1.0
     ? 'small'
-    : pokemon.heightM >= 1.4 || pokemon.weightKg >= 45
+    : pokemon.heightM >= 1.4
       ? 'large'
+      : 'medium'
+  const weightSize = pokemon.weightKg <= 35
+    ? 'light'
+    : pokemon.weightKg >= 45
+      ? 'heavy'
       : 'medium'
   const affinity = getPrimaryAffinity(pokemon)
   const profile = affinityProfiles[affinity]
 
   return {
     size,
+    weightSize,
     textureWord: profile.textureWord,
-    movementWord: size === 'small' ? 'close to the ground' : size === 'large' ? 'with a heavier reach' : 'at a medium height',
+    movementWord: size === 'small' ? 'close to the ground' : size === 'large' ? 'from higher up' : 'at a medium height',
     groundWord: profile.groundWord,
     waterAvoidanceWord: profile.waterAvoidanceWord,
   }
@@ -355,10 +371,14 @@ const scorePokemonAgainstTraits = (pokemonId: number, traits: CaseTrait[]) => {
 
 const getTraitConclusionFragment = (trait: CaseTrait): string => {
   switch (trait) {
-    case 'small_stature':
-      return 'small and close to the ground'
-    case 'large_stature':
-      return 'large and heavy on the ground'
+    case 'short_height':
+      return 'short enough to leave low-height clues'
+    case 'tall_height':
+      return 'tall enough to leave higher reach clues'
+    case 'light_weight':
+      return 'light enough to leave shallow tracks'
+    case 'heavy_weight':
+      return 'heavy enough to leave deep tracks or dents'
     case 'ground_affinity':
       return 'comfortable around dry soil'
     case 'burrowing':
@@ -428,10 +448,14 @@ const getTraitConclusionFragment = (trait: CaseTrait): string => {
 
 const getTraitDeductionText = (trait: CaseTrait): string => {
   switch (trait) {
-    case 'small_stature':
-      return 'This pointed toward a small Pokemon that stayed low.'
-    case 'large_stature':
-      return 'This pointed toward a larger, heavier suspect.'
+    case 'short_height':
+      return 'This pointed toward a shorter Pokemon moving low.'
+    case 'tall_height':
+      return 'This pointed toward a taller suspect reaching from higher up.'
+    case 'light_weight':
+      return 'This pointed toward a lighter suspect leaving shallow marks.'
+    case 'heavy_weight':
+      return 'This pointed toward a heavier suspect leaving deep marks.'
     case 'ground_affinity':
       return 'This suggested the culprit moved comfortably through dry grit and loose ground.'
     case 'burrowing':
@@ -510,7 +534,7 @@ const buildEvidenceFromTrait = (evidenceId: string, culprit: Pokemon) => {
         endExplanation: `The culprit moved ${profile.movementWord} while eating near the scene.`,
         deductionText:
           profile.size === 'small'
-            ? 'This pointed toward a small Pokemon that stayed low.'
+            ? 'This pointed toward a shorter Pokemon moving low.'
             : profile.size === 'large'
               ? 'This pointed toward a larger suspect reaching in from above the ground.'
               : 'This pointed toward a medium-sized suspect moving at table height.',
@@ -524,25 +548,25 @@ const buildEvidenceFromTrait = (evidenceId: string, culprit: Pokemon) => {
       }
     case 'small-tracks':
       return {
-        title: profile.size === 'small' ? 'Small Tracks' : profile.size === 'large' ? 'Heavy Prints' : 'Medium Tracks',
+        title: profile.weightSize === 'light' ? 'Light Tracks' : profile.weightSize === 'heavy' ? 'Heavy Prints' : 'Medium Tracks',
         clueText:
-          profile.size === 'small'
-            ? 'The tracks were small and close to the ground.'
-            : profile.size === 'large'
+          profile.weightSize === 'light'
+            ? 'The tracks were shallow and lightly pressed into the dirt.'
+            : profile.weightSize === 'heavy'
               ? 'The prints were deeper and wider than expected.'
-              : 'The tracks were medium-sized and steady through the dirt.',
+              : 'The tracks were steady with a medium depth through the dirt.',
         endExplanation:
-          profile.size === 'small'
-            ? 'The culprit left small, low tracks near the tents.'
-            : profile.size === 'large'
+          profile.weightSize === 'light'
+            ? 'The culprit left light tracks near the tents.'
+            : profile.weightSize === 'heavy'
               ? 'The culprit left a broader, heavier trail near the tents.'
-              : 'The culprit left medium tracks that held their shape near the tents.',
+              : 'The culprit left medium-depth tracks that held their shape near the tents.',
         deductionText:
-          profile.size === 'small'
-            ? 'This pointed toward a small Pokemon that stayed low.'
-            : profile.size === 'large'
-              ? 'This pointed toward a larger suspect that left heavier tracks.'
-              : 'This pointed toward a medium-sized suspect with a steadier stride.',
+          profile.weightSize === 'light'
+            ? 'This pointed toward a lighter suspect leaving shallow marks.'
+            : profile.weightSize === 'heavy'
+              ? 'This pointed toward a heavier suspect that left deeper tracks.'
+              : 'This pointed toward a medium-weight suspect with a steadier stride.',
       }
     case 'sand-trail':
       return {
@@ -579,6 +603,27 @@ const buildEvidenceFromTrait = (evidenceId: string, culprit: Pokemon) => {
             : profile.size === 'large'
               ? 'This suggested a taller suspect reached lower than expected while passing the table.'
               : 'This suggested the culprit moved along the lower edge of the table, not from above it.',
+      }
+    case 'high-reach':
+      return {
+        title: 'High Reach',
+        clueText: 'Crumbs were brushed from the upper edge of the table.',
+        endExplanation: 'The culprit reached the table from higher up while carrying crumbs away.',
+        deductionText: 'This pointed toward a taller suspect reaching from higher up.',
+      }
+    case 'deep-prints':
+      return {
+        title: 'Deep Prints',
+        clueText: 'Several prints pressed unusually deep into the dirt.',
+        endExplanation: 'The culprit was heavy enough to leave deeper marks while moving away.',
+        deductionText: 'This pointed toward a heavier suspect leaving deep marks.',
+      }
+    case 'light-tracks':
+      return {
+        title: 'Light Tracks',
+        clueText: 'The marks barely pressed into the dusty ground beside the table.',
+        endExplanation: 'The culprit was light enough to leave only shallow marks beside the table.',
+        deductionText: 'This pointed toward a lighter suspect leaving shallow marks.',
       }
     case 'avoided-water':
       return {
@@ -891,10 +936,14 @@ const getMismatchReason = (suspectId: number, relevantTraits: CaseTrait[]) => {
   const missingTrait = relevantTraits.find((trait) => !pokemonTraits.has(trait))
 
   switch (missingTrait) {
-    case 'small_stature':
-      return 'Did not fit the small, low clues left at the scene.'
-    case 'large_stature':
-      return 'Did not fit the signs of a larger, heavier suspect.'
+    case 'short_height':
+      return 'Did not fit the low-height clues left at the scene.'
+    case 'tall_height':
+      return 'Did not fit the high-reach clues left at the scene.'
+    case 'light_weight':
+      return 'Did not fit the shallow, light-track clues.'
+    case 'heavy_weight':
+      return 'Did not fit the deep-print or heavy-pressure clues.'
     case 'ground_affinity':
       return 'Did not fit the dry grit and loose-soil evidence.'
     case 'burrowing':

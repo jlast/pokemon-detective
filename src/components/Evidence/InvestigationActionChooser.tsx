@@ -21,9 +21,10 @@ const leadTypeLabels: Record<LocationAction['leadType'], string> = {
 interface InvestigationActionChooserProps {
   actions: LocationAction[]
   chooseAction: (actionId: string) => void
+  disabled?: boolean
 }
 
-export function InvestigationActionChooser({ actions, chooseAction }: InvestigationActionChooserProps) {
+export function InvestigationActionChooser({ actions, chooseAction, disabled = false }: InvestigationActionChooserProps) {
   return (
     <div className="investigation-action-chooser">
       <div className="investigation-action-header">
@@ -37,6 +38,7 @@ export function InvestigationActionChooser({ actions, chooseAction }: Investigat
             type="button"
             className="investigation-action-option"
             onClick={() => chooseAction(action.id)}
+            disabled={disabled}
           >
             <div className="investigation-action-meta">
               <span className="investigation-action-icon" aria-hidden="true">

@@ -142,7 +142,7 @@ export const baseEvidence: Evidence[] = evidenceRaw as Evidence[]
 const evidenceDefaults: Record<string, { evidenceId: string; title: string; text: string }> = {
   crumbs: { evidenceId: 'cookie-crumbs', title: 'Cookie Crumbs', text: 'Fresh crumbs were scattered low across the ground.' },
   campers: { evidenceId: 'quiet-digging', title: 'Quiet Digging', text: 'Someone heard soft scraping after midnight.' },
-  'measure-tracks': { evidenceId: 'small-tracks', title: 'Small Tracks', text: 'The tracks were small and close to the ground.' },
+  'measure-tracks': { evidenceId: 'small-tracks', title: 'Light Tracks', text: 'The tracks were shallow and lightly pressed into the dirt.' },
   'follow-tracks': { evidenceId: 'sand-trail', title: 'Sand Trail', text: 'A faint trail of dry grit pulled away from the scene.' },
   'check-roots': { evidenceId: 'loose-soil', title: 'Loose Soil', text: 'Fresh soil had been disturbed under the tree roots.' },
   'inspect-lid': { evidenceId: 'scratch-marks', title: 'Scratch Marks', text: 'Narrow marks scored the cookie jar lid.' },

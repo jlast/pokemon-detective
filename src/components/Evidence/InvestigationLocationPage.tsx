@@ -62,6 +62,7 @@ export function InvestigationLocationPage({
             <InvestigationActionChooser
               actions={location.actions}
               chooseAction={(actionId) => chooseAction(location.id, actionId)}
+              disabled={isSearching}
             />
             {isSearching ? <div className="active-investigation-resolving">Following lead...</div> : null}
           </>

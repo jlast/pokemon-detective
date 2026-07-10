@@ -3,7 +3,7 @@
     "id": "cookie-crumbs",
     "title": "Cookie Crumbs",
     "clueText": "Fresh crumbs were scattered low across the ground.",
-    "hiddenTrait": "small_low",
+    "hiddenTrait": "short_height",
     "endExplanation": "The culprit moved close to the ground while eating near the scene.",
     "discovered": false
   },
@@ -17,10 +17,10 @@
   },
   {
     "id": "small-tracks",
-    "title": "Small Tracks",
-    "clueText": "The tracks were small and close to the ground.",
-    "hiddenTrait": "small_low",
-    "endExplanation": "The culprit left small, low tracks near the tents.",
+    "title": "Light Tracks",
+    "clueText": "The tracks were shallow and lightly pressed into the dirt.",
+    "hiddenTrait": "light_weight",
+    "endExplanation": "The culprit left light tracks near the tents.",
     "discovered": false
   },
   {
@@ -51,8 +51,32 @@
     "id": "low-crumbs",
     "title": "Low Crumbs",
     "clueText": "Crumbs had fallen low along the edge of the table.",
-    "hiddenTrait": "small_low",
+    "hiddenTrait": "short_height",
     "endExplanation": "The culprit moved low beside the table while carrying crumbs away.",
+    "discovered": false
+  },
+  {
+    "id": "high-reach",
+    "title": "High Reach",
+    "clueText": "Crumbs were brushed from the upper edge of the table.",
+    "hiddenTrait": "tall_height",
+    "endExplanation": "The culprit reached the table from higher up while carrying crumbs away.",
+    "discovered": false
+  },
+  {
+    "id": "deep-prints",
+    "title": "Deep Prints",
+    "clueText": "Several prints pressed unusually deep into the dirt.",
+    "hiddenTrait": "heavy_weight",
+    "endExplanation": "The culprit was heavy enough to leave deeper marks while moving away.",
+    "discovered": false
+  },
+  {
+    "id": "light-tracks",
+    "title": "Light Tracks",
+    "clueText": "The marks barely pressed into the dusty ground beside the table.",
+    "hiddenTrait": "light_weight",
+    "endExplanation": "The culprit was light enough to leave only shallow marks beside the table.",
     "discovered": false
   },
   {

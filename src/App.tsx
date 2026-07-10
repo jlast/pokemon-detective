@@ -11,7 +11,7 @@ import { EndingRoute } from './routes/EndingRoute'
 import { InvestigationLocationRoute } from './routes/InvestigationLocationRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
-import { getCurrentCase, investigate as apiInvestigate, accuse as apiAccuse } from './api'
+import { getCurrentCase, investigate as apiInvestigate, accuse as apiAccuse, clearSuspect as apiClearSuspect } from './api'
 import { allCases } from './game/cases'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from './game/caseModel'
 import {
@@ -166,10 +166,17 @@ function App() {
   }
 
   const toggleRuledOut = (suspectId: number) => {
+    const current = suspectNotes.get(suspectId)
+    const newStatus = current?.noteStatus === 'ruled-out' ? 'suspect' : 'ruled-out'
     updateSuspectNote(suspectId, (prev) => ({
-      noteStatus: prev.noteStatus === 'ruled-out' ? 'suspect' : 'ruled-out',
+      noteStatus: newStatus,
       inspectedGroups: prev.inspectedGroups,
     }))
+    if (authed) {
+      apiClearSuspect(getTodayCaseId(), suspectId, newStatus === 'ruled-out').catch((err) =>
+        console.error('Failed to sync suspect status:', err),
+      )
+    }
   }
 
   const setSuspectNoteStatus = (suspectId: number, noteStatus: SuspectNoteStatus) => {
@@ -177,6 +184,11 @@ function App() {
       noteStatus,
       inspectedGroups: prev.inspectedGroups,
     }))
+    if (authed) {
+      apiClearSuspect(getTodayCaseId(), suspectId, noteStatus === 'ruled-out').catch((err) =>
+        console.error('Failed to sync suspect status:', err),
+      )
+    }
   }
 
   const inspectSuspect = (suspectId: number) => {

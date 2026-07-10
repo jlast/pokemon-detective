@@ -22,6 +22,7 @@ export interface PlayerProgressRecord {
   accusationsRemaining: number
   accusationHistory: number[]
   investigatedLocations: InvestigatedLocationRecord[]
+  clearedSuspectIds: number[]
   ttl: number
 }
 

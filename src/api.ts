@@ -38,6 +38,19 @@ export const investigate = async (
   return res.json()
 }
 
+export const clearSuspect = async (
+  caseId: string,
+  suspectId: number,
+  cleared: boolean,
+): Promise<SessionResponse> => {
+  const res = await fetch(
+    `${BASE}/api/cases/${enc(caseId)}/suspects/${suspectId}/clear`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() }, body: JSON.stringify({ cleared }) },
+  )
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
 export const accuse = async (
   caseId: string,
   suspectId: number,
