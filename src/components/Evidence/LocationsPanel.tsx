@@ -94,6 +94,12 @@ export function LocationsPanel({
           </svg>
         </div>
 
+        <div className="pinboard-card board-progress-card" style={{ gridArea: 'stats' }}>
+          <span>Evidence {evidenceCollectedCount}</span>
+          <span>Locations {investigatedCount} / {currentCase.locations.length}</span>
+          <span>Actions {pointsLeft} left</span>
+        </div>
+
         <div className="pinboard-card budget-card" style={{ gridArea: 'budget' }}>
           <div className="budget-card-pin" aria-hidden="true" />
           <strong className="budget-card-title">Budget</strong>

@@ -646,53 +646,47 @@
 
 .investigation-result-card {
   display: grid;
-  gap: 0.85rem;
-  padding: 0.9rem;
-  border-radius: 18px;
+  gap: 0.8rem;
+  padding: clamp(0.75rem, 2vw, 1.2rem);
+  border-radius: 20px;
   background:
-    linear-gradient(135deg, rgba(255, 250, 240, 0.96), rgba(244, 236, 221, 0.94));
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-card);
+    linear-gradient(180deg, rgba(255, 250, 240, 0.98), rgba(246, 230, 189, 0.94));
+  border: 1px solid rgba(173, 143, 82, 0.44);
+  box-shadow: 0 18px 42px rgba(80, 56, 26, 0.14);
+  animation: result-content-fade 360ms ease-out both;
 }
 
-.result-location-header {
+.result-complete-header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   gap: 1rem;
+  padding: 0 0.15rem;
 }
 
-.result-location-header h3 {
+.result-complete-header h3 {
   margin: 0;
-  font-size: 1.35rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: clamp(0.95rem, 1.8vw, 1.12rem);
+  letter-spacing: 0.01em;
 }
 
-.result-action-used,
-.result-evidence-count {
+.result-complete-header p {
   margin: 0;
   color: var(--muted);
-  font-size: 0.88rem;
-  font-weight: 700;
-}
-
-.result-status-stack {
-  display: grid;
-  justify-items: end;
-  gap: 0.35rem;
+  font-size: 0.86rem;
+  font-weight: 800;
 }
 
 .result-status-pill {
   display: inline-flex;
   align-items: center;
-  min-height: 2rem;
-  padding: 0.35rem 0.7rem;
+  justify-self: center;
+  min-height: 1.55rem;
+  padding: 0.2rem 0.6rem;
   border-radius: 999px;
-  background: rgba(217, 177, 63, 0.18);
+  background: rgba(217, 177, 63, 0.2);
   border: 1px solid rgba(173, 143, 82, 0.65);
   color: var(--ink);
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -700,63 +694,69 @@
 
 .evidence-hero {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.95rem;
-  align-items: center;
-  padding: 1rem;
-  border-radius: 18px;
-  background: #fffaf0;
-  border: 1px solid rgba(173, 143, 82, 0.55);
-  box-shadow: 0 14px 32px rgba(60, 50, 30, 0.11);
-  animation: evidence-hero-reveal 360ms ease-out both;
+  justify-items: center;
+  gap: 0.7rem;
+  min-height: clamp(12rem, 31vh, 17.5rem);
+  padding: clamp(1.1rem, 3vw, 2rem) clamp(1rem, 3vw, 2.25rem);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 238, 151, 0.72), transparent 36%),
+    linear-gradient(180deg, #fffaf0 0%, #f9eac2 100%);
+  border: 1px solid rgba(173, 143, 82, 0.62);
+  box-shadow: 0 22px 44px rgba(60, 50, 30, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.74);
+  text-align: center;
+  animation: evidence-hero-reveal 420ms cubic-bezier(0.2, 0.72, 0.22, 1) both;
 }
 
 .evidence-hero-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 4.25rem;
-  height: 4.25rem;
+  width: clamp(4.5rem, 7vw, 5rem);
+  height: clamp(4.5rem, 7vw, 5rem);
   border-radius: 18px;
-  background: linear-gradient(135deg, #f3cf56, #fff0a8);
+  background: linear-gradient(135deg, #f3cf56, #fff0a8 58%, #fff8d6);
   border: 1px solid #d9b13f;
-  font-size: 2rem;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  font-size: clamp(2.15rem, 4vw, 2.6rem);
+  box-shadow: 0 16px 34px rgba(95, 69, 27, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 .evidence-hero-copy {
   display: grid;
-  gap: 0.35rem;
+  justify-items: center;
+  gap: 0.45rem;
+  max-width: 34rem;
 }
 
 .evidence-hero-copy h3 {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: clamp(2rem, 4vw, 2.25rem);
+  line-height: 1.05;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.035em;
 }
 
 .evidence-hero-copy p:not(.eyebrow) {
   margin: 0;
   color: var(--ink);
-  line-height: 1.45;
+  font-size: clamp(0.95rem, 1.7vw, 1.05rem);
+  line-height: 1.4;
 }
 
-.result-board-badge {
-  justify-self: start;
+.evidence-hero-copy .result-save-confirmation {
+  justify-self: center;
   display: inline-flex;
   align-items: center;
-  min-height: 1.65rem;
-  padding: 0.25rem 0.55rem;
+  min-height: 1.8rem;
+  margin: 0.15rem 0 0;
+  padding: 0.25rem 0.65rem;
   border-radius: 999px;
   background: rgba(67, 150, 99, 0.12);
   border: 1px solid rgba(67, 150, 99, 0.35);
   color: #2f744a;
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  animation: result-badge-pulse 720ms ease-out 180ms both;
+  animation: result-pinning-effect 420ms ease-out 230ms both;
 }
 
 .result-section-grid {
@@ -866,19 +866,28 @@
 
 .result-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+@keyframes result-content-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes evidence-hero-reveal {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(18px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(-4px) scale(1);
   }
 }
 
@@ -905,23 +914,28 @@
   }
 }
 
+@keyframes result-pinning-effect {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.92) rotate(-1deg);
+  }
+  58% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.06) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
 @media (max-width: 720px) {
-  .result-location-header,
-  .progress-strip {
+  .result-complete-header {
     display: grid;
   }
 
-  .result-status-stack {
-    justify-items: start;
-  }
-
   .evidence-hero {
-    grid-template-columns: 1fr;
-    justify-items: start;
-  }
-
-  .result-section-grid {
-    grid-template-columns: 1fr;
+    min-height: 17rem;
   }
 
   .result-actions {
@@ -2691,6 +2705,20 @@
   z-index: 1;
 }
 
+.board-progress-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: rgba(255, 250, 240, 0.92);
+  border: 1px solid rgba(79, 67, 33, 0.14);
+  color: #4f4321;
+  font-size: 0.86rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
 .budget-card {
   background: linear-gradient(180deg, #fff5a8 0%, #f6df73 100%);
   color: #4f4321;
@@ -3196,6 +3224,7 @@
   .investigation-pinboard {
     grid-template-columns: repeat(4, 1fr);
     grid-template-areas:
+      "stats    stats    stats    stats"
       "budget   pantry   kitchen  theory"
       "storage  photo    counter  evidence";
   }
@@ -3206,6 +3235,12 @@
   .investigation-pinboard {
     grid-template-columns: repeat(2, 1fr);
     grid-template-areas: unset;
+  }
+
+  .board-progress-card {
+    grid-column: 1 / -1;
+    display: grid;
+    justify-items: start;
   }
 
   .budget-card {

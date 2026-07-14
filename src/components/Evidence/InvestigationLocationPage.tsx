@@ -1,21 +1,42 @@
 import { Link } from 'react-router-dom'
 import type { Location } from '../../game/caseModel'
+import { TODAY_INVESTIGATION_PATH, TODAY_SUSPECTS_PATH } from '../../paths'
 import { InvestigationActionChooser } from './InvestigationActionChooser'
 
 interface InvestigationLocationPageProps {
   location: Location | null
   pointsLeft: number
   resolvedCount: number
-  maxInvestigations: number
+  totalLocations: number
   isSearching: boolean
   chooseAction: (locationId: string, actionId: string) => void
+}
+
+const evidenceIcons: Record<string, string> = {
+  'cookie-crumbs': '🍪',
+  'low-crumbs': '🍪',
+  'ash-scatter': '🔥',
+  'pollen-scent': '🌸',
+  'quiet-digging': '🕳️',
+  'psychic-echo': '🔮',
+  'slime-trail': '🫧',
+  'small-tracks': '👣',
+  'sand-trail': '🏖️',
+  'frost-trail': '❄️',
+  'feather-drift': '🪶',
+  'dry-trail': '🏜️',
+  'loose-soil': '🪨',
+  'scratch-marks': '🔪',
+  'metal-shaving': '⚙️',
+  'static-mark': '⚡',
+  'avoided-water': '💧',
 }
 
 export function InvestigationLocationPage({
   location,
   pointsLeft,
   resolvedCount,
-  maxInvestigations,
+  totalLocations,
   isSearching,
   chooseAction,
 }: InvestigationLocationPageProps) {
@@ -25,7 +46,7 @@ export function InvestigationLocationPage({
         <div className="inspect-item">
           <strong>Location not found</strong>
           <p className="overview-section-hook">This investigation lead could not be opened.</p>
-          <Link to="/investigation" className="secondary-button suspect-file-back-button">
+          <Link to={TODAY_INVESTIGATION_PATH} className="secondary-button suspect-file-back-button">
             Back to Investigation Board
           </Link>
         </div>
@@ -36,25 +57,29 @@ export function InvestigationLocationPage({
   const selectedAction = location.actions.find((action) => action.id === location.selectedActionId) ?? null
   const statusLabel = location.investigated ? 'Complete' : 'Not searched'
   const hasEvidence = !!location.evidenceId
-  const detectiveNote = hasEvidence
-    ? selectedAction?.implicationText ?? 'The new clue should be compared against the suspect files.'
-    : 'This lead does not narrow the suspect list.'
-  const progressSlots = Array.from({ length: maxInvestigations }, (_, index) => index < resolvedCount)
+  const allLocationsInvestigated = resolvedCount >= totalLocations
+  const evidenceTitle = hasEvidence ? (location.evidenceTitle ?? selectedAction?.evidenceTitle) : 'No Useful Evidence'
+  const evidenceText = hasEvidence
+    ? (location.evidenceText ?? selectedAction?.evidenceText)
+    : (location.observationText ?? selectedAction?.observationText)
+  const evidenceIcon = hasEvidence && location.evidenceId ? (evidenceIcons[location.evidenceId] ?? '📎') : '🔎'
 
   return (
     <section className="notebook-card active-investigation-panel investigation-location-page">
-      <div className="active-investigation-location">
-        <span className="location-icon" aria-hidden="true">
-          {location.icon}
-        </span>
-        <div className="location-heading-copy">
-          <h2 className="location-name">{location.name}</h2>
-          <p className="location-description">{location.teaserText ?? 'Choose how to investigate this location.'}</p>
+      {!location.investigated ? (
+        <div className="active-investigation-location">
+          <span className="location-icon" aria-hidden="true">
+            {location.icon}
+          </span>
+          <div className="location-heading-copy">
+            <h2 className="location-name">{location.name}</h2>
+            <p className="location-description">{location.teaserText ?? 'Choose how to investigate this location.'}</p>
+          </div>
+          <span className="location-status-stamp is-idle">
+            {statusLabel}
+          </span>
         </div>
-        <span className={`location-status-stamp ${location.investigated ? 'is-complete' : 'is-idle'}`}>
-          {statusLabel}
-        </span>
-      </div>
+      ) : null}
 
       {!location.investigated ? (
         pointsLeft > 0 ? (
@@ -75,75 +100,46 @@ export function InvestigationLocationPage({
       ) : selectedAction ? (
         <>
           <section className="investigation-result-card">
-            <div className="result-location-header">
+            <div className="result-complete-header">
               <div>
-                <h3>{location.name}</h3>
-                <p className="result-action-used">Action used: {selectedAction.label}</p>
-              </div>
-              <div className="result-status-stack">
-                <span className="result-status-pill">Investigation complete</span>
-                <span className="result-evidence-count">{hasEvidence ? '+1 evidence added' : 'No evidence added'}</span>
+                <h3>✓ {location.name} completed</h3>
+                <p>You followed the lead.</p>
               </div>
             </div>
 
             <section className="evidence-hero">
               <div className="evidence-hero-icon" aria-hidden="true">
-                {hasEvidence ? '👣' : '🔎'}
+                {evidenceIcon}
               </div>
               <div className="evidence-hero-copy">
-                <p className="eyebrow">New Evidence Discovered</p>
-                <h3>{hasEvidence ? (location.evidenceTitle ?? selectedAction?.evidenceTitle) : 'No Useful Evidence'}</h3>
-                <p>{hasEvidence ? (location.evidenceText ?? selectedAction?.evidenceText) : (location.observationText ?? selectedAction?.observationText)}</p>
-                {hasEvidence ? <span className="result-board-badge">Pinned to evidence board</span> : null}
-              </div>
-            </section>
-
-            <div className="result-section-grid">
-              <section className="result-info-card">
-                <strong>Observation</strong>
-                <p>{location.observationText ?? selectedAction?.observationText}</p>
-              </section>
-
-              <section className="result-info-card deduction-card">
-                <strong>Detective&apos;s Deduction</strong>
-                <p>{detectiveNote}</p>
-              </section>
-
-              <section className="result-info-card board-updated-card">
-                <strong>Board Updated</strong>
-                {hasEvidence ? (
-                  <span className="evidence-chip-new">
-                    <span aria-hidden="true">✓ 👣</span>
-                    {location.evidenceTitle ?? selectedAction?.evidenceTitle}
-                    <span className="new-badge">NEW</span>
-                  </span>
-                ) : (
-                  <p>No new evidence was pinned.</p>
-                )}
-              </section>
-            </div>
-
-            <section className="progress-strip">
-              <div>
-                <strong>Investigation Progress</strong>
-                <p>{resolvedCount} / {maxInvestigations} locations resolved</p>
-                <p>{pointsLeft} / {maxInvestigations} actions remaining</p>
-              </div>
-              <div className="progress-dots" aria-hidden="true">
-                {progressSlots.map((isUsed, index) => (
-                  <span key={index} className={isUsed ? 'is-used' : ''} />
-                ))}
+                <span className="result-status-pill">{hasEvidence ? 'New Evidence' : 'Lead Closed'}</span>
+                <h3>{evidenceTitle}</h3>
+                <p>{evidenceText}</p>
+                <p className="result-save-confirmation">✓ {hasEvidence ? 'Added to Evidence Board' : 'Lead recorded'}</p>
               </div>
             </section>
           </section>
 
           <div className="result-actions">
-            <Link to="/suspects" className="primary-button suspect-file-back-button">
-              Review Suspects →
-            </Link>
-            <Link to="/investigation" className="secondary-button suspect-file-back-button">
-              ← Continue Investigation
-            </Link>
+            {allLocationsInvestigated ? (
+              <>
+                <Link to={TODAY_SUSPECTS_PATH} className="primary-button suspect-file-back-button">
+                  Review Suspects →
+                </Link>
+                <Link to={TODAY_INVESTIGATION_PATH} className="secondary-button suspect-file-back-button">
+                  Back to Investigation Board
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to={TODAY_INVESTIGATION_PATH} className="primary-button suspect-file-back-button">
+                  Continue Investigation →
+                </Link>
+                <Link to={TODAY_INVESTIGATION_PATH} className="secondary-button suspect-file-back-button">
+                  Review Evidence
+                </Link>
+              </>
+            )}
           </div>
         </>
       ) : null}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import './App.css'
 import { DesktopSidebar } from './components/DesktopSidebar'
 import { Header } from './components/Header'
@@ -15,6 +15,17 @@ import { getCurrentCase, investigate as apiInvestigate, accuse as apiAccuse, cle
 import { allCases } from './game/cases'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from './game/caseModel'
 import {
+  TODAY_ACCUSE_PATH,
+  TODAY_ENDING_PATH,
+  TODAY_INVESTIGATION_PATH,
+  TODAY_PATH,
+  TODAY_SUSPECTS_PATH,
+  accusationPath,
+  endingPath,
+  investigationLocationPath,
+  suspectPath,
+} from './paths'
+import {
   isAuthenticated,
   login,
   logout as authLogout,
@@ -25,6 +36,26 @@ import {
 } from './auth'
 
 const getTodayCaseId = () => new Date().toISOString().slice(0, 10)
+
+function NavigateToTodayInvestigation() {
+  const { locationId } = useParams()
+  return <Navigate to={locationId ? investigationLocationPath(locationId) : TODAY_INVESTIGATION_PATH} replace />
+}
+
+function NavigateToTodaySuspect() {
+  const { id } = useParams()
+  return <Navigate to={id ? `${TODAY_SUSPECTS_PATH}/${id}` : TODAY_SUSPECTS_PATH} replace />
+}
+
+function NavigateToTodayAccuse() {
+  const { suspectId } = useParams()
+  return <Navigate to={suspectId ? `${TODAY_ACCUSE_PATH}/${suspectId}` : TODAY_SUSPECTS_PATH} replace />
+}
+
+function NavigateToTodayEnding() {
+  const { status } = useParams()
+  return <Navigate to={status ? endingPath(status) : TODAY_PATH} replace />
+}
 
 function App() {
   const location = useLocation()
@@ -110,7 +141,7 @@ function App() {
   const accusationTarget = currentCase?.suspects.find((s) => s.pokemonId === accusationTargetId) ?? null
 
   const currentRoute = location.pathname
-  const activeSidebarSection = currentRoute === '/' || currentRoute.startsWith('/investigation') ? 'case' : ''
+  const activeSidebarSection = currentRoute === '/' || currentRoute.startsWith(TODAY_PATH) || currentRoute.startsWith('/suspects') || currentRoute.startsWith('/investigation') ? 'case' : ''
 
   const clearScreenState = () => {
     setSelectedLocationId(null)
@@ -146,7 +177,7 @@ function App() {
           setUserProfile(getUserProfile())
           await loadCase()
         }
-        navigate('/', { replace: true })
+        navigate(TODAY_PATH, { replace: true })
       })()
       return
     }
@@ -170,11 +201,11 @@ function App() {
     setSuspectNotes(new Map())
     resetTransientUi()
     await loadCase()
-    navigate('/investigation')
+    navigate(TODAY_INVESTIGATION_PATH)
   }
 
   const startInvestigation = () => {
-    navigate('/investigation')
+    navigate(TODAY_INVESTIGATION_PATH)
   }
 
   const toggleRuledOut = (suspectId: number) => {
@@ -204,7 +235,7 @@ function App() {
   }
 
   const inspectSuspect = (suspectId: number) => {
-    navigate(`/suspects/${suspectId}`)
+    navigate(suspectPath(suspectId))
   }
 
   const inspectGroup = (suspectId: number, groupKey: SuspectInvestigationGroup) => {
@@ -216,13 +247,13 @@ function App() {
 
   const openAccusation = (suspectId: number) => {
     setAccusationTargetId(suspectId)
-    navigate(`/accuse/${suspectId}`)
+    navigate(accusationPath(suspectId))
   }
 
   const closeAccusation = () => {
     const suspectId = accusationTargetId
     setAccusationTargetId(null)
-    navigate(suspectId ? `/suspects/${suspectId}` : '/suspects')
+    navigate(suspectId ? suspectPath(suspectId) : TODAY_SUSPECTS_PATH)
   }
 
   const confirmAccusation = async () => {
@@ -244,12 +275,12 @@ function App() {
 
         if (data.status === 'solved') {
           resetTransientUi()
-          navigate('/ending/solved')
+          navigate(endingPath('solved'))
         } else if (data.status === 'failed') {
           resetTransientUi()
-          navigate('/ending/failed')
+          navigate(endingPath('failed'))
         } else {
-          navigate(`/suspects/${accusationTarget.pokemonId}`)
+          navigate(suspectPath(accusationTarget.pokemonId))
         }
       } catch (err) {
         console.error('Accusation failed:', err)
@@ -281,19 +312,19 @@ function App() {
 
       if (status === 'solved') {
         resetTransientUi()
-        navigate('/ending/solved')
+        navigate(endingPath('solved'))
       } else if (status === 'failed') {
         resetTransientUi()
-        navigate('/ending/failed')
+        navigate(endingPath('failed'))
       } else {
-        navigate(`/suspects/${accusationTarget.pokemonId}`)
+        navigate(suspectPath(accusationTarget.pokemonId))
       }
     }
   }
 
   const openLocation = (locationId: string) => {
     setSelectedLocationId(locationId)
-    navigate(`/investigation/${locationId}`)
+    navigate(investigationLocationPath(locationId))
   }
 
   const investigateLocation = async (locationId: string, actionId: string) => {
@@ -361,29 +392,29 @@ function App() {
 
   const giveUp = () => {
     if (!currentCase) return
-    navigate('/ending/gave-up')
+    navigate(endingPath('gave-up'))
   }
 
   useEffect(() => {
     if (!currentCase) return
 
-    if (currentRoute === '/investigation' || currentRoute === '/') {
+    if (currentRoute === TODAY_INVESTIGATION_PATH || currentRoute === TODAY_PATH || currentRoute === '/') {
       clearScreenState()
       return
     }
 
-    if (currentRoute === '/suspects') {
+    if (currentRoute === TODAY_SUSPECTS_PATH) {
       clearScreenState()
       return
     }
 
-    if (currentRoute.startsWith('/suspects/')) {
+    if (currentRoute.startsWith(`${TODAY_SUSPECTS_PATH}/`)) {
       clearScreenState()
       return
     }
 
-    if (currentRoute.startsWith('/investigation/')) {
-      const locationId = currentRoute.replace('/investigation/', '')
+    if (currentRoute.startsWith(`${TODAY_INVESTIGATION_PATH}/`)) {
+      const locationId = currentRoute.replace(`${TODAY_INVESTIGATION_PATH}/`, '')
       if (currentCase.locations.some((loc) => loc.id === locationId)) {
         clearScreenState()
         setSelectedLocationId(locationId)
@@ -391,8 +422,8 @@ function App() {
       return
     }
 
-    if (currentRoute.startsWith('/accuse/')) {
-      const suspectId = Number(currentRoute.replace('/accuse/', ''))
+    if (currentRoute.startsWith(`${TODAY_ACCUSE_PATH}/`)) {
+      const suspectId = Number(currentRoute.replace(`${TODAY_ACCUSE_PATH}/`, ''))
       if (currentCase.suspects.some((s) => s.pokemonId === suspectId)) {
         setAccusationTargetId(suspectId)
       }
@@ -460,7 +491,7 @@ function App() {
         activeSection={activeSidebarSection}
           authed={authed}
           userProfile={userProfile}
-          onSelectCase={() => navigate('/')}
+          onSelectCase={() => navigate(TODAY_PATH)}
           onSelectHowToPlay={() => navigate('/how-to-play')}
         onLogin={handleLogin}
         onLogout={handleLogout}
@@ -473,6 +504,12 @@ function App() {
           <Route
             path="/"
             element={
+              <Navigate to={TODAY_PATH} replace />
+            }
+          />
+          <Route
+            path="/today"
+            element={
               <CaseOverviewRoute
                 attemptsLeft={attemptsLeft}
                 currentCase={currentCase}
@@ -483,12 +520,18 @@ function App() {
               />
             }
           />
-          <Route path="/home" element={<Navigate to="/" replace />} />
-          <Route path="/case" element={<Navigate to="/" replace />} />
-          <Route path="/investigation" element={<CaseRoute {...sharedInvestigationRouteProps} />} />
+          <Route path="/home" element={<Navigate to={TODAY_PATH} replace />} />
+          <Route path="/case" element={<Navigate to={TODAY_PATH} replace />} />
+          <Route path="/investigation" element={<Navigate to={TODAY_INVESTIGATION_PATH} replace />} />
+          <Route path="/investigation/:locationId" element={<NavigateToTodayInvestigation />} />
+          <Route path="/suspects" element={<Navigate to={TODAY_SUSPECTS_PATH} replace />} />
+          <Route path="/suspects/:id" element={<NavigateToTodaySuspect />} />
+          <Route path="/accuse/:suspectId" element={<NavigateToTodayAccuse />} />
+          <Route path="/ending/:status" element={<NavigateToTodayEnding />} />
+          <Route path={TODAY_INVESTIGATION_PATH} element={<CaseRoute {...sharedInvestigationRouteProps} />} />
           <Route path="/callback" element={null} />
           <Route
-            path="/investigation/:locationId"
+            path={`${TODAY_INVESTIGATION_PATH}/:locationId`}
             element={
               <InvestigationLocationRoute
                 attemptsLeft={attemptsLeft}
@@ -501,9 +544,9 @@ function App() {
               />
             }
           />
-          <Route path="/suspects" element={<SuspectsRoute {...sharedInvestigationRouteProps} />} />
+          <Route path={TODAY_SUSPECTS_PATH} element={<SuspectsRoute {...sharedInvestigationRouteProps} />} />
           <Route
-            path="/suspects/:id"
+            path={`${TODAY_SUSPECTS_PATH}/:id`}
             element={
               <SuspectFileRoute
                 currentCase={currentCase}
@@ -516,7 +559,7 @@ function App() {
             }
           />
           <Route
-            path="/accuse/:suspectId"
+            path={`${TODAY_ACCUSE_PATH}/:suspectId`}
             element={
               accusationTarget ? (
                 <AccuseRoute
@@ -526,16 +569,16 @@ function App() {
                   confirmAccusation={confirmAccusation}
                 />
               ) : currentCase.status === 'solved' ? (
-                <Navigate to="/ending/solved" replace />
+                <Navigate to={endingPath('solved')} replace />
               ) : currentCase.status === 'failed' ? (
-                <Navigate to="/ending/failed" replace />
+                <Navigate to={endingPath('failed')} replace />
               ) : (
-                <Navigate to="/suspects" replace />
+                <Navigate to={TODAY_SUSPECTS_PATH} replace />
               )
             }
           />
           <Route
-            path="/ending/:status"
+            path={`${TODAY_ENDING_PATH}/:status`}
             element={
               <EndingRoute
                 currentCase={currentCase}
@@ -548,7 +591,7 @@ function App() {
           />
           <Route path="/login" element={<LoginRoute onLogin={() => login()} />} />
           <Route path="/how-to-play" element={<div className="main-layout-single"><p className="placeholder-page">How to play — coming soon</p></div>} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to={TODAY_PATH} replace />} />
         </Routes>
       </div>
     </main>

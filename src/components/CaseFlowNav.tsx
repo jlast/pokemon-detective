@@ -1,9 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom'
+import { TODAY_INVESTIGATION_PATH, TODAY_PATH, TODAY_SUSPECTS_PATH } from '../paths'
 
 const tabs = [
-  { path: '/', label: 'Case Overview' },
-  { path: '/investigation', label: 'Investigation Board' },
-  { path: '/suspects', label: 'Suspects Lineup' },
+  { path: TODAY_PATH, label: 'Case Overview' },
+  { path: TODAY_INVESTIGATION_PATH, label: 'Investigation Board' },
+  { path: TODAY_SUSPECTS_PATH, label: 'Suspects Lineup' },
 ]
 
 export function CaseFlowNav() {

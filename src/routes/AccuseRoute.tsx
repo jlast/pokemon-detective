@@ -1,5 +1,6 @@
 import { AccusationsPanel } from '../components/Suspects/AccusationsPanel'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from '../game/caseModel'
+import { TODAY_SUSPECTS_PATH } from '../paths'
 import { SuspectFileRoute } from './SuspectFileRoute'
 
 interface AccuseRouteProps {
@@ -30,7 +31,7 @@ export function AccuseRoute({
       <SuspectFileRoute
         currentCase={currentCase}
         selectedSuspectOverride={accusationTarget}
-        backLinkTo="/suspects"
+        backLinkTo={TODAY_SUSPECTS_PATH}
         wrongAccusationIds={wrongAccusationIds}
         inspectGroup={inspectGroup}
         setSuspectNoteStatus={setSuspectNoteStatus}
