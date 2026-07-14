@@ -6,7 +6,6 @@ interface DesktopSidebarProps {
   authed: boolean
   userProfile: UserProfile | null
   caseStreak?: number
-  onSelectHome: () => void
   onSelectCase: () => void
   onSelectHowToPlay: () => void
   onLogin: () => void
@@ -18,7 +17,6 @@ export function DesktopSidebar({
   authed,
   userProfile,
   caseStreak,
-  onSelectHome,
   onSelectCase,
   onSelectHowToPlay,
   onLogin,
@@ -47,14 +45,6 @@ export function DesktopSidebar({
       </div>
 
       <div className="desktop-sidebar-section">
-        <button
-          type="button"
-          className={`sidebar-nav-button ${activeSection === 'home' ? 'is-active' : ''}`}
-          onClick={onSelectHome}
-        >
-          Home
-        </button>
-
         <button
           type="button"
           className={`sidebar-nav-button ${activeSection === 'case' ? 'is-active' : ''}`}

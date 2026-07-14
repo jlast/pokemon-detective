@@ -11,6 +11,22 @@ export interface SessionResponse {
   status: 'playing' | 'solved' | 'failed'
 }
 
+export interface InvestigationResponse {
+  result: {
+    locationId: string
+    actionId: string
+    outcomeType: string
+    observationText: string
+    evidenceId?: string
+    evidenceTitle?: string
+    evidenceText?: string
+  }
+  investigationsRemaining: number
+  accusationsRemaining: number
+  accusationHistory: number[]
+  status: 'playing' | 'solved' | 'failed'
+}
+
 const authHeaders = async (): Promise<Record<string, string>> => {
   const token = await ensureValidSession() ? getToken() : null
   return token ? { Authorization: `Bearer ${token}` } : {}
@@ -29,7 +45,7 @@ export const investigate = async (
   caseId: string,
   locationId: string,
   actionId: string,
-): Promise<SessionResponse> => {
+): Promise<InvestigationResponse> => {
   const res = await fetch(
     `${BASE}/api/cases/${enc(caseId)}/investigate/${enc(locationId)}/${enc(actionId)}`,
     { method: 'POST', headers: { 'Content-Type': 'application/json', ...await authHeaders() } },

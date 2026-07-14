@@ -387,7 +387,7 @@ const handleInvestigate = async (
   }
 
   return ok({
-    case: buildResponseCase(fullCase, progress),
+    result: record,
     investigationsRemaining: progress.investigationsRemaining,
     accusationsRemaining: progress.accusationsRemaining,
     accusationHistory: progress.accusationHistory,

@@ -263,6 +263,35 @@
   font-style: italic;
 }
 
+.loading-case-header__copy {
+  width: 100%;
+}
+
+.skeleton-line {
+  display: block;
+  height: 1em;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--panel), #fff7e8, var(--panel));
+  background-size: 200% 100%;
+  animation: skeleton-sheen 1.2s ease-in-out infinite;
+}
+
+.skeleton-line--eyebrow {
+  width: 11rem;
+}
+
+.skeleton-line--title {
+  width: min(28rem, 82%);
+}
+
+.skeleton-line--story {
+  width: min(42rem, 100%);
+}
+
+.loading-puzzle-card .placeholder-page {
+  margin: 0;
+}
+
 .main-layout {
   display: grid;
   gap: 1rem;
@@ -3010,6 +3039,16 @@
   100% {
     opacity: 1;
     transform: rotate(-6deg) scale(1);
+  }
+}
+
+@keyframes skeleton-sheen {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
   }
 }
 

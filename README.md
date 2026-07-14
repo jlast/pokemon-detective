@@ -20,6 +20,12 @@ VITE_API_TARGET=http://localhost:3002 npm run dev
 
 The frontend uses `localhost:5173` for local auth redirects. If that port is already in use, stop the existing Vite process rather than letting the app move to another port.
 
+The local API verifies Cognito tokens against `USER_POOL_ID`. The dev server defaults to this project's user pool; override it for another environment with:
+
+```sh
+API_DEV_USER_POOL_ID=us-east-1_example npm run dev:api
+```
+
 ## Case Hierarchy
 
 ### `src/game/caseModel.ts`

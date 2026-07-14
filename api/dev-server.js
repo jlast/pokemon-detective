@@ -2,6 +2,10 @@ import { createRequire } from 'module'
 import { createServer } from 'http'
 
 const require = createRequire(import.meta.url)
+
+process.env.REGION ??= 'us-east-1'
+process.env.USER_POOL_ID ??= process.env.API_DEV_USER_POOL_ID ?? 'us-east-1_XqYE4PPiZ'
+
 const { handler } = require('./dist/handler.cjs')
 
 const PORT = Number(process.env.PORT ?? 3001)

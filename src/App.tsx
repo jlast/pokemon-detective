@@ -110,7 +110,7 @@ function App() {
   const accusationTarget = currentCase?.suspects.find((s) => s.pokemonId === accusationTargetId) ?? null
 
   const currentRoute = location.pathname
-  const activeSidebarSection = currentRoute === '/' ? 'home' : ''
+  const activeSidebarSection = currentRoute === '/' || currentRoute.startsWith('/investigation') ? 'case' : ''
 
   const clearScreenState = () => {
     setSelectedLocationId(null)
@@ -303,7 +303,24 @@ function App() {
       try {
         const caseId = getTodayCaseId()
         const data = await apiInvestigate(caseId, locationId, actionId)
-        setCaseData(data.case)
+        setCaseData((prev) => prev
+          ? {
+              ...prev,
+              locations: prev.locations.map((location) => location.id === data.result.locationId
+                ? {
+                    ...location,
+                    investigated: true,
+                    selectedActionId: data.result.actionId,
+                    observationText: data.result.observationText,
+                    evidenceId: data.result.evidenceId,
+                    evidenceTitle: data.result.evidenceTitle,
+                    evidenceText: data.result.evidenceText,
+                  }
+                : location,
+              ),
+            }
+          : prev,
+        )
         setInvestigationsRemaining(data.investigationsRemaining)
         setAccusationsRemaining(data.accusationsRemaining)
         setAccusationHistory(data.accusationHistory)
@@ -390,15 +407,31 @@ function App() {
           activeSection=""
           authed={authed}
           userProfile={userProfile}
-          onSelectHome={() => {}}
           onSelectCase={() => {}}
           onSelectHowToPlay={() => {}}
           onLogin={handleLogin}
           onLogout={handleLogout}
         />
         <div className="app-content">
+          <header className="app-header notebook-card loading-case-header" aria-hidden="true">
+            <div className="brand-lockup">
+              <div className="loading-case-header__copy">
+                <p className="eyebrow">
+                  <span className="skeleton-line skeleton-line--eyebrow" />
+                </p>
+                <h1>
+                  <span className="skeleton-line skeleton-line--title" />
+                </h1>
+                <p className="subtle-text">
+                  <span className="skeleton-line skeleton-line--story" />
+                </p>
+              </div>
+            </div>
+          </header>
           <div className="main-layout-single">
-            <p className="placeholder-page">Loading today's puzzle...</p>
+            <section className="notebook-card loading-puzzle-card" aria-busy="true">
+              <p className="placeholder-page">Loading today's puzzle...</p>
+            </section>
           </div>
         </div>
       </main>
@@ -425,11 +458,10 @@ function App() {
     <main className="app-shell">
       <DesktopSidebar
         activeSection={activeSidebarSection}
-        authed={authed}
-        userProfile={userProfile}
-        onSelectHome={() => navigate('/')}
-        onSelectCase={() => navigate('/')}
-        onSelectHowToPlay={() => navigate('/how-to-play')}
+          authed={authed}
+          userProfile={userProfile}
+          onSelectCase={() => navigate('/')}
+          onSelectHowToPlay={() => navigate('/how-to-play')}
         onLogin={handleLogin}
         onLogout={handleLogout}
       />
