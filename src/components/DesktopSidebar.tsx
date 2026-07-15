@@ -39,8 +39,8 @@ export function DesktopSidebar({
 
           <div>
             <h2 className="sidebar-brand-title">
-              <span className="sidebar-brand-title-top">Pokemon</span>
-              <span className="sidebar-brand-title-bottom">Detective</span>
+              <span className="sidebar-brand-title-top">Poké</span>
+              <span className="sidebar-brand-title-bottom">Mystery</span>
             </h2>
           </div>
         </div>

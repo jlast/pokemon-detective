@@ -9,7 +9,7 @@ export function Header({ currentCase }: HeaderProps) {
     <header className="app-header notebook-card">
       <div className="brand-lockup">
         <div>
-          <p className="eyebrow">Pokemon Detective</p>
+          <p className="eyebrow">PokéMystery</p>
           <h1>{currentCase.title}</h1>
           <p className="subtle-text">{currentCase.shortStory}</p>
         </div>

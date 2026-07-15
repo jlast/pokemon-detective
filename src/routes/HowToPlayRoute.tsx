@@ -33,7 +33,7 @@ export function HowToPlayRoute() {
             <p className="eyebrow">Field manual</p>
             <h2>How to play</h2>
             <p className="subtle-text">
-              Pokemon Detective is a daily deduction case. Search the scene, cross-check clues, and identify the culprit before your accusation attempts run out.
+              PokéMystery is a daily deduction case. Search the scene, cross-check clues, and identify the culprit before your accusation attempts run out.
             </p>
           </div>
 
