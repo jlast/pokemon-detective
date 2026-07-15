@@ -263,6 +263,105 @@
   font-style: italic;
 }
 
+.how-to-play-page {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.25rem;
+}
+
+.how-to-play-hero {
+  display: grid;
+  gap: 1rem;
+}
+
+.how-to-play-hero h2 {
+  margin: 0 0 0.45rem;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1;
+}
+
+.how-to-play-case-note {
+  display: grid;
+  gap: 0.35rem;
+  align-content: start;
+  padding: 1rem;
+  border: 1px dashed #b99a5f;
+  border-radius: 18px;
+  background: #fff8df;
+  box-shadow: var(--shadow-card);
+  transform: rotate(0.6deg);
+}
+
+.how-to-play-case-note__label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.how-to-play-case-note span:last-child {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.how-to-play-steps {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.how-to-play-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  align-items: start;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--panel);
+}
+
+.how-to-play-step__number {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--accent-yellow);
+  border: 1px solid var(--button-border);
+  font-weight: 800;
+}
+
+.how-to-play-step h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+
+.how-to-play-step p,
+.how-to-play-tips li {
+  color: var(--muted);
+}
+
+.how-to-play-tips {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-left: 4px solid var(--accent-yellow-deep);
+  border-radius: 16px;
+  background: rgba(255, 248, 223, 0.68);
+}
+
+.how-to-play-tips h3 {
+  margin: 0;
+}
+
+.how-to-play-tips ul {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
 .loading-case-header__copy {
   width: 100%;
 }
@@ -3376,6 +3475,15 @@
   .overview-meta-grid {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr) minmax(260px, 0.9fr);
     align-items: start;
+  }
+
+  .how-to-play-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.45fr);
+    align-items: start;
+  }
+
+  .how-to-play-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .case-overview-cta {

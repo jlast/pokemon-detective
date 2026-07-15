@@ -65,7 +65,7 @@ export function DesktopSidebar({
 
         <button
           type="button"
-          className="sidebar-nav-button"
+          className={`sidebar-nav-button ${activeSection === 'how-to-play' ? 'is-active' : ''}`}
           onClick={onSelectHowToPlay}
         >
           How to play

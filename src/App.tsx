@@ -9,6 +9,7 @@ import { CaseOverviewRoute } from './routes/CaseOverviewRoute'
 import { CaseRoute } from './routes/CaseRoute'
 import { EndingRoute } from './routes/EndingRoute'
 import { InvestigationLocationRoute } from './routes/InvestigationLocationRoute'
+import { HowToPlayRoute } from './routes/HowToPlayRoute'
 import { PokedexRoute } from './routes/PokedexRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
@@ -144,7 +145,7 @@ function App() {
   const currentRoute = location.pathname
   const activeSidebarSection = currentRoute === '/' || currentRoute.startsWith(TODAY_PATH) || currentRoute.startsWith('/suspects') || currentRoute.startsWith('/investigation')
     ? 'case'
-    : currentRoute.startsWith('/pokedex') ? 'pokedex' : ''
+    : currentRoute.startsWith('/pokedex') ? 'pokedex' : currentRoute.startsWith('/how-to-play') ? 'how-to-play' : ''
 
   const clearScreenState = () => {
     setSelectedLocationId(null)
@@ -617,7 +618,7 @@ function App() {
           />
           <Route path="/login" element={<LoginRoute onLogin={() => login()} />} />
           <Route path="/pokedex" element={<PokedexRoute authed={authed} onLogin={handleLogin} />} />
-          <Route path="/how-to-play" element={<div className="main-layout-single"><p className="placeholder-page">How to play — coming soon</p></div>} />
+          <Route path="/how-to-play" element={<HowToPlayRoute />} />
           <Route path="*" element={<Navigate to={TODAY_PATH} replace />} />
         </Routes>}
       </div>
