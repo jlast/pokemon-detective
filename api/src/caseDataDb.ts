@@ -2,7 +2,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb'
 
 const client = new DynamoDBClient({})
-const doc = DynamoDBDocumentClient.from(client)
+const doc = DynamoDBDocumentClient.from(client, { marshallOptions: { removeUndefinedValues: true } })
 
 export interface CaseDataRecord {
   caseId: string
