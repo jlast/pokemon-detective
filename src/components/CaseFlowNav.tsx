@@ -2,9 +2,9 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { TODAY_INVESTIGATION_PATH, TODAY_PATH, TODAY_SUSPECTS_PATH } from '../paths'
 
 const tabs = [
-  { path: TODAY_PATH, label: 'Case Overview', mobileLabel: 'Case', iconClass: 'case-flow-tab-icon--file' },
-  { path: TODAY_INVESTIGATION_PATH, label: 'Investigation Board', mobileLabel: 'Board', iconClass: 'case-flow-tab-icon--search' },
-  { path: TODAY_SUSPECTS_PATH, label: 'Suspects Lineup', mobileLabel: 'Suspects', iconClass: 'case-flow-tab-icon--lineup' },
+  { path: TODAY_PATH, label: 'Case Overview', mobileLabel: 'Case File', iconClass: 'case-flow-tab-icon--file' },
+  { path: TODAY_INVESTIGATION_PATH, label: 'Investigation Board', mobileLabel: 'Evidence Board', iconClass: 'case-flow-tab-icon--pin' },
+  { path: TODAY_SUSPECTS_PATH, label: 'Suspects Lineup', mobileLabel: 'Suspect Files', iconClass: 'case-flow-tab-icon--files' },
 ]
 
 export function CaseFlowNav() {

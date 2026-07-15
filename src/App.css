@@ -3704,23 +3704,23 @@
 
   .case-flow-nav {
     position: fixed;
-    right: max(0.75rem, env(safe-area-inset-right));
-    bottom: max(0.75rem, env(safe-area-inset-bottom));
-    left: max(0.75rem, env(safe-area-inset-left));
+    right: env(safe-area-inset-right);
+    bottom: env(safe-area-inset-bottom);
+    left: env(safe-area-inset-left);
     z-index: 30;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.35rem;
+    gap: 0;
     width: auto;
     max-width: none;
     margin: 0;
-    padding: 0.45rem;
+    padding: 0.3rem 0.55rem 0.45rem;
     overflow: visible;
-    border: 1px solid rgba(31, 45, 71, 0.12);
-    border-radius: 24px;
-    background: rgba(255, 250, 240, 0.96);
-    box-shadow: 0 18px 44px rgba(31, 45, 71, 0.22);
-    backdrop-filter: blur(14px);
+    border: 1px solid var(--border);
+    border-width: 1px 0 0;
+    border-radius: 0;
+    background: #f1e5ca;
+    box-shadow: 0 -8px 20px rgba(38, 36, 31, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.56);
   }
 
   .app-content,
@@ -3732,35 +3732,77 @@
   }
 
   .case-flow-tab {
-    min-height: 3.65rem;
+    position: relative;
+    min-height: 3.25rem;
     flex-direction: column;
-    gap: 0.15rem;
-    padding: 0.45rem 0.35rem;
-    border: 0;
-    border-radius: 18px;
-    color: #66728a;
-    font-size: 0.72rem;
+    gap: 0.18rem;
+    margin-top: 0.35rem;
+    padding: 0.42rem 0.24rem 0.38rem;
+    border: 1px solid #c8b99e;
+    border-bottom: 0;
+    border-left-width: 0;
+    border-radius: 12px 12px 0 0;
+    background: #eadcc1;
+    color: #68728a;
+    font-size: 0.68rem;
     letter-spacing: 0;
     text-transform: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  }
+
+  .case-flow-tab:first-child {
+    border-left-width: 1px;
+  }
+
+  .case-flow-tab::before {
+    content: '';
+    position: absolute;
+    top: -0.42rem;
+    left: 0.7rem;
+    width: 42%;
+    height: 0.5rem;
+    border: 1px solid #c8b99e;
+    border-bottom: 0;
+    border-radius: 9px 9px 0 0;
+    background: inherit;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
   }
 
   .case-flow-tab:hover {
-    background: rgba(244, 236, 221, 0.72);
+    background: #efe3cb;
   }
 
   .case-flow-tab.is-active {
-    top: auto;
+    top: -0.38rem;
     margin-bottom: 0;
-    background: #eef4d9;
+    background: var(--card);
+    border-top-color: transparent;
     color: var(--text-main);
-    box-shadow: inset 0 0 0 1px rgba(175, 199, 122, 0.7);
+    z-index: 1;
+    box-shadow: 0 -5px 12px rgba(38, 36, 31, 0.08);
+  }
+
+  .case-flow-tab.is-active::before {
+    border-top-color: #c8b99e;
+    background: var(--card);
+  }
+
+  .case-flow-tab.is-active::after {
+    content: '';
+    position: absolute;
+    right: 18%;
+    bottom: 0.18rem;
+    left: 18%;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--accent-yellow-deep);
   }
 
   .case-flow-tab-icon {
     display: block;
     position: relative;
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1.08rem;
+    height: 1.08rem;
     color: currentColor;
   }
 
@@ -3773,53 +3815,56 @@
     background: linear-gradient(135deg, transparent 0 72%, currentColor 73% 100%) top right / 0.45rem 0.45rem no-repeat;
   }
 
-  .case-flow-tab-icon--search::before {
+  .case-flow-tab-icon--pin::before {
     content: '';
     position: absolute;
-    top: 0.12rem;
-    left: 0.12rem;
-    width: 0.7rem;
-    height: 0.7rem;
+    top: 0.04rem;
+    left: 50%;
+    width: 0.5rem;
+    height: 0.5rem;
     border: 2px solid currentColor;
     border-radius: 50%;
-  }
-
-  .case-flow-tab-icon--search::after {
-    content: '';
-    position: absolute;
-    right: 0.12rem;
-    bottom: 0.18rem;
-    width: 0.55rem;
-    height: 2px;
-    border-radius: 999px;
-    background: currentColor;
-    transform: rotate(45deg);
-    transform-origin: center;
-  }
-
-  .case-flow-tab-icon--lineup::before,
-  .case-flow-tab-icon--lineup::after {
-    content: '';
-    position: absolute;
-    border-radius: 999px;
-    background: currentColor;
-  }
-
-  .case-flow-tab-icon--lineup::before {
-    top: 0.18rem;
-    left: 50%;
-    width: 0.48rem;
-    height: 0.48rem;
-    box-shadow: -0.48rem 0.3rem 0 -0.08rem currentColor, 0.48rem 0.3rem 0 -0.08rem currentColor;
     transform: translateX(-50%);
   }
 
-  .case-flow-tab-icon--lineup::after {
-    right: 0.1rem;
-    bottom: 0.18rem;
-    left: 0.1rem;
-    height: 0.38rem;
-    border-radius: 0.5rem 0.5rem 0.18rem 0.18rem;
+  .case-flow-tab-icon--pin::after {
+    content: '';
+    position: absolute;
+    top: 0.55rem;
+    left: 50%;
+    width: 2px;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: currentColor;
+    transform: translateX(-50%);
+  }
+
+  .case-flow-tab-icon--files::before,
+  .case-flow-tab-icon--files::after {
+    content: '';
+    position: absolute;
+    border: 2px solid currentColor;
+    border-radius: 0.16rem;
+    background: transparent;
+  }
+
+  .case-flow-tab-icon--files::before {
+    top: 0.08rem;
+    right: 0.02rem;
+    width: 0.62rem;
+    height: 0.72rem;
+  }
+
+  .case-flow-tab-icon--files::after {
+    bottom: 0.02rem;
+    left: 0.04rem;
+    width: 0.62rem;
+    height: 0.72rem;
+    background: #eadcc1;
+  }
+
+  .case-flow-tab.is-active .case-flow-tab-icon--files::after {
+    background: var(--card);
   }
 
   .case-flow-tab-label {
@@ -3828,7 +3873,7 @@
 
   .case-flow-tab-mobile-label {
     display: block;
-    font-size: 0.74rem;
+    font-size: clamp(0.62rem, 2.9vw, 0.74rem);
     font-weight: 800;
     line-height: 1.1;
   }
