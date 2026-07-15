@@ -51,9 +51,9 @@ const evolutionLineByPokemonId: Record<number, string> = {
 
 const toTitle = (value: string) => value[0].toUpperCase() + value.slice(1)
 
-const getHeightCategory = (pokemon: Pokemon) => pokemon.heightM <= 1.0 ? 'Small' : 'Tall'
+const getHeightCategory = (pokemon: Pokemon) => pokemon.heightM <= 0.6 ? 'Small' : pokemon.heightM >= 1.4 ? 'Tall' : 'Medium'
 
-const getWeightCategory = (pokemon: Pokemon) => pokemon.weightKg <= 35 ? 'Light' : 'Heavy'
+const getWeightCategory = (pokemon: Pokemon) => pokemon.weightKg <= 12 ? 'Light' : pokemon.weightKg >= 45 ? 'Heavy' : 'Medium'
 
 const statLabels = {
   hp: 'HP',

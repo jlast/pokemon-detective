@@ -76,7 +76,7 @@
     "cookie-crumbs": { "title": "Scattered Pages", "clueText": "Torn pages were scattered {movementWord} near the shelf." },
     "low-crumbs": { "title": "Paper Fragments", "clueText": "Paper fragments fell {movementWord} beside the desk." },
     "quiet-digging": { "title": "Quiet Rustling", "clueText": "Someone heard soft rustling after closing hours." },
-    "small-tracks": { "title": "Small Impressions", "clueText": "Small impressions dented the library carpet {movementWord}." },
+    "small-tracks": { "title": "Track Impressions", "clueText": "Track impressions dented the library carpet." },
     "sand-trail": { "title": "Dust Trail", "clueText": "A trail of {textureWord} led between the shelves." },
     "loose-soil": { "title": "Binding Dust", "clueText": "Fine dust from the binding settled {movementWord} under the shelf." },
     "scratch-marks": { "title": "Score Marks", "clueText": "Fine score marks circled the display case lock." },

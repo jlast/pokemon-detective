@@ -76,7 +76,7 @@
     "cookie-crumbs": { "title": "Debris", "clueText": "Tiny fragments were scattered {movementWord} across the hall." },
     "low-crumbs": { "title": "Trace Fragments", "clueText": "Small particles fell {movementWord} beside the exhibit." },
     "quiet-digging": { "title": "Faint Scraping", "clueText": "The guard heard a faint scraping near the exhibit." },
-    "small-tracks": { "clueText": "Small marks pressed into the museum floor {movementWord}." },
+    "small-tracks": { "clueText": "Marks pressed into the museum floor near the display." },
     "sand-trail": { "title": "Display Dust", "clueText": "A trace of {textureWord} led between the displays." },
     "loose-soil": { "title": "Floor Disturbance", "clueText": "The {groundWord} near the display base showed disturbance." },
     "scratch-marks": { "title": "Display Score Marks", "clueText": "Fine score marks circled the display case lock." },

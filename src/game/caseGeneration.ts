@@ -4,8 +4,10 @@ import { getPokemonById } from './suspectCaseFile'
 
 export type CaseTrait =
   | 'short_height'
+  | 'medium_height'
   | 'tall_height'
   | 'light_weight'
+  | 'medium_weight'
   | 'heavy_weight'
   | 'ground_affinity'
   | 'burrowing'
@@ -48,9 +50,11 @@ type TraitRule = {
 }
 
 const traitRules: TraitRule[] = [
-  { trait: 'short_height', check: (p) => p.heightM <= 1.0 },
+  { trait: 'short_height', check: (p) => p.heightM <= 0.6 },
+  { trait: 'medium_height', check: (p) => p.heightM > 0.6 && p.heightM < 1.4 },
   { trait: 'tall_height', check: (p) => p.heightM >= 1.4 },
-  { trait: 'light_weight', check: (p) => p.weightKg <= 35 },
+  { trait: 'light_weight', check: (p) => p.weightKg <= 12 },
+  { trait: 'medium_weight', check: (p) => p.weightKg > 12 && p.weightKg < 45 },
   { trait: 'heavy_weight', check: (p) => p.weightKg >= 45 },
   { trait: 'ground_affinity', types: ['ground', 'rock', 'fighting', 'normal', 'dragon'] },
   { trait: 'burrowing', types: ['ground', 'rock', 'bug'] },
@@ -141,6 +145,8 @@ type ActionEvidencePool = {
 const actionEvidencePools: ActionEvidencePool[] = [
   { actionId: 'crumbs', locationId: 'campsite', isPrimary: true, pool: [
     { evidenceId: 'cookie-crumbs', trait: 'short_height' },
+    { evidenceId: 'cookie-crumbs', trait: 'medium_height' },
+    { evidenceId: 'cookie-crumbs', trait: 'tall_height' },
     { evidenceId: 'high-reach', trait: 'tall_height' },
     { evidenceId: 'ash-scatter', trait: 'ash_or_scorch' },
     { evidenceId: 'pollen-scent', trait: 'plant_residue' },
@@ -157,6 +163,8 @@ const actionEvidencePools: ActionEvidencePool[] = [
   ]},
   { actionId: 'measure-tracks', locationId: 'tracks', isPrimary: true, pool: [
     { evidenceId: 'small-tracks', trait: 'light_weight' },
+    { evidenceId: 'small-tracks', trait: 'medium_weight' },
+    { evidenceId: 'small-tracks', trait: 'heavy_weight' },
     { evidenceId: 'deep-prints', trait: 'heavy_weight' },
     { evidenceId: 'sand-trail', trait: 'ground_affinity' },
     { evidenceId: 'frost-trail', trait: 'moisture_residue' },
@@ -191,6 +199,7 @@ const actionEvidencePools: ActionEvidencePool[] = [
   ]},
   { actionId: 'check-table', locationId: 'cookie-jar', isPrimary: false, pool: [
     { evidenceId: 'high-reach', trait: 'tall_height' },
+    { evidenceId: 'cookie-crumbs', trait: 'medium_height' },
     { evidenceId: 'low-crumbs', trait: 'short_height' },
     { evidenceId: 'light-tracks', trait: 'light_weight' },
     { evidenceId: 'gentle-handling', trait: 'attack_poor' },
@@ -333,12 +342,12 @@ export const getPokemonCaseTraits = (pokemon: Pokemon): Set<CaseTrait> => {
 }
 
 const getPokemonCaseProfile = (pokemon: Pokemon): PokemonCaseProfile => {
-  const size = pokemon.heightM <= 1.0
+  const size = pokemon.heightM <= 0.6
     ? 'small'
     : pokemon.heightM >= 1.4
       ? 'large'
       : 'medium'
-  const weightSize = pokemon.weightKg <= 35
+  const weightSize = pokemon.weightKg <= 12
     ? 'light'
     : pokemon.weightKg >= 45
       ? 'heavy'
@@ -373,10 +382,14 @@ const getTraitConclusionFragment = (trait: CaseTrait): string => {
   switch (trait) {
     case 'short_height':
       return 'short enough to leave low-height clues'
+    case 'medium_height':
+      return 'medium-sized enough to leave mid-height clues'
     case 'tall_height':
       return 'tall enough to leave higher reach clues'
     case 'light_weight':
       return 'light enough to leave shallow tracks'
+    case 'medium_weight':
+      return 'medium-weight enough to leave steady tracks'
     case 'heavy_weight':
       return 'heavy enough to leave deep tracks or dents'
     case 'ground_affinity':
@@ -450,10 +463,14 @@ const getTraitDeductionText = (trait: CaseTrait): string => {
   switch (trait) {
     case 'short_height':
       return 'This pointed toward a shorter Pokemon moving low.'
+    case 'medium_height':
+      return 'This pointed toward a medium-sized Pokemon moving at table height.'
     case 'tall_height':
       return 'This pointed toward a taller suspect reaching from higher up.'
     case 'light_weight':
       return 'This pointed toward a lighter suspect leaving shallow marks.'
+    case 'medium_weight':
+      return 'This pointed toward a medium-weight suspect leaving steady tracks.'
     case 'heavy_weight':
       return 'This pointed toward a heavier suspect leaving deep marks.'
     case 'ground_affinity':
@@ -938,10 +955,14 @@ const getMismatchReason = (suspectId: number, relevantTraits: CaseTrait[]) => {
   switch (missingTrait) {
     case 'short_height':
       return 'Did not fit the low-height clues left at the scene.'
+    case 'medium_height':
+      return 'Did not fit the medium-height clues left at the scene.'
     case 'tall_height':
       return 'Did not fit the high-reach clues left at the scene.'
     case 'light_weight':
       return 'Did not fit the shallow, light-track clues.'
+    case 'medium_weight':
+      return 'Did not fit the medium-depth track clues.'
     case 'heavy_weight':
       return 'Did not fit the deep-print or heavy-pressure clues.'
     case 'ground_affinity':

@@ -76,7 +76,7 @@
     "cookie-crumbs": { "title": "Scattered Gear", "clueText": "Training gear was dropped {movementWord} across the floor." },
     "low-crumbs": { "title": "Dropped Items", "clueText": "Small items had fallen {movementWord} along the bench." },
     "quiet-digging": { "title": "Locker Scraping", "clueText": "Someone heard scraping against the lockers after hours." },
-    "small-tracks": { "clueText": "Small scuffs marked the floor {movementWord}." },
+    "small-tracks": { "clueText": "Scuffs marked the floor near the case." },
     "sand-trail": { "title": "Gym Dust", "clueText": "A trail of {textureWord} stretched across the gym floor." },
     "loose-soil": { "title": "Mat Disturbance", "clueText": "The {groundWord} near the equipment rack was disturbed." },
     "scratch-marks": { "title": "Scored Marks", "clueText": "Fine score marks circled the trophy case lock." },
