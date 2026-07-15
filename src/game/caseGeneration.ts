@@ -142,6 +142,18 @@ type ActionEvidencePool = {
   isPrimary: boolean
 }
 
+type RequiredEvidenceCategoryId = 'height' | 'weight' | 'primary_type' | 'secondary_type' | 'highest_stat' | 'lowest_stat'
+
+type RequiredEvidenceCategory = {
+  id: RequiredEvidenceCategoryId
+  traits: CaseTrait[]
+}
+
+type ChosenEvidence = {
+  evidenceId: string
+  trait: CaseTrait
+}
+
 const actionEvidencePools: ActionEvidencePool[] = [
   { actionId: 'crumbs', locationId: 'campsite', isPrimary: true, pool: [
     { evidenceId: 'cookie-crumbs', trait: 'short_height' },
@@ -247,6 +259,43 @@ const poorTraitByStat: Record<StatName, CaseTrait> = {
   specialAttack: 'special_attack_poor',
   specialDefense: 'special_defense_poor',
   speed: 'speed_poor',
+}
+
+const heightTraitForPokemon = (pokemon: Pokemon): CaseTrait => {
+  if (pokemon.heightM <= 0.6) return 'short_height'
+  if (pokemon.heightM >= 1.4) return 'tall_height'
+  return 'medium_height'
+}
+
+const weightTraitForPokemon = (pokemon: Pokemon): CaseTrait => {
+  if (pokemon.weightKg <= 12) return 'light_weight'
+  if (pokemon.weightKg >= 45) return 'heavy_weight'
+  return 'medium_weight'
+}
+
+const getTypeTraits = (type: PokemonType, isPrimary: boolean): CaseTrait[] => traitRules
+  .filter((rule) => rule.types?.includes(type) && (isPrimary || !rule.requirePrimary))
+  .map((rule) => rule.trait)
+
+const uniqueTraits = (traits: CaseTrait[]): CaseTrait[] => Array.from(new Set(traits))
+
+const getRequiredEvidenceCategories = (pokemon: Pokemon): RequiredEvidenceCategory[] => {
+  const strongestStat = pickPriorityStat(pokemon, strongestStatPriority, 'max')
+  const weakestStat = pickPriorityStat(pokemon, weakestStatPriority, 'min')
+  const categories: RequiredEvidenceCategory[] = [
+    { id: 'height', traits: [heightTraitForPokemon(pokemon)] },
+    { id: 'weight', traits: [weightTraitForPokemon(pokemon)] },
+    { id: 'primary_type', traits: uniqueTraits(getTypeTraits(pokemon.types[0], true)) },
+    { id: 'highest_stat', traits: [focusTraitByStat[strongestStat]] },
+    { id: 'lowest_stat', traits: [poorTraitByStat[weakestStat]] },
+  ]
+
+  const secondaryType = pokemon.types[1]
+  if (secondaryType) {
+    categories.splice(3, 0, { id: 'secondary_type', traits: uniqueTraits(getTypeTraits(secondaryType, false)) })
+  }
+
+  return categories.filter((category) => category.traits.length > 0)
 }
 
 type PokemonCaseProfile = {
@@ -1048,19 +1097,80 @@ const pickEvidenceForAction = (
   pool: ActionEvidencePool,
   culpritTraits: Set<CaseTrait>,
   usedEvidenceIds: Set<string>,
-): string => {
+): ChosenEvidence => {
   const matching = pool.pool.filter((entry) => culpritTraits.has(entry.trait))
   const unusedMatching = matching.filter((entry) => !usedEvidenceIds.has(entry.evidenceId))
   const unused = pool.pool.filter((entry) => !usedEvidenceIds.has(entry.evidenceId))
   const candidates = unusedMatching.length > 0
     ? unusedMatching
-    : unused.length > 0
-      ? unused
-      : matching.length > 0
-        ? matching
+    : matching.length > 0
+      ? matching
+      : unused.length > 0
+        ? unused
         : pool.pool
-  return candidates[Math.floor(Math.random() * candidates.length)]!.evidenceId
+  const chosen = candidates[Math.floor(Math.random() * candidates.length)]!
+  return { evidenceId: chosen.evidenceId, trait: chosen.trait }
 }
+
+const getCategoryCandidates = (category: RequiredEvidenceCategory) => actionEvidencePools.flatMap((pool) =>
+  pool.pool
+    .filter((entry) => category.traits.includes(entry.trait))
+    .map((entry) => ({ actionId: pool.actionId, evidenceId: entry.evidenceId, trait: entry.trait }))
+)
+
+const assignRequiredEvidence = (categories: RequiredEvidenceCategory[]): Map<string, ChosenEvidence> | null => {
+  const categoriesByCandidateCount = categories
+    .map((category) => ({ category, candidates: getCategoryCandidates(category) }))
+    .filter((entry) => entry.candidates.length > 0)
+    .sort((left, right) => left.candidates.length - right.candidates.length)
+
+  if (categoriesByCandidateCount.length !== categories.length) {
+    return null
+  }
+
+  const assignments = new Map<string, ChosenEvidence>()
+  const usedEvidenceIds = new Set<string>()
+
+  const assignNext = (categoryIndex: number): boolean => {
+    if (categoryIndex >= categoriesByCandidateCount.length) {
+      return true
+    }
+
+    const { candidates } = categoriesByCandidateCount[categoryIndex]!
+    const orderedCandidates = shuffle(candidates)
+      .sort((left, right) => Number(usedEvidenceIds.has(left.evidenceId)) - Number(usedEvidenceIds.has(right.evidenceId)))
+
+    for (const candidate of orderedCandidates) {
+      if (assignments.has(candidate.actionId)) {
+        continue
+      }
+
+      const hadEvidenceId = usedEvidenceIds.has(candidate.evidenceId)
+      assignments.set(candidate.actionId, { evidenceId: candidate.evidenceId, trait: candidate.trait })
+      usedEvidenceIds.add(candidate.evidenceId)
+
+      if (assignNext(categoryIndex + 1)) {
+        return true
+      }
+
+      assignments.delete(candidate.actionId)
+      if (!hadEvidenceId) {
+        usedEvidenceIds.delete(candidate.evidenceId)
+      }
+    }
+
+    return false
+  }
+
+  return assignNext(0) ? assignments : null
+}
+
+const hasRequiredEvidenceCoverage = (
+  actionEvidenceMap: Map<string, ChosenEvidence>,
+  categories: RequiredEvidenceCategory[],
+): boolean => categories.every((category) =>
+  Array.from(actionEvidenceMap.values()).some((chosen) => category.traits.includes(chosen.trait))
+)
 
 const buildSolution = (
   culpritId: number,
@@ -1159,20 +1269,34 @@ export const generateCaseLineup = (
     }
 
     const culpritTraits = getPokemonCaseTraits(culprit)
-    const actionEvidenceMap = new Map<string, string>()
-    const usedEvidenceIds = new Set<string>()
+    const requiredEvidenceCategories = getRequiredEvidenceCategories(culprit)
+    const actionEvidenceMap = assignRequiredEvidence(requiredEvidenceCategories)
+
+    if (!actionEvidenceMap) {
+      continue
+    }
+
+    const usedEvidenceIds = new Set(Array.from(actionEvidenceMap.values()).map((entry) => entry.evidenceId))
 
     for (const slot of actionEvidencePools) {
-      const chosenId = pickEvidenceForAction(slot, culpritTraits, usedEvidenceIds)
-      actionEvidenceMap.set(slot.actionId, chosenId)
-      usedEvidenceIds.add(chosenId)
+      if (actionEvidenceMap.has(slot.actionId)) {
+        continue
+      }
+
+      const chosen = pickEvidenceForAction(slot, culpritTraits, usedEvidenceIds)
+      actionEvidenceMap.set(slot.actionId, chosen)
+      usedEvidenceIds.add(chosen.evidenceId)
+    }
+
+    if (!hasRequiredEvidenceCoverage(actionEvidenceMap, requiredEvidenceCategories)) {
+      continue
     }
 
     const overriddenLocations = locations.map((location) => ({
       ...location,
       actions: location.actions.map((action) => {
-        const chosenId = action.evidenceId ? actionEvidenceMap.get(action.id) : null
-        return chosenId ? { ...action, evidenceId: chosenId } : action
+        const chosen = action.evidenceId ? actionEvidenceMap.get(action.id) : null
+        return chosen ? { ...action, evidenceId: chosen.evidenceId } : action
       }),
     }))
 
