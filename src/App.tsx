@@ -485,6 +485,14 @@ function App() {
     giveUp,
   }
 
+  const completedCaseStatus = currentCase.status === 'solved' || currentCase.status === 'failed'
+    ? currentCase.status
+    : null
+  const shouldRedirectToCompletedCase =
+    completedCaseStatus !== null &&
+    currentRoute.startsWith(TODAY_PATH) &&
+    !currentRoute.startsWith(TODAY_ENDING_PATH)
+
   return (
     <main className="app-shell">
       <DesktopSidebar
@@ -500,7 +508,9 @@ function App() {
       <div className="app-content">
         <Header currentCase={currentCase} />
 
-        <Routes>
+        {shouldRedirectToCompletedCase ? (
+          <Navigate to={endingPath(completedCaseStatus)} replace />
+        ) : <Routes>
           <Route
             path="/"
             element={
@@ -592,7 +602,7 @@ function App() {
           <Route path="/login" element={<LoginRoute onLogin={() => login()} />} />
           <Route path="/how-to-play" element={<div className="main-layout-single"><p className="placeholder-page">How to play — coming soon</p></div>} />
           <Route path="*" element={<Navigate to={TODAY_PATH} replace />} />
-        </Routes>
+        </Routes>}
       </div>
     </main>
   )
