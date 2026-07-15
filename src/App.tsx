@@ -488,6 +488,15 @@ function App() {
   const completedCaseStatus = currentCase.status === 'solved' || currentCase.status === 'failed'
     ? currentCase.status
     : null
+  const requestedEndingStatus = currentRoute.startsWith(`${TODAY_ENDING_PATH}/`)
+    ? currentRoute.replace(`${TODAY_ENDING_PATH}/`, '').split('/')[0]
+    : null
+  const requestedCompletedEndingStatus =
+    requestedEndingStatus === 'solved' || requestedEndingStatus === 'failed'
+      ? requestedEndingStatus
+      : null
+  const shouldRedirectFromInvalidCompletedEnding =
+    requestedCompletedEndingStatus !== null && requestedCompletedEndingStatus !== currentCase.status
   const shouldRedirectToCompletedCase =
     completedCaseStatus !== null &&
     currentRoute.startsWith(TODAY_PATH) &&
@@ -508,7 +517,9 @@ function App() {
       <div className="app-content">
         <Header currentCase={currentCase} />
 
-        {shouldRedirectToCompletedCase ? (
+        {shouldRedirectFromInvalidCompletedEnding ? (
+          <Navigate to={completedCaseStatus ? endingPath(completedCaseStatus) : TODAY_PATH} replace />
+        ) : shouldRedirectToCompletedCase ? (
           <Navigate to={endingPath(completedCaseStatus)} replace />
         ) : <Routes>
           <Route
