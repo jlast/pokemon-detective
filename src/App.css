@@ -416,7 +416,8 @@
 }
 
 .pokedex-card__badge {
-  justify-self: start;
+  justify-self: center;
+  text-align: center;
   border-radius: 999px;
   padding: 0.2rem 0.45rem;
   background: #fff1b8;
