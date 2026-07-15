@@ -124,7 +124,6 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
                     <h3>{pokemon.name}</h3>
                     {unlocked ? (
                       <>
-                        {shinyUnlocked ? <span className="pokedex-card__badge">Shiny registered</span> : null}
                         <p>{pokemon.types.join(' / ')}</p>
                         <p>{pokemon.region}</p>
                       </>

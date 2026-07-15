@@ -355,6 +355,7 @@
 
 .pokedex-card.is-shiny {
   border-color: #d8b552;
+  background: #f0c94b;
   box-shadow: 0 10px 24px rgba(216, 181, 82, 0.16);
 }
 
@@ -413,19 +414,6 @@
   color: var(--text-dim);
   font-size: 0.82rem;
   text-transform: capitalize;
-}
-
-.pokedex-card__badge {
-  justify-self: center;
-  text-align: center;
-  border-radius: 999px;
-  padding: 0.2rem 0.45rem;
-  background: #fff1b8;
-  color: #71571b;
-  font-size: 0.68rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
 .main-layout {
