@@ -108,8 +108,15 @@ export interface Case {
 
 export function getDiscoveredEvidence(caseData: Case): Evidence[] {
   const discovered: Evidence[] = []
+  const seenEvidenceIds = new Set<string>()
   for (const location of caseData.locations) {
-    if (location.investigated && location.selectedActionId && location.evidenceId) {
+    if (
+      location.investigated &&
+      location.selectedActionId &&
+      location.evidenceId &&
+      !seenEvidenceIds.has(location.evidenceId)
+    ) {
+      seenEvidenceIds.add(location.evidenceId)
       const action = location.actions.find((a) => a.id === location.selectedActionId)
       discovered.push({
         id: location.evidenceId,

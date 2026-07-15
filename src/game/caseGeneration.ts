@@ -1030,7 +1030,14 @@ const pickEvidenceForAction = (
 ): string => {
   const matching = pool.pool.filter((entry) => culpritTraits.has(entry.trait))
   const unusedMatching = matching.filter((entry) => !usedEvidenceIds.has(entry.evidenceId))
-  const candidates = unusedMatching.length > 0 ? unusedMatching : matching
+  const unused = pool.pool.filter((entry) => !usedEvidenceIds.has(entry.evidenceId))
+  const candidates = unusedMatching.length > 0
+    ? unusedMatching
+    : unused.length > 0
+      ? unused
+      : matching.length > 0
+        ? matching
+        : pool.pool
   return candidates[Math.floor(Math.random() * candidates.length)]!.evidenceId
 }
 

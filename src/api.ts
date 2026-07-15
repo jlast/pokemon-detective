@@ -34,11 +34,10 @@ const authHeaders = async (): Promise<Record<string, string>> => {
 
 const enc = encodeURIComponent
 
-export const getCurrentCase = async (): Promise<Case> => {
+export const getCurrentCase = async (): Promise<SessionResponse> => {
   const res = await fetch(`${BASE}/api/cases/current`, { headers: await authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
-  const data = await res.json()
-  return data.case
+  return res.json()
 }
 
 export const investigate = async (

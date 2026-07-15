@@ -157,10 +157,10 @@ function App() {
     setLoading(true)
     try {
       const data = await getCurrentCase()
-      setCaseData(data)
-      setInvestigationsRemaining(data.maxInvestigations)
-      setAccusationsRemaining(3)
-      setAccusationHistory([])
+      setCaseData(data.case)
+      setInvestigationsRemaining(data.investigationsRemaining)
+      setAccusationsRemaining(data.accusationsRemaining)
+      setAccusationHistory(data.accusationHistory)
     } catch (err) {
       console.error('Failed to load daily case:', err)
     } finally {

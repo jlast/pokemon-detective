@@ -321,10 +321,22 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
       progress = await ensureProgressShinyMap(userId, progress, fullCase)
     }
 
-    return ok({ case: buildResponseCase(fullCase, progress) })
+    return ok({
+      case: buildResponseCase(fullCase, progress),
+      investigationsRemaining: progress.investigationsRemaining,
+      accusationsRemaining: progress.accusationsRemaining,
+      accusationHistory: progress.accusationHistory,
+      status: progress.status,
+    })
   }
 
-  return ok({ case: buildResponseCase(fullCase, null) })
+  return ok({
+    case: buildResponseCase(fullCase, null),
+    investigationsRemaining: fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS,
+    accusationsRemaining: MAX_ACCUSATIONS,
+    accusationHistory: [],
+    status: 'playing',
+  })
 }
 
 const handleInvestigate = async (
