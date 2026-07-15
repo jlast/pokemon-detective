@@ -1,4 +1,5 @@
 import { allCases, createCaseById } from '../../src/game/cases/index'
+import { pokemonData } from '../../src/data/pokemon'
 import { putCaseData } from './caseDataDb'
 
 const getTodayUtc = (): string => {
@@ -7,6 +8,24 @@ const getTodayUtc = (): string => {
 }
 
 const SESSION_TTL_DAYS = 7
+const WITNESS_OPTION_COUNT = 3
+
+const shuffle = <T,>(items: T[]): T[] => {
+  const copy = [...items]
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1))
+    const current = copy[index]
+    copy[index] = copy[swapIndex]
+    copy[swapIndex] = current
+  }
+  return copy
+}
+
+const createWitnessPokemonIds = (suspectPokemonIds: number[]): number[] => {
+  const suspectIds = new Set(suspectPokemonIds)
+  return shuffle(pokemonData.map((pokemon) => pokemon.id).filter((id) => !suspectIds.has(id)))
+    .slice(0, WITNESS_OPTION_COUNT)
+}
 
 interface CloudWatchEvent {
   version?: string
@@ -44,13 +63,15 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
     for (const suspect of gameCase.suspects) {
       suspectShinyMap[String(suspect.pokemonId)] = suspect.isShiny
     }
+    const suspectPokemonIds = gameCase.suspects.map((s) => s.pokemonId)
 
     await putCaseData({
       caseId,
       configId: gameCase.id,
       culpritPokemonId: gameCase.culpritPokemonId,
-      suspectPokemonIds: gameCase.suspects.map((s) => s.pokemonId),
+      suspectPokemonIds,
       suspectShinyMap,
+      witnessPokemonIds: createWitnessPokemonIds(suspectPokemonIds),
       actionEvidenceMap,
       solution: {
         culpritRevealText: gameCase.solution?.culpritRevealText ?? '',

@@ -8,7 +8,7 @@ import { InvestigationRouteFrame } from './InvestigationRouteFrame'
 interface InvestigationLocationRouteProps {
   attemptsLeft: number
   currentCase: Case
-  investigateLocation: (locationId: string, actionId: string) => Promise<void>
+  investigateLocation: (locationId: string, actionId: string, witnessPokemonId?: number) => Promise<void>
   openLocation: (locationId: string) => void
   selectedLocationId: string | null
   startNewCase: () => void
@@ -33,7 +33,7 @@ export function InvestigationLocationRoute({
     setSearchingLocationId(null)
   }, [selectedLocationId])
 
-  const chooseAction = (locationId: string, actionId: string) => {
+  const chooseAction = (locationId: string, actionId: string, witnessPokemonId?: number) => {
     if (searchingLocationId !== null) return
 
     setSearchingLocationId(locationId)
@@ -41,7 +41,7 @@ export function InvestigationLocationRoute({
     window.setTimeout(() => {
       void (async () => {
         try {
-          await investigateLocation(locationId, actionId)
+          await investigateLocation(locationId, actionId, witnessPokemonId)
         } finally {
           setSearchingLocationId((currentId) => (currentId === locationId ? null : currentId))
         }
@@ -67,6 +67,8 @@ export function InvestigationLocationRoute({
         resolvedCount={actionsUsed}
         totalLocations={currentCase.locations.length}
         isSearching={searchingLocationId === selectedLocationId}
+        witnessPokemonIds={currentCase.witnessPokemonIds}
+        interviewedWitnessPokemonIds={currentCase.locations.flatMap((location) => location.witnessPokemonId ? [location.witnessPokemonId] : [])}
         chooseAction={chooseAction}
       />
     </InvestigationRouteFrame>

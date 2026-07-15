@@ -1338,6 +1338,54 @@
   box-shadow: 0 6px 12px rgba(82, 66, 38, 0.08);
 }
 
+.investigation-action-option--witness {
+  cursor: default;
+}
+
+.investigation-action-option--witness:hover {
+  transform: none;
+}
+
+.witness-pokemon-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-top: 0.45rem;
+}
+
+.witness-pokemon-option {
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+  padding: 0.45rem 0.3rem;
+  border: 1px solid rgba(183, 157, 96, 0.65);
+  border-radius: 10px;
+  background: rgba(255, 247, 222, 0.85);
+  color: #4b3f2a;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.witness-pokemon-option:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #fff4ca;
+  border-color: #a98438;
+}
+
+.witness-pokemon-option:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.witness-pokemon-sprite {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
 .investigation-action-meta {
   display: flex;
   align-items: center;

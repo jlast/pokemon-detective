@@ -20,6 +20,7 @@ export interface InvestigationResponse {
     evidenceId?: string
     evidenceTitle?: string
     evidenceText?: string
+    witnessPokemonId?: number
   }
   investigationsRemaining: number
   accusationsRemaining: number
@@ -57,10 +58,15 @@ export const investigate = async (
   caseId: string,
   locationId: string,
   actionId: string,
+  witnessPokemonId?: number,
 ): Promise<InvestigationResponse> => {
   const res = await fetch(
     `${BASE}/api/cases/${enc(caseId)}/investigate/${enc(locationId)}/${enc(actionId)}`,
-    { method: 'POST', headers: { 'Content-Type': 'application/json', ...await authHeaders() } },
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...await authHeaders() },
+      body: JSON.stringify(witnessPokemonId ? { witnessPokemonId } : {}),
+    },
   )
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()

@@ -1,19 +1,17 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { allCases, createCaseById, rebuildFullCase } from '../../src/game/cases/index'
 import type { Case, CaseStatus, LocationAction } from '../../src/game/caseModel'
-import { getShinySpriteUrl } from '../../src/data/pokemon'
+import { getShinySpriteUrl, pokemonData } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, putCaseData } from './caseDataDb'
 import {
   getProgress,
   createProgress,
   updateProgress,
-  getPokedexRecord,
-  putPokedexRecord,
   type PlayerProgressRecord,
   type InvestigatedLocationRecord,
-  type PokedexRecord,
 } from './playerDb'
+import { getPokedexRecord, putPokedexRecord, type PokedexRecord } from './pokedexDb'
 
 const USER_POOL_ID = process.env.USER_POOL_ID ?? ''
 const REGION = process.env.REGION ?? 'us-east-1'
@@ -27,6 +25,7 @@ const SESSION_TTL_DAYS = 7
 const MAX_ACCUSATIONS = 3
 const DEFAULT_INVESTIGATIONS = 6
 const SHINY_ODDS = 0.01
+const WITNESS_OPTION_COUNT = 3
 
 interface ApiGatewayEvent {
   path: string
@@ -96,7 +95,6 @@ const getUserInfo = async (event: ApiGatewayEvent): Promise<UserInfo> => {
 }
 
 const getDateUserId = (sub: string, caseId: string): string => `${sub}:${caseId}`
-const getPokedexUserId = (sub: string): string => `pokedex:${sub}`
 
 const getTodayUtc = (): string => {
   const now = new Date()
@@ -105,7 +103,6 @@ const getTodayUtc = (): string => {
 
 const stripActionOutcome = (action: LocationAction): LocationAction => {
   const {
-    outcomeType: _outcomeType,
     observationText: _observationText,
     observationTextSmall: _observationTextSmall,
     observationTextMedium: _observationTextMedium,
@@ -127,8 +124,25 @@ const mergeUniqueIds = (current: number[], next: number[]): number[] => (
   [...new Set([...current, ...next])].sort((a, b) => a - b)
 )
 
+const shuffle = <T,>(items: T[]): T[] => {
+  const copy = [...items]
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1))
+    const current = copy[index]
+    copy[index] = copy[swapIndex]
+    copy[swapIndex] = current
+  }
+  return copy
+}
+
+const createWitnessPokemonIds = (suspectPokemonIds: number[]): number[] => {
+  const suspectIds = new Set(suspectPokemonIds)
+  return shuffle(pokemonData.map((pokemon) => pokemon.id).filter((id) => !suspectIds.has(id)))
+    .slice(0, WITNESS_OPTION_COUNT)
+}
+
 const getOrCreatePokedex = async (sub: string): Promise<PokedexRecord> => {
-  const userId = getPokedexUserId(sub)
+  const userId = sub
   return await getPokedexRecord(userId) ?? {
     userId,
     seenPokemonIds: [],
@@ -145,13 +159,14 @@ const updatePokedexForCompletedCase = async (
   status: 'solved' | 'failed',
 ): Promise<void> => {
   const suspectPokemonIds = fullCase.suspects.map((suspect) => suspect.pokemonId)
+  const witnessPokemonIds = progress.interviewedWitnessPokemonIds ?? []
   const shinyPokemonIds = fullCase.suspects
     .filter((suspect) => progress.suspectShinyMap?.[String(suspect.pokemonId)] === true)
     .map((suspect) => suspect.pokemonId)
   const pokedex = await getOrCreatePokedex(sub)
-  const seenPokemonIds = mergeUniqueIds(pokedex.seenPokemonIds ?? [], suspectPokemonIds)
+  const seenPokemonIds = mergeUniqueIds(pokedex.seenPokemonIds ?? [], [...suspectPokemonIds, ...witnessPokemonIds])
   const unlockedPokemonIds = status === 'solved'
-    ? mergeUniqueIds(pokedex.unlockedPokemonIds ?? [], suspectPokemonIds)
+    ? mergeUniqueIds(pokedex.unlockedPokemonIds ?? [], [...suspectPokemonIds, ...witnessPokemonIds])
     : pokedex.unlockedPokemonIds ?? []
   const seenShinyPokemonIds = mergeUniqueIds(pokedex.seenShinyPokemonIds ?? [], shinyPokemonIds)
   const unlockedShinyPokemonIds = status === 'solved'
@@ -164,6 +179,18 @@ const updatePokedexForCompletedCase = async (
     unlockedPokemonIds,
     seenShinyPokemonIds,
     unlockedShinyPokemonIds,
+  })
+}
+
+const markPokedexSeen = async (sub: string, pokemonIds: number[]): Promise<void> => {
+  if (pokemonIds.length === 0) return
+  const pokedex = await getOrCreatePokedex(sub)
+  await putPokedexRecord({
+    userId: pokedex.userId,
+    seenPokemonIds: mergeUniqueIds(pokedex.seenPokemonIds ?? [], pokemonIds),
+    unlockedPokemonIds: pokedex.unlockedPokemonIds ?? [],
+    seenShinyPokemonIds: pokedex.seenShinyPokemonIds ?? [],
+    unlockedShinyPokemonIds: pokedex.unlockedShinyPokemonIds ?? [],
   })
 }
 
@@ -189,6 +216,7 @@ const createCaseProgress = (
   accusationHistory: [],
   investigatedLocations: [],
   clearedSuspectIds: [],
+  interviewedWitnessPokemonIds: [],
   suspectShinyMap: createSuspectShinyMap(fullCase),
   ttl: getProgressTtl(),
 })
@@ -229,6 +257,11 @@ const ensureProgressDefaults = async (
   if (!Array.isArray(next.clearedSuspectIds)) {
     next.clearedSuspectIds = []
     updates.clearedSuspectIds = next.clearedSuspectIds
+  }
+
+  if (!Array.isArray(next.interviewedWitnessPokemonIds)) {
+    next.interviewedWitnessPokemonIds = []
+    updates.interviewedWitnessPokemonIds = next.interviewedWitnessPokemonIds
   }
 
   if (hasCompleteSuspectShinyMap(next, fullCase)) {
@@ -308,6 +341,7 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
           evidenceTitle: record.evidenceTitle ?? null,
           evidenceText: record.evidenceText ?? null,
           evidenceId: record.evidenceId ?? null,
+          witnessPokemonId: record.witnessPokemonId,
         }
       }
       return {
@@ -339,6 +373,10 @@ const getTodayCaseData = async () => {
 const loadCase = async (caseId: string) => {
   const record = await getCaseData(caseId)
   if (!record) return null
+  const witnessPokemonIds = record.witnessPokemonIds ?? createWitnessPokemonIds(record.suspectPokemonIds)
+  if (!record.witnessPokemonIds) {
+    await putCaseData({ ...record, witnessPokemonIds })
+  }
   const fullCase = rebuildFullCase(
     record.configId,
     record.culpritPokemonId,
@@ -346,7 +384,9 @@ const loadCase = async (caseId: string) => {
     record.suspectShinyMap,
     record.actionEvidenceMap,
     record.solution,
+    witnessPokemonIds,
   )
+  fullCase.witnessPokemonIds = witnessPokemonIds
   return fullCase
 }
 
@@ -369,13 +409,16 @@ const generateAndStoreCase = async (caseId: string) => {
   for (const suspect of gameCase.suspects) {
     suspectShinyMap[String(suspect.pokemonId)] = suspect.isShiny
   }
+  const suspectPokemonIds = gameCase.suspects.map((s) => s.pokemonId)
+  const witnessPokemonIds = createWitnessPokemonIds(suspectPokemonIds)
 
   await putCaseData({
     caseId,
     configId: gameCase.id,
     culpritPokemonId: gameCase.culpritPokemonId,
-    suspectPokemonIds: gameCase.suspects.map((s) => s.pokemonId),
+    suspectPokemonIds,
     suspectShinyMap,
+    witnessPokemonIds,
     actionEvidenceMap,
     solution: {
       culpritRevealText: gameCase.solution?.culpritRevealText ?? '',
@@ -386,6 +429,7 @@ const generateAndStoreCase = async (caseId: string) => {
     ttl: getProgressTtl(),
   })
 
+  gameCase.witnessPokemonIds = witnessPokemonIds
   return gameCase
 }
 
@@ -456,6 +500,11 @@ const handleInvestigate = async (
   const userInfo = await getUserInfo(event)
   if (!userInfo.sub) return err(401, 'Authentication required')
 
+  let body: { witnessPokemonId?: number } = {}
+  try {
+    body = JSON.parse(event.body ?? '{}')
+  } catch {}
+
   const fullCase = await loadCase(caseId)
   if (!fullCase) return err(404, 'Case not found')
 
@@ -481,6 +530,19 @@ const handleInvestigate = async (
   const action = location.actions.find((a) => a.id === actionId)
   if (!action) return err(404, 'Action not found')
 
+  const witnessPokemonId = typeof body.witnessPokemonId === 'number' ? body.witnessPokemonId : undefined
+  if (action.outcomeType === 'witness') {
+    if (!witnessPokemonId) return err(400, 'Witness Pokemon required')
+    if (!(fullCase.witnessPokemonIds ?? []).includes(witnessPokemonId)) {
+      return err(400, 'Invalid witness Pokemon')
+    }
+    if ((progress.interviewedWitnessPokemonIds ?? []).includes(witnessPokemonId)) {
+      return err(400, 'Witness Pokemon already interviewed')
+    }
+  } else if (witnessPokemonId) {
+    return err(400, 'Witness Pokemon only applies to witness leads')
+  }
+
   const record: InvestigatedLocationRecord = {
     locationId,
     actionId,
@@ -489,20 +551,30 @@ const handleInvestigate = async (
     evidenceId: action.evidenceId ?? undefined,
     evidenceTitle: action.evidenceTitle ?? undefined,
     evidenceText: action.evidenceText ?? undefined,
+    witnessPokemonId,
   }
 
   const investigatedLocations = [...progress.investigatedLocations, record]
+  const interviewedWitnessPokemonIds = witnessPokemonId
+    ? mergeUniqueIds(progress.interviewedWitnessPokemonIds ?? [], [witnessPokemonId])
+    : progress.interviewedWitnessPokemonIds ?? []
   const investigationsRemaining = progress.investigationsRemaining - 1
 
   await updateProgress(userId, {
     investigatedLocations,
+    interviewedWitnessPokemonIds,
     investigationsRemaining,
     ttl: getProgressTtl(),
   })
 
+  if (witnessPokemonId) {
+    await markPokedexSeen(userInfo.sub, [witnessPokemonId])
+  }
+
   progress = {
     ...progress,
     investigatedLocations,
+    interviewedWitnessPokemonIds,
     investigationsRemaining,
   }
 

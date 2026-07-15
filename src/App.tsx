@@ -331,13 +331,13 @@ function App() {
     navigate(investigationLocationPath(locationId))
   }
 
-  const investigateLocation = async (locationId: string, actionId: string) => {
+  const investigateLocation = async (locationId: string, actionId: string, witnessPokemonId?: number) => {
     if (!caseData) return
 
     if (authed) {
       try {
         const caseId = getTodayCaseId()
-        const data = await apiInvestigate(caseId, locationId, actionId)
+        const data = await apiInvestigate(caseId, locationId, actionId, witnessPokemonId)
         setCaseData((prev) => prev
           ? {
               ...prev,
@@ -350,6 +350,7 @@ function App() {
                     evidenceId: data.result.evidenceId,
                     evidenceTitle: data.result.evidenceTitle,
                     evidenceText: data.result.evidenceText,
+                    witnessPokemonId: data.result.witnessPokemonId,
                   }
                 : location,
               ),
@@ -385,6 +386,7 @@ function App() {
                 evidenceId: rawAction?.evidenceId ?? undefined,
                 evidenceTitle: rawAction?.evidenceTitle ?? undefined,
                 evidenceText: rawAction?.evidenceText ?? undefined,
+                witnessPokemonId,
               }
             : l,
         ),

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { Location } from '../../game/caseModel'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
+import { pokemonData } from '../../data/pokemon'
 import { TODAY_INVESTIGATION_PATH, TODAY_SUSPECTS_PATH } from '../../paths'
 import { InvestigationActionChooser } from './InvestigationActionChooser'
 
@@ -10,7 +11,9 @@ interface InvestigationLocationPageProps {
   resolvedCount: number
   totalLocations: number
   isSearching: boolean
-  chooseAction: (locationId: string, actionId: string) => void
+  witnessPokemonIds?: number[]
+  interviewedWitnessPokemonIds?: number[]
+  chooseAction: (locationId: string, actionId: string, witnessPokemonId?: number) => void
 }
 
 export function InvestigationLocationPage({
@@ -19,6 +22,8 @@ export function InvestigationLocationPage({
   resolvedCount,
   totalLocations,
   isSearching,
+  witnessPokemonIds = [],
+  interviewedWitnessPokemonIds = [],
   chooseAction,
 }: InvestigationLocationPageProps) {
   if (!location) {
@@ -44,6 +49,9 @@ export function InvestigationLocationPage({
     ? (location.evidenceText ?? selectedAction?.evidenceText)
     : (location.observationText ?? selectedAction?.observationText)
   const evidenceIcon = hasEvidence ? getEvidenceIcon(location.evidenceId, evidenceTitle, '📎') : '🔎'
+  const witnessPokemon = location.witnessPokemonId
+    ? pokemonData.find((pokemon) => pokemon.id === location.witnessPokemonId)
+    : null
 
   return (
     <section className="notebook-card active-investigation-panel investigation-location-page">
@@ -67,7 +75,9 @@ export function InvestigationLocationPage({
           <>
             <InvestigationActionChooser
               actions={location.actions}
-              chooseAction={(actionId) => chooseAction(location.id, actionId)}
+              witnessPokemonIds={witnessPokemonIds}
+              interviewedWitnessPokemonIds={interviewedWitnessPokemonIds}
+              chooseAction={(actionId, witnessPokemonId) => chooseAction(location.id, actionId, witnessPokemonId)}
               disabled={isSearching}
             />
             {isSearching ? <div className="active-investigation-resolving">Following lead...</div> : null}
@@ -96,6 +106,9 @@ export function InvestigationLocationPage({
                 <span className="result-status-pill">{hasEvidence ? 'New Evidence' : 'Lead Closed'}</span>
                 <h3>{evidenceTitle}</h3>
                 <p>{evidenceText}</p>
+                {witnessPokemon ? (
+                  <p className="result-save-confirmation">Witness interviewed: {witnessPokemon.name}</p>
+                ) : null}
                 <p className="result-save-confirmation">✓ {hasEvidence ? 'Added to Evidence Board' : 'Lead recorded'}</p>
               </div>
             </section>

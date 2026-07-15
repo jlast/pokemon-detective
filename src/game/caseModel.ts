@@ -58,6 +58,7 @@ export interface Location {
   evidenceTitle?: string
   evidenceText?: string
   evidenceId?: string
+  witnessPokemonId?: number
   investigated: boolean
   selectedActionId: string | null
   actions: LocationAction[]
@@ -99,6 +100,7 @@ export interface Case {
   difficulty: CaseDifficulty
   culpritPokemonId: number
   maxInvestigations: number
+  witnessPokemonIds?: number[]
   suspects: Suspect[]
   locations: Location[]
   evidence: Evidence[]

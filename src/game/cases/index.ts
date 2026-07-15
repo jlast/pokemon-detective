@@ -63,6 +63,7 @@ export const rebuildFullCase = (
   suspectShinyMap: Record<number, boolean>,
   actionEvidenceMap: Record<string, string>,
   solution: CaseSolution,
+  witnessPokemonIds?: number[],
 ): Case => {
   const config = allCases.find((c) => c.id === configId)
   if (!config) throw new Error(`Case config not found: ${configId}`)
@@ -86,6 +87,7 @@ export const rebuildFullCase = (
   return {
     ...baseCase,
     culpritPokemonId,
+    witnessPokemonIds,
     suspects,
     locations: generatedLocations,
     evidence: generatedEvidence,

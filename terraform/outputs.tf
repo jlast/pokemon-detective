@@ -38,6 +38,11 @@ output "player_progress_table_name" {
   value       = aws_dynamodb_table.player_progress.name
 }
 
+output "pokedex_table_name" {
+  description = "Name of the Pokedex DynamoDB table"
+  value       = aws_dynamodb_table.pokedex.name
+}
+
 output "cognito_user_pool_id" {
   description = "Cognito User Pool ID"
   value       = aws_cognito_user_pool.main.id
@@ -52,5 +57,4 @@ output "cognito_domain" {
   description = "Cognito Hosted UI domain"
   value       = "${aws_cognito_user_pool_domain.main.domain}.auth.${var.region}.amazoncognito.com"
 }
-
 
