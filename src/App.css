@@ -292,6 +292,141 @@
   margin: 0;
 }
 
+.pokedex-page {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1rem;
+}
+
+.pokedex-empty-state {
+  justify-items: start;
+  max-width: 680px;
+}
+
+.pokedex-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.pokedex-header h2 {
+  margin: 0;
+}
+
+.pokedex-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pokedex-stats span {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  background: #eef4d9;
+  color: var(--text-main);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.pokedex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.8rem;
+}
+
+.pokedex-card {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  background: #fffaf0;
+  overflow: hidden;
+}
+
+.pokedex-card.is-hidden {
+  background: #f2eadf;
+}
+
+.pokedex-card.is-seen {
+  background: #f8f1e5;
+}
+
+.pokedex-card.is-shiny {
+  border-color: #d8b552;
+  box-shadow: 0 10px 24px rgba(216, 181, 82, 0.16);
+}
+
+.pokedex-card__sprite-frame {
+  display: grid;
+  place-items: center;
+  min-height: 88px;
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.pokedex-card__sprite {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.pokedex-card.is-seen .pokedex-card__sprite {
+  filter: grayscale(0.75);
+  opacity: 0.42;
+}
+
+.pokedex-card__unknown {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: #d8ccba;
+  color: #7b6d5a;
+  font-size: 1.8rem;
+  font-weight: 900;
+}
+
+.pokedex-card__body {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.pokedex-card__number {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.pokedex-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.pokedex-card p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  text-transform: capitalize;
+}
+
+.pokedex-card__badge {
+  justify-self: start;
+  border-radius: 999px;
+  padding: 0.2rem 0.45rem;
+  background: #fff1b8;
+  color: #71571b;
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .main-layout {
   display: grid;
   gap: 1rem;

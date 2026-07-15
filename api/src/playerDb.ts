@@ -27,6 +27,14 @@ export interface PlayerProgressRecord {
   ttl: number
 }
 
+export interface PokedexRecord {
+  userId: string
+  seenPokemonIds: number[]
+  unlockedPokemonIds: number[]
+  seenShinyPokemonIds?: number[]
+  unlockedShinyPokemonIds?: number[]
+}
+
 const TABLE = process.env.PLAYER_PROGRESS_TABLE ?? 'PlayerProgress'
 
 export const getProgress = async (userId: string): Promise<PlayerProgressRecord | null> => {
@@ -56,4 +64,13 @@ export const updateProgress = async (
     ExpressionAttributeNames: attrNames,
     ExpressionAttributeValues: attrValues,
   }))
+}
+
+export const getPokedexRecord = async (userId: string): Promise<PokedexRecord | null> => {
+  const result = await doc.send(new GetCommand({ TableName: TABLE, Key: { userId } }))
+  return (result.Item as PokedexRecord) ?? null
+}
+
+export const putPokedexRecord = async (record: PokedexRecord): Promise<void> => {
+  await doc.send(new PutCommand({ TableName: TABLE, Item: record }))
 }

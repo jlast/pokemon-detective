@@ -9,6 +9,7 @@ import { CaseOverviewRoute } from './routes/CaseOverviewRoute'
 import { CaseRoute } from './routes/CaseRoute'
 import { EndingRoute } from './routes/EndingRoute'
 import { InvestigationLocationRoute } from './routes/InvestigationLocationRoute'
+import { PokedexRoute } from './routes/PokedexRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
 import { getCurrentCase, investigate as apiInvestigate, accuse as apiAccuse, clearSuspect as apiClearSuspect } from './api'
@@ -81,7 +82,7 @@ function App() {
   }, [])
 
   const wrongAccusationIds = useMemo(() => {
-    return accusationHistory
+    return accusationHistory ?? []
   }, [accusationHistory])
 
   const [suspectNotes, setSuspectNotes] = useState<Map<number, {
@@ -141,7 +142,9 @@ function App() {
   const accusationTarget = currentCase?.suspects.find((s) => s.pokemonId === accusationTargetId) ?? null
 
   const currentRoute = location.pathname
-  const activeSidebarSection = currentRoute === '/' || currentRoute.startsWith(TODAY_PATH) || currentRoute.startsWith('/suspects') || currentRoute.startsWith('/investigation') ? 'case' : ''
+  const activeSidebarSection = currentRoute === '/' || currentRoute.startsWith(TODAY_PATH) || currentRoute.startsWith('/suspects') || currentRoute.startsWith('/investigation')
+    ? 'case'
+    : currentRoute.startsWith('/pokedex') ? 'pokedex' : ''
 
   const clearScreenState = () => {
     setSelectedLocationId(null)
@@ -160,7 +163,7 @@ function App() {
       setCaseData(data.case)
       setInvestigationsRemaining(data.investigationsRemaining)
       setAccusationsRemaining(data.accusationsRemaining)
-      setAccusationHistory(data.accusationHistory)
+      setAccusationHistory(data.accusationHistory ?? [])
     } catch (err) {
       console.error('Failed to load daily case:', err)
     } finally {
@@ -264,7 +267,7 @@ function App() {
         const caseId = getTodayCaseId()
         const data = await apiAccuse(caseId, accusationTarget.pokemonId)
         setCaseData(data.case)
-        setAccusationHistory(data.accusationHistory)
+        setAccusationHistory(data.accusationHistory ?? [])
         setAccusationsRemaining(data.accusationsRemaining)
         setAccusationTargetId(null)
 
@@ -354,7 +357,7 @@ function App() {
         )
         setInvestigationsRemaining(data.investigationsRemaining)
         setAccusationsRemaining(data.accusationsRemaining)
-        setAccusationHistory(data.accusationHistory)
+        setAccusationHistory(data.accusationHistory ?? [])
         setLastInvestigatedLocationId(locationId)
       } catch (err) {
         console.error('Investigation failed:', err)
@@ -439,6 +442,7 @@ function App() {
           authed={authed}
           userProfile={userProfile}
           onSelectCase={() => {}}
+          onSelectPokedex={() => {}}
           onSelectHowToPlay={() => {}}
           onLogin={handleLogin}
           onLogout={handleLogout}
@@ -509,6 +513,7 @@ function App() {
           authed={authed}
           userProfile={userProfile}
           onSelectCase={() => navigate(TODAY_PATH)}
+          onSelectPokedex={() => navigate('/pokedex')}
           onSelectHowToPlay={() => navigate('/how-to-play')}
         onLogin={handleLogin}
         onLogout={handleLogout}
@@ -611,6 +616,7 @@ function App() {
             }
           />
           <Route path="/login" element={<LoginRoute onLogin={() => login()} />} />
+          <Route path="/pokedex" element={<PokedexRoute authed={authed} onLogin={handleLogin} />} />
           <Route path="/how-to-play" element={<div className="main-layout-single"><p className="placeholder-page">How to play — coming soon</p></div>} />
           <Route path="*" element={<Navigate to={TODAY_PATH} replace />} />
         </Routes>}

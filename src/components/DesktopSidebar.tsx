@@ -7,6 +7,7 @@ interface DesktopSidebarProps {
   userProfile: UserProfile | null
   caseStreak?: number
   onSelectCase: () => void
+  onSelectPokedex: () => void
   onSelectHowToPlay: () => void
   onLogin: () => void
   onLogout: () => void
@@ -18,6 +19,7 @@ export function DesktopSidebar({
   userProfile,
   caseStreak,
   onSelectCase,
+  onSelectPokedex,
   onSelectHowToPlay,
   onLogin,
   onLogout,
@@ -51,6 +53,14 @@ export function DesktopSidebar({
           onClick={onSelectCase}
         >
           Today's case
+        </button>
+
+        <button
+          type="button"
+          className={`sidebar-nav-button ${activeSection === 'pokedex' ? 'is-active' : ''}`}
+          onClick={onSelectPokedex}
+        >
+          Pokedex
         </button>
 
         <button

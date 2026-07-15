@@ -27,6 +27,13 @@ export interface InvestigationResponse {
   status: 'playing' | 'solved' | 'failed'
 }
 
+export interface PokedexResponse {
+  seenPokemonIds: number[]
+  unlockedPokemonIds: number[]
+  seenShinyPokemonIds: number[]
+  unlockedShinyPokemonIds: number[]
+}
+
 const authHeaders = async (): Promise<Record<string, string>> => {
   const token = await ensureValidSession() ? getToken() : null
   return token ? { Authorization: `Bearer ${token}` } : {}
@@ -36,6 +43,12 @@ const enc = encodeURIComponent
 
 export const getCurrentCase = async (): Promise<SessionResponse> => {
   const res = await fetch(`${BASE}/api/cases/current`, { headers: await authHeaders() })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
+export const getPokedex = async (): Promise<PokedexResponse> => {
+  const res = await fetch(`${BASE}/api/pokedex`, { headers: await authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }

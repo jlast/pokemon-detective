@@ -4,7 +4,16 @@ import type { Case, CaseStatus, LocationAction } from '../../src/game/caseModel'
 import { getShinySpriteUrl } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, putCaseData } from './caseDataDb'
-import { getProgress, createProgress, updateProgress, type PlayerProgressRecord, type InvestigatedLocationRecord } from './playerDb'
+import {
+  getProgress,
+  createProgress,
+  updateProgress,
+  getPokedexRecord,
+  putPokedexRecord,
+  type PlayerProgressRecord,
+  type InvestigatedLocationRecord,
+  type PokedexRecord,
+} from './playerDb'
 
 const USER_POOL_ID = process.env.USER_POOL_ID ?? ''
 const REGION = process.env.REGION ?? 'us-east-1'
@@ -87,6 +96,7 @@ const getUserInfo = async (event: ApiGatewayEvent): Promise<UserInfo> => {
 }
 
 const getDateUserId = (sub: string, caseId: string): string => `${sub}:${caseId}`
+const getPokedexUserId = (sub: string): string => `pokedex:${sub}`
 
 const getTodayUtc = (): string => {
   const now = new Date()
@@ -112,6 +122,50 @@ const stripActionOutcome = (action: LocationAction): LocationAction => {
 }
 
 const getProgressTtl = (): number => Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400
+
+const mergeUniqueIds = (current: number[], next: number[]): number[] => (
+  [...new Set([...current, ...next])].sort((a, b) => a - b)
+)
+
+const getOrCreatePokedex = async (sub: string): Promise<PokedexRecord> => {
+  const userId = getPokedexUserId(sub)
+  return await getPokedexRecord(userId) ?? {
+    userId,
+    seenPokemonIds: [],
+    unlockedPokemonIds: [],
+    seenShinyPokemonIds: [],
+    unlockedShinyPokemonIds: [],
+  }
+}
+
+const updatePokedexForCompletedCase = async (
+  sub: string,
+  fullCase: Case,
+  progress: PlayerProgressRecord,
+  status: 'solved' | 'failed',
+): Promise<void> => {
+  const suspectPokemonIds = fullCase.suspects.map((suspect) => suspect.pokemonId)
+  const shinyPokemonIds = fullCase.suspects
+    .filter((suspect) => progress.suspectShinyMap?.[String(suspect.pokemonId)] === true)
+    .map((suspect) => suspect.pokemonId)
+  const pokedex = await getOrCreatePokedex(sub)
+  const seenPokemonIds = mergeUniqueIds(pokedex.seenPokemonIds ?? [], suspectPokemonIds)
+  const unlockedPokemonIds = status === 'solved'
+    ? mergeUniqueIds(pokedex.unlockedPokemonIds ?? [], suspectPokemonIds)
+    : pokedex.unlockedPokemonIds ?? []
+  const seenShinyPokemonIds = mergeUniqueIds(pokedex.seenShinyPokemonIds ?? [], shinyPokemonIds)
+  const unlockedShinyPokemonIds = status === 'solved'
+    ? mergeUniqueIds(pokedex.unlockedShinyPokemonIds ?? [], shinyPokemonIds)
+    : pokedex.unlockedShinyPokemonIds ?? []
+
+  await putPokedexRecord({
+    userId: pokedex.userId,
+    seenPokemonIds,
+    unlockedPokemonIds,
+    seenShinyPokemonIds,
+    unlockedShinyPokemonIds,
+  })
+}
 
 const createSuspectShinyMap = (fullCase: Case): Record<string, boolean> => Object.fromEntries(
   fullCase.suspects.map((suspect) => [String(suspect.pokemonId), Math.random() < SHINY_ODDS]),
@@ -139,15 +193,53 @@ const createCaseProgress = (
   ttl: getProgressTtl(),
 })
 
-const ensureProgressShinyMap = async (
+const ensureProgressDefaults = async (
   userId: string,
   progress: PlayerProgressRecord,
   fullCase: Case,
 ): Promise<PlayerProgressRecord> => {
-  if (hasCompleteSuspectShinyMap(progress, fullCase)) return progress
+  const updates: Partial<PlayerProgressRecord> = {}
+  const next: PlayerProgressRecord = { ...progress }
+
+  if (!next.status) {
+    next.status = 'playing'
+    updates.status = next.status
+  }
+
+  if (typeof next.investigationsRemaining !== 'number') {
+    next.investigationsRemaining = fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS
+    updates.investigationsRemaining = next.investigationsRemaining
+  }
+
+  if (typeof next.accusationsRemaining !== 'number') {
+    next.accusationsRemaining = MAX_ACCUSATIONS
+    updates.accusationsRemaining = next.accusationsRemaining
+  }
+
+  if (!Array.isArray(next.accusationHistory)) {
+    next.accusationHistory = []
+    updates.accusationHistory = next.accusationHistory
+  }
+
+  if (!Array.isArray(next.investigatedLocations)) {
+    next.investigatedLocations = []
+    updates.investigatedLocations = next.investigatedLocations
+  }
+
+  if (!Array.isArray(next.clearedSuspectIds)) {
+    next.clearedSuspectIds = []
+    updates.clearedSuspectIds = next.clearedSuspectIds
+  }
+
+  if (hasCompleteSuspectShinyMap(next, fullCase)) {
+    if (Object.keys(updates).length > 0) {
+      await updateProgress(userId, { ...updates, ttl: getProgressTtl() })
+    }
+    return next
+  }
 
   const suspectShinyMap = {
-    ...(progress.suspectShinyMap ?? {}),
+    ...(next.suspectShinyMap ?? {}),
   }
 
   for (const suspect of fullCase.suspects) {
@@ -155,9 +247,12 @@ const ensureProgressShinyMap = async (
     suspectShinyMap[key] ??= Math.random() < SHINY_ODDS
   }
 
-  await updateProgress(userId, { suspectShinyMap, ttl: getProgressTtl() })
+  next.suspectShinyMap = suspectShinyMap
+  updates.suspectShinyMap = suspectShinyMap
 
-  return { ...progress, suspectShinyMap }
+  await updateProgress(userId, { ...updates, ttl: getProgressTtl() })
+
+  return next
 }
 
 const applyPlayerShinyMap = (fullCase: Case, progress: PlayerProgressRecord): Case['suspects'] => (
@@ -318,7 +413,7 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
       progress = createCaseProgress(userId, caseId, fullCase)
       await createProgress(progress)
     } else {
-      progress = await ensureProgressShinyMap(userId, progress, fullCase)
+      progress = await ensureProgressDefaults(userId, progress, fullCase)
     }
 
     return ok({
@@ -336,6 +431,19 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
     accusationsRemaining: MAX_ACCUSATIONS,
     accusationHistory: [],
     status: 'playing',
+  })
+}
+
+const handleGetPokedex = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
+  const userInfo = await getUserInfo(event)
+  if (!userInfo.sub) return err(401, 'Authentication required')
+
+  const pokedex = await getOrCreatePokedex(userInfo.sub)
+  return ok({
+    seenPokemonIds: pokedex.seenPokemonIds ?? [],
+    unlockedPokemonIds: pokedex.unlockedPokemonIds ?? [],
+    seenShinyPokemonIds: pokedex.seenShinyPokemonIds ?? [],
+    unlockedShinyPokemonIds: pokedex.unlockedShinyPokemonIds ?? [],
   })
 }
 
@@ -358,7 +466,7 @@ const handleInvestigate = async (
     progress = createCaseProgress(userId, caseId, fullCase)
     await createProgress(progress)
   } else {
-    progress = await ensureProgressShinyMap(userId, progress, fullCase)
+    progress = await ensureProgressDefaults(userId, progress, fullCase)
   }
 
   if (progress.status !== 'playing') return err(400, 'Game is already over')
@@ -427,7 +535,7 @@ const handleAccuse = async (
     progress = createCaseProgress(userId, caseId, fullCase, 0)
     await createProgress(progress)
   } else {
-    progress = await ensureProgressShinyMap(userId, progress, fullCase)
+    progress = await ensureProgressDefaults(userId, progress, fullCase)
   }
 
   if (progress.status !== 'playing') return err(400, 'Game is already over')
@@ -458,6 +566,10 @@ const handleAccuse = async (
     status,
     ttl: getProgressTtl(),
   })
+
+  if (status === 'solved' || status === 'failed') {
+    await updatePokedexForCompletedCase(userInfo.sub, fullCase, progress, status)
+  }
 
   progress = {
     ...progress,
@@ -502,7 +614,7 @@ const handleClearSuspect = async (
     progress = createCaseProgress(userId, caseId, fullCase)
     await createProgress(progress)
   } else {
-    progress = await ensureProgressShinyMap(userId, progress, fullCase)
+    progress = await ensureProgressDefaults(userId, progress, fullCase)
   }
 
   const clearedSuspectIds = progress.clearedSuspectIds ?? []
@@ -537,6 +649,10 @@ export const handler = async (
   try {
     if (method === 'GET' && path === '/api/cases/current') {
       return await handleGetCurrentCase(event)
+    }
+
+    if (method === 'GET' && path === '/api/pokedex') {
+      return await handleGetPokedex(event)
     }
 
     const apiCasesMatch = path.match(/^\/api\/cases\/([^/]+)$/)
