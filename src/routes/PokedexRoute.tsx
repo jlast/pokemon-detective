@@ -68,6 +68,12 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
   const seenCount = seenIds.size
   const unlockedCount = unlockedIds.size
   const shinyCount = seenShinyIds.size
+  const registeredPokemon = pokemonData.filter((pokemon) => (
+    seenIds.has(pokemon.id) ||
+    unlockedIds.has(pokemon.id) ||
+    seenShinyIds.has(pokemon.id) ||
+    unlockedShinyIds.has(pokemon.id)
+  ))
 
   return (
     <div className="main-layout-single">
@@ -91,11 +97,13 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
           <p className="placeholder-page">Loading Pokedex records...</p>
         ) : error ? (
           <p className="placeholder-page">Could not load your Pokedex right now.</p>
+        ) : registeredPokemon.length === 0 ? (
+          <p className="placeholder-page">No Pokemon registered yet. Complete a case to add Pokemon to your Pokedex.</p>
         ) : (
           <div className="pokedex-grid">
-            {pokemonData.map((pokemon) => {
+            {registeredPokemon.map((pokemon) => {
               const unlocked = unlockedIds.has(pokemon.id)
-              const seen = unlocked || seenIds.has(pokemon.id)
+              const seen = unlocked || seenIds.has(pokemon.id) || seenShinyIds.has(pokemon.id)
               const shinyUnlocked = unlockedShinyIds.has(pokemon.id)
               const shinySeen = shinyUnlocked || seenShinyIds.has(pokemon.id)
               const sprite = shinySeen ? getShinySpriteUrl(pokemon.id) : pokemon.sprite
@@ -105,19 +113,15 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
                   className={`pokedex-card notebook-card${unlocked ? ' is-unlocked' : seen ? ' is-seen' : ' is-hidden'}${shinySeen ? ' is-shiny' : ''}`}
                 >
                   <div className="pokedex-card__sprite-frame">
-                    {seen ? (
-                      <img
-                        className="pokedex-card__sprite"
-                        src={sprite}
-                        alt={`${shinySeen ? 'Shiny ' : ''}${unlocked ? pokemon.name : `${pokemon.name}, seen but locked`}`}
-                      />
-                    ) : (
-                      <span className="pokedex-card__unknown" aria-hidden="true">?</span>
-                    )}
+                    <img
+                      className="pokedex-card__sprite"
+                      src={sprite}
+                      alt={`${shinySeen ? 'Shiny ' : ''}${unlocked ? pokemon.name : `${pokemon.name}, seen but locked`}`}
+                    />
                   </div>
                   <div className="pokedex-card__body">
                     <span className="pokedex-card__number">#{String(pokemon.id).padStart(3, '0')}</span>
-                    <h3>{seen ? pokemon.name : 'Unknown'}</h3>
+                    <h3>{pokemon.name}</h3>
                     {unlocked ? (
                       <>
                         {shinyUnlocked ? <span className="pokedex-card__badge">Shiny registered</span> : null}
@@ -126,8 +130,6 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
                       </>
                     ) : seen ? (
                       <p>{shinySeen ? 'Shiny seen' : 'Record locked'}</p>
-                    ) : (
-                      <p>Not encountered</p>
                     )}
                   </div>
                 </article>
