@@ -128,7 +128,7 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
                         <p>{pokemon.types.join(' / ')}</p>
                         <p>{pokemon.region}</p>
                       </>
-                    ) : seen ? (
+                    ) : (
                       <p>{shinySeen ? 'Shiny seen' : 'Record locked'}</p>
                     )}
                   </div>
