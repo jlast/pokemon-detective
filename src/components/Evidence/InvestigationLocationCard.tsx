@@ -1,25 +1,6 @@
 import { useMemo } from 'react'
 import type { Location } from '../../game/caseModel'
-
-const evidenceIcons: Record<string, string> = {
-  'cookie-crumbs': '🍪',
-  'low-crumbs': '🍪',
-  'ash-scatter': '🔥',
-  'pollen-scent': '🌸',
-  'quiet-digging': '🕳️',
-  'psychic-echo': '🔮',
-  'slime-trail': '🫧',
-  'small-tracks': '👣',
-  'sand-trail': '🏖️',
-  'frost-trail': '❄️',
-  'feather-drift': '🪶',
-  'dry-trail': '🏜️',
-  'loose-soil': '🪨',
-  'scratch-marks': '🔪',
-  'metal-shaving': '⚙️',
-  'static-mark': '⚡',
-  'avoided-water': '💧',
-}
+import { getEvidenceIcon } from '../../game/evidenceMeta'
 
 interface InvestigationLocationCardProps {
   location: Location
@@ -62,7 +43,7 @@ export function InvestigationLocationCard({
   const actionable = !isSearching && !(!isComplete && pointsLeft <= 0)
 
   const evidenceIcon = selectedAction?.evidenceId
-    ? evidenceIcons[selectedAction.evidenceId] ?? '🔍'
+    ? getEvidenceIcon(selectedAction.evidenceId, selectedAction.evidenceTitle, '🔍')
     : '🔍'
 
   return (

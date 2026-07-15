@@ -130,3 +130,12 @@ export function getDiscoveredEvidence(caseData: Case): Evidence[] {
   }
   return discovered
 }
+
+export function getUniqueSolutionEvidence(caseData: Case): CaseEvidenceExplanation[] {
+  const seenEvidenceTitles = new Set<string>()
+  return (caseData.solution?.evidenceExplanation ?? []).filter((item) => {
+    if (seenEvidenceTitles.has(item.evidenceTitle)) return false
+    seenEvidenceTitles.add(item.evidenceTitle)
+    return true
+  })
+}

@@ -595,7 +595,7 @@ const buildEvidenceFromTrait = (evidenceId: string, culprit: Pokemon) => {
   switch (evidenceId) {
     case 'cookie-crumbs':
       return {
-        title: 'Cookie Crumbs',
+        title: `${profile.size === 'small' ? 'Small' : profile.size === 'large' ? 'Large' : 'Medium'} Cookie Crumbs`,
         clueText: `Fresh crumbs were scattered ${profile.movementWord}.`,
         endExplanation: `The culprit moved ${profile.movementWord} while eating near the scene.`,
         deductionText:

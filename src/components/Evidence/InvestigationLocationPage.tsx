@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Location } from '../../game/caseModel'
+import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { TODAY_INVESTIGATION_PATH, TODAY_SUSPECTS_PATH } from '../../paths'
 import { InvestigationActionChooser } from './InvestigationActionChooser'
 
@@ -10,26 +11,6 @@ interface InvestigationLocationPageProps {
   totalLocations: number
   isSearching: boolean
   chooseAction: (locationId: string, actionId: string) => void
-}
-
-const evidenceIcons: Record<string, string> = {
-  'cookie-crumbs': '🍪',
-  'low-crumbs': '🍪',
-  'ash-scatter': '🔥',
-  'pollen-scent': '🌸',
-  'quiet-digging': '🕳️',
-  'psychic-echo': '🔮',
-  'slime-trail': '🫧',
-  'small-tracks': '👣',
-  'sand-trail': '🏖️',
-  'frost-trail': '❄️',
-  'feather-drift': '🪶',
-  'dry-trail': '🏜️',
-  'loose-soil': '🪨',
-  'scratch-marks': '🔪',
-  'metal-shaving': '⚙️',
-  'static-mark': '⚡',
-  'avoided-water': '💧',
 }
 
 export function InvestigationLocationPage({
@@ -62,7 +43,7 @@ export function InvestigationLocationPage({
   const evidenceText = hasEvidence
     ? (location.evidenceText ?? selectedAction?.evidenceText)
     : (location.observationText ?? selectedAction?.observationText)
-  const evidenceIcon = hasEvidence && location.evidenceId ? (evidenceIcons[location.evidenceId] ?? '📎') : '🔎'
+  const evidenceIcon = hasEvidence ? getEvidenceIcon(location.evidenceId, evidenceTitle, '📎') : '🔎'
 
   return (
     <section className="notebook-card active-investigation-panel investigation-location-page">

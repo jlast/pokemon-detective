@@ -1,4 +1,5 @@
 import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
+import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { InvestigationLocationCard } from './InvestigationLocationCard'
 
 const getRemainingInvestigationCopy = (remainingActions: number) => {
@@ -40,26 +41,6 @@ const getCurrentTheoryCopy = (evidenceCount: number, remainingActions: number) =
     return 'You may be ready to inspect suspect files.'
   }
   return 'The case is ready for a final accusation.'
-}
-
-const evidenceIcons: Record<string, string> = {
-  'cookie-crumbs': '🍪',
-  'low-crumbs': '🍪',
-  'ash-scatter': '🔥',
-  'pollen-scent': '🌸',
-  'quiet-digging': '🕳️',
-  'psychic-echo': '🔮',
-  'slime-trail': '🫧',
-  'small-tracks': '👣',
-  'sand-trail': '🏖️',
-  'frost-trail': '❄️',
-  'feather-drift': '🪶',
-  'dry-trail': '🏜️',
-  'loose-soil': '🪨',
-  'scratch-marks': '🔪',
-  'metal-shaving': '⚙️',
-  'static-mark': '⚡',
-  'avoided-water': '💧',
 }
 
 export function LocationsPanel({
@@ -121,7 +102,7 @@ export function LocationsPanel({
             <ul className="evidence-card-list">
               {discoveredEvidence.slice(0, 5).map((item) => (
                 <li key={item.id} className="evidence-card-item">
-                  <span aria-hidden="true">{evidenceIcons[item.id] ?? '📎'}</span>
+                  <span aria-hidden="true">{getEvidenceIcon(item.id, item.title, '📎')}</span>
                   <span>{item.title}</span>
                 </li>
               ))}
