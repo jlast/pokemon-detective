@@ -3,7 +3,6 @@ import { getClearedSuspectEvidenceLabel, getEvidenceIcon } from '../game/evidenc
 import { MugShot } from './Suspects/MugShot'
 
 const maxAccusations = 3
-const visibleEvidenceLimit = 4
 
 interface EndingScreenProps {
   currentCase: Case
@@ -25,8 +24,6 @@ export function EndingScreen({
   const solution = currentCase.solution
   const culpritName = culpritSuspect?.name ?? 'The culprit'
   const uniqueEvidenceItems = getUniqueSolutionEvidence(currentCase)
-  const visibleEvidenceItems = uniqueEvidenceItems.slice(0, visibleEvidenceLimit)
-  const hiddenEvidenceItems = uniqueEvidenceItems.slice(visibleEvidenceLimit)
   const clearedSuspects = solution?.clearedSuspects ?? []
   const discoveredEvidenceCount = getDiscoveredEvidence(currentCase).length
   const evidenceCollectedCount = currentCase.status === 'active'
@@ -73,7 +70,7 @@ export function EndingScreen({
     <section className={`notebook-card ending-screen solved-case-screen ${isSolved ? 'victory-screen' : 'failed-case-screen'}`}>
       <section className="case-closed-hero culprit-reveal-card">
         <div className="ending-hero-copy">
-          <h2>{isSolved ? 'Culprit identified' : 'Investigation failed'}</h2>
+          <h2>{isSolved ? 'Case solved' : 'Investigation failed'}</h2>
           <strong className="ending-culprit-name">{culpritName}</strong>
           <p>{culpritName} was the culprit.</p>
         </div>
@@ -97,15 +94,7 @@ export function EndingScreen({
         <section className="inspect-item compact-result-panel evidence-used-panel">
           <strong>Evidence used</strong>
           <div className="evidence-result-list">
-            {visibleEvidenceItems.map(renderEvidenceRow)}
-            {hiddenEvidenceItems.length > 0 ? (
-              <details className="result-more-details">
-                <summary>+{hiddenEvidenceItems.length} more pieces of evidence</summary>
-                <div className="result-more-list">
-                  {hiddenEvidenceItems.map(renderEvidenceRow)}
-                </div>
-              </details>
-            ) : null}
+            {uniqueEvidenceItems.map(renderEvidenceRow)}
           </div>
         </section>
 
