@@ -1,6 +1,8 @@
 bucket_name           = "pokemon-detective-your-unique-suffix"
 region                = "us-east-1"
-app_url               = "https://d123.cloudfront.net"    # CloudFront distribution domain name
+app_url               = "https://www.example.com"
+domain_name           = "example.com"
+primary_domain_name   = "www.example.com"
 handler_zip_path      = "../api/dist/handler.zip"
 cognito_domain        = "pokemon-detective"
 google_client_id      = "your-google-client-id.apps.googleusercontent.com"

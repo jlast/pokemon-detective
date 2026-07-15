@@ -11,8 +11,6 @@ interface InvestigationLocationRouteProps {
   investigateLocation: (locationId: string, actionId: string, witnessPokemonId?: number) => Promise<void>
   openLocation: (locationId: string) => void
   selectedLocationId: string | null
-  startNewCase: () => void
-  giveUp: () => void
 }
 
 export function InvestigationLocationRoute({
@@ -20,8 +18,6 @@ export function InvestigationLocationRoute({
   investigateLocation,
   openLocation,
   selectedLocationId,
-  startNewCase,
-  giveUp,
 }: InvestigationLocationRouteProps) {
   const [searchingLocationId, setSearchingLocationId] = useState<string | null>(null)
   const selectedLocation =
@@ -56,8 +52,6 @@ export function InvestigationLocationRoute({
       layout="none"
       currentCase={currentCase}
       openLocation={openLocation}
-      startNewCase={startNewCase}
-      giveUp={giveUp}
       showCaseFlowNav={false}
     >
       <div className="detail-back-link" onClick={() => navigate(TODAY_INVESTIGATION_PATH)}>← Back to Investigation Board</div>

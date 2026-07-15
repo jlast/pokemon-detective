@@ -12,7 +12,17 @@ provider "aws" {
   region = var.region
 }
 
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+}
+
 # ─── S3 + CloudFront for static site ─────────────────────────────────────────
+
+data "aws_route53_zone" "site" {
+  name         = var.domain_name
+  private_zone = false
+}
 
 resource "aws_s3_bucket" "site" {
   bucket = var.bucket_name
@@ -20,7 +30,7 @@ resource "aws_s3_bucket" "site" {
 }
 
 resource "aws_s3_bucket_public_access_block" "site" {
-  bucket = aws_s3_bucket.site.id
+  bucket                  = aws_s3_bucket.site.id
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
@@ -59,6 +69,39 @@ data "aws_iam_policy_document" "cloudfront_oac" {
       values   = [aws_cloudfront_distribution.site.arn]
     }
   }
+}
+
+resource "aws_acm_certificate" "site" {
+  provider                  = aws.us_east_1
+  domain_name               = var.primary_domain_name
+  subject_alternative_names = [var.domain_name]
+  validation_method         = "DNS"
+  tags                      = var.tags
+
+  lifecycle { create_before_destroy = true }
+}
+
+resource "aws_route53_record" "site_certificate_validation" {
+  for_each = {
+    for option in aws_acm_certificate.site.domain_validation_options : option.domain_name => {
+      name   = option.resource_record_name
+      record = option.resource_record_value
+      type   = option.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.site.zone_id
+}
+
+resource "aws_acm_certificate_validation" "site" {
+  provider                = aws.us_east_1
+  certificate_arn         = aws_acm_certificate.site.arn
+  validation_record_fqdns = [for record in aws_route53_record.site_certificate_validation : record.fqdn]
 }
 
 # ─── DynamoDB ─────────────────────────────────────────────────────────────────
@@ -120,8 +163,8 @@ resource "aws_iam_role" "lambda" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
       Principal = { Service = "lambda.amazonaws.com" }
     }]
   })
@@ -224,8 +267,8 @@ resource "aws_iam_role" "cron" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
       Principal = { Service = "lambda.amazonaws.com" }
     }]
   })
@@ -293,8 +336,8 @@ resource "aws_cloudwatch_event_rule" "daily_case" {
 }
 
 resource "aws_cloudwatch_event_target" "daily_case" {
-  rule      = aws_cloudwatch_event_rule.daily_case.name
-  arn       = aws_lambda_function.cron.arn
+  rule = aws_cloudwatch_event_rule.daily_case.name
+  arn  = aws_lambda_function.cron.arn
 }
 
 resource "aws_lambda_permission" "cron_events" {
@@ -393,8 +436,8 @@ resource "aws_cognito_identity_provider" "google" {
 # ─── API Gateway (REST) — single proxy resource ──────────────────────────────
 
 resource "aws_api_gateway_rest_api" "api" {
-  name  = "${var.project_name}-api"
-  tags  = var.tags
+  name = "${var.project_name}-api"
+  tags = var.tags
 }
 
 resource "aws_api_gateway_resource" "api" {
@@ -446,11 +489,24 @@ resource "aws_api_gateway_deployment" "api" {
 resource "aws_cloudfront_function" "spa_routing" {
   name    = "${var.project_name}-spa-routing"
   runtime = "cloudfront-js-2.0"
-  comment = "Rewrite non-asset, non-API paths to index.html for SPA routing"
+  comment = "Redirect apex domain and rewrite SPA routes to index.html"
   publish = true
   code    = <<-EOF
 function handler(event) {
   var request = event.request;
+  var hostHeader = request.headers.host;
+  var host = hostHeader && hostHeader.value ? hostHeader.value.toLowerCase() : '';
+
+  if (host === '${var.domain_name}') {
+    return {
+      statusCode: 301,
+      statusDescription: 'Moved Permanently',
+      headers: {
+        location: { value: 'https://${var.primary_domain_name}' + request.uri + querystringToString(request.querystring) }
+      }
+    };
+  }
+
   var uri = request.uri;
 
   // Pass API requests through unchanged
@@ -467,6 +523,26 @@ function handler(event) {
   request.uri = '/index.html';
   return request;
 }
+
+function querystringToString(querystring) {
+  var parts = [];
+
+  for (var key in querystring) {
+    if (querystring[key].multiValue) {
+      for (var i = 0; i < querystring[key].multiValue.length; i++) {
+        parts.push(formatQueryParam(key, querystring[key].multiValue[i].value));
+      }
+    } else {
+      parts.push(formatQueryParam(key, querystring[key].value));
+    }
+  }
+
+  return parts.length ? '?' + parts.join('&') : '';
+}
+
+function formatQueryParam(key, value) {
+  return value === '' ? key : key + '=' + value;
+}
 EOF
 }
 
@@ -478,6 +554,7 @@ resource "aws_cloudfront_distribution" "site" {
   default_root_object = "index.html"
   price_class         = var.price_class
   tags                = var.tags
+  aliases             = [var.domain_name, var.primary_domain_name]
 
   # S3 origin for static assets
   origin {
@@ -537,6 +614,11 @@ resource "aws_cloudfront_distribution" "site" {
       cookies { forward = "none" }
     }
 
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.spa_routing.arn
+    }
+
     min_ttl     = 86400
     default_ttl = 604800
     max_ttl     = 31536000
@@ -557,6 +639,11 @@ resource "aws_cloudfront_distribution" "site" {
       cookies { forward = "all" }
     }
 
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.spa_routing.arn
+    }
+
     min_ttl     = 0
     default_ttl = 0
     max_ttl     = 0
@@ -567,6 +654,56 @@ resource "aws_cloudfront_distribution" "site" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate_validation.site.certificate_arn
+    minimum_protocol_version = "TLSv1.2_2021"
+    ssl_support_method       = "sni-only"
+  }
+}
+
+resource "aws_route53_record" "site_apex_ipv4" {
+  name    = var.domain_name
+  type    = "A"
+  zone_id = data.aws_route53_zone.site.zone_id
+
+  alias {
+    evaluate_target_health = false
+    name                   = aws_cloudfront_distribution.site.domain_name
+    zone_id                = aws_cloudfront_distribution.site.hosted_zone_id
+  }
+}
+
+resource "aws_route53_record" "site_apex_ipv6" {
+  name    = var.domain_name
+  type    = "AAAA"
+  zone_id = data.aws_route53_zone.site.zone_id
+
+  alias {
+    evaluate_target_health = false
+    name                   = aws_cloudfront_distribution.site.domain_name
+    zone_id                = aws_cloudfront_distribution.site.hosted_zone_id
+  }
+}
+
+resource "aws_route53_record" "site_primary_ipv4" {
+  name    = var.primary_domain_name
+  type    = "A"
+  zone_id = data.aws_route53_zone.site.zone_id
+
+  alias {
+    evaluate_target_health = false
+    name                   = aws_cloudfront_distribution.site.domain_name
+    zone_id                = aws_cloudfront_distribution.site.hosted_zone_id
+  }
+}
+
+resource "aws_route53_record" "site_primary_ipv6" {
+  name    = var.primary_domain_name
+  type    = "AAAA"
+  zone_id = data.aws_route53_zone.site.zone_id
+
+  alias {
+    evaluate_target_health = false
+    name                   = aws_cloudfront_distribution.site.domain_name
+    zone_id                = aws_cloudfront_distribution.site.hosted_zone_id
   }
 }

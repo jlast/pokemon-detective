@@ -15,7 +15,7 @@ export function SuspectsPanel({
   const discoveredEvidence = getDiscoveredEvidence(currentCase)
 
   return (
-    <section className={`notebook-card evidence-board mobile-section`}>
+    <section className="notebook-card evidence-board mobile-section is-active">
       <div className="section-heading">
         <div>
           <h2>Suspects Lineup</h2>

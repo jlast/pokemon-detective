@@ -37,7 +37,6 @@ export function CaseOverview({
         <div className="inspect-item overview-suspects-panel">
           <div className="overview-section-copy">
             <strong>Suspects</strong>
-            <p className="overview-section-hook">These Pokemon are the persons of interest.</p>
           </div>
           <div className="overview-suspect-row">
             {selectedCase.suspects.map((suspect, index) => (
@@ -74,57 +73,24 @@ export function CaseOverview({
             <div className="case-detail-row">
               <span className="case-detail-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" className="case-detail-icon-svg" focusable="false">
-                  <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2.2" />
-                  <path d="M3 12h18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-                  <circle cx="12" cy="12" r="3.1" fill="currentColor" />
-                </svg>
-              </span>
-              <span className="case-detail-label">Suspects</span>
-              <span className="case-detail-value">{selectedCase.suspects.length}</span>
-            </div>
-            <div className="case-detail-row">
-              <span className="case-detail-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" className="case-detail-icon-svg" focusable="false">
-                  <path
-                    d="M10.2 21c-2.7 0-4.7-2.1-4.7-4.9 0-2.2 1.1-4.2 2.6-5.9 1.1-1.2 2.2-2.6 3.4-2.6 1.7 0 3.2 2.8 3.2 5.8 0 4.2-1.9 7.6-4.5 7.6z"
-                    fill="currentColor"
-                  />
-                  <circle cx="7.7" cy="7.2" r="1.45" fill="currentColor" />
-                  <circle cx="10.6" cy="5.3" r="1.3" fill="currentColor" />
-                  <circle cx="13.7" cy="5.6" r="1.2" fill="currentColor" />
-                  <circle cx="16.1" cy="7.9" r="1.25" fill="currentColor" />
-                </svg>
-              </span>
-              <span className="case-detail-label">Locations</span>
-              <span className="case-detail-value">{selectedCase.locations.length}</span>
-            </div>
-            <div className="case-detail-row">
-              <span className="case-detail-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" className="case-detail-icon-svg" focusable="false">
                   <path
                     d="M12 20.2l-1.2-1.08C6.12 14.88 3 12.05 3 8.58 3 5.9 5.08 4 7.7 4c1.5 0 2.94.7 3.86 1.82C12.48 4.7 13.92 4 15.42 4 18.04 4 20.12 5.9 20.12 8.58c0 3.47-3.12 6.3-7.8 10.56L12 20.2z"
                     fill="currentColor"
                   />
                 </svg>
               </span>
-              <span className="case-detail-label">Attempts</span>
-              <span className="case-detail-value">{attemptsLeft}</span>
+              <span className="case-detail-label">Accusations left</span>
+              <span className="case-detail-value">{attemptsLeft ?? 0}</span>
             </div>
           </LinedOverview>
           <PostIt title="Known scene notes">
-            <span>{selectedCase.shortStory}</span>
-            <span>
-              You will need to search locations, inspect suspects, and decide who
-              does not belong.
-            </span>
+            <span>INITIAL REPORT</span>
+            <span>A small statue disappeared from the academy courtyard.</span>
           </PostIt>
           {startInvestigation ? (
             <div className="case-overview-cta">
-              <p className="case-overview-cta-lead">Your first task is to search the area for clues.</p>
-              <p className="case-overview-cta-copy">Search locations and collect your first clue.</p>
-              <p className="case-overview-cta-copy">
-                The culprit won't reveal themselves. Search locations, collect evidence, then inspect the suspects.
-              </p>
+              <p className="case-overview-cta-lead">WORKING THEORY</p>
+              <p className="case-overview-cta-copy">The culprit must have left evidence at the scene.</p>
               <button type="button" className="primary-button case-overview-cta-button" onClick={startInvestigation}>
                 Begin the Investigation
               </button>

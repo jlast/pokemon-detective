@@ -56,6 +56,16 @@ variable "app_url" {
   type        = string
 }
 
+variable "domain_name" {
+  description = "Apex domain name for the application"
+  type        = string
+}
+
+variable "primary_domain_name" {
+  description = "Canonical domain name for the application"
+  type        = string
+}
+
 variable "additional_callback_urls" {
   description = "Additional Cognito callback URLs for local development"
   type        = list(string)

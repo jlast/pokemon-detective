@@ -5,8 +5,6 @@ interface CaseRouteProps {
   attemptsLeft: number
   currentCase: Case
   openLocation: (locationId: string) => void
-  startNewCase: () => void
-  giveUp: () => void
 }
 
 export function CaseRoute(props: CaseRouteProps) {

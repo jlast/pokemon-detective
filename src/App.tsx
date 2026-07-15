@@ -38,6 +38,7 @@ import {
 } from './auth'
 
 const getTodayCaseId = () => new Date().toISOString().slice(0, 10)
+const MAX_ACCUSATIONS = 3
 
 function NavigateToTodayInvestigation() {
   const { locationId } = useParams()
@@ -66,7 +67,7 @@ function App() {
   const [caseData, setCaseData] = useState<Case | null>(null)
   const [loading, setLoading] = useState(true)
   const [investigationsRemaining, setInvestigationsRemaining] = useState(0)
-  const [accusationsRemaining, setAccusationsRemaining] = useState(3)
+  const [accusationsRemaining, setAccusationsRemaining] = useState(MAX_ACCUSATIONS)
   const [accusationHistory, setAccusationHistory] = useState<number[]>([])
 
   const [authed, setAuthed] = useState(() => isAuthenticated())
@@ -163,7 +164,7 @@ function App() {
       const data = await getCurrentCase()
       setCaseData(data.case)
       setInvestigationsRemaining(data.investigationsRemaining)
-      setAccusationsRemaining(data.accusationsRemaining)
+      setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
       setAccusationHistory(data.accusationHistory ?? [])
     } catch (err) {
       console.error('Failed to load daily case:', err)
@@ -269,7 +270,7 @@ function App() {
         const data = await apiAccuse(caseId, accusationTarget.pokemonId)
         setCaseData(data.case)
         setAccusationHistory(data.accusationHistory ?? [])
-        setAccusationsRemaining(data.accusationsRemaining)
+        setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
         setAccusationTargetId(null)
 
         updateSuspectNote(accusationTarget.pokemonId, (prev) => ({
@@ -358,7 +359,7 @@ function App() {
           : prev,
         )
         setInvestigationsRemaining(data.investigationsRemaining)
-        setAccusationsRemaining(data.accusationsRemaining)
+        setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
         setAccusationHistory(data.accusationHistory ?? [])
         setLastInvestigatedLocationId(locationId)
       } catch (err) {
@@ -394,11 +395,6 @@ function App() {
       setInvestigationsRemaining(investigationsRemaining - 1)
       setLastInvestigatedLocationId(locationId)
     }
-  }
-
-  const giveUp = () => {
-    if (!currentCase) return
-    navigate(endingPath('gave-up'))
   }
 
   useEffect(() => {
@@ -488,8 +484,6 @@ function App() {
     openAccusation,
     investigateLocation,
     openLocation,
-    startNewCase,
-    giveUp,
   }
 
   const completedCaseStatus = currentCase.status === 'solved' || currentCase.status === 'failed'
@@ -543,8 +537,6 @@ function App() {
                 attemptsLeft={attemptsLeft}
                 currentCase={currentCase}
                 startInvestigation={startInvestigation}
-                startNewCase={startNewCase}
-                giveUp={giveUp}
                 inspectSuspect={inspectSuspect}
               />
             }
@@ -568,8 +560,6 @@ function App() {
                 investigateLocation={investigateLocation}
                 openLocation={openLocation}
                 selectedLocationId={selectedLocationId}
-                startNewCase={startNewCase}
-                giveUp={giveUp}
               />
             }
           />
