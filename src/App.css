@@ -3500,10 +3500,45 @@
   display: grid;
   gap: 1rem;
   padding: 1.5rem;
-  background: linear-gradient(180deg, #d4a76a 0%, #b8894e 100%);
+  background-color: #b87942;
+  background-image:
+    radial-gradient(circle at 14% 18%, rgba(67, 37, 18, 0.28) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 74% 38%, rgba(255, 215, 145, 0.32) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 42% 82%, rgba(83, 47, 22, 0.24) 0 1.2px, transparent 2px),
+    radial-gradient(circle at 91% 73%, rgba(245, 193, 115, 0.24) 0 1px, transparent 1.6px),
+    repeating-linear-gradient(22deg, rgba(82, 45, 19, 0.08) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(96deg, rgba(255, 224, 156, 0.08) 0 1px, transparent 1px 9px),
+    linear-gradient(180deg, #d19a5d 0%, #aa6c38 100%);
+  background-size:
+    18px 18px,
+    23px 23px,
+    29px 29px,
+    31px 31px,
+    100% 100%,
+    100% 100%,
+    100% 100%;
   border-radius: 18px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 229, 176, 0.18),
+    inset 0 16px 36px rgba(255, 224, 156, 0.14),
+    inset 0 -22px 42px rgba(78, 42, 18, 0.22);
+  isolation: isolate;
+}
+
+.investigation-pinboard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 18% 12%, rgba(255, 231, 174, 0.16), transparent 38%),
+    radial-gradient(ellipse at 86% 88%, rgba(62, 33, 14, 0.18), transparent 44%),
+    linear-gradient(90deg, rgba(65, 35, 14, 0.16), transparent 8%, transparent 92%, rgba(65, 35, 14, 0.18));
+  mix-blend-mode: multiply;
+  opacity: 0.55;
 }
 
 .string-layer {
