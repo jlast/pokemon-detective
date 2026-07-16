@@ -1,34 +1,62 @@
+import { useMemo } from 'react'
 import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
-import { InvestigationLocationCard } from './InvestigationLocationCard'
+import { InvestigationLocationCard, type LocationCardVariant } from './InvestigationLocationCard'
 
 const placeholderSceneImage = '/case-scenes/placeholder.svg'
+const locationCardVariants: LocationCardVariant[] = ['detective-note', 'clipboard', 'polaroid', 'evidence-tag', 'map-fragment']
 
 const getPublicAssetUrl = (path: string) => {
   if (/^(https?:)?\/\//.test(path)) return path
   return `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
 }
 
-const getCurrentTheoryCopy = (evidenceCount: number, remainingActions: number) => {
+const getWorkingTheoryCopy = (evidenceCount: number, remainingActions: number, suspectCount: number) => {
   if (remainingActions <= 0) {
-    return 'Investigation is over. Make your call.'
+    return 'Final notes are in order. The remaining pattern is ready to test.'
   }
   if (evidenceCount === 0) {
-    return 'No suspect stands out yet.'
+    return 'No clear pattern yet. Continue searching for common clues.'
   }
   if (evidenceCount === 1) {
-    return 'One piece of evidence found.'
+    return 'One clue marks the first thread. Trace where it leads next.'
   }
   if (evidenceCount === 2) {
-    return 'A pattern may be forming.'
+    return 'Two clues now point in the same direction. Movement through the scene is taking shape.'
   }
   if (evidenceCount === 3) {
-    return 'Several leads point in the same direction.'
+    return 'Several marks begin to agree. The suspect profile is narrowing.'
   }
   if (evidenceCount === 4) {
-    return 'You may be ready to inspect suspect files.'
+    return `Only a few suspects still match the notes. Check the remaining ${Math.min(suspectCount, 3)} closely.`
   }
-  return 'The case is ready for a final accusation.'
+  return 'Evidence points to a narrow path. The final accusation is close.'
+}
+
+const getEvidenceBoardCopy = (evidenceCount: number, maxInvestigations: number) => {
+  if (evidenceCount <= 0) {
+    return 'No evidence pinned.'
+  }
+  if (evidenceCount >= maxInvestigations) {
+    return 'Evidence board complete. Ready for final accusation.'
+  }
+  if (evidenceCount === 1) {
+    return '1 item pinned.'
+  }
+  if (evidenceCount >= 3) {
+    return `${evidenceCount} pieces of evidence pinned. Patterns beginning to emerge.`
+  }
+  return `${evidenceCount} pieces of evidence pinned.`
+}
+
+const createLocationVariantAssignments = (locations: Case['locations']) => {
+  const pool = locationCardVariants.flatMap((variant) => [variant, variant])
+  const shuffledPool = [...pool].sort(() => Math.random() - 0.5)
+
+  return locations.reduce<Record<string, LocationCardVariant>>((assignments, location, index) => {
+    assignments[location.id] = shuffledPool[index % shuffledPool.length]
+    return assignments
+  }, {})
 }
 
 export function LocationsPanel({
@@ -46,9 +74,15 @@ export function LocationsPanel({
   const actionsUsed = investigatedCount
   const maxInvestigations = currentCase.maxInvestigations
   const pointsLeft = Math.max(maxInvestigations - actionsUsed, 0)
-  const currentTheoryCopy = getCurrentTheoryCopy(evidenceCollectedCount, pointsLeft)
+  const workingTheoryCopy = getWorkingTheoryCopy(evidenceCollectedCount, pointsLeft, currentCase.suspects.length)
+  const evidenceBoardCopy = getEvidenceBoardCopy(evidenceCollectedCount, maxInvestigations)
   const sceneImage = getPublicAssetUrl(currentCase.sceneImage ?? placeholderSceneImage)
   const sceneImageAlt = currentCase.sceneImageAlt ?? `Scene photo for ${currentCase.title}`
+  const locationAssignmentKey = currentCase.locations.map((location) => location.id).join('|')
+  const locationVariantAssignments = useMemo(
+    () => createLocationVariantAssignments(currentCase.locations),
+    [currentCase.id, locationAssignmentKey],
+  )
 
   return (
     <section
@@ -86,7 +120,7 @@ export function LocationsPanel({
         </div>
 
         <div className="pinboard-card evidence-card" style={{ gridArea: 'evidence' }}>
-          <strong className="evidence-card-title">Evidence</strong>
+          <strong className="evidence-card-title">Evidence Board</strong>
           {discoveredEvidence.length > 0 ? (
             <ul className="evidence-card-list">
               {discoveredEvidence.slice(0, 5).map((item) => (
@@ -97,15 +131,14 @@ export function LocationsPanel({
               ))}
             </ul>
           ) : (
-            <p className="evidence-card-empty">No evidence collected yet.</p>
+            <p className="evidence-card-empty">No confirmed evidence.</p>
           )}
-          <p className="pinboard-card-meta">{evidenceCollectedCount} evidence item{evidenceCollectedCount !== 1 ? 's' : ''} collected</p>
+          <p className="pinboard-card-meta">{evidenceBoardCopy}</p>
         </div>
 
         <div className="pinboard-card theory-card" style={{ gridArea: 'theory' }}>
-          <div className="theory-card-stack" aria-hidden="true" />
-          <strong className="theory-card-title">Current Theory</strong>
-          <p className="theory-card-text">{currentTheoryCopy}</p>
+          <strong className="theory-card-title">Working Theory</strong>
+          <p className="theory-card-text">{workingTheoryCopy}</p>
         </div>
 
         {currentCase.locations.map((location, index) => {
@@ -120,6 +153,8 @@ export function LocationsPanel({
               isNewEvidence={false}
               pointsLeft={pointsLeft}
               openPanel={openLocation}
+              variant={locationVariantAssignments[location.id] ?? locationCardVariants[index % locationCardVariants.length]}
+              evidenceNumber={index + 1}
               style={{ gridArea: area }}
             />
           )

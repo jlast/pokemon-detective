@@ -3728,7 +3728,7 @@
 }
 
 .evidence-card {
-  background: var(--paper);
+  background: #fbf1dc;
   border: 1px solid var(--border);
 }
 
@@ -3754,20 +3754,8 @@
 }
 
 .theory-card {
-  background: var(--paper);
+  background: #fbf1dc;
   border: 1px solid var(--border);
-}
-
-.theory-card-stack {
-  position: absolute;
-  top: 0.3rem;
-  left: 0.3rem;
-  right: 0.3rem;
-  bottom: 0.3rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--paper-dark);
-  z-index: -1;
 }
 
 .theory-card-text {
@@ -3781,16 +3769,37 @@
 .investigation-location-card {
   position: relative;
   display: grid;
-  gap: 0.6rem;
-  padding: 1rem 1rem 0.8rem;
-  background: linear-gradient(180deg, #fffaf0 0%, #f5edd6 100%);
-  border: 1px solid #d8cbb6;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  min-height: 13.5rem;
+  padding: 0.8rem;
+  background: var(--location-paper, #fffaf0);
+  border: 1px solid rgba(79, 67, 33, 0.16);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(60, 50, 30, 0.12);
+  box-shadow: 0 4px 12px rgba(60, 50, 30, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.62);
   transform: rotate(var(--tilt, 0deg));
   cursor: pointer;
   transition: transform 180ms ease, box-shadow 180ms ease;
   z-index: 1;
+  overflow: visible;
+}
+
+.investigation-location-card--tone-0 {
+  --location-paper: #fff7df;
+}
+
+.investigation-location-card--tone-1 {
+  --location-paper: #f4ecd7;
+}
+
+.investigation-location-card--tone-2 {
+  --location-paper: #f2f0e8;
+}
+
+.investigation-location-card.is-action-available {
+  --location-paper: #fff1b8;
+  border-color: rgba(177, 135, 38, 0.38);
+  box-shadow: 0 7px 16px rgba(124, 86, 25, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .investigation-location-card:hover {
@@ -3805,9 +3814,12 @@
 
 .investigation-location-card.is-complete {
   opacity: 0.85;
-  border-color: #bfb59b;
-  background: linear-gradient(180deg, #f0ebdb 0%, #e5ddc7 100%);
-  cursor: default;
+  --location-paper: #fffaf0;
+  border-color: rgba(86, 130, 72, 0.44);
+}
+
+.investigation-location-card.is-complete::before {
+  background: #6d9a55;
 }
 
 .investigation-location-card.is-disabled {
@@ -3842,88 +3854,181 @@
   display: none;
 }
 
-.pin-location-status {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
+.location-document {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.45rem;
+  min-height: 0;
+  color: #3f3422;
+}
+
+.location-document__label {
+  color: #746548;
   font-size: 0.68rem;
-  font-weight: 800;
+  font-weight: 900;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  background: var(--paper);
-  border: 1px solid var(--border);
-  color: var(--muted);
 }
 
-.pin-location-status.is-searching {
-  color: #8c6f29;
-  border-color: var(--gold);
-}
-
-.pin-location-status.is-complete {
-  color: #5a8b4f;
-  border-color: var(--success);
-}
-
-.pin-location-status.is-disabled {
-  color: var(--muted);
-}
-
-.pin-location-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 10px;
-  background: rgba(255, 253, 247, 0.8);
-  border: 1px solid #d0c5b1;
-  font-size: 1.3rem;
-}
-
-.pin-location-name {
+.location-document__title,
+.location-document__caption {
   margin: 0;
+  color: #2f281c;
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 900;
+  line-height: 1.1;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
-.location-card__evidence {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.5rem 0.6rem;
-  border-radius: 8px;
-  background: rgba(255, 252, 244, 0.6);
-  border: 1px solid #ddd2bd;
-  min-height: 2.4rem;
+.location-document__observation,
+.location-document__quote {
+  margin: 0;
+  color: #66583d;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
-.location-card__evidence-label {
-  font-size: 0.65rem;
+.location-document--detective-note {
+  min-height: 100%;
+  padding: 0.7rem 0.55rem 0.55rem;
+  background-image: repeating-linear-gradient(0deg, transparent 0 1.55rem, rgba(127, 145, 166, 0.18) 1.55rem calc(1.55rem + 1px));
+  clip-path: polygon(0 0.25rem, 13% 0, 28% 0.18rem, 45% 0.02rem, 66% 0.22rem, 84% 0.04rem, 100% 0.2rem, 100% 100%, 0 100%);
+}
+
+.location-document--detective-note .location-document__title {
+  font-family: "Comic Sans MS", "Bradley Hand", "Segoe Print", cursive;
+  font-size: 1.02rem;
+}
+
+.location-document--clipboard {
+  min-height: 100%;
+  padding: 1.2rem 0.65rem 0.55rem;
+  border: 1px solid rgba(88, 70, 42, 0.22);
+  background: rgba(255, 253, 247, 0.58);
+}
+
+.location-document--clipboard::before {
+  content: '';
+  position: absolute;
+  top: -0.4rem;
+  left: 50%;
+  width: 4.2rem;
+  height: 1rem;
+  border: 1px solid #8f8269;
+  border-radius: 0.35rem 0.35rem 0.2rem 0.2rem;
+  background: linear-gradient(180deg, #c9bfa7, #8f8269);
+  transform: translateX(-50%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.location-document__checkbox {
+  color: #4d422e;
+  font-size: 0.76rem;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
 }
 
-.location-card__evidence-item {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--text-main);
-  line-height: 1.3;
+.location-document--polaroid {
+  justify-items: center;
+  gap: 0.28rem;
+  min-height: 100%;
+  padding: 0.35rem 0.35rem 0.65rem;
+  background: #fffdf8;
+  border: 1px solid rgba(79, 67, 33, 0.14);
+  box-shadow: inset 0 -1.5rem 0 rgba(255, 250, 240, 0.96);
 }
 
-.location-card__evidence-item--empty {
-  font-weight: 400;
-  font-style: italic;
-  color: var(--muted);
+.location-document__photo {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 5.7rem;
+  border: 1px solid #2c271f;
+  background:
+    radial-gradient(circle at 72% 26%, rgba(247, 218, 111, 0.68) 0 0.55rem, transparent 0.6rem),
+    linear-gradient(135deg, #b9c5ad, #e2d4ad 58%, #9aa88f);
+  filter: sepia(0.18) saturate(0.88);
+}
+
+.location-document__photo span {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 2px 1px rgba(40, 32, 20, 0.18));
+}
+
+.location-document--polaroid .location-document__caption,
+.location-document--polaroid .location-document__quote {
+  font-family: "Comic Sans MS", "Bradley Hand", "Segoe Print", cursive;
+  text-align: center;
+  text-transform: none;
+}
+
+.location-document--evidence-tag {
+  justify-items: center;
+  gap: 0.28rem;
+  min-height: 100%;
+  padding: 0.8rem 0.65rem 0.55rem;
+  border: 1px dashed #9d865d;
+  border-radius: 0.7rem 0.7rem 0.45rem 0.45rem;
+  background: rgba(255, 251, 239, 0.62);
+}
+
+.location-document__tag-hole {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 50%;
+  background: #b87942;
+  border: 1px solid rgba(79, 67, 33, 0.3);
+  box-shadow: inset 0 1px 3px rgba(56, 36, 18, 0.35);
+}
+
+.location-document__large-icon {
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.location-document--evidence-tag .location-document__observation {
+  text-align: center;
+}
+
+.location-document--map-fragment {
+  min-height: 100%;
+  padding: 0.55rem;
+  background-image:
+    linear-gradient(90deg, transparent 49%, rgba(111, 91, 57, 0.16) 49% 51%, transparent 51%),
+    linear-gradient(0deg, transparent 49%, rgba(111, 91, 57, 0.13) 49% 51%, transparent 51%);
+  background-size: 100% 100%, 100% 100%;
+}
+
+.location-document__map {
+  position: relative;
+  min-height: 4.1rem;
+  border: 1px solid rgba(112, 96, 63, 0.22);
+  background:
+    repeating-linear-gradient(35deg, transparent 0 0.9rem, rgba(127, 142, 107, 0.18) 0.9rem calc(0.9rem + 1px)),
+    linear-gradient(135deg, rgba(191, 172, 116, 0.16), rgba(119, 151, 128, 0.2));
+  overflow: hidden;
+}
+
+.location-document__route {
+  position: absolute;
+  top: 48%;
+  left: 8%;
+  width: 86%;
+  border-top: 2px dashed rgba(124, 78, 49, 0.78);
+  transform: rotate(-12deg);
+}
+
+.location-document__marker {
+  position: absolute;
+  top: 38%;
+  left: 58%;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid #b64032;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
 }
 
 .pin-location-button {
