@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { Location } from '../../game/caseModel'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
+import { getLocationIcon } from '../../game/locationIcons'
 import { pokemonData } from '../../data/pokemon'
 import { TODAY_INVESTIGATION_PATH, TODAY_SUSPECTS_PATH } from '../../paths'
 import { InvestigationActionChooser } from './InvestigationActionChooser'
@@ -55,6 +56,7 @@ export function InvestigationLocationPage({
     ? (isPlaceholderWitnessText(location.evidenceText) ? selectedAction?.evidenceText : location.evidenceText) ?? selectedAction?.evidenceText
     : (location.observationText ?? selectedAction?.observationText)
   const evidenceIcon = hasEvidence ? getEvidenceIcon(location.evidenceId, evidenceTitle) : null
+  const locationIcon = getLocationIcon(location.name, location.icon)
   const witnessPokemon = location.witnessPokemonId
     ? pokemonData.find((pokemon) => pokemon.id === location.witnessPokemonId)
     : null
@@ -64,7 +66,7 @@ export function InvestigationLocationPage({
       {!location.investigated ? (
         <div className="active-investigation-location">
           <span className="location-icon" aria-hidden="true">
-            {location.icon}
+            {locationIcon}
           </span>
           <div className="location-heading-copy">
             <h2 className="location-name">{location.name}</h2>

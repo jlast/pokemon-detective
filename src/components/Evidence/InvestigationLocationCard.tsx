@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import type { Location } from '../../game/caseModel'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
+import { getLocationIcon } from '../../game/locationIcons'
 
 interface InvestigationLocationCardProps {
   location: Location
@@ -45,6 +46,7 @@ export function InvestigationLocationCard({
   const evidenceIcon = selectedAction?.evidenceId
     ? getEvidenceIcon(selectedAction.evidenceId, selectedAction.evidenceTitle, '🔍')
     : '🔍'
+  const locationIcon = getLocationIcon(location.name, location.icon)
 
   return (
     <article
@@ -58,7 +60,7 @@ export function InvestigationLocationCard({
     >
       <span className="pin-location-dot" aria-hidden="true" />
       <span className={`pin-location-status ${statusClassName}`}>{statusLabel}</span>
-      <span className="pin-location-icon" aria-hidden="true">{location.icon}</span>
+      <span className="pin-location-icon" aria-hidden="true">{locationIcon}</span>
       <h3 className="pin-location-name">{location.name}</h3>
       <div className="location-card__evidence">
         <span className="location-card__evidence-label">
