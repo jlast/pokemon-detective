@@ -10,6 +10,8 @@ export type CaseConfig = {
   title: string
   shortStory: string
   crimeIcon: string
+  sceneImage: string
+  sceneImageAlt: string
   difficulty: CaseDifficulty
   maxInvestigations: number
   locations: Location[]
@@ -50,6 +52,8 @@ export type RawCaseConfig = {
   title: string
   shortStory: string
   crimeIcon: string
+  sceneImage?: string
+  sceneImageAlt?: string
   difficulty: CaseDifficulty
   maxInvestigations: number
   locations?: RawCaseLocation[]
@@ -289,6 +293,8 @@ export const hydrateCaseConfig = (rawCaseConfig: RawCaseConfig): CaseConfig => {
     title: rawCaseConfig.title,
     shortStory: rawCaseConfig.shortStory,
     crimeIcon: rawCaseConfig.crimeIcon,
+    sceneImage: rawCaseConfig.sceneImage ?? '/case-scenes/placeholder.svg',
+    sceneImageAlt: rawCaseConfig.sceneImageAlt ?? `Scene photo for ${rawCaseConfig.title}`,
     difficulty: rawCaseConfig.difficulty,
     maxInvestigations: rawCaseConfig.maxInvestigations,
     locations,

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" role="img" aria-labelledby="title desc">
+  <title id="title">Case scene placeholder</title>
+  <desc id="desc">A stylized detective photo of an outdoor case scene pinned on paper.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#c8dcc7"/>
+      <stop offset="1" stop-color="#eef0d0"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#8fa66a"/>
+      <stop offset="1" stop-color="#6d844f"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 0.08"/>
+      </feComponentTransfer>
+      <feBlend mode="multiply" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect width="480" height="320" rx="22" fill="#f9f0d8"/>
+  <rect x="24" y="24" width="432" height="272" rx="14" fill="url(#sky)"/>
+  <path d="M24 220c58-34 111-38 158-11 36 20 74 18 113-7 48-30 102-24 161 19v75H24z" fill="url(#ground)"/>
+  <path d="M71 230c37-18 72-20 104-6M322 218c40-17 78-14 112 9" fill="none" stroke="#435738" stroke-width="6" stroke-linecap="round" opacity="0.35"/>
+  <circle cx="88" cy="82" r="24" fill="#f6d66d" opacity="0.82"/>
+  <path d="M119 204l42-116 44 116z" fill="#526d44"/>
+  <path d="M179 204l55-143 58 143z" fill="#405a3c"/>
+  <path d="M280 205l38-100 42 100z" fill="#5f744c"/>
+  <path d="M124 204h228" stroke="#344331" stroke-width="8" stroke-linecap="round" opacity="0.22"/>
+  <g fill="none" stroke="#574832" stroke-linecap="round" opacity="0.6">
+    <path d="M213 244c16-9 28-9 38 0" stroke-width="5"/>
+    <path d="M232 236v22" stroke-width="4"/>
+    <path d="M200 260h64" stroke-width="4" stroke-dasharray="8 9"/>
+  </g>
+  <g transform="translate(365 45) rotate(7)">
+    <rect x="0" y="0" width="52" height="28" rx="4" fill="#e9d396" opacity="0.9"/>
+    <path d="M6 15h40" stroke="#b99c64" stroke-width="2" opacity="0.7"/>
+  </g>
+  <rect x="24" y="24" width="432" height="272" rx="14" fill="transparent" stroke="#7c6b48" stroke-width="3" opacity="0.28"/>
+  <rect width="480" height="320" rx="22" fill="transparent" filter="url(#grain)"/>
+</svg>

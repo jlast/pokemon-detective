@@ -2,24 +2,7 @@ import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { InvestigationLocationCard } from './InvestigationLocationCard'
 
-const getRemainingInvestigationCopy = (remainingActions: number) => {
-  if (remainingActions <= 0) {
-    return 'No investigations left.'
-  }
-  if (remainingActions === 1) {
-    return 'Final investigation.'
-  }
-  if (remainingActions === 2) {
-    return 'Two investigations remain.'
-  }
-  if (remainingActions === 3) {
-    return 'The case is taking shape.'
-  }
-  if (remainingActions === 4) {
-    return 'Plenty of time left.'
-  }
-  return 'Full budget available.'
-}
+const placeholderSceneImage = '/case-scenes/placeholder.svg'
 
 const getCurrentTheoryCopy = (evidenceCount: number, remainingActions: number) => {
   if (remainingActions <= 0) {
@@ -58,8 +41,9 @@ export function LocationsPanel({
   const actionsUsed = investigatedCount
   const maxInvestigations = currentCase.maxInvestigations
   const pointsLeft = Math.max(maxInvestigations - actionsUsed, 0)
-  const remainingCopy = getRemainingInvestigationCopy(pointsLeft)
   const currentTheoryCopy = getCurrentTheoryCopy(evidenceCollectedCount, pointsLeft)
+  const sceneImage = currentCase.sceneImage ?? placeholderSceneImage
+  const sceneImageAlt = currentCase.sceneImageAlt ?? `Scene photo for ${currentCase.title}`
 
   return (
     <section
@@ -81,19 +65,17 @@ export function LocationsPanel({
           <span>Actions {pointsLeft} left</span>
         </div>
 
-        <div className="pinboard-card budget-card" style={{ gridArea: 'budget' }}>
-          <div className="budget-card-pin" aria-hidden="true" />
-          <strong className="budget-card-title">Budget</strong>
-          <div className="budget-token-row" aria-hidden="true">
-            {Array.from({ length: maxInvestigations }, (_, index) => (
-              <span
-                key={index}
-                className={`budget-token ${index < pointsLeft ? 'is-available' : 'is-spent'}`}
-              />
-            ))}
+        <div className="pinboard-card case-scene-card" style={{ gridArea: 'budget' }}>
+          <div className="case-scene-card__pin" aria-hidden="true" />
+          <img
+            className="case-scene-card__image"
+            src={sceneImage}
+            alt={sceneImageAlt}
+          />
+          <div className="case-scene-card__caption">
+            <strong>Scene photo</strong>
+            <span>{currentCase.title}</span>
           </div>
-          <p className="budget-card-text">{remainingCopy}</p>
-          <p className="budget-card-meta">{actionsUsed} / {maxInvestigations} used</p>
         </div>
 
         <div className="pinboard-card evidence-card" style={{ gridArea: 'evidence' }}>
@@ -110,7 +92,7 @@ export function LocationsPanel({
           ) : (
             <p className="evidence-card-empty">No evidence collected yet.</p>
           )}
-          <p className="budget-card-meta">{evidenceCollectedCount} evidence item{evidenceCollectedCount !== 1 ? 's' : ''} collected</p>
+          <p className="pinboard-card-meta">{evidenceCollectedCount} evidence item{evidenceCollectedCount !== 1 ? 's' : ''} collected</p>
         </div>
 
         <div className="pinboard-card theory-card" style={{ gridArea: 'theory' }}>

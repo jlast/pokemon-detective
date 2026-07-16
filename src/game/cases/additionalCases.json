@@ -1,47 +1,1750 @@
 [
-  { "id": "vanishing-vase", "title": "The Vanishing Vase", "shortStory": "A painted vase disappeared from the florist's front display overnight.", "crimeIcon": "🏺", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Florist Display", "traceArea": "Shop Aisle", "storageArea": "Potting Shelf", "lockedObject": "Display Cabinet", "witnessArea": "Flower Stand", "witnessRole": "florist", "waterFeature": "watering can" } },
-  { "id": "broken-bakery-window", "title": "The Broken Bakery Window", "shortStory": "Someone broke into the bakery and scattered flour across the counter.", "crimeIcon": "🥐", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Bakery Floor", "traceArea": "Flour Counter", "storageArea": "Bread Rack", "lockedObject": "Pastry Case", "witnessArea": "Kitchen Door", "witnessRole": "baker", "waterFeature": "wash sink" } },
-  { "id": "missing-moonstone", "title": "The Missing Moonstone", "shortStory": "A moonstone vanished from a quiet shrine before sunrise.", "crimeIcon": "🌙", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Shrine Steps", "traceArea": "Moonlit Path", "storageArea": "Offering Shelf", "lockedObject": "Stone Reliquary", "witnessArea": "Prayer Hall", "witnessRole": "caretaker", "waterFeature": "ritual basin" } },
-  { "id": "stolen-stage-prop", "title": "The Stolen Stage Prop", "shortStory": "The theater's prized prop vanished moments before rehearsal.", "crimeIcon": "🎭", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Main Stage", "traceArea": "Backstage Floor", "storageArea": "Prop Rack", "lockedObject": "Costume Trunk", "witnessArea": "Green Room", "witnessRole": "stagehand", "waterFeature": "makeup sink" } },
-  { "id": "ransacked-greenhouse", "title": "The Ransacked Greenhouse", "shortStory": "Rare seedlings were uprooted from the greenhouse after closing.", "crimeIcon": "🌱", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Greenhouse Bed", "traceArea": "Damp Walkway", "storageArea": "Seedling Rack", "lockedObject": "Tool Cabinet", "witnessArea": "Garden Gate", "witnessRole": "gardener", "waterFeature": "irrigation hose" } },
-  { "id": "vanished-fishing-net", "title": "The Vanished Fishing Net", "shortStory": "A fisher's best net vanished from the pier shed.", "crimeIcon": "🎣", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Pier Shed", "traceArea": "Dock Planks", "storageArea": "Net Rack", "lockedObject": "Bait Locker", "witnessArea": "Harbor Bench", "witnessRole": "fisher", "waterFeature": "tide pool" } },
-  { "id": "pilfered-parcel", "title": "The Pilfered Parcel", "shortStory": "A sealed parcel disappeared from the post office sorting room.", "crimeIcon": "📦", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Sorting Room", "traceArea": "Mail Counter", "storageArea": "Parcel Shelf", "lockedObject": "Delivery Cage", "witnessArea": "Front Desk", "witnessRole": "clerk", "waterFeature": "mop bucket" } },
-  { "id": "toppled-totem", "title": "The Toppled Totem", "shortStory": "A carved totem was knocked over in the village square.", "crimeIcon": "🪵", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Village Square", "traceArea": "Packed Dirt Path", "storageArea": "Carving Stand", "lockedObject": "Ceremonial Chest", "witnessArea": "Meeting Hut", "witnessRole": "elder", "waterFeature": "rain barrel" } },
-  { "id": "missing-map", "title": "The Missing Map", "shortStory": "A hand-drawn route map vanished from the ranger station.", "crimeIcon": "🗺️", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Ranger Desk", "traceArea": "Station Floor", "storageArea": "Map Shelf", "lockedObject": "File Cabinet", "witnessArea": "Lookout Porch", "witnessRole": "ranger", "waterFeature": "canteen crate" } },
-  { "id": "raided-berry-stall", "title": "The Raided Berry Stall", "shortStory": "A market stall was emptied of its ripest berries overnight.", "crimeIcon": "🫐", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Berry Stall", "traceArea": "Market Lane", "storageArea": "Crate Stack", "lockedObject": "Cash Box", "witnessArea": "Vendor Booth", "witnessRole": "vendor", "waterFeature": "rinse tub" } },
-  { "id": "stolen-silver-bell", "title": "The Stolen Silver Bell", "shortStory": "A silver bell disappeared from the town hall display.", "crimeIcon": "🔔", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Town Hall", "traceArea": "Marble Hallway", "storageArea": "Display Shelf", "lockedObject": "Bell Case", "witnessArea": "Clerk Office", "witnessRole": "clerk", "waterFeature": "water cooler" } },
-  { "id": "scrambled-signal", "title": "The Scrambled Signal", "shortStory": "The radio tower's tuning crystal was disturbed during the night.", "crimeIcon": "📡", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Radio Tower", "traceArea": "Service Platform", "storageArea": "Cable Rack", "lockedObject": "Tuning Console", "witnessArea": "Control Booth", "witnessRole": "technician", "waterFeature": "cooling tank" } },
-  { "id": "missing-museum-key", "title": "The Missing Museum Key", "shortStory": "The curator's master key vanished from a locked office.", "crimeIcon": "🗝️", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Curator Office", "traceArea": "Gallery Hall", "storageArea": "Catalog Shelf", "lockedObject": "Key Cabinet", "witnessArea": "Ticket Desk", "witnessRole": "curator", "waterFeature": "cleaning bucket" } },
-  { "id": "wrecked-workshop", "title": "The Wrecked Workshop", "shortStory": "A repair workshop was found open with parts scattered everywhere.", "crimeIcon": "🛠️", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Repair Bench", "traceArea": "Workshop Floor", "storageArea": "Parts Shelf", "lockedObject": "Tool Chest", "witnessArea": "Service Window", "witnessRole": "mechanic", "waterFeature": "parts washer" } },
-  { "id": "empty-aquarium-cache", "title": "The Empty Aquarium Cache", "shortStory": "A hidden cache beside the aquarium tank was emptied overnight.", "crimeIcon": "🐠", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Aquarium Hall", "traceArea": "Tank Walkway", "storageArea": "Feed Shelf", "lockedObject": "Filter Cabinet", "witnessArea": "Viewing Room", "witnessRole": "aquarist", "waterFeature": "main tank" } },
-  { "id": "lost-lantern", "title": "The Lost Lantern", "shortStory": "The festival lantern disappeared before the evening procession.", "crimeIcon": "🏮", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Festival Booth", "traceArea": "Lantern Path", "storageArea": "Decoration Rack", "lockedObject": "Supply Chest", "witnessArea": "Parade Gate", "witnessRole": "organizer", "waterFeature": "fountain basin" } },
-  { "id": "stolen-snowglobe", "title": "The Stolen Snowglobe", "shortStory": "A souvenir snowglobe vanished from the lodge display.", "crimeIcon": "❄️", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Lodge Lobby", "traceArea": "Carpet Runner", "storageArea": "Souvenir Shelf", "lockedObject": "Glass Display", "witnessArea": "Reception Desk", "witnessRole": "innkeeper", "waterFeature": "tea station" } },
-  { "id": "disturbed-dojo-locker", "title": "The Disturbed Dojo Locker", "shortStory": "A training badge was taken from the dojo locker room.", "crimeIcon": "🥋", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Dojo Floor", "traceArea": "Practice Mat", "storageArea": "Gear Rack", "lockedObject": "Badge Locker", "witnessArea": "Training Hall", "witnessRole": "sensei", "waterFeature": "wash basin" } },
-  { "id": "missing-honey-jar", "title": "The Missing Honey Jar", "shortStory": "A jar of rare honey vanished from the apiary shed.", "crimeIcon": "🍯", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Apiary Shed", "traceArea": "Hive Path", "storageArea": "Jar Shelf", "lockedObject": "Honey Cabinet", "witnessArea": "Bee Yard", "witnessRole": "beekeeper", "waterFeature": "smoker bucket" } },
-  { "id": "raided-rooftop-garden", "title": "The Raided Rooftop Garden", "shortStory": "A rooftop planter was stripped of its prize herbs.", "crimeIcon": "🪴", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Rooftop Garden", "traceArea": "Gravel Walkway", "storageArea": "Planter Rack", "lockedObject": "Seed Cabinet", "witnessArea": "Roof Door", "witnessRole": "caretaker", "waterFeature": "rain collector" } },
-  { "id": "broken-observatory-case", "title": "The Broken Observatory Case", "shortStory": "A star chart was taken from the observatory display case.", "crimeIcon": "🔭", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Observatory Dome", "traceArea": "Telescope Platform", "storageArea": "Chart Shelf", "lockedObject": "Star Chart Case", "witnessArea": "Control Room", "witnessRole": "astronomer", "waterFeature": "lens rinse tray" } },
-  { "id": "stolen-ticket-roll", "title": "The Stolen Ticket Roll", "shortStory": "A full roll of tickets disappeared from the arcade booth.", "crimeIcon": "🎟️", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Arcade Booth", "traceArea": "Game Aisle", "storageArea": "Prize Shelf", "lockedObject": "Ticket Drawer", "witnessArea": "Token Counter", "witnessRole": "attendant", "waterFeature": "soda spill" } },
-  { "id": "missing-train-luggage", "title": "The Missing Train Luggage", "shortStory": "A passenger's luggage vanished from the station platform.", "crimeIcon": "🚂", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Station Platform", "traceArea": "Ticket Hall", "storageArea": "Luggage Rack", "lockedObject": "Storage Locker", "witnessArea": "Conductor Booth", "witnessRole": "conductor", "waterFeature": "platform puddle" } },
-  { "id": "vandalized-clocktower", "title": "The Vandalized Clocktower", "shortStory": "The clocktower mechanism was tampered with before noon.", "crimeIcon": "🕰️", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Clocktower Base", "traceArea": "Spiral Stair", "storageArea": "Gear Shelf", "lockedObject": "Mechanism Panel", "witnessArea": "Bell Room", "witnessRole": "timekeeper", "waterFeature": "maintenance pail" } },
-  { "id": "missing-tea-tin", "title": "The Missing Tea Tin", "shortStory": "A prized tea tin vanished from the cafe shelf.", "crimeIcon": "🍵", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Cafe Counter", "traceArea": "Tile Floor", "storageArea": "Tea Shelf", "lockedObject": "Tea Cabinet", "witnessArea": "Dining Nook", "witnessRole": "barista", "waterFeature": "kettle station" } },
-  { "id": "looted-market-cart", "title": "The Looted Market Cart", "shortStory": "A market cart was raided before the morning rush.", "crimeIcon": "🛒", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Market Cart", "traceArea": "Cobblestone Lane", "storageArea": "Crate Rack", "lockedObject": "Coin Drawer", "witnessArea": "Awning Post", "witnessRole": "merchant", "waterFeature": "produce tub" } },
-  { "id": "stolen-camp-badge", "title": "The Stolen Camp Badge", "shortStory": "A camp leader's badge disappeared from the notice board.", "crimeIcon": "🏕️", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Camp Office", "traceArea": "Cabin Trail", "storageArea": "Notice Board", "lockedObject": "Badge Box", "witnessArea": "Fire Circle", "witnessRole": "camp leader", "waterFeature": "wash bucket" } },
-  { "id": "cracked-fountain-box", "title": "The Cracked Fountain Box", "shortStory": "The donation box beside the fountain was found cracked open.", "crimeIcon": "⛲", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Fountain Plaza", "traceArea": "Wet Stone Path", "storageArea": "Bench Nook", "lockedObject": "Donation Box", "witnessArea": "Plaza Kiosk", "witnessRole": "groundskeeper", "waterFeature": "fountain edge" } },
-  { "id": "missing-ship-log", "title": "The Missing Ship Log", "shortStory": "A ship log vanished from the harbor master's office.", "crimeIcon": "⚓", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Harbor Office", "traceArea": "Gangway", "storageArea": "Log Shelf", "lockedObject": "Chart Cabinet", "witnessArea": "Dock Gate", "witnessRole": "harbor master", "waterFeature": "dock puddle" } },
-  { "id": "raided-archive-drawer", "title": "The Raided Archive Drawer", "shortStory": "A sealed archive drawer was opened and a record removed.", "crimeIcon": "🗄️", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Archive Room", "traceArea": "Record Aisle", "storageArea": "Document Shelf", "lockedObject": "Archive Drawer", "witnessArea": "Reading Desk", "witnessRole": "archivist", "waterFeature": "humidifier tray" } },
-  { "id": "stolen-circus-banner", "title": "The Stolen Circus Banner", "shortStory": "The circus banner vanished before the opening parade.", "crimeIcon": "🎪", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Circus Tent", "traceArea": "Ring Floor", "storageArea": "Banner Rack", "lockedObject": "Costume Chest", "witnessArea": "Ticket Wagon", "witnessRole": "ringmaster", "waterFeature": "animal trough" } },
-  { "id": "empty-orchard-crate", "title": "The Empty Orchard Crate", "shortStory": "A crate of perfect apples vanished from the orchard shed.", "crimeIcon": "🍎", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Orchard Shed", "traceArea": "Tree Row", "storageArea": "Apple Crate", "lockedObject": "Cold Box", "witnessArea": "Farm Gate", "witnessRole": "orchard keeper", "waterFeature": "irrigation ditch" } },
-  { "id": "broken-lighthouse-lens", "title": "The Broken Lighthouse Lens", "shortStory": "A spare lighthouse lens was damaged and moved from its case.", "crimeIcon": "🛟", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Lighthouse Entry", "traceArea": "Stone Stair", "storageArea": "Lens Shelf", "lockedObject": "Lens Case", "witnessArea": "Keeper Room", "witnessRole": "lighthouse keeper", "waterFeature": "seawater pail" } },
-  { "id": "missing-mining-tools", "title": "The Missing Mining Tools", "shortStory": "A set of mining tools disappeared from the quarry shed.", "crimeIcon": "⛏️", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Quarry Shed", "traceArea": "Gravel Track", "storageArea": "Tool Rack", "lockedObject": "Supply Locker", "witnessArea": "Foreman Hut", "witnessRole": "foreman", "waterFeature": "sluice trough" } },
-  { "id": "ransacked-art-room", "title": "The Ransacked Art Room", "shortStory": "A rare paint box vanished from the school art room.", "crimeIcon": "🎨", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Art Room", "traceArea": "Paint Table", "storageArea": "Canvas Shelf", "lockedObject": "Supply Cabinet", "witnessArea": "Classroom Door", "witnessRole": "teacher", "waterFeature": "brush cup" } },
-  { "id": "stolen-picnic-basket", "title": "The Stolen Picnic Basket", "shortStory": "A picnic basket vanished from the park pavilion.", "crimeIcon": "🧺", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Park Pavilion", "traceArea": "Grass Path", "storageArea": "Bench Shelf", "lockedObject": "Cooler Box", "witnessArea": "Picnic Table", "witnessRole": "park guest", "waterFeature": "drinking fountain" } },
-  { "id": "missing-courtyard-statue", "title": "The Missing Courtyard Statue", "shortStory": "A small statue disappeared from the academy courtyard.", "crimeIcon": "🗿", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Academy Courtyard", "traceArea": "Stone Walk", "storageArea": "Plaque Stand", "lockedObject": "Display Plinth", "witnessArea": "Lecture Hall", "witnessRole": "student", "waterFeature": "courtyard fountain" } },
-  { "id": "pilfered-lab-sample", "title": "The Pilfered Lab Sample", "shortStory": "A sealed lab sample disappeared from the research bench.", "crimeIcon": "🧪", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Research Lab", "traceArea": "Lab Counter", "storageArea": "Sample Shelf", "lockedObject": "Specimen Fridge", "witnessArea": "Observation Room", "witnessRole": "researcher", "waterFeature": "rinse station" } },
-  { "id": "tampered-radio-booth", "title": "The Tampered Radio Booth", "shortStory": "A broadcast booth was disturbed during a late-night show.", "crimeIcon": "🎙️", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Radio Booth", "traceArea": "Studio Floor", "storageArea": "Record Shelf", "lockedObject": "Mixer Panel", "witnessArea": "Producer Desk", "witnessRole": "host", "waterFeature": "water glass" } },
-  { "id": "missing-inn-register", "title": "The Missing Inn Register", "shortStory": "The inn's guest register vanished from the front desk.", "crimeIcon": "🏨", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Inn Lobby", "traceArea": "Front Hall", "storageArea": "Key Shelf", "lockedObject": "Register Drawer", "witnessArea": "Reception Desk", "witnessRole": "innkeeper", "waterFeature": "tea tray" } },
-  { "id": "ransacked-flower-cart", "title": "The Ransacked Flower Cart", "shortStory": "A flower cart was overturned and its rare blooms taken.", "crimeIcon": "💐", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Flower Cart", "traceArea": "Garden Lane", "storageArea": "Bloom Crate", "lockedObject": "Cash Tin", "witnessArea": "Street Corner", "witnessRole": "flower seller", "waterFeature": "flower bucket" } },
-  { "id": "stolen-wind-chime", "title": "The Stolen Wind Chime", "shortStory": "A handmade wind chime disappeared from a porch display.", "crimeIcon": "🎐", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Porch Display", "traceArea": "Wooden Deck", "storageArea": "Craft Shelf", "lockedObject": "Display Hook", "witnessArea": "Workshop Door", "witnessRole": "artisan", "waterFeature": "rain bowl" } },
-  { "id": "disturbed-ranger-cache", "title": "The Disturbed Ranger Cache", "shortStory": "A ranger supply cache was opened and emergency gear removed.", "crimeIcon": "🎒", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Forest Cache", "traceArea": "Trail Bend", "storageArea": "Supply Shelf", "lockedObject": "Emergency Box", "witnessArea": "Trail Post", "witnessRole": "trail ranger", "waterFeature": "stream crossing" } },
-  { "id": "missing-ferry-token", "title": "The Missing Ferry Token", "shortStory": "A ferry token was stolen from the dock office drawer.", "crimeIcon": "⛴️", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Dock Office", "traceArea": "Boardwalk", "storageArea": "Ticket Shelf", "lockedObject": "Token Drawer", "witnessArea": "Ferry Gate", "witnessRole": "deckhand", "waterFeature": "harbor edge" } },
-  { "id": "raided-candy-counter", "title": "The Raided Candy Counter", "shortStory": "A candy counter was raided and the rarest sweets disappeared.", "crimeIcon": "🍬", "difficulty": "easy", "maxInvestigations": 5, "template": { "area": "Candy Counter", "traceArea": "Shop Floor", "storageArea": "Sweet Shelf", "lockedObject": "Treat Case", "witnessArea": "Checkout Desk", "witnessRole": "shopkeeper", "waterFeature": "syrup sink" } }
+  {
+    "id": "missing-cookies",
+    "title": "The Missing Cookies",
+    "shortStory": "Someone snuck into camp overnight and ate all the cookies.",
+    "crimeIcon": "🍪",
+    "sceneImage": "/case-scenes/missing-cookies.webp",
+    "sceneImageAlt": "Scene photo for The Missing Cookies",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "locations": [
+      {
+        "id": "campsite",
+        "name": "Campsite",
+        "icon": "🏕️",
+        "teaserText": "The campsite looks recently disturbed.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "crumbs",
+            "label": "Examine the crumbs",
+            "description": "Inspect traces near the fire pit.",
+            "observationText": "The snack area was disturbed {movementWord}."
+          },
+          {
+            "kind": "nothing",
+            "id": "tents",
+            "label": "Search the tents",
+            "description": "Check sleeping bags and gear.",
+            "observationText": "The tents are messy, but nothing points to the culprit."
+          },
+          {
+            "kind": "witness",
+            "id": "campers",
+            "label": "Interview nearby campers",
+            "description": "Ask what they heard overnight.",
+            "observationText": "The witness sounded sleepy, but consistent."
+          }
+        ]
+      },
+      {
+        "id": "tracks",
+        "name": "Tracks",
+        "icon": "👣",
+        "teaserText": "Something passed behind the tents.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "measure-tracks",
+            "label": "Measure the tracks",
+            "description": "Check the size of the tracks.",
+            "observationText": "The tracks are steady and medium-sized through the dirt.",
+            "sizeOverrides": {
+              "small": "The prints stay tight and shallow beside the tents.",
+              "large": "The prints press deeper into the dirt than expected."
+            }
+          },
+          {
+            "kind": "evidence",
+            "id": "follow-tracks",
+            "label": "Follow the tracks",
+            "description": "Follow where the trail breaks away.",
+            "observationText": "The tracks break apart into {textureWord} behind the tents."
+          },
+          {
+            "kind": "nothing",
+            "id": "photograph-tracks",
+            "label": "Photograph the tracks",
+            "description": "Capture the tracks before they blur.",
+            "observationText": "The picture is clear, but it gives you nothing new."
+          }
+        ]
+      },
+      {
+        "id": "forest-edge",
+        "name": "Forest Edge",
+        "icon": "🌲",
+        "teaserText": "The soil near the roots looks unusual.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "check-roots",
+            "label": "Check the tree roots",
+            "description": "Inspect the soil under the roots.",
+            "observationText": "Something recently worked through the {groundWord} under the roots."
+          },
+          {
+            "kind": "nothing",
+            "id": "search-branches",
+            "label": "Search the branches",
+            "description": "Check the branches above eye level.",
+            "observationText": "Broken twigs and leaves make noise, but reveal nothing useful."
+          },
+          {
+            "kind": "nothing",
+            "id": "listen-quietly",
+            "label": "Listen quietly",
+            "description": "Pause and listen for movement.",
+            "observationText": "The woods stay still. If someone was here, they are long gone."
+          }
+        ]
+      },
+      {
+        "id": "cookie-jar",
+        "name": "Cookie Jar",
+        "icon": "🍪",
+        "teaserText": "The empty jar sits slightly crooked.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "inspect-lid",
+            "label": "Inspect the lid",
+            "description": "Study where the lid was forced open.",
+            "observationText": "Something scraped hard against the lid before it gave way."
+          },
+          {
+            "kind": "nothing",
+            "id": "smell-jar",
+            "label": "Smell the jar",
+            "description": "Check for any lingering scent.",
+            "observationText": "It only smells sweet and stale. Nothing useful lingers."
+          },
+          {
+            "kind": "evidence",
+            "id": "check-table",
+            "label": "Check the table",
+            "description": "Look along the table edge.",
+            "observationText": "Whoever reached the jar left crumbs {movementWord} along the edge."
+          }
+        ]
+      },
+      {
+        "id": "witness-tent",
+        "name": "Witness Tent",
+        "icon": "🛏️",
+        "teaserText": "A sleepy camper remembers something.",
+        "actions": [
+          {
+            "kind": "witness",
+            "id": "interview-camper",
+            "label": "Interview the sleepy camper",
+            "description": "Ask what the camper remembers.",
+            "observationText": "The witness is tired, but certain about that detail."
+          },
+          {
+            "kind": "evidence",
+            "id": "check-wash-bucket",
+            "label": "Check the wash bucket",
+            "description": "Inspect the ground by the bucket.",
+            "observationText": "Even near the water, a line of {textureWord} stayed behind."
+          },
+          {
+            "kind": "nothing",
+            "id": "search-bedding",
+            "label": "Search the bedding",
+            "description": "Check the blankets and bedding.",
+            "observationText": "The bedding is warm and crumpled, but it hides nothing useful."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "purloined-page",
+    "title": "The Purloined Page",
+    "shortStory": "A rare page was torn from a locked book in the library.",
+    "crimeIcon": "📖",
+    "sceneImage": "/case-scenes/purloined-page.jpg",
+    "sceneImageAlt": "Scene photo for The Purloined Page",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "locations": [
+      {
+        "id": "reading-room",
+        "name": "Reading Room",
+        "icon": "📚",
+        "teaserText": "Books are scattered across the floor.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "crumbs",
+            "label": "Check the floor",
+            "description": "Look for dropped items near the shelves.",
+            "observationText": "Books were disturbed {movementWord} from their shelves."
+          },
+          {
+            "kind": "nothing",
+            "id": "tents",
+            "label": "Search the armchairs",
+            "description": "Check between the cushions.",
+            "observationText": "The armchairs are rumpled, but nothing is hidden here."
+          },
+          {
+            "kind": "witness",
+            "id": "campers",
+            "label": "Interview the librarian",
+            "description": "Ask what they heard last night.",
+            "observationText": "The librarian overheard soft footsteps after hours."
+          }
+        ]
+      },
+      {
+        "id": "front-desk",
+        "name": "Front Desk",
+        "icon": "📋",
+        "teaserText": "The desk surface looks disturbed.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "measure-tracks",
+            "label": "Measure the marks",
+            "description": "Check the scuff marks on the counter.",
+            "observationText": "The scuffs are even and mid-height across the counter.",
+            "sizeOverrides": {
+              "small": "Small scuff marks sit low on the desk front.",
+              "large": "Deep scuff marks line the top of the counter."
+            }
+          },
+          {
+            "kind": "evidence",
+            "id": "follow-tracks",
+            "label": "Follow the traces",
+            "description": "See where the trail leads.",
+            "observationText": "A thin line of {textureWord} trails away from the desk."
+          },
+          {
+            "kind": "nothing",
+            "id": "photograph-tracks",
+            "label": "Photograph the desk",
+            "description": "Capture the surface before it is cleaned.",
+            "observationText": "The photo shows nothing beyond what you already saw."
+          }
+        ]
+      },
+      {
+        "id": "rare-books",
+        "name": "Rare Books",
+        "icon": "📜",
+        "teaserText": "The restricted section has been disturbed.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "check-roots",
+            "label": "Check the bookcase base",
+            "description": "Inspect the floor under the shelves.",
+            "observationText": "The {groundWord} near the bookcase has been disturbed."
+          },
+          {
+            "kind": "nothing",
+            "id": "search-branches",
+            "label": "Search the high shelves",
+            "description": "Check the topmost books.",
+            "observationText": "The high shelves are dusty but undisturbed."
+          },
+          {
+            "kind": "nothing",
+            "id": "listen-quietly",
+            "label": "Listen for sounds",
+            "description": "Pause and listen.",
+            "observationText": "The library is silent. No one is hiding here."
+          }
+        ]
+      },
+      {
+        "id": "study-nook",
+        "name": "Study Nook",
+        "icon": "🪑",
+        "teaserText": "The display case latch looks damaged.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "inspect-lid",
+            "label": "Inspect the display case",
+            "description": "Check where the latch was forced.",
+            "observationText": "Fresh scoring marks scratch the glass case latch."
+          },
+          {
+            "kind": "nothing",
+            "id": "smell-jar",
+            "label": "Check the inkwell",
+            "description": "Sniff for any unusual scent.",
+            "observationText": "It smells only of old paper and dust. Nothing stands out."
+          },
+          {
+            "kind": "evidence",
+            "id": "check-table",
+            "label": "Check the desk",
+            "description": "Look along the writing desk.",
+            "observationText": "Whoever took the book left traces {movementWord} along the desk."
+          }
+        ]
+      },
+      {
+        "id": "staff-office",
+        "name": "Staff Office",
+        "icon": "🚪",
+        "teaserText": "A staff member remembers something odd.",
+        "actions": [
+          {
+            "kind": "witness",
+            "id": "interview-camper",
+            "label": "Talk to the assistant",
+            "description": "Ask what they noticed.",
+            "observationText": "The assistant is certain about that detail."
+          },
+          {
+            "kind": "evidence",
+            "id": "check-wash-bucket",
+            "label": "Check the coat rack",
+            "description": "Inspect the floor by the rack.",
+            "observationText": "Even by the door, a line of {textureWord} stayed behind."
+          },
+          {
+            "kind": "nothing",
+            "id": "search-bedding",
+            "label": "Search the staff cot",
+            "description": "Check the rest area.",
+            "observationText": "The cot is undisturbed and holds no clues."
+          }
+        ]
+      }
+    ],
+    "evidenceOverrides": {
+      "height-clue": {
+        "title": "Scattered Pages",
+        "clueText": "Torn pages were scattered {movementWord} near the shelf."
+      },
+      "witness-clue": {
+        "title": "Library Witness",
+        "clueText": "The librarian remembered the culprit {waterAvoidanceWord}."
+      },
+      "weight-clue": {
+        "title": "Track Impressions",
+        "clueText": "Track impressions were {trackDepth} in the library carpet."
+      },
+      "type-residue-clue": {
+        "title": "Dust Trail",
+        "clueText": "A trail of {textureWord} led between the shelves."
+      },
+      "ground-trace-clue": {
+        "title": "Binding Dust",
+        "clueText": "Fine dust near the shelf showed {groundWord}."
+      },
+      "force-clue": {
+        "title": "Score Marks",
+        "clueText": "The display case lock showed {forceTrace}."
+      }
+    }
+  },
+  {
+    "id": "missing-medal",
+    "title": "The Missing Medal",
+    "shortStory": "A championship medal vanished from the locked trophy case overnight.",
+    "crimeIcon": "🏅",
+    "sceneImage": "/case-scenes/missing-medal.webp",
+    "sceneImageAlt": "Scene photo for The Missing Medal",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "locations": [
+      {
+        "id": "locker-room",
+        "name": "Locker Room",
+        "icon": "🏋️",
+        "teaserText": "The locker room shows signs of a struggle.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "crumbs",
+            "label": "Search the benches",
+            "description": "Look for dropped items on the benches.",
+            "observationText": "Gear was scattered {movementWord} across the benches."
+          },
+          {
+            "kind": "nothing",
+            "id": "tents",
+            "label": "Check the lockers",
+            "description": "Open unlocked lockers.",
+            "observationText": "The lockers are messy but reveal nothing useful."
+          },
+          {
+            "kind": "witness",
+            "id": "campers",
+            "label": "Question the attendant",
+            "description": "Ask who was here last night.",
+            "observationText": "The attendant remembers hearing scuffling after hours."
+          }
+        ]
+      },
+      {
+        "id": "gym-floor",
+        "name": "Gym Floor",
+        "icon": "🏀",
+        "teaserText": "The floor has fresh marks.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "measure-tracks",
+            "label": "Measure the scuffs",
+            "description": "Check the size of the floor marks.",
+            "observationText": "Mid-sized scuff marks trail across the gym floor.",
+            "sizeOverrides": {
+              "small": "Small, light scuff marks near the equipment rack.",
+              "large": "Heavy, deep scuff marks near center court."
+            }
+          },
+          {
+            "kind": "evidence",
+            "id": "follow-tracks",
+            "label": "Follow the marks",
+            "description": "See where the trail goes.",
+            "observationText": "A line of {textureWord} cuts across the gym floor."
+          },
+          {
+            "kind": "nothing",
+            "id": "photograph-tracks",
+            "label": "Photograph the floor",
+            "description": "Document the marks.",
+            "observationText": "The photos are clear but add nothing new."
+          }
+        ]
+      },
+      {
+        "id": "equipment-room",
+        "name": "Equipment Room",
+        "icon": "🏐",
+        "teaserText": "Equipment has been knocked over.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "check-roots",
+            "label": "Check under the racks",
+            "description": "Inspect the floor beneath equipment.",
+            "observationText": "The {groundWord} under the rack has been disturbed."
+          },
+          {
+            "kind": "nothing",
+            "id": "search-branches",
+            "label": "Search the top shelves",
+            "description": "Check above eye level.",
+            "observationText": "The top shelves are dusty but untouched."
+          },
+          {
+            "kind": "nothing",
+            "id": "listen-quietly",
+            "label": "Listen for movement",
+            "description": "Stand still and listen.",
+            "observationText": "The room is quiet. No one is here."
+          }
+        ]
+      },
+      {
+        "id": "trophy-case",
+        "name": "Trophy Case",
+        "icon": "🏆",
+        "teaserText": "The trophy case lock is damaged.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "inspect-lid",
+            "label": "Inspect the lock",
+            "description": "Check how the lock was forced.",
+            "observationText": "The lock has fresh scoring marks around the edge."
+          },
+          {
+            "kind": "nothing",
+            "id": "smell-jar",
+            "label": "Smell the case",
+            "description": "Check for unusual odors.",
+            "observationText": "It smells like polished metal. Nothing unusual."
+          },
+          {
+            "kind": "evidence",
+            "id": "check-table",
+            "label": "Check the display table",
+            "description": "Look along the display surface.",
+            "observationText": "Whoever opened the case left traces {movementWord} along the glass."
+          }
+        ]
+      },
+      {
+        "id": "coach-office",
+        "name": "Coach Office",
+        "icon": "📋",
+        "teaserText": "The coach recalls a strange detail.",
+        "actions": [
+          {
+            "kind": "witness",
+            "id": "interview-camper",
+            "label": "Interview the coach",
+            "description": "Ask what they remember.",
+            "observationText": "The coach is tired but clear on that detail."
+          },
+          {
+            "kind": "evidence",
+            "id": "check-wash-bucket",
+            "label": "Check the sink area",
+            "description": "Look by the washbasin.",
+            "observationText": "Even by the sink, a line of {textureWord} remained."
+          },
+          {
+            "kind": "nothing",
+            "id": "search-bedding",
+            "label": "Search the couch",
+            "description": "Check the office couch.",
+            "observationText": "The couch is rumpled but holds nothing useful."
+          }
+        ]
+      }
+    ],
+    "evidenceOverrides": {
+      "height-clue": {
+        "title": "Scattered Gear",
+        "clueText": "Training gear was dropped {movementWord} across the floor."
+      },
+      "witness-clue": {
+        "title": "Locker Room Witness",
+        "clueText": "Someone remembered the culprit {waterAvoidanceWord}."
+      },
+      "weight-clue": {
+        "title": "Floor Scuffs",
+        "clueText": "Scuffs were {trackDepth} near the trophy case."
+      },
+      "type-residue-clue": {
+        "title": "Gym Residue",
+        "clueText": "A trail of {textureWord} stretched across the gym floor."
+      },
+      "ground-trace-clue": {
+        "title": "Mat Disturbance",
+        "clueText": "The mat area showed {groundWord}."
+      },
+      "force-clue": {
+        "title": "Scored Marks",
+        "clueText": "The trophy case lock showed {forceTrace}."
+      }
+    }
+  },
+  {
+    "id": "ravaged-pantry",
+    "title": "The Ravaged Pantry",
+    "shortStory": "Someone raided the restaurant pantry after closing hours.",
+    "crimeIcon": "🥘",
+    "sceneImage": "/case-scenes/ravaged-pantry.jpg",
+    "sceneImageAlt": "Scene photo for The Ravaged Pantry",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "locations": [
+      {
+        "id": "pantry",
+        "name": "Pantry",
+        "icon": "🥫",
+        "teaserText": "Shelves have been rummaged through.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "crumbs",
+            "label": "Check the floor",
+            "description": "Look for dropped food on the floor.",
+            "observationText": "Spilled goods scatter {movementWord} across the pantry floor."
+          },
+          {
+            "kind": "nothing",
+            "id": "tents",
+            "label": "Search the shelves",
+            "description": "Check the stacked boxes.",
+            "observationText": "The shelves are disorganized but reveal no suspect."
+          },
+          {
+            "kind": "witness",
+            "id": "campers",
+            "label": "Ask the chef",
+            "description": "Who was in the kitchen last?",
+            "observationText": "The chef recalls hearing rustling after closing."
+          }
+        ]
+      },
+      {
+        "id": "kitchen-counter",
+        "name": "Kitchen Counter",
+        "icon": "🔪",
+        "teaserText": "The counter has fresh traces.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "measure-tracks",
+            "label": "Measure the marks",
+            "description": "Check marks on the countertop.",
+            "observationText": "Medium marks run across the stainless steel counter.",
+            "sizeOverrides": {
+              "small": "Fine light marks sit low on the counter edge.",
+              "large": "Deep gouges run across the counter surface."
+            }
+          },
+          {
+            "kind": "evidence",
+            "id": "follow-tracks",
+            "label": "Follow the trail",
+            "description": "See where the residue leads.",
+            "observationText": "A streak of {textureWord} trails across the counter."
+          },
+          {
+            "kind": "nothing",
+            "id": "photograph-tracks",
+            "label": "Photograph the counter",
+            "description": "Document the surface.",
+            "observationText": "The photo captures it but reveals nothing more."
+          }
+        ]
+      },
+      {
+        "id": "walk-in-fridge",
+        "name": "Walk-in Fridge",
+        "icon": "🧊",
+        "teaserText": "The cold room floor shows signs of activity.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "check-roots",
+            "label": "Check under the shelving",
+            "description": "Inspect the floor beneath racks.",
+            "observationText": "The {groundWord} near the fridge base was disturbed."
+          },
+          {
+            "kind": "nothing",
+            "id": "search-branches",
+            "label": "Check the top shelves",
+            "description": "Reach above head height.",
+            "observationText": "The top shelves are frosted but undisturbed."
+          },
+          {
+            "kind": "nothing",
+            "id": "listen-quietly",
+            "label": "Listen for drips",
+            "description": "Pause and listen.",
+            "observationText": "The fridge hums quietly. No one is inside."
+          }
+        ]
+      },
+      {
+        "id": "dining-room",
+        "name": "Dining Room",
+        "icon": "🍽️",
+        "teaserText": "The locked cabinet door was tampered with.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "inspect-lid",
+            "label": "Inspect the cabinet lock",
+            "description": "Check how the lock was forced.",
+            "observationText": "Fine scratch marks circle the cabinet lock."
+          },
+          {
+            "kind": "nothing",
+            "id": "smell-jar",
+            "label": "Smell the cabinet",
+            "description": "Check for lingering scents.",
+            "observationText": "It smells of old wood and polish. Nothing useful."
+          },
+          {
+            "kind": "evidence",
+            "id": "check-table",
+            "label": "Check the dining table",
+            "description": "Look along the table edge.",
+            "observationText": "Whoever took from the cabinet worked {movementWord} along the table."
+          }
+        ]
+      },
+      {
+        "id": "back-alley",
+        "name": "Back Alley",
+        "icon": "🚮",
+        "teaserText": "A delivery person noticed something odd.",
+        "actions": [
+          {
+            "kind": "witness",
+            "id": "interview-camper",
+            "label": "Interview the delivery person",
+            "description": "Ask what they saw.",
+            "observationText": "The delivery person is certain about the detail."
+          },
+          {
+            "kind": "evidence",
+            "id": "check-wash-bucket",
+            "label": "Check the drain",
+            "description": "Inspect the ground near the drain.",
+            "observationText": "Even near the drain, a line of {textureWord} stayed behind."
+          },
+          {
+            "kind": "nothing",
+            "id": "search-bedding",
+            "label": "Check the delivery crates",
+            "description": "Look through stacked crates.",
+            "observationText": "The crates are stacked neatly. Nothing is hidden."
+          }
+        ]
+      }
+    ],
+    "evidenceOverrides": {
+      "type-residue-clue": {
+        "title": "Counter Trace",
+        "clueText": "A trail of {textureWord} stretched across the kitchen counter."
+      },
+      "force-clue": {
+        "clueText": "The pantry lock showed {forceTrace}.",
+        "endExplanation": "The culprit left {forceTrace} while forcing the pantry open."
+      }
+    }
+  },
+  {
+    "id": "stolen-artifact",
+    "title": "The Stolen Artifact",
+    "shortStory": "A priceless artifact was taken from a sealed museum exhibit.",
+    "crimeIcon": "🗿",
+    "sceneImage": "/case-scenes/stolen-artifact.jpg",
+    "sceneImageAlt": "Scene photo for The Stolen Artifact",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "locations": [
+      {
+        "id": "main-hall",
+        "name": "Main Hall",
+        "icon": "🏛️",
+        "teaserText": "The grand hall shows signs of movement.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "crumbs",
+            "label": "Scan the floor",
+            "description": "Look for items dropped on the floor.",
+            "observationText": "Debris was scattered {movementWord} across the marble floor."
+          },
+          {
+            "kind": "nothing",
+            "id": "tents",
+            "label": "Search the alcoves",
+            "description": "Check the side alcoves.",
+            "observationText": "The alcoves are dusty but hold no clues."
+          },
+          {
+            "kind": "witness",
+            "id": "campers",
+            "label": "Talk to the guard",
+            "description": "Ask what they noticed during rounds.",
+            "observationText": "The guard heard something shift near closing time."
+          }
+        ]
+      },
+      {
+        "id": "exhibit-room",
+        "name": "Exhibit Room",
+        "icon": "🖼️",
+        "teaserText": "The exhibit floor has fresh scuffs.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "measure-tracks",
+            "label": "Measure the scuffs",
+            "description": "Check the scuff marks on the floor.",
+            "observationText": "Mid-sized scuffs mark the floor near the exhibit.",
+            "sizeOverrides": {
+              "small": "Small, light scuffs near the display base.",
+              "large": "Heavy scuffs mark the floor around the exhibit."
+            }
+          },
+          {
+            "kind": "evidence",
+            "id": "follow-tracks",
+            "label": "Follow the trail",
+            "description": "See where the scuffs lead.",
+            "observationText": "A trace of {textureWord} leads away from the exhibit."
+          },
+          {
+            "kind": "nothing",
+            "id": "photograph-tracks",
+            "label": "Photograph the floor",
+            "description": "Capture the scuff pattern.",
+            "observationText": "The photo shows the pattern clearly but adds nothing."
+          }
+        ]
+      },
+      {
+        "id": "storage-vault",
+        "name": "Storage Vault",
+        "icon": "🔐",
+        "teaserText": "The vault floor shows disturbance.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "check-roots",
+            "label": "Check under the shelves",
+            "description": "Inspect the floor under storage.",
+            "observationText": "The {groundWord} in the vault has been disturbed."
+          },
+          {
+            "kind": "nothing",
+            "id": "search-branches",
+            "label": "Check the high cabinets",
+            "description": "Reach the top cabinets.",
+            "observationText": "The high cabinets are dusty but untouched."
+          },
+          {
+            "kind": "nothing",
+            "id": "listen-quietly",
+            "label": "Listen for echoes",
+            "description": "Stand still in the vault.",
+            "observationText": "The vault is silent. No one is here."
+          }
+        ]
+      },
+      {
+        "id": "security-office",
+        "name": "Security Office",
+        "icon": "📹",
+        "teaserText": "The security panel was tampered with.",
+        "actions": [
+          {
+            "kind": "evidence",
+            "id": "inspect-lid",
+            "label": "Inspect the panel",
+            "description": "Check how the panel was forced.",
+            "observationText": "The security panel has fresh scoring around its edge."
+          },
+          {
+            "kind": "nothing",
+            "id": "smell-jar",
+            "label": "Smell the panel",
+            "description": "Check for unusual odors.",
+            "observationText": "It smells of electronics and dust. Nothing stands out."
+          },
+          {
+            "kind": "evidence",
+            "id": "check-table",
+            "label": "Check the desk",
+            "description": "Search the security desk.",
+            "observationText": "Whoever reached the panel left traces {movementWord} along the desk."
+          }
+        ]
+      },
+      {
+        "id": "rooftop",
+        "name": "Rooftop",
+        "icon": "🌙",
+        "teaserText": "The rooftop guard has a curious memory.",
+        "actions": [
+          {
+            "kind": "witness",
+            "id": "interview-camper",
+            "label": "Interview the rooftop guard",
+            "description": "Ask what they recall.",
+            "observationText": "The guard is tired but certain about that memory."
+          },
+          {
+            "kind": "evidence",
+            "id": "check-wash-bucket",
+            "label": "Check the drainpipe",
+            "description": "Inspect the ground near the pipe.",
+            "observationText": "Even near the drainpipe, a line of {textureWord} stayed behind."
+          },
+          {
+            "kind": "nothing",
+            "id": "search-bedding",
+            "label": "Check the rooftop shed",
+            "description": "Search the storage shed.",
+            "observationText": "The shed is empty and holds nothing useful."
+          }
+        ]
+      }
+    ],
+    "evidenceOverrides": {
+      "height-clue": {
+        "title": "Debris",
+        "clueText": "Tiny fragments were scattered {movementWord} across the hall."
+      },
+      "witness-clue": {
+        "title": "Guard Statement",
+        "clueText": "The guard remembered the culprit {waterAvoidanceWord}."
+      },
+      "weight-clue": {
+        "title": "Museum Floor Marks",
+        "clueText": "Marks were {trackDepth} in the museum floor near the display."
+      },
+      "type-residue-clue": {
+        "title": "Display Dust",
+        "clueText": "A trace of {textureWord} led between the displays."
+      },
+      "ground-trace-clue": {
+        "title": "Floor Disturbance",
+        "clueText": "The display base showed {groundWord}."
+      },
+      "force-clue": {
+        "title": "Display Score Marks",
+        "clueText": "The display case lock showed {forceTrace}."
+      }
+    }
+  },
+  {
+    "id": "vanishing-vase",
+    "title": "The Vanishing Vase",
+    "shortStory": "A painted vase disappeared from the florist's front display overnight.",
+    "crimeIcon": "🏺",
+    "sceneImage": "/case-scenes/vanishing-vase.webp",
+    "sceneImageAlt": "Scene photo for The Vanishing Vase",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Florist Display",
+      "traceArea": "Shop Aisle",
+      "storageArea": "Potting Shelf",
+      "lockedObject": "Display Cabinet",
+      "witnessArea": "Flower Stand",
+      "witnessRole": "florist",
+      "waterFeature": "watering can"
+    }
+  },
+  {
+    "id": "broken-bakery-window",
+    "title": "The Broken Bakery Window",
+    "shortStory": "Someone broke into the bakery and scattered flour across the counter.",
+    "crimeIcon": "🥐",
+    "sceneImage": "/case-scenes/broken-bakery-window.webp",
+    "sceneImageAlt": "Scene photo for The Broken Bakery Window",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Bakery Floor",
+      "traceArea": "Flour Counter",
+      "storageArea": "Bread Rack",
+      "lockedObject": "Pastry Case",
+      "witnessArea": "Kitchen Door",
+      "witnessRole": "baker",
+      "waterFeature": "wash sink"
+    }
+  },
+  {
+    "id": "missing-moonstone",
+    "title": "The Missing Moonstone",
+    "shortStory": "A moonstone vanished from a quiet shrine before sunrise.",
+    "crimeIcon": "🌙",
+    "sceneImage": "/case-scenes/missing-moonstone.webp",
+    "sceneImageAlt": "Scene photo for The Missing Moonstone",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Shrine Steps",
+      "traceArea": "Moonlit Path",
+      "storageArea": "Offering Shelf",
+      "lockedObject": "Stone Reliquary",
+      "witnessArea": "Prayer Hall",
+      "witnessRole": "caretaker",
+      "waterFeature": "ritual basin"
+    }
+  },
+  {
+    "id": "stolen-stage-prop",
+    "title": "The Stolen Stage Prop",
+    "shortStory": "The theater's prized prop vanished moments before rehearsal.",
+    "crimeIcon": "🎭",
+    "sceneImage": "/case-scenes/stolen-stage-prop.webp",
+    "sceneImageAlt": "Scene photo for The Stolen Stage Prop",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Main Stage",
+      "traceArea": "Backstage Floor",
+      "storageArea": "Prop Rack",
+      "lockedObject": "Costume Trunk",
+      "witnessArea": "Green Room",
+      "witnessRole": "stagehand",
+      "waterFeature": "makeup sink"
+    }
+  },
+  {
+    "id": "ransacked-greenhouse",
+    "title": "The Ransacked Greenhouse",
+    "shortStory": "Rare seedlings were uprooted from the greenhouse after closing.",
+    "crimeIcon": "🌱",
+    "sceneImage": "/case-scenes/ransacked-greenhouse.webp",
+    "sceneImageAlt": "Scene photo for The Ransacked Greenhouse",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Greenhouse Bed",
+      "traceArea": "Damp Walkway",
+      "storageArea": "Seedling Rack",
+      "lockedObject": "Tool Cabinet",
+      "witnessArea": "Garden Gate",
+      "witnessRole": "gardener",
+      "waterFeature": "irrigation hose"
+    }
+  },
+  {
+    "id": "vanished-fishing-net",
+    "title": "The Vanished Fishing Net",
+    "shortStory": "A fisher's best net vanished from the pier shed.",
+    "crimeIcon": "🎣",
+    "sceneImage": "/case-scenes/vanished-fishing-net.webp",
+    "sceneImageAlt": "Scene photo for The Vanished Fishing Net",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Pier Shed",
+      "traceArea": "Dock Planks",
+      "storageArea": "Net Rack",
+      "lockedObject": "Bait Locker",
+      "witnessArea": "Harbor Bench",
+      "witnessRole": "fisher",
+      "waterFeature": "tide pool"
+    }
+  },
+  {
+    "id": "pilfered-parcel",
+    "title": "The Pilfered Parcel",
+    "shortStory": "A sealed parcel disappeared from the post office sorting room.",
+    "crimeIcon": "📦",
+    "sceneImage": "/case-scenes/pilfered-parcel.webp",
+    "sceneImageAlt": "Scene photo for The Pilfered Parcel",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Sorting Room",
+      "traceArea": "Mail Counter",
+      "storageArea": "Parcel Shelf",
+      "lockedObject": "Delivery Cage",
+      "witnessArea": "Front Desk",
+      "witnessRole": "clerk",
+      "waterFeature": "mop bucket"
+    }
+  },
+  {
+    "id": "toppled-totem",
+    "title": "The Toppled Totem",
+    "shortStory": "A carved totem was knocked over in the village square.",
+    "crimeIcon": "🪵",
+    "sceneImage": "/case-scenes/toppled-totem.webp",
+    "sceneImageAlt": "Scene photo for The Toppled Totem",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Village Square",
+      "traceArea": "Packed Dirt Path",
+      "storageArea": "Carving Stand",
+      "lockedObject": "Ceremonial Chest",
+      "witnessArea": "Meeting Hut",
+      "witnessRole": "elder",
+      "waterFeature": "rain barrel"
+    }
+  },
+  {
+    "id": "missing-map",
+    "title": "The Missing Map",
+    "shortStory": "A hand-drawn route map vanished from the ranger station.",
+    "crimeIcon": "🗺️",
+    "sceneImage": "/case-scenes/missing-map.webp",
+    "sceneImageAlt": "Scene photo for The Missing Map",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Ranger Desk",
+      "traceArea": "Station Floor",
+      "storageArea": "Map Shelf",
+      "lockedObject": "File Cabinet",
+      "witnessArea": "Lookout Porch",
+      "witnessRole": "ranger",
+      "waterFeature": "canteen crate"
+    }
+  },
+  {
+    "id": "raided-berry-stall",
+    "title": "The Raided Berry Stall",
+    "shortStory": "A market stall was emptied of its ripest berries overnight.",
+    "crimeIcon": "🫐",
+    "sceneImage": "/case-scenes/raided-berry-stall.webp",
+    "sceneImageAlt": "Scene photo for The Raided Berry Stall",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Berry Stall",
+      "traceArea": "Market Lane",
+      "storageArea": "Crate Stack",
+      "lockedObject": "Cash Box",
+      "witnessArea": "Vendor Booth",
+      "witnessRole": "vendor",
+      "waterFeature": "rinse tub"
+    }
+  },
+  {
+    "id": "stolen-silver-bell",
+    "title": "The Stolen Silver Bell",
+    "shortStory": "A silver bell disappeared from the town hall display.",
+    "crimeIcon": "🔔",
+    "sceneImage": "/case-scenes/stolen-silver-bell.jpg",
+    "sceneImageAlt": "Scene photo for The Stolen Silver Bell",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Town Hall",
+      "traceArea": "Marble Hallway",
+      "storageArea": "Display Shelf",
+      "lockedObject": "Bell Case",
+      "witnessArea": "Clerk Office",
+      "witnessRole": "clerk",
+      "waterFeature": "water cooler"
+    }
+  },
+  {
+    "id": "scrambled-signal",
+    "title": "The Scrambled Signal",
+    "shortStory": "The radio tower's tuning crystal was disturbed during the night.",
+    "crimeIcon": "📡",
+    "sceneImage": "/case-scenes/scrambled-signal.jpg",
+    "sceneImageAlt": "Scene photo for The Scrambled Signal",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Radio Tower",
+      "traceArea": "Service Platform",
+      "storageArea": "Cable Rack",
+      "lockedObject": "Tuning Console",
+      "witnessArea": "Control Booth",
+      "witnessRole": "technician",
+      "waterFeature": "cooling tank"
+    }
+  },
+  {
+    "id": "missing-museum-key",
+    "title": "The Missing Museum Key",
+    "shortStory": "The curator's master key vanished from a locked office.",
+    "crimeIcon": "🗝️",
+    "sceneImage": "/case-scenes/missing-museum-key.jpg",
+    "sceneImageAlt": "Scene photo for The Missing Museum Key",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Curator Office",
+      "traceArea": "Gallery Hall",
+      "storageArea": "Catalog Shelf",
+      "lockedObject": "Key Cabinet",
+      "witnessArea": "Ticket Desk",
+      "witnessRole": "curator",
+      "waterFeature": "cleaning bucket"
+    }
+  },
+  {
+    "id": "wrecked-workshop",
+    "title": "The Wrecked Workshop",
+    "shortStory": "A repair workshop was found open with parts scattered everywhere.",
+    "crimeIcon": "🛠️",
+    "sceneImage": "/case-scenes/wrecked-workshop.webp",
+    "sceneImageAlt": "Scene photo for The Wrecked Workshop",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Repair Bench",
+      "traceArea": "Workshop Floor",
+      "storageArea": "Parts Shelf",
+      "lockedObject": "Tool Chest",
+      "witnessArea": "Service Window",
+      "witnessRole": "mechanic",
+      "waterFeature": "parts washer"
+    }
+  },
+  {
+    "id": "empty-aquarium-cache",
+    "title": "The Empty Aquarium Cache",
+    "shortStory": "A hidden cache beside the aquarium tank was emptied overnight.",
+    "crimeIcon": "🐠",
+    "sceneImage": "/case-scenes/empty-aquarium-cache.jpg",
+    "sceneImageAlt": "Scene photo for The Empty Aquarium Cache",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Aquarium Hall",
+      "traceArea": "Tank Walkway",
+      "storageArea": "Feed Shelf",
+      "lockedObject": "Filter Cabinet",
+      "witnessArea": "Viewing Room",
+      "witnessRole": "aquarist",
+      "waterFeature": "main tank"
+    }
+  },
+  {
+    "id": "lost-lantern",
+    "title": "The Lost Lantern",
+    "shortStory": "The festival lantern disappeared before the evening procession.",
+    "crimeIcon": "🏮",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Festival Booth",
+      "traceArea": "Lantern Path",
+      "storageArea": "Decoration Rack",
+      "lockedObject": "Supply Chest",
+      "witnessArea": "Parade Gate",
+      "witnessRole": "organizer",
+      "waterFeature": "fountain basin"
+    },
+    "sceneImage": "/case-scenes/lost-lantern.jpg",
+    "sceneImageAlt": "Scene photo for The Lost Lantern"
+  },
+  {
+    "id": "stolen-snowglobe",
+    "title": "The Stolen Snowglobe",
+    "shortStory": "A souvenir snowglobe vanished from the lodge display.",
+    "crimeIcon": "❄️",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Lodge Lobby",
+      "traceArea": "Carpet Runner",
+      "storageArea": "Souvenir Shelf",
+      "lockedObject": "Glass Display",
+      "witnessArea": "Reception Desk",
+      "witnessRole": "innkeeper",
+      "waterFeature": "tea station"
+    },
+    "sceneImage": "/case-scenes/stolen-snowglobe.webp",
+    "sceneImageAlt": "Scene photo for The Stolen Snowglobe"
+  },
+  {
+    "id": "disturbed-dojo-locker",
+    "title": "The Disturbed Dojo Locker",
+    "shortStory": "A training badge was taken from the dojo locker room.",
+    "crimeIcon": "🥋",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Dojo Floor",
+      "traceArea": "Practice Mat",
+      "storageArea": "Gear Rack",
+      "lockedObject": "Badge Locker",
+      "witnessArea": "Training Hall",
+      "witnessRole": "sensei",
+      "waterFeature": "wash basin"
+    },
+    "sceneImage": "/case-scenes/disturbed-dojo-locker.webp",
+    "sceneImageAlt": "Scene photo for The Disturbed Dojo Locker"
+  },
+  {
+    "id": "missing-honey-jar",
+    "title": "The Missing Honey Jar",
+    "shortStory": "A jar of rare honey vanished from the apiary shed.",
+    "crimeIcon": "🍯",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Apiary Shed",
+      "traceArea": "Hive Path",
+      "storageArea": "Jar Shelf",
+      "lockedObject": "Honey Cabinet",
+      "witnessArea": "Bee Yard",
+      "witnessRole": "beekeeper",
+      "waterFeature": "smoker bucket"
+    },
+    "sceneImage": "/case-scenes/missing-honey-jar.webp",
+    "sceneImageAlt": "Scene photo for The Missing Honey Jar"
+  },
+  {
+    "id": "raided-rooftop-garden",
+    "title": "The Raided Rooftop Garden",
+    "shortStory": "A rooftop planter was stripped of its prize herbs.",
+    "crimeIcon": "🪴",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Rooftop Garden",
+      "traceArea": "Gravel Walkway",
+      "storageArea": "Planter Rack",
+      "lockedObject": "Seed Cabinet",
+      "witnessArea": "Roof Door",
+      "witnessRole": "caretaker",
+      "waterFeature": "rain collector"
+    },
+    "sceneImage": "/case-scenes/raided-rooftop-garden.jpg",
+    "sceneImageAlt": "Scene photo for The Raided Rooftop Garden"
+  },
+  {
+    "id": "broken-observatory-case",
+    "title": "The Broken Observatory Case",
+    "shortStory": "A star chart was taken from the observatory display case.",
+    "crimeIcon": "🔭",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Observatory Dome",
+      "traceArea": "Telescope Platform",
+      "storageArea": "Chart Shelf",
+      "lockedObject": "Star Chart Case",
+      "witnessArea": "Control Room",
+      "witnessRole": "astronomer",
+      "waterFeature": "lens rinse tray"
+    },
+    "sceneImage": "/case-scenes/broken-observatory-case.jpg",
+    "sceneImageAlt": "Scene photo for The Broken Observatory Case"
+  },
+  {
+    "id": "stolen-ticket-roll",
+    "title": "The Stolen Ticket Roll",
+    "shortStory": "A full roll of tickets disappeared from the arcade booth.",
+    "crimeIcon": "🎟️",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Arcade Booth",
+      "traceArea": "Game Aisle",
+      "storageArea": "Prize Shelf",
+      "lockedObject": "Ticket Drawer",
+      "witnessArea": "Token Counter",
+      "witnessRole": "attendant",
+      "waterFeature": "soda spill"
+    },
+    "sceneImage": "/case-scenes/stolen-ticket-roll.webp",
+    "sceneImageAlt": "Scene photo for The Stolen Ticket Roll"
+  },
+  {
+    "id": "missing-train-luggage",
+    "title": "The Missing Train Luggage",
+    "shortStory": "A passenger's luggage vanished from the station platform.",
+    "crimeIcon": "🚂",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Station Platform",
+      "traceArea": "Ticket Hall",
+      "storageArea": "Luggage Rack",
+      "lockedObject": "Storage Locker",
+      "witnessArea": "Conductor Booth",
+      "witnessRole": "conductor",
+      "waterFeature": "platform puddle"
+    },
+    "sceneImage": "/case-scenes/missing-train-luggage.jpg",
+    "sceneImageAlt": "Scene photo for The Missing Train Luggage"
+  },
+  {
+    "id": "vandalized-clocktower",
+    "title": "The Vandalized Clocktower",
+    "shortStory": "The clocktower mechanism was tampered with before noon.",
+    "crimeIcon": "🕰️",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Clocktower Base",
+      "traceArea": "Spiral Stair",
+      "storageArea": "Gear Shelf",
+      "lockedObject": "Mechanism Panel",
+      "witnessArea": "Bell Room",
+      "witnessRole": "timekeeper",
+      "waterFeature": "maintenance pail"
+    },
+    "sceneImage": "/case-scenes/vandalized-clocktower.webp",
+    "sceneImageAlt": "Scene photo for The Vandalized Clocktower"
+  },
+  {
+    "id": "missing-tea-tin",
+    "title": "The Missing Tea Tin",
+    "shortStory": "A prized tea tin vanished from the cafe shelf.",
+    "crimeIcon": "🍵",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Cafe Counter",
+      "traceArea": "Tile Floor",
+      "storageArea": "Tea Shelf",
+      "lockedObject": "Tea Cabinet",
+      "witnessArea": "Dining Nook",
+      "witnessRole": "barista",
+      "waterFeature": "kettle station"
+    },
+    "sceneImage": "/case-scenes/missing-tea-tin.webp",
+    "sceneImageAlt": "Scene photo for The Missing Tea Tin"
+  },
+  {
+    "id": "looted-market-cart",
+    "title": "The Looted Market Cart",
+    "shortStory": "A market cart was raided before the morning rush.",
+    "crimeIcon": "🛒",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Market Cart",
+      "traceArea": "Cobblestone Lane",
+      "storageArea": "Crate Rack",
+      "lockedObject": "Coin Drawer",
+      "witnessArea": "Awning Post",
+      "witnessRole": "merchant",
+      "waterFeature": "produce tub"
+    },
+    "sceneImage": "/case-scenes/looted-market-cart.webp",
+    "sceneImageAlt": "Scene photo for The Looted Market Cart"
+  },
+  {
+    "id": "stolen-camp-badge",
+    "title": "The Stolen Camp Badge",
+    "shortStory": "A camp leader's badge disappeared from the notice board.",
+    "crimeIcon": "🏕️",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Camp Office",
+      "traceArea": "Cabin Trail",
+      "storageArea": "Notice Board",
+      "lockedObject": "Badge Box",
+      "witnessArea": "Fire Circle",
+      "witnessRole": "camp leader",
+      "waterFeature": "wash bucket"
+    },
+    "sceneImage": "/case-scenes/stolen-camp-badge.jpg",
+    "sceneImageAlt": "Scene photo for The Stolen Camp Badge"
+  },
+  {
+    "id": "cracked-fountain-box",
+    "title": "The Cracked Fountain Box",
+    "shortStory": "The donation box beside the fountain was found cracked open.",
+    "crimeIcon": "⛲",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Fountain Plaza",
+      "traceArea": "Wet Stone Path",
+      "storageArea": "Bench Nook",
+      "lockedObject": "Donation Box",
+      "witnessArea": "Plaza Kiosk",
+      "witnessRole": "groundskeeper",
+      "waterFeature": "fountain edge"
+    },
+    "sceneImage": "/case-scenes/cracked-fountain-box.jpg",
+    "sceneImageAlt": "Scene photo for The Cracked Fountain Box"
+  },
+  {
+    "id": "missing-ship-log",
+    "title": "The Missing Ship Log",
+    "shortStory": "A ship log vanished from the harbor master's office.",
+    "crimeIcon": "⚓",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Harbor Office",
+      "traceArea": "Gangway",
+      "storageArea": "Log Shelf",
+      "lockedObject": "Chart Cabinet",
+      "witnessArea": "Dock Gate",
+      "witnessRole": "harbor master",
+      "waterFeature": "dock puddle"
+    },
+    "sceneImage": "/case-scenes/missing-ship-log.jpg",
+    "sceneImageAlt": "Scene photo for The Missing Ship Log"
+  },
+  {
+    "id": "raided-archive-drawer",
+    "title": "The Raided Archive Drawer",
+    "shortStory": "A sealed archive drawer was opened and a record removed.",
+    "crimeIcon": "🗄️",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Archive Room",
+      "traceArea": "Record Aisle",
+      "storageArea": "Document Shelf",
+      "lockedObject": "Archive Drawer",
+      "witnessArea": "Reading Desk",
+      "witnessRole": "archivist",
+      "waterFeature": "humidifier tray"
+    },
+    "sceneImage": "/case-scenes/raided-archive-drawer.jpg",
+    "sceneImageAlt": "Scene photo for The Raided Archive Drawer"
+  },
+  {
+    "id": "stolen-circus-banner",
+    "title": "The Stolen Circus Banner",
+    "shortStory": "The circus banner vanished before the opening parade.",
+    "crimeIcon": "🎪",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Circus Tent",
+      "traceArea": "Ring Floor",
+      "storageArea": "Banner Rack",
+      "lockedObject": "Costume Chest",
+      "witnessArea": "Ticket Wagon",
+      "witnessRole": "ringmaster",
+      "waterFeature": "animal trough"
+    },
+    "sceneImage": "/case-scenes/stolen-circus-banner.webp",
+    "sceneImageAlt": "Scene photo for The Stolen Circus Banner"
+  },
+  {
+    "id": "empty-orchard-crate",
+    "title": "The Empty Orchard Crate",
+    "shortStory": "A crate of perfect apples vanished from the orchard shed.",
+    "crimeIcon": "🍎",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Orchard Shed",
+      "traceArea": "Tree Row",
+      "storageArea": "Apple Crate",
+      "lockedObject": "Cold Box",
+      "witnessArea": "Farm Gate",
+      "witnessRole": "orchard keeper",
+      "waterFeature": "irrigation ditch"
+    },
+    "sceneImage": "/case-scenes/empty-orchard-crate.webp",
+    "sceneImageAlt": "Scene photo for The Empty Orchard Crate"
+  },
+  {
+    "id": "broken-lighthouse-lens",
+    "title": "The Broken Lighthouse Lens",
+    "shortStory": "A spare lighthouse lens was damaged and moved from its case.",
+    "crimeIcon": "🛟",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Lighthouse Entry",
+      "traceArea": "Stone Stair",
+      "storageArea": "Lens Shelf",
+      "lockedObject": "Lens Case",
+      "witnessArea": "Keeper Room",
+      "witnessRole": "lighthouse keeper",
+      "waterFeature": "seawater pail"
+    },
+    "sceneImage": "/case-scenes/broken-lighthouse-lens.webp",
+    "sceneImageAlt": "Scene photo for The Broken Lighthouse Lens"
+  },
+  {
+    "id": "missing-mining-tools",
+    "title": "The Missing Mining Tools",
+    "shortStory": "A set of mining tools disappeared from the quarry shed.",
+    "crimeIcon": "⛏️",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Quarry Shed",
+      "traceArea": "Gravel Track",
+      "storageArea": "Tool Rack",
+      "lockedObject": "Supply Locker",
+      "witnessArea": "Foreman Hut",
+      "witnessRole": "foreman",
+      "waterFeature": "sluice trough"
+    },
+    "sceneImage": "/case-scenes/missing-mining-tools.webp",
+    "sceneImageAlt": "Scene photo for The Missing Mining Tools"
+  },
+  {
+    "id": "ransacked-art-room",
+    "title": "The Ransacked Art Room",
+    "shortStory": "A rare paint box vanished from the school art room.",
+    "crimeIcon": "🎨",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Art Room",
+      "traceArea": "Paint Table",
+      "storageArea": "Canvas Shelf",
+      "lockedObject": "Supply Cabinet",
+      "witnessArea": "Classroom Door",
+      "witnessRole": "teacher",
+      "waterFeature": "brush cup"
+    },
+    "sceneImage": "/case-scenes/ransacked-art-room.jpg",
+    "sceneImageAlt": "Scene photo for The Ransacked Art Room"
+  },
+  {
+    "id": "stolen-picnic-basket",
+    "title": "The Stolen Picnic Basket",
+    "shortStory": "A picnic basket vanished from the park pavilion.",
+    "crimeIcon": "🧺",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Park Pavilion",
+      "traceArea": "Grass Path",
+      "storageArea": "Bench Shelf",
+      "lockedObject": "Cooler Box",
+      "witnessArea": "Picnic Table",
+      "witnessRole": "park guest",
+      "waterFeature": "drinking fountain"
+    },
+    "sceneImage": "/case-scenes/stolen-picnic-basket.webp",
+    "sceneImageAlt": "Scene photo for The Stolen Picnic Basket"
+  },
+  {
+    "id": "missing-courtyard-statue",
+    "title": "The Missing Courtyard Statue",
+    "shortStory": "A small statue disappeared from the academy courtyard.",
+    "crimeIcon": "🗿",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Academy Courtyard",
+      "traceArea": "Stone Walk",
+      "storageArea": "Plaque Stand",
+      "lockedObject": "Display Plinth",
+      "witnessArea": "Lecture Hall",
+      "witnessRole": "student",
+      "waterFeature": "courtyard fountain"
+    },
+    "sceneImage": "/case-scenes/missing-courtyard-statue.webp",
+    "sceneImageAlt": "Scene photo for The Missing Courtyard Statue"
+  },
+  {
+    "id": "pilfered-lab-sample",
+    "title": "The Pilfered Lab Sample",
+    "shortStory": "A sealed lab sample disappeared from the research bench.",
+    "crimeIcon": "🧪",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Research Lab",
+      "traceArea": "Lab Counter",
+      "storageArea": "Sample Shelf",
+      "lockedObject": "Specimen Fridge",
+      "witnessArea": "Observation Room",
+      "witnessRole": "researcher",
+      "waterFeature": "rinse station"
+    },
+    "sceneImage": "/case-scenes/pilfered-lab-sample.webp",
+    "sceneImageAlt": "Scene photo for The Pilfered Lab Sample"
+  },
+  {
+    "id": "tampered-radio-booth",
+    "title": "The Tampered Radio Booth",
+    "shortStory": "A broadcast booth was disturbed during a late-night show.",
+    "crimeIcon": "🎙️",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Radio Booth",
+      "traceArea": "Studio Floor",
+      "storageArea": "Record Shelf",
+      "lockedObject": "Mixer Panel",
+      "witnessArea": "Producer Desk",
+      "witnessRole": "host",
+      "waterFeature": "water glass"
+    },
+    "sceneImage": "/case-scenes/tampered-radio-booth.webp",
+    "sceneImageAlt": "Scene photo for The Tampered Radio Booth"
+  },
+  {
+    "id": "missing-inn-register",
+    "title": "The Missing Inn Register",
+    "shortStory": "The inn's guest register vanished from the front desk.",
+    "crimeIcon": "🏨",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Inn Lobby",
+      "traceArea": "Front Hall",
+      "storageArea": "Key Shelf",
+      "lockedObject": "Register Drawer",
+      "witnessArea": "Reception Desk",
+      "witnessRole": "innkeeper",
+      "waterFeature": "tea tray"
+    },
+    "sceneImage": "/case-scenes/missing-inn-register.webp",
+    "sceneImageAlt": "Scene photo for The Missing Inn Register"
+  },
+  {
+    "id": "ransacked-flower-cart",
+    "title": "The Ransacked Flower Cart",
+    "shortStory": "A flower cart was overturned and its rare blooms taken.",
+    "crimeIcon": "💐",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Flower Cart",
+      "traceArea": "Garden Lane",
+      "storageArea": "Bloom Crate",
+      "lockedObject": "Cash Tin",
+      "witnessArea": "Street Corner",
+      "witnessRole": "flower seller",
+      "waterFeature": "flower bucket"
+    },
+    "sceneImage": "/case-scenes/ransacked-flower-cart.webp",
+    "sceneImageAlt": "Scene photo for The Ransacked Flower Cart"
+  },
+  {
+    "id": "stolen-wind-chime",
+    "title": "The Stolen Wind Chime",
+    "shortStory": "A handmade wind chime disappeared from a porch display.",
+    "crimeIcon": "🎐",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Porch Display",
+      "traceArea": "Wooden Deck",
+      "storageArea": "Craft Shelf",
+      "lockedObject": "Display Hook",
+      "witnessArea": "Workshop Door",
+      "witnessRole": "artisan",
+      "waterFeature": "rain bowl"
+    },
+    "sceneImage": "/case-scenes/stolen-wind-chime.webp",
+    "sceneImageAlt": "Scene photo for The Stolen Wind Chime"
+  },
+  {
+    "id": "disturbed-ranger-cache",
+    "title": "The Disturbed Ranger Cache",
+    "shortStory": "A ranger supply cache was opened and emergency gear removed.",
+    "crimeIcon": "🎒",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Forest Cache",
+      "traceArea": "Trail Bend",
+      "storageArea": "Supply Shelf",
+      "lockedObject": "Emergency Box",
+      "witnessArea": "Trail Post",
+      "witnessRole": "trail ranger",
+      "waterFeature": "stream crossing"
+    },
+    "sceneImage": "/case-scenes/disturbed-ranger-cache.webp",
+    "sceneImageAlt": "Scene photo for The Disturbed Ranger Cache"
+  },
+  {
+    "id": "missing-ferry-token",
+    "title": "The Missing Ferry Token",
+    "shortStory": "A ferry token was stolen from the dock office drawer.",
+    "crimeIcon": "⛴️",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Dock Office",
+      "traceArea": "Boardwalk",
+      "storageArea": "Ticket Shelf",
+      "lockedObject": "Token Drawer",
+      "witnessArea": "Ferry Gate",
+      "witnessRole": "deckhand",
+      "waterFeature": "harbor edge"
+    },
+    "sceneImage": "/case-scenes/missing-ferry-token.jpg",
+    "sceneImageAlt": "Scene photo for The Missing Ferry Token"
+  },
+  {
+    "id": "raided-candy-counter",
+    "title": "The Raided Candy Counter",
+    "shortStory": "A candy counter was raided and the rarest sweets disappeared.",
+    "crimeIcon": "🍬",
+    "difficulty": "easy",
+    "maxInvestigations": 5,
+    "template": {
+      "area": "Candy Counter",
+      "traceArea": "Shop Floor",
+      "storageArea": "Sweet Shelf",
+      "lockedObject": "Treat Case",
+      "witnessArea": "Checkout Desk",
+      "witnessRole": "shopkeeper",
+      "waterFeature": "syrup sink"
+    },
+    "sceneImage": "/case-scenes/raided-candy-counter.jpg",
+    "sceneImageAlt": "Scene photo for The Raided Candy Counter"
+  }
 ]

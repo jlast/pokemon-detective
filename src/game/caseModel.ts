@@ -97,6 +97,8 @@ export interface Case {
   title: string
   shortStory: string
   crimeIcon: string
+  sceneImage: string
+  sceneImageAlt: string
   difficulty: CaseDifficulty
   culpritPokemonId: number
   maxInvestigations: number

@@ -2,21 +2,9 @@ import type { Case, CaseSolution } from '../caseModel'
 import { getPokemonById } from '../suspectCaseFile'
 import { generateCaseEvidence, generateCaseLineup, generateCaseLocations } from '../caseGeneration'
 import { createBaseCase, createSuspect, hydrateCaseConfig, type CaseConfig, type RawCaseConfig } from './shared'
-import missingCookiesRaw from './missingCookies.json'
-import purloinedPageRaw from './purloinedPage.json'
-import missingMedalRaw from './missingMedal.json'
-import ravagedPantryRaw from './ravagedPantry.json'
-import stolenArtifactRaw from './stolenArtifact.json'
 import additionalCasesRaw from './additionalCases.json'
 
-export const allCases: CaseConfig[] = [
-  hydrateCaseConfig(missingCookiesRaw as RawCaseConfig),
-  hydrateCaseConfig(purloinedPageRaw as RawCaseConfig),
-  hydrateCaseConfig(missingMedalRaw as RawCaseConfig),
-  hydrateCaseConfig(ravagedPantryRaw as RawCaseConfig),
-  hydrateCaseConfig(stolenArtifactRaw as RawCaseConfig),
-  ...(additionalCasesRaw as RawCaseConfig[]).map(hydrateCaseConfig),
-]
+export const allCases: CaseConfig[] = (additionalCasesRaw as RawCaseConfig[]).map(hydrateCaseConfig)
 
 const buildCase = (caseConfig: CaseConfig): Case => {
   const baseCase = createBaseCase(caseConfig)
@@ -43,11 +31,17 @@ const buildCase = (caseConfig: CaseConfig): Case => {
   }
 }
 
-export const createMissingCookiesCase = (): Case => buildCase(allCases[0]!)
-export const createPurloinedPageCase = (): Case => buildCase(allCases[1]!)
-export const createMissingMedalCase = (): Case => buildCase(allCases[2]!)
-export const createRavagedPantryCase = (): Case => buildCase(allCases[3]!)
-export const createStolenArtifactCase = (): Case => buildCase(allCases[4]!)
+const createRequiredCaseById = (id: string): Case => {
+  const config = allCases.find((c) => c.id === id)
+  if (!config) throw new Error(`Case config not found: ${id}`)
+  return buildCase(config)
+}
+
+export const createMissingCookiesCase = (): Case => createRequiredCaseById('missing-cookies')
+export const createPurloinedPageCase = (): Case => createRequiredCaseById('purloined-page')
+export const createMissingMedalCase = (): Case => createRequiredCaseById('missing-medal')
+export const createRavagedPantryCase = (): Case => createRequiredCaseById('ravaged-pantry')
+export const createStolenArtifactCase = (): Case => createRequiredCaseById('stolen-artifact')
 
 export const getCaseList = () => allCases.map((c) => ({ id: c.id, title: c.title, shortStory: c.shortStory, crimeIcon: c.crimeIcon, difficulty: c.difficulty }))
 

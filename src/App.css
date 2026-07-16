@@ -3541,12 +3541,17 @@
   text-transform: uppercase;
 }
 
-.budget-card {
-  background: linear-gradient(180deg, #fff5a8 0%, #f6df73 100%);
+.case-scene-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.55rem;
+  background: #fbf1dc;
+  border: 1px solid rgba(79, 67, 33, 0.16);
   color: #4f4321;
+  transform: rotate(-1.2deg);
 }
 
-.budget-card-pin {
+.case-scene-card__pin {
   position: absolute;
   top: 0.5rem;
   left: 50%;
@@ -3558,7 +3563,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-.budget-card-title,
 .evidence-card-title,
 .theory-card-title {
   display: block;
@@ -3569,37 +3573,36 @@
   letter-spacing: 0.08em;
 }
 
-.budget-token-row {
-  display: flex;
-  gap: 0.4rem;
-  margin: 0.5rem 0;
-}
-
-.budget-token {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 6px;
+.case-scene-card__image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
   border: 1px solid rgba(79, 67, 33, 0.2);
-  background: rgba(255, 251, 239, 0.5);
+  background: #efe0bd;
 }
 
-.budget-token.is-available {
-  background: var(--gold);
-  border-color: rgba(79, 67, 33, 0.3);
+.case-scene-card__caption {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0 0.15rem 0.1rem;
 }
 
-.budget-token.is-spent {
-  opacity: 0.4;
-  background: rgba(255, 251, 239, 0.3);
+.case-scene-card__caption strong {
+  font-size: 0.76rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
 }
 
-.budget-card-text {
-  margin: 0;
-  font-weight: 700;
-  font-size: 0.9rem;
+.case-scene-card__caption span {
+  color: #746342;
+  font-size: 0.78rem;
+  line-height: 1.2;
 }
 
-.budget-card-meta {
+.pinboard-card-meta {
   margin: 0.3rem 0 0;
   font-size: 0.78rem;
   opacity: 0.7;
@@ -4311,7 +4314,7 @@
     justify-items: start;
   }
 
-  .budget-card {
+  .case-scene-card {
     grid-column: 1 / -1;
   }
 
