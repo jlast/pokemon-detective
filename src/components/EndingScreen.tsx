@@ -1,8 +1,23 @@
+import { useEffect, useState } from 'react'
 import { getDiscoveredEvidence, type Case, type Suspect } from '../game/caseModel'
 import { getClearedSuspectEvidenceLabel, getEvidenceIcon } from '../game/evidenceMeta'
 import { MugShot } from './Suspects/MugShot'
 
 const maxAccusations = 3
+
+const getMsUntilNextUtcDay = () => {
+  const now = new Date()
+  const nextUtcDay = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)
+  return Math.max(nextUtcDay - now.getTime(), 0)
+}
+
+const formatCountdown = (milliseconds: number) => {
+  const totalSeconds = Math.max(Math.floor(milliseconds / 1000), 0)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+  return [hours, minutes, seconds].map((value) => String(value).padStart(2, '0')).join(':')
+}
 
 interface EndingScreenProps {
   currentCase: Case
@@ -17,6 +32,7 @@ export function EndingScreen({
   attemptsLeft,
   wrongAccusationCount,
 }: EndingScreenProps) {
+  const [timeUntilNextCase, setTimeUntilNextCase] = useState(getMsUntilNextUtcDay)
   const isSolved = currentCase.status === 'solved'
   const isFailed = currentCase.status === 'failed'
   const solution = currentCase.solution
@@ -34,6 +50,14 @@ export function EndingScreen({
   const nonCulpritSuspects = currentCase.suspects.filter(
     (suspect) => suspect.pokemonId !== currentCase.culpritPokemonId,
   )
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setTimeUntilNextCase(getMsUntilNextUtcDay())
+    }, 1000)
+
+    return () => window.clearInterval(timer)
+  }, [])
 
   const renderEvidenceRow = (item: (typeof solutionEvidenceItems)[number]) => {
     const location = currentCase.locations.find((entry) => entry.id === item.locationId)
@@ -83,9 +107,16 @@ export function EndingScreen({
       </section>
 
       <section className="case-result-stats" aria-label="Case summary">
-        <span><strong>Evidence</strong> {evidenceCollectedCount}/{currentCase.locations.length}</span>
-        <span><strong>Wrong guesses</strong> {displayedWrongGuesses}</span>
-        <span><strong>Attempts left</strong> {displayedAttemptsLeft}</span>
+        <span className="case-result-stat"><strong>Evidence</strong> <span>{evidenceCollectedCount}/{currentCase.locations.length}</span></span>
+        <span className="case-result-stat"><strong>Wrong guesses</strong> <span>{displayedWrongGuesses}</span></span>
+        <span className="case-result-stat"><strong>Attempts left</strong> <span>{displayedAttemptsLeft}</span></span>
+        <span className="case-result-stat next-case-timer" title="Daily at 00:00 UTC" aria-label="Next case refreshes daily at 00:00 UTC">
+          <strong>Next case</strong>
+          <span className="next-case-timer__time" aria-live="polite">
+            {timeUntilNextCase > 0 ? formatCountdown(timeUntilNextCase) : 'Available now'}
+          </span>
+          <span className="next-case-timer__hint">Daily at 00:00 UTC</span>
+        </span>
       </section>
 
       <div className="ending-details-grid">
