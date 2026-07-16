@@ -73,20 +73,11 @@
     }
   ],
   "evidenceOverrides": {
-    "cookie-crumbs": { "title": "Debris", "clueText": "Tiny fragments were scattered {movementWord} across the hall." },
-    "low-crumbs": { "title": "Trace Fragments", "clueText": "Small particles fell {movementWord} beside the exhibit." },
-    "quiet-digging": { "title": "Faint Scraping", "clueText": "The guard heard a faint scraping near the exhibit." },
-    "small-tracks": { "clueText": "Marks pressed into the museum floor near the display." },
-    "sand-trail": { "title": "Display Dust", "clueText": "A trace of {textureWord} led between the displays." },
-    "loose-soil": { "title": "Floor Disturbance", "clueText": "The {groundWord} near the display base showed disturbance." },
-    "scratch-marks": { "title": "Display Score Marks", "clueText": "Fine score marks circled the display case lock." },
-    "static-mark": { "clueText": "A faint scorch mark blackened the edge of the display case." },
-    "metal-shaving": { "clueText": "Thin curls of metal were found near the display lock." },
-    "dry-trail": { "title": "Dry Trace", "clueText": "A line of {textureWord} led away from the exhibit hall." },
-    "ash-scatter": { "title": "Display Dust", "clueText": "A dusting of {textureWord} settled near the display case." },
-    "frost-trail": { "clueText": "A trail of {textureWord} shimmered on the museum floor." },
-    "pollen-scent": { "clueText": "The air carried a strange hint of {textureWord}." },
-    "slime-trail": { "clueText": "A slick ribbon of {textureWord} traced across the gallery floor." },
-    "feather-drift": { "clueText": "A few specks of {textureWord} drifted down near the artifact." }
+    "height-clue": { "title": "Debris", "clueText": "Tiny fragments were scattered {movementWord} across the hall." },
+    "witness-clue": { "title": "Guard Statement", "clueText": "The guard remembered the culprit {waterAvoidanceWord}." },
+    "weight-clue": { "title": "Museum Floor Marks", "clueText": "Marks were {trackDepth} in the museum floor near the display." },
+    "type-residue-clue": { "title": "Display Dust", "clueText": "A trace of {textureWord} led between the displays." },
+    "ground-trace-clue": { "title": "Floor Disturbance", "clueText": "The display base showed {groundWord}." },
+    "force-clue": { "title": "Display Score Marks", "clueText": "The display case lock showed {forceTrace}." }
   }
 }

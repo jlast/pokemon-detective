@@ -1,32 +1,23 @@
 export const evidenceIcons: Record<string, string> = {
-  'cookie-crumbs': '🍪',
-  'low-crumbs': '🍪',
-  'ash-scatter': '🔥',
-  'pollen-scent': '🌸',
-  'quiet-digging': '🕳️',
-  'psychic-echo': '🔮',
-  'slime-trail': '🫧',
-  'small-tracks': '👣',
-  'sand-trail': '🏖️',
-  'frost-trail': '❄️',
-  'feather-drift': '🪶',
-  'dry-trail': '🏜️',
-  'loose-soil': '🪨',
-  'scratch-marks': '🪨',
-  'metal-shaving': '⚙️',
-  'static-mark': '⚡',
-  'avoided-water': '💧',
+  'height-clue': '📏',
+  'weight-clue': '👣',
+  'type-residue-clue': '✨',
+  'ground-trace-clue': '🪨',
+  'force-clue': '🔐',
+  'witness-clue': '🗣️',
+  'highest-stat-clue': '💪',
+  'lowest-stat-clue': '🧭',
 }
 
 const evidenceTitleIcons: Record<string, string> = {
-  'Cookie Crumbs': '🍪',
-  'Small Cookie Crumbs': '🍪',
-  'Medium Cookie Crumbs': '🍪',
-  'Large Cookie Crumbs': '🍪',
-  'Light Tracks': '👣',
-  'Medium Tracks': '👣',
-  'Heavy Prints': '👣',
-  'Scratch Marks': '🪨',
+  'Height Clue': '📏',
+  'Track Clue': '👣',
+  'Residue Clue': '✨',
+  'Ground Clue': '🪨',
+  'Entry Clue': '🔐',
+  'Witness Clue': '🗣️',
+  'Strength Clue': '💪',
+  'Limitation Clue': '🧭',
 }
 
 export const getEvidenceIcon = (evidenceId: string | null | undefined, evidenceTitle?: string | null, fallback = '🔎') => {
@@ -37,7 +28,13 @@ export const getEvidenceIcon = (evidenceId: string | null | undefined, evidenceT
 
 export const getEvidenceCategory = (title: string) => {
   const text = title.toLowerCase()
+  if (text.includes('height') || text.includes('reach')) return 'Height evidence'
   if (text.includes('track') || text.includes('print')) return 'Footprint evidence'
+  if (text.includes('residue') || text.includes('trace')) return 'Residue evidence'
+  if (text.includes('entry') || text.includes('force')) return 'Entry evidence'
+  if (text.includes('witness')) return 'Witness evidence'
+  if (text.includes('strength')) return 'Strength evidence'
+  if (text.includes('limitation')) return 'Limitation evidence'
   if (text.includes('crumb') || text.includes('cookie')) return 'Food evidence'
   if (text.includes('scratch') || text.includes('mark')) return 'Surface evidence'
   if (text.includes('soil') || text.includes('stone')) return 'Ground evidence'
@@ -72,7 +69,7 @@ export const getClearedSuspectEvidenceLabel = (reason?: string) => {
   if (text.includes('light-track')) return 'Light tracks'
   if (text.includes('medium-depth')) return 'Medium tracks'
   if (text.includes('deep-print') || text.includes('heavy-pressure')) return 'Deep prints'
-  if (text.includes('dry grit') || text.includes('loose-soil')) return 'Loose soil'
+  if (text.includes('dry grit') || text.includes('loose soil')) return 'Loose soil'
   if (text.includes('digging')) return 'Digging signs'
   if (text.includes('dry ground')) return 'Dry ground clues'
   if (text.includes('damp') || text.includes('moisture')) return 'Damp evidence'

@@ -73,20 +73,11 @@
     }
   ],
   "evidenceOverrides": {
-    "cookie-crumbs": { "title": "Scattered Pages", "clueText": "Torn pages were scattered {movementWord} near the shelf." },
-    "low-crumbs": { "title": "Paper Fragments", "clueText": "Paper fragments fell {movementWord} beside the desk." },
-    "quiet-digging": { "title": "Quiet Rustling", "clueText": "Someone heard soft rustling after closing hours." },
-    "small-tracks": { "title": "Track Impressions", "clueText": "Track impressions dented the library carpet." },
-    "sand-trail": { "title": "Dust Trail", "clueText": "A trail of {textureWord} led between the shelves." },
-    "loose-soil": { "title": "Binding Dust", "clueText": "Fine dust from the binding settled {movementWord} under the shelf." },
-    "scratch-marks": { "title": "Score Marks", "clueText": "Fine score marks circled the display case lock." },
-    "dry-trail": { "title": "Dry Trace", "clueText": "A line of {textureWord} led away from the reading nook." },
-    "ash-scatter": { "title": "Debris", "clueText": "A fine dusting of {textureWord} settled near the reference desk." },
-    "frost-trail": { "clueText": "A trail of {textureWord} glistened down the aisle." },
-    "pollen-scent": { "clueText": "The air carried a strange hint of {textureWord} from the old paper." },
-    "slime-trail": { "clueText": "A slick ribbon of {textureWord} traced across the reading room floor." },
-    "static-mark": { "clueText": "A faint scorch mark blackened the edge of the bookcase." },
-    "metal-shaving": { "clueText": "Thin curls of metal were found near the display lock." },
-    "feather-drift": { "clueText": "A few specks of {textureWord} drifted down near the stacks." }
+    "height-clue": { "title": "Scattered Pages", "clueText": "Torn pages were scattered {movementWord} near the shelf." },
+    "witness-clue": { "title": "Library Witness", "clueText": "The librarian remembered the culprit {waterAvoidanceWord}." },
+    "weight-clue": { "title": "Track Impressions", "clueText": "Track impressions were {trackDepth} in the library carpet." },
+    "type-residue-clue": { "title": "Dust Trail", "clueText": "A trail of {textureWord} led between the shelves." },
+    "ground-trace-clue": { "title": "Binding Dust", "clueText": "Fine dust near the shelf showed {groundWord}." },
+    "force-clue": { "title": "Score Marks", "clueText": "The display case lock showed {forceTrace}." }
   }
 }

@@ -73,10 +73,7 @@
     }
   ],
   "evidenceOverrides": {
-    "sand-trail": { "title": "Counter Trace", "clueText": "A trail of residue stretched across the kitchen counter." },
-    "dry-trail": { "title": "Dry Path", "clueText": "A dry line of residue led away from the sink area." },
-    "scratch-marks": { "clueText": "Fine scratch marks circled the pantry lock.", "endExplanation": "The culprit left scratch marks while forcing the pantry open." },
-    "static-mark": { "clueText": "A faint scorch mark blackened the edge of the cabinet.", "endExplanation": "The culprit left a scorched mark while forcing the cabinet open." },
-    "metal-shaving": { "clueText": "Thin curls of metal were found near the cabinet lock.", "endExplanation": "The culprit left metal shavings while scraping against the cabinet." }
+    "type-residue-clue": { "title": "Counter Trace", "clueText": "A trail of {textureWord} stretched across the kitchen counter." },
+    "force-clue": { "clueText": "The pantry lock showed {forceTrace}.", "endExplanation": "The culprit left {forceTrace} while forcing the pantry open." }
   }
 }

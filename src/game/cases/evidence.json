@@ -1,306 +1,66 @@
 [
   {
-    "id": "cookie-crumbs",
-    "title": "Cookie Crumbs",
-    "clueText": "Fresh crumbs were scattered low across the ground.",
-    "hiddenTrait": "short_height",
-    "endExplanation": "The culprit moved close to the ground while eating near the scene.",
+    "id": "height-clue",
+    "title": "Height Clue",
+    "clueText": "The missing item was disturbed at a telling height.",
+    "hiddenTrait": "height",
+    "endExplanation": "The culprit's height matched the way the item was handled.",
     "discovered": false
   },
   {
-    "id": "quiet-digging",
-    "title": "Quiet Digging",
-    "clueText": "Someone heard soft scraping after midnight.",
-    "hiddenTrait": "digging",
-    "endExplanation": "The culprit spent time scratching or digging near camp overnight.",
+    "id": "weight-clue",
+    "title": "Track Clue",
+    "clueText": "The tracks showed a telling depth.",
+    "hiddenTrait": "weight",
+    "endExplanation": "The culprit's weight matched the track depth.",
     "discovered": false
   },
   {
-    "id": "small-tracks",
-    "title": "Light Tracks",
-    "clueText": "The tracks were shallow and lightly pressed into the dirt.",
-    "hiddenTrait": "light_weight",
-    "endExplanation": "The culprit left light tracks near the tents.",
+    "id": "type-residue-clue",
+    "title": "Residue Clue",
+    "clueText": "There was a type-specific trace left behind.",
+    "hiddenTrait": "typeResidue",
+    "endExplanation": "The culprit left residue that matched its type.",
     "discovered": false
   },
   {
-    "id": "sand-trail",
-    "title": "Sand Trail",
-    "clueText": "A faint trail of dry grit pulled away from the scene.",
-    "hiddenTrait": "ground_or_sand",
-    "endExplanation": "The culprit carried dry grit away from the tracks.",
+    "id": "ground-trace-clue",
+    "title": "Ground Clue",
+    "clueText": "The nearby ground showed a telling trace.",
+    "hiddenTrait": "groundTrace",
+    "endExplanation": "The culprit disturbed the ground in a way that matched its type.",
     "discovered": false
   },
   {
-    "id": "loose-soil",
-    "title": "Loose Soil",
-    "clueText": "Fresh soil had been disturbed under the tree roots.",
-    "hiddenTrait": "digging",
-    "endExplanation": "Something recently dug into the loose soil at the forest edge.",
+    "id": "force-clue",
+    "title": "Entry Clue",
+    "clueText": "The point of entry showed a telling mark.",
+    "hiddenTrait": "force",
+    "endExplanation": "The culprit left a mark that matched how it forced entry.",
     "discovered": false
   },
   {
-    "id": "scratch-marks",
-    "title": "Scratch Marks",
-    "clueText": "Narrow marks scored the cookie jar lid.",
-    "hiddenTrait": "claws_or_scratching",
-    "endExplanation": "The culprit left narrow scratch marks while opening the jar.",
+    "id": "witness-clue",
+    "title": "Witness Clue",
+    "clueText": "A witness remembered a telling detail.",
+    "hiddenTrait": "witness",
+    "endExplanation": "The witness detail matched the culprit.",
     "discovered": false
   },
   {
-    "id": "low-crumbs",
-    "title": "Low Crumbs",
-    "clueText": "Crumbs had fallen low along the edge of the table.",
-    "hiddenTrait": "short_height",
-    "endExplanation": "The culprit moved low beside the table while carrying crumbs away.",
+    "id": "highest-stat-clue",
+    "title": "Strength Clue",
+    "clueText": "The scene showed what the culprit relied on most.",
+    "hiddenTrait": "highestStat",
+    "endExplanation": "The culprit's strongest quality matched the clue.",
     "discovered": false
   },
   {
-    "id": "high-reach",
-    "title": "High Reach",
-    "clueText": "Crumbs were brushed from the upper edge of the table.",
-    "hiddenTrait": "tall_height",
-    "endExplanation": "The culprit reached the table from higher up while carrying crumbs away.",
-    "discovered": false
-  },
-  {
-    "id": "deep-prints",
-    "title": "Deep Prints",
-    "clueText": "Several prints pressed unusually deep into the dirt.",
-    "hiddenTrait": "heavy_weight",
-    "endExplanation": "The culprit was heavy enough to leave deeper marks while moving away.",
-    "discovered": false
-  },
-  {
-    "id": "light-tracks",
-    "title": "Light Tracks",
-    "clueText": "The marks barely pressed into the dusty ground beside the table.",
-    "hiddenTrait": "light_weight",
-    "endExplanation": "The culprit was light enough to leave only shallow marks beside the table.",
-    "discovered": false
-  },
-  {
-    "id": "avoided-water",
-    "title": "Avoided Water",
-    "clueText": "The witness remembered the culprit skirting around the water bucket.",
-    "hiddenTrait": "dry_ground_dislike_water",
-    "endExplanation": "The culprit deliberately avoided the wettest part of the scene.",
-    "discovered": false
-  },
-  {
-    "id": "dry-trail",
-    "title": "Dry Trail",
-    "clueText": "A dry path of grit led away from the wash bucket.",
-    "hiddenTrait": "ground_or_sand",
-    "endExplanation": "The culprit carried dry grit even near the water station.",
-    "discovered": false
-  },
-  {
-    "id": "ash-scatter",
-    "title": "Ash Scatter",
-    "clueText": "A fine dusting of residue settled near the fire pit.",
-    "hiddenTrait": "ash_or_scorch",
-    "endExplanation": "The culprit brushed against the ashes and left a trail.",
-    "discovered": false
-  },
-  {
-    "id": "static-mark",
-    "title": "Static Mark",
-    "clueText": "A faint burn mark blackened the edge of the lid.",
-    "hiddenTrait": "fire_heat",
-    "endExplanation": "The culprit left a scorched mark while forcing the jar open.",
-    "discovered": false
-  },
-  {
-    "id": "frost-trail",
-    "title": "Frost Trail",
-    "clueText": "A trail of frost sparkled behind the tents.",
-    "hiddenTrait": "moisture_residue",
-    "endExplanation": "The culprit left a glittering line of frost in the night air.",
-    "discovered": false
-  },
-  {
-    "id": "pollen-scent",
-    "title": "Pollen Scent",
-    "clueText": "The air near the roots carried a strange hint of plant matter.",
-    "hiddenTrait": "plant_residue",
-    "endExplanation": "The culprit disturbed the ground and stirred up plant matter.",
-    "discovered": false
-  },
-  {
-    "id": "psychic-echo",
-    "title": "Psychic Echo",
-    "clueText": "The witness felt an odd chill while describing the culprit.",
-    "hiddenTrait": "psychic_trace",
-    "endExplanation": "Something about the culprit left an uneasy sensation in the air.",
-    "discovered": false
-  },
-  {
-    "id": "metal-shaving",
-    "title": "Metal Shaving",
-    "clueText": "Thin curls of metal were found near the jar lid.",
-    "hiddenTrait": "metal_scrape",
-    "endExplanation": "The culprit left metal shavings while scraping against the jar.",
-    "discovered": false
-  },
-  {
-    "id": "slime-trail",
-    "title": "Slime Trail",
-    "clueText": "A slick ribbon of residue traced away from the scene.",
-    "hiddenTrait": "toxic_residue",
-    "endExplanation": "The culprit left a viscous trail as it moved through the scene.",
-    "discovered": false
-  },
-  {
-    "id": "feather-drift",
-    "title": "Feather Drift",
-    "clueText": "A few specks of down drifted down near the tracks.",
-    "hiddenTrait": "air_movement",
-    "endExplanation": "The culprit scattered light debris while moving through the brush.",
-    "discovered": false
-  },
-  {
-    "id": "flicker-surge",
-    "title": "Flicker Surge",
-    "clueText": "Nearby lights flickered just before the scene was disturbed.",
-    "hiddenTrait": "electrical_interference",
-    "endExplanation": "The culprit disrupted the nearby light or wiring while moving through.",
-    "discovered": false
-  },
-  {
-    "id": "heavy-dent",
-    "title": "Heavy Dent",
-    "clueText": "A deep dent had sunk into the surface beside the disturbance.",
-    "hiddenTrait": "heavy_impact",
-    "endExplanation": "The culprit hit or leaned hard enough to leave a deep impression behind.",
-    "discovered": false
-  },
-  {
-    "id": "glow-dust",
-    "title": "Glow Dust",
-    "clueText": "A faint shimmer lingered over the disturbed area.",
-    "hiddenTrait": "light_or_glow",
-    "endExplanation": "The culprit left a soft glowing trace hanging at the scene.",
-    "discovered": false
-  },
-  {
-    "id": "splash-burst",
-    "title": "Splash Burst",
-    "clueText": "Water had splashed outward in a sudden burst near the clue.",
-    "hiddenTrait": "water_displacement",
-    "endExplanation": "The culprit moved directly through the water and kicked it wide around the scene.",
-    "discovered": false
-  },
-  {
-    "id": "stone-chips",
-    "title": "Stone Chips",
-    "clueText": "Tiny chips of grit and broken stone were scattered nearby.",
-    "hiddenTrait": "stone_fragment",
-    "endExplanation": "The culprit carried stone fragments or knocked them loose while passing through.",
-    "discovered": false
-  },
-  {
-    "id": "cold-spot",
-    "title": "Cold Spot",
-    "clueText": "The air around the clue felt unnaturally cold.",
-    "hiddenTrait": "cold_aura",
-    "endExplanation": "The culprit left a lingering cold patch around the scene after moving on.",
-    "discovered": false
-  },
-  {
-    "id": "steady-endurance",
-    "title": "Steady Endurance",
-    "clueText": "The trail held steady farther than expected before it showed any hesitation.",
-    "hiddenTrait": "hp_focus",
-    "endExplanation": "The culprit kept moving at a consistent pace without obvious slowdown.",
-    "discovered": false
-  },
-  {
-    "id": "forceful-entry",
-    "title": "Forceful Entry",
-    "clueText": "The object looked forced aside with direct physical power, not delicate handling.",
-    "hiddenTrait": "attack_focus",
-    "endExplanation": "The culprit relied on blunt physical force while getting through the scene.",
-    "discovered": false
-  },
-  {
-    "id": "braced-tracks",
-    "title": "Braced Tracks",
-    "clueText": "The route suggested the culprit pushed through rough footing without losing balance.",
-    "hiddenTrait": "defense_focus",
-    "endExplanation": "The culprit handled contact and resistance better than a fragile suspect would have.",
-    "discovered": false
-  },
-  {
-    "id": "energy-bloom",
-    "title": "Energy Bloom",
-    "clueText": "An unusual flare of residual energy seemed stronger than the physical damage around it.",
-    "hiddenTrait": "special_attack_focus",
-    "endExplanation": "The culprit left an outsized energy trace compared with the blunt impact at the scene.",
-    "discovered": false
-  },
-  {
-    "id": "weathered-calm",
-    "title": "Weathered Calm",
-    "clueText": "The trail stayed oddly composed through an area most suspects would find uncomfortable.",
-    "hiddenTrait": "special_defense_focus",
-    "endExplanation": "The culprit moved through the strange conditions without obvious hesitation.",
-    "discovered": false
-  },
-  {
-    "id": "swift-pass",
-    "title": "Swift Pass",
-    "clueText": "The signs suggested the culprit crossed the area faster than expected.",
-    "hiddenTrait": "speed_focus",
-    "endExplanation": "The culprit covered the scene quickly enough to leave only a short, sharp disturbance.",
-    "discovered": false
-  },
-  {
-    "id": "winded-pause",
-    "title": "Winded Pause",
-    "clueText": "The trail suggested the culprit slowed sooner than expected during the escape.",
-    "hiddenTrait": "hp_poor",
-    "endExplanation": "The culprit likely could not keep up a long push without losing pace.",
-    "discovered": false
-  },
-  {
-    "id": "gentle-handling",
-    "title": "Gentle Handling",
-    "clueText": "The scene showed access without the kind of brute-force damage a stronger suspect would leave.",
-    "hiddenTrait": "attack_poor",
-    "endExplanation": "The culprit got through by position or timing rather than raw power.",
-    "discovered": false
-  },
-  {
-    "id": "brittle-pass",
-    "title": "Brittle Pass",
-    "clueText": "The route avoided the roughest footing, as if the culprit could not risk a hard impact.",
-    "hiddenTrait": "defense_poor",
-    "endExplanation": "The culprit seemed less suited to taking heavy knocks or rough contact.",
-    "discovered": false
-  },
-  {
-    "id": "faded-surge",
-    "title": "Faded Surge",
-    "clueText": "Any unusual energy at the scene was faint compared with the rest of the disturbance.",
-    "hiddenTrait": "special_attack_poor",
-    "endExplanation": "The culprit did not leave the kind of strong energy trace a more forceful special attacker would.",
-    "discovered": false
-  },
-  {
-    "id": "shaken-focus",
-    "title": "Shaken Focus",
-    "clueText": "The trail looked more hesitant in the strange part of the scene than it did elsewhere.",
-    "hiddenTrait": "special_defense_poor",
-    "endExplanation": "The culprit seemed more easily rattled by unusual surroundings than a calm specialist would be.",
-    "discovered": false
-  },
-  {
-    "id": "slow-route",
-    "title": "Slow Route",
-    "clueText": "The path through the scene was deliberate and slow rather than quick and direct.",
-    "hiddenTrait": "speed_poor",
-    "endExplanation": "The culprit moved more carefully and slowly than a fast suspect would have.",
+    "id": "lowest-stat-clue",
+    "title": "Limitation Clue",
+    "clueText": "The route showed what the culprit avoided.",
+    "hiddenTrait": "lowestStat",
+    "endExplanation": "The culprit's weakest quality matched the clue.",
     "discovered": false
   }
 ]

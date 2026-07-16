@@ -140,15 +140,15 @@ export const createSuspect = (pokemonId: number, isShinyOverride?: boolean): Sus
 export const baseEvidence: Evidence[] = evidenceRaw as Evidence[]
 
 const evidenceDefaults: Record<string, { evidenceId: string; title: string; text: string }> = {
-  crumbs: { evidenceId: 'cookie-crumbs', title: 'Cookie Crumbs', text: 'Fresh crumbs were scattered low across the ground.' },
-  campers: { evidenceId: 'quiet-digging', title: 'Quiet Digging', text: 'Someone heard soft scraping after midnight.' },
-  'measure-tracks': { evidenceId: 'small-tracks', title: 'Light Tracks', text: 'The tracks were shallow and lightly pressed into the dirt.' },
-  'follow-tracks': { evidenceId: 'sand-trail', title: 'Sand Trail', text: 'A faint trail of dry grit pulled away from the scene.' },
-  'check-roots': { evidenceId: 'loose-soil', title: 'Loose Soil', text: 'Fresh soil had been disturbed under the tree roots.' },
-  'inspect-lid': { evidenceId: 'scratch-marks', title: 'Scratch Marks', text: 'Narrow marks scored the cookie jar lid.' },
-  'check-table': { evidenceId: 'low-crumbs', title: 'Low Crumbs', text: 'Crumbs had fallen low along the edge of the table.' },
-  'interview-camper': { evidenceId: 'avoided-water', title: 'Avoided Water', text: 'The witness remembered the culprit skirting around the water bucket.' },
-  'check-wash-bucket': { evidenceId: 'dry-trail', title: 'Dry Trail', text: 'A dry path of grit led away from the wash bucket.' },
+  crumbs: { evidenceId: 'height-clue', title: 'Height Clue', text: 'The missing item was disturbed at a telling height.' },
+  campers: { evidenceId: 'witness-clue', title: 'Witness Clue', text: 'A witness remembered a telling detail.' },
+  'measure-tracks': { evidenceId: 'weight-clue', title: 'Track Clue', text: 'The tracks showed a telling depth.' },
+  'follow-tracks': { evidenceId: 'type-residue-clue', title: 'Residue Clue', text: 'There was a type-specific trace left behind.' },
+  'check-roots': { evidenceId: 'ground-trace-clue', title: 'Ground Clue', text: 'The nearby ground showed a telling trace.' },
+  'inspect-lid': { evidenceId: 'force-clue', title: 'Entry Clue', text: 'The point of entry showed a telling mark.' },
+  'check-table': { evidenceId: 'height-clue', title: 'Height Clue', text: 'The missing item was disturbed at a telling height.' },
+  'interview-camper': { evidenceId: 'witness-clue', title: 'Witness Clue', text: 'A witness remembered a telling detail.' },
+  'check-wash-bucket': { evidenceId: 'type-residue-clue', title: 'Residue Clue', text: 'There was a type-specific trace left behind.' },
 }
 
 const location = (
