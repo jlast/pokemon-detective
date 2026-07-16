@@ -54,7 +54,7 @@ export function InvestigationLocationPage({
   const evidenceText = hasEvidence
     ? (isPlaceholderWitnessText(location.evidenceText) ? selectedAction?.evidenceText : location.evidenceText) ?? selectedAction?.evidenceText
     : (location.observationText ?? selectedAction?.observationText)
-  const evidenceIcon = hasEvidence ? getEvidenceIcon(location.evidenceId, evidenceTitle, '📎') : '🔎'
+  const evidenceIcon = hasEvidence ? getEvidenceIcon(location.evidenceId, evidenceTitle) : null
   const witnessPokemon = location.witnessPokemonId
     ? pokemonData.find((pokemon) => pokemon.id === location.witnessPokemonId)
     : null
@@ -96,32 +96,47 @@ export function InvestigationLocationPage({
         )
       ) : selectedAction ? (
         <>
-          <section className="investigation-result-card">
-            <div className="result-complete-header">
-              <div>
-                <h3>✓ {location.name} completed</h3>
-                <p>You followed the lead.</p>
+          {hasEvidence ? (
+            <section className="investigation-result-card">
+              <div className="result-complete-header">
+                <div>
+                  <h3>✓ {location.name} completed</h3>
+                  <p>You followed the lead.</p>
+                </div>
               </div>
-            </div>
 
-            <section className="evidence-hero">
-              <div className="evidence-hero-icon" aria-hidden="true">
-                {evidenceIcon}
-              </div>
-              <div className="evidence-hero-copy">
-                <span className="result-status-pill">{hasEvidence ? 'New Evidence' : 'Lead Closed'}</span>
-                <h3>{evidenceTitle}</h3>
-                <p>{evidenceText}</p>
-                {witnessPokemon ? (
-                  <p className="result-save-confirmation">Witness interviewed: {witnessPokemon.name}</p>
-                ) : null}
-                <p className="result-save-confirmation">✓ {hasEvidence ? 'Added to Evidence Board' : 'Lead recorded'}</p>
+              <section className="evidence-hero">
+                <div className="evidence-hero-icon" aria-hidden="true">
+                  {evidenceIcon}
+                </div>
+                <div className="evidence-hero-copy">
+                  <span className="result-status-pill">New Evidence</span>
+                  <h3>{evidenceTitle}</h3>
+                  <p>{evidenceText}</p>
+                  {witnessPokemon ? (
+                    <p className="result-save-confirmation">Witness interviewed: {witnessPokemon.name}</p>
+                  ) : null}
+                  <p className="result-save-confirmation">✓ Added to Evidence Board</p>
+                </div>
+              </section>
+            </section>
+          ) : (
+            <section className="no-evidence-result-card">
+              <p className="no-evidence-location">✓ {location.name} investigated</p>
+              <h3>Nothing useful here</h3>
+              <div className="no-evidence-copy">
+                <p>The area appears undisturbed.</p>
+                <p>This location can be ruled out.</p>
               </div>
             </section>
-          </section>
+          )}
 
           <div className="result-actions">
-            {allLocationsInvestigated ? (
+            {!hasEvidence ? (
+              <Link to={TODAY_INVESTIGATION_PATH} className="primary-button suspect-file-back-button">
+                Continue Investigation →
+              </Link>
+            ) : allLocationsInvestigated ? (
               <>
                 <Link to={TODAY_SUSPECTS_PATH} className="primary-button suspect-file-back-button">
                   Review Suspects →

@@ -35,7 +35,7 @@ export function InvestigationResult({
       ) : (
         hasEvidence ? (
           <div className="location-evidence-list">
-            <span>✓ {action.evidenceTitle}</span>
+            <span>🔎 {action.evidenceTitle}</span>
             <span className="location-evidence-copy">Observation</span>
             <span>{action.observationText}</span>
             <span className="location-evidence-copy">Evidence details</span>

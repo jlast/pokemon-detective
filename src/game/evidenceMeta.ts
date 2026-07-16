@@ -1,30 +1,8 @@
-export const evidenceIcons: Record<string, string> = {
-  'height-clue': '📏',
-  'weight-clue': '👣',
-  'type-residue-clue': '✨',
-  'ground-trace-clue': '🪨',
-  'force-clue': '🔐',
-  'witness-clue': '🗣️',
-  'highest-stat-clue': '💪',
-  'lowest-stat-clue': '🧭',
-}
-
-const evidenceTitleIcons: Record<string, string> = {
-  'Height Clue': '📏',
-  'Track Clue': '👣',
-  'Residue Clue': '✨',
-  'Ground Clue': '🪨',
-  'Entry Clue': '🔐',
-  'Witness Clue': '🗣️',
-  'Strength Clue': '💪',
-  'Limitation Clue': '🧭',
-}
-
-export const getEvidenceIcon = (evidenceId: string | null | undefined, evidenceTitle?: string | null, fallback = '🔎') => {
-  if (evidenceId && evidenceIcons[evidenceId]) return evidenceIcons[evidenceId]
-  if (evidenceTitle && evidenceTitleIcons[evidenceTitle]) return evidenceTitleIcons[evidenceTitle]
-  return fallback
-}
+export const getEvidenceIcon = (
+  _evidenceId?: string | null,
+  _evidenceTitle?: string | null,
+  _fallback = '🔎',
+) => '🔎'
 
 export const getEvidenceCategory = (title: string) => {
   const text = title.toLowerCase()

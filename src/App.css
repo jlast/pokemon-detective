@@ -1276,6 +1276,50 @@
   animation: result-pinning-effect 420ms ease-out 230ms both;
 }
 
+.no-evidence-result-card {
+  display: grid;
+  gap: 0.55rem;
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: clamp(1rem, 2.2vw, 1.35rem);
+  border-radius: 18px;
+  background: rgba(255, 250, 240, 0.86);
+  border: 1px dashed rgba(139, 102, 64, 0.48);
+  box-shadow: 0 10px 24px rgba(80, 56, 26, 0.08);
+  animation: result-content-fade 260ms ease-out both;
+}
+
+.no-evidence-location {
+  width: fit-content;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 900;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  text-decoration-color: rgba(139, 102, 64, 0.45);
+}
+
+.no-evidence-result-card h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.3rem, 3vw, 1.65rem);
+  line-height: 1.1;
+}
+
+.no-evidence-copy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.no-evidence-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
 .result-section-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
