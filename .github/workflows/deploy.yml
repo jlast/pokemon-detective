@@ -51,7 +51,20 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       # ── Deploy client to S3 ──
-      - run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }}/ --delete
+      # Hashed Vite assets can be cached for a long time, but index.html must
+      # always revalidate so clients pick up the newest asset filenames.
+      - name: Deploy immutable client assets
+        run: >
+          aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }}/
+          --delete
+          --exclude "index.html"
+          --cache-control "public,max-age=31536000,immutable"
+
+      - name: Deploy non-cacheable app shell
+        run: >
+          aws s3 cp dist/index.html s3://${{ secrets.S3_BUCKET_NAME }}/index.html
+          --cache-control "no-cache,no-store,must-revalidate"
+          --content-type "text/html"
 
       # ── Deploy Lambdas ──
       - name: Deploy handler Lambda
@@ -64,4 +77,4 @@ jobs:
       - run: >
           aws cloudfront create-invalidation
           --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-          --paths "/*" "/sprites/*"
+          --paths "/*"
