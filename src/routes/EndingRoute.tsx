@@ -6,7 +6,6 @@ interface EndingRouteProps {
   culpritSuspect: Suspect | null
   attemptsLeft: number
   wrongAccusationCount: number
-  startNewCase: () => void
 }
 
 export function EndingRoute({
@@ -14,7 +13,6 @@ export function EndingRoute({
   culpritSuspect,
   attemptsLeft,
   wrongAccusationCount,
-  startNewCase,
 }: EndingRouteProps) {
   return (
     <div className="">
@@ -22,7 +20,6 @@ export function EndingRoute({
         culpritSuspect={culpritSuspect}
         attemptsLeft={attemptsLeft}
         wrongAccusationCount={wrongAccusationCount}
-        startNewCase={startNewCase}
         currentCase={currentCase}
       />
     </div>

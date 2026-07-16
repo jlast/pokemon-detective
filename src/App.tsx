@@ -212,13 +212,6 @@ function App() {
     loadCase()
   }, [loadCase])
 
-  const startNewCase = async () => {
-    setSuspectNotes(new Map())
-    resetTransientUi()
-    await loadCase()
-    navigate(TODAY_INVESTIGATION_PATH)
-  }
-
   const startInvestigation = () => {
     navigate(TODAY_INVESTIGATION_PATH)
   }
@@ -629,7 +622,6 @@ function App() {
                 culpritSuspect={culpritSuspect}
                 attemptsLeft={attemptsLeft}
                 wrongAccusationCount={wrongAccusationIds.length}
-                startNewCase={startNewCase}
               />
             }
           />

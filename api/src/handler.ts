@@ -198,6 +198,22 @@ const createSuspectShinyMap = (fullCase: Case): Record<string, boolean> => Objec
   fullCase.suspects.map((suspect) => [String(suspect.pokemonId), Math.random() < SHINY_ODDS]),
 )
 
+const isPlaceholderEvidenceText = (evidenceId: string | undefined, text: string | undefined): boolean => (
+  evidenceId === 'witness-clue' && text === 'A witness remembered a telling detail.'
+)
+
+const resolveEvidenceTitle = (record: InvestigatedLocationRecord, action: LocationAction | undefined): string | undefined => (
+  isPlaceholderEvidenceText(record.evidenceId, record.evidenceText)
+    ? action?.evidenceTitle ?? record.evidenceTitle
+    : record.evidenceTitle ?? action?.evidenceTitle ?? undefined
+)
+
+const resolveEvidenceText = (record: InvestigatedLocationRecord, action: LocationAction | undefined): string | undefined => (
+  !record.evidenceText || isPlaceholderEvidenceText(record.evidenceId, record.evidenceText)
+    ? action?.evidenceText ?? record.evidenceText
+    : record.evidenceText
+)
+
 const hasCompleteSuspectShinyMap = (progress: PlayerProgressRecord, fullCase: Case): boolean => (
   fullCase.suspects.every((suspect) => typeof progress.suspectShinyMap?.[String(suspect.pokemonId)] === 'boolean')
 )
@@ -333,13 +349,14 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
     locations: fullCase.locations.map((loc) => {
       if (investigatedMap.has(loc.id)) {
         const record = investigatedMap.get(loc.id)!
+        const selectedAction = loc.actions.find((action) => action.id === record.actionId)
         return {
           ...loc,
           investigated: true,
           selectedActionId: record.actionId,
           observationText: record.observationText,
-          evidenceTitle: record.evidenceTitle ?? null,
-          evidenceText: record.evidenceText ?? null,
+          evidenceTitle: resolveEvidenceTitle(record, selectedAction) ?? null,
+          evidenceText: resolveEvidenceText(record, selectedAction) ?? null,
           evidenceId: record.evidenceId ?? null,
           witnessPokemonId: record.witnessPokemonId,
         }
@@ -530,6 +547,16 @@ const handleInvestigate = async (
   const action = location.actions.find((a) => a.id === actionId)
   if (!action) return err(404, 'Action not found')
 
+  const evidenceItem = action.evidenceId
+    ? fullCase.evidence.find((item) => item.id === action.evidenceId)
+    : undefined
+  const evidenceTitle = isPlaceholderEvidenceText(action.evidenceId ?? undefined, action.evidenceText ?? undefined)
+    ? evidenceItem?.title ?? action.evidenceTitle
+    : action.evidenceTitle ?? evidenceItem?.title
+  const evidenceText = isPlaceholderEvidenceText(action.evidenceId ?? undefined, action.evidenceText ?? undefined)
+    ? evidenceItem?.clueText ?? action.evidenceText
+    : action.evidenceText ?? evidenceItem?.clueText
+
   const witnessPokemonId = typeof body.witnessPokemonId === 'number' ? body.witnessPokemonId : undefined
   if (action.outcomeType === 'witness') {
     if (!witnessPokemonId) return err(400, 'Witness Pokemon required')
@@ -549,8 +576,8 @@ const handleInvestigate = async (
     outcomeType: action.outcomeType,
     observationText: action.observationText,
     evidenceId: action.evidenceId ?? undefined,
-    evidenceTitle: action.evidenceTitle ?? undefined,
-    evidenceText: action.evidenceText ?? undefined,
+    evidenceTitle,
+    evidenceText,
     witnessPokemonId,
   }
 

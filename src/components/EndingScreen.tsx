@@ -1,4 +1,4 @@
-import { getDiscoveredEvidence, getUniqueSolutionEvidence, type Case, type Suspect } from '../game/caseModel'
+import { getDiscoveredEvidence, type Case, type Suspect } from '../game/caseModel'
 import { getClearedSuspectEvidenceLabel, getEvidenceIcon } from '../game/evidenceMeta'
 import { MugShot } from './Suspects/MugShot'
 
@@ -9,7 +9,6 @@ interface EndingScreenProps {
   culpritSuspect: Suspect | null
   attemptsLeft: number
   wrongAccusationCount: number
-  startNewCase: () => void
 }
 
 export function EndingScreen({
@@ -17,18 +16,17 @@ export function EndingScreen({
   culpritSuspect,
   attemptsLeft,
   wrongAccusationCount,
-  startNewCase,
 }: EndingScreenProps) {
   const isSolved = currentCase.status === 'solved'
   const isFailed = currentCase.status === 'failed'
   const solution = currentCase.solution
   const culpritName = culpritSuspect?.name ?? 'The culprit'
-  const uniqueEvidenceItems = getUniqueSolutionEvidence(currentCase)
+  const solutionEvidenceItems = solution?.evidenceExplanation ?? []
   const clearedSuspects = solution?.clearedSuspects ?? []
   const discoveredEvidenceCount = getDiscoveredEvidence(currentCase).length
   const evidenceCollectedCount = currentCase.status === 'active'
     ? discoveredEvidenceCount
-    : Math.max(discoveredEvidenceCount, uniqueEvidenceItems.length)
+    : Math.max(discoveredEvidenceCount, solutionEvidenceItems.length)
   const displayedAttemptsLeft = isFailed ? 0 : attemptsLeft ?? Math.max(maxAccusations - wrongAccusationCount, 0)
   const displayedWrongGuesses = isFailed
     ? Math.max(wrongAccusationCount, maxAccusations - displayedAttemptsLeft)
@@ -37,7 +35,7 @@ export function EndingScreen({
     (suspect) => suspect.pokemonId !== currentCase.culpritPokemonId,
   )
 
-  const renderEvidenceRow = (item: (typeof uniqueEvidenceItems)[number]) => {
+  const renderEvidenceRow = (item: (typeof solutionEvidenceItems)[number]) => {
     const location = currentCase.locations.find((entry) => entry.id === item.locationId)
     const evidenceIcon = getEvidenceIcon(location?.evidenceId, item.evidenceTitle)
 
@@ -94,7 +92,7 @@ export function EndingScreen({
         <section className="inspect-item compact-result-panel evidence-used-panel">
           <strong>Evidence used</strong>
           <div className="evidence-result-list">
-            {uniqueEvidenceItems.map(renderEvidenceRow)}
+            {solutionEvidenceItems.map(renderEvidenceRow)}
           </div>
         </section>
 
@@ -104,15 +102,6 @@ export function EndingScreen({
             {nonCulpritSuspects.map(renderSuspectRow)}
           </div>
         </section>
-      </div>
-
-      <div className="ending-actions overlay-actions">
-        <button type="button" className="primary-button" onClick={startNewCase}>
-          New case
-        </button>
-        <button type="button" className="secondary-button" onClick={startNewCase}>
-          Play again
-        </button>
       </div>
     </section>
   )
