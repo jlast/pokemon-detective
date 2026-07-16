@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
-import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { TODAY_INVESTIGATION_PATH } from '../../paths'
 import { SuspectCard } from './SuspectCard'
 
@@ -27,7 +26,7 @@ export function SuspectsPanel({
 
       <section className="suspect-evidence-strip suspect-evidence-board inspect-item">
         <div className="suspect-evidence-board-header">
-          <strong>{getEvidenceIcon()} Evidence Collected</strong>
+          <strong>📎 Evidence Collected</strong>
         </div>
 
         {discoveredEvidence.length > 0 ? (
@@ -35,7 +34,7 @@ export function SuspectsPanel({
             {discoveredEvidence.map((evidenceItem) => (
               <article key={evidenceItem.id} className="suspect-evidence-tag evidence-note-card">
                 <span className="suspect-evidence-tag-icon" aria-hidden="true">
-                  {getEvidenceIcon()}
+                  📎
                 </span>
                 <div className="suspect-evidence-tag-copy">
                   <strong>{evidenceItem.title}</strong>

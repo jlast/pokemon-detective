@@ -38,7 +38,7 @@ export function InvestigationLocationCard({
         ? 'is-disabled'
         : 'is-idle'
 
-  const tiltAngle = useMemo(() => (Math.random() * 4 - 2).toFixed(1), [])
+  const tiltAngle = useMemo(() => (Math.random() * 4 - 2).toFixed(1), [location.id])
 
   const actionable = !isSearching && !(!isComplete && pointsLeft <= 0)
 

@@ -102,7 +102,7 @@ export function LocationsPanel({
             <ul className="evidence-card-list">
               {discoveredEvidence.slice(0, 5).map((item) => (
                 <li key={item.id} className="evidence-card-item">
-                  <span aria-hidden="true">{getEvidenceIcon(item.id, item.title)}</span>
+                  <span aria-hidden="true">{getEvidenceIcon(item.id, item.title, '📎')}</span>
                   <span>{item.title}</span>
                 </li>
               ))}
