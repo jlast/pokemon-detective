@@ -1011,7 +1011,7 @@
     "title": "The Pilfered Parcel",
     "shortStory": "A sealed parcel disappeared from the post office sorting room.",
     "crimeIcon": "📦",
-    "sceneImage": "/case-scenes/pilfered-parcel.webp",
+    "sceneImage": "/case-scenes/pilfered-parcel.jpg",
     "sceneImageAlt": "Scene photo for The Pilfered Parcel",
     "difficulty": "easy",
     "maxInvestigations": 5,

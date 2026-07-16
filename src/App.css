@@ -3542,25 +3542,75 @@
 }
 
 .case-scene-card {
+  position: relative;
+  overflow: hidden;
   display: grid;
   gap: 0.55rem;
   padding: 0.55rem;
   background: #fbf1dc;
   border: 1px solid rgba(79, 67, 33, 0.16);
   color: #4f4321;
+  box-shadow: var(--shadow-card);
   transform: rotate(-1.2deg);
+}
+
+.case-scene-card::before {
+  content: none;
+}
+
+.case-scene-card::after {
+  content: none;
 }
 
 .case-scene-card__pin {
   position: absolute;
   top: 0.5rem;
   left: 50%;
+  z-index: 3;
   width: 12px;
   height: 12px;
   border-radius: 50%;
   background: var(--pin-red);
   transform: translateX(-50%);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.case-scene-card__image-frame {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border: 4px solid #14100c;
+  border-radius: 3px;
+  background: #f9f4de;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.75),
+    4px 4px 0 rgba(20, 16, 12, 0.92);
+  isolation: isolate;
+}
+
+.case-scene-card__image-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 36%),
+    linear-gradient(0deg, rgba(255, 221, 122, 0.12), rgba(255, 221, 122, 0.12));
+  mix-blend-mode: soft-light;
+  opacity: 0.72;
+}
+
+.case-scene-card__image-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(20, 16, 12, 0.18), transparent 7%, transparent 93%, rgba(20, 16, 12, 0.2)),
+    linear-gradient(0deg, rgba(20, 16, 12, 0.2), transparent 8%, transparent 92%, rgba(20, 16, 12, 0.18));
+  mix-blend-mode: multiply;
 }
 
 .evidence-card-title,
@@ -3578,27 +3628,36 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid rgba(79, 67, 33, 0.2);
   background: #efe0bd;
+  filter: contrast(1.24) saturate(1.22) brightness(1.05);
+  transform: scale(1.02);
 }
 
 .case-scene-card__caption {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: 0.15rem;
   padding: 0 0.15rem 0.1rem;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 .case-scene-card__caption strong {
+  color: #4f4321;
   font-size: 0.76rem;
+  font-weight: 800;
   line-height: 1.1;
   text-transform: uppercase;
   letter-spacing: 0.07em;
+  text-shadow: none;
 }
 
 .case-scene-card__caption span {
   color: #746342;
   font-size: 0.78rem;
+  font-weight: 400;
   line-height: 1.2;
 }
 

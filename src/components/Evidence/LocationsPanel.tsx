@@ -72,11 +72,13 @@ export function LocationsPanel({
 
         <div className="pinboard-card case-scene-card" style={{ gridArea: 'budget' }}>
           <div className="case-scene-card__pin" aria-hidden="true" />
-          <img
-            className="case-scene-card__image"
-            src={sceneImage}
-            alt={sceneImageAlt}
-          />
+          <div className="case-scene-card__image-frame">
+            <img
+              className="case-scene-card__image"
+              src={sceneImage}
+              alt={sceneImageAlt}
+            />
+          </div>
           <div className="case-scene-card__caption">
             <strong>Scene photo</strong>
             <span>{currentCase.title}</span>
