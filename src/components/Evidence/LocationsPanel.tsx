@@ -4,6 +4,11 @@ import { InvestigationLocationCard } from './InvestigationLocationCard'
 
 const placeholderSceneImage = '/case-scenes/placeholder.svg'
 
+const getPublicAssetUrl = (path: string) => {
+  if (/^(https?:)?\/\//.test(path)) return path
+  return `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
+}
+
 const getCurrentTheoryCopy = (evidenceCount: number, remainingActions: number) => {
   if (remainingActions <= 0) {
     return 'Investigation is over. Make your call.'
@@ -42,7 +47,7 @@ export function LocationsPanel({
   const maxInvestigations = currentCase.maxInvestigations
   const pointsLeft = Math.max(maxInvestigations - actionsUsed, 0)
   const currentTheoryCopy = getCurrentTheoryCopy(evidenceCollectedCount, pointsLeft)
-  const sceneImage = currentCase.sceneImage ?? placeholderSceneImage
+  const sceneImage = getPublicAssetUrl(currentCase.sceneImage ?? placeholderSceneImage)
   const sceneImageAlt = currentCase.sceneImageAlt ?? `Scene photo for ${currentCase.title}`
 
   return (
