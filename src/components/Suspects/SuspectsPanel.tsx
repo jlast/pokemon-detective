@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom'
 import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
+import { TODAY_INVESTIGATION_PATH } from '../../paths'
 import { SuspectCard } from './SuspectCard'
 
 interface SuspectsProps {
@@ -43,8 +45,10 @@ export function SuspectsPanel({
           </div>
         ) : (
           <div className="suspect-evidence-empty">
-            <p className="overview-section-hook">No evidence collected yet.</p>
-            <p className="overview-section-hook">Search investigation locations to collect your first clue.</p>
+            <p className="overview-section-hook">Start at the locations board to collect your first clue.</p>
+            <Link to={TODAY_INVESTIGATION_PATH} className="primary-button suspect-evidence-cta">
+              Investigate locations
+            </Link>
           </div>
         )}
       </section>

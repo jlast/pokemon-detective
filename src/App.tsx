@@ -74,6 +74,7 @@ function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() =>
     authed ? getUserProfile() : null,
   )
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleLogin = useCallback(() => {
     navigate('/login')
@@ -82,6 +83,11 @@ function App() {
   const handleLogout = useCallback(() => {
     authLogout()
   }, [])
+
+  const navigateAndCloseMenu = useCallback((path: string) => {
+    setIsMobileMenuOpen(false)
+    navigate(path)
+  }, [navigate])
 
   const wrongAccusationIds = useMemo(() => {
     return accusationHistory ?? []
@@ -196,6 +202,10 @@ function App() {
       setAuthed(ok)
       setUserProfile(ok ? getUserProfile() : null)
     })()
+  }, [currentRoute])
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
   }, [currentRoute])
 
   useEffect(() => {
@@ -517,7 +527,22 @@ function App() {
       />
 
       <div className="app-content">
-        <Header currentCase={currentCase} />
+        <Header
+          currentCase={currentCase}
+          activeSection={activeSidebarSection}
+          authed={authed}
+          userProfile={userProfile}
+          isMenuOpen={isMobileMenuOpen}
+          onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
+          onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
+          onSelectPokedex={() => navigateAndCloseMenu('/pokedex')}
+          onSelectHowToPlay={() => navigateAndCloseMenu('/how-to-play')}
+          onLogin={() => navigateAndCloseMenu('/login')}
+          onLogout={() => {
+            setIsMobileMenuOpen(false)
+            handleLogout()
+          }}
+        />
 
         {shouldRedirectFromInvalidCompletedEnding ? (
           <Navigate to={completedCaseStatus ? endingPath(completedCaseStatus) : TODAY_PATH} replace />
