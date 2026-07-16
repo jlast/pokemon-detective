@@ -20,7 +20,7 @@ export function InvestigationRouteFrame({
 }: InvestigationRouteFrameProps) {
   return (
     <div className="main-layout-single">
-      {showCaseFlowNav ? <CaseFlowNav /> : null}
+      {showCaseFlowNav ? <CaseFlowNav currentCase={currentCase} /> : null}
       {layout === 'locations' ? (
         <LocationsPanel
           isEvidenceTab

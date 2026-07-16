@@ -108,7 +108,7 @@ export function InvestigationLocationCard({
         onClick={(e) => { e.stopPropagation(); openPanel(location.id) }}
         disabled={isSearching || (!isComplete && pointsLeft <= 0)}
       >
-        {isSearching ? 'Following lead…' : isComplete ? 'Review →' : pointsLeft <= 0 ? 'Locked' : 'Investigate →'}
+        {isSearching ? 'Following lead…' : isComplete ? 'Investigate →' : pointsLeft <= 0 ? 'Locked' : 'Investigate →'}
       </button>
     </article>
   )

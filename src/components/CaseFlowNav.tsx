@@ -1,15 +1,22 @@
 import { useLocation, useNavigate } from 'react-router-dom'
+import type { Case } from '../game/caseModel'
 import { TODAY_INVESTIGATION_PATH, TODAY_PATH, TODAY_SUSPECTS_PATH } from '../paths'
 
 const tabs = [
-  { path: TODAY_PATH, label: 'Case Overview', mobileLabel: 'Case File', iconClass: 'case-flow-tab-icon--file' },
-  { path: TODAY_INVESTIGATION_PATH, label: 'Investigation Board', mobileLabel: 'Evidence Board', iconClass: 'case-flow-tab-icon--pin' },
-  { path: TODAY_SUSPECTS_PATH, label: 'Suspects Lineup', mobileLabel: 'Suspect Files', iconClass: 'case-flow-tab-icon--files' },
+  { id: 'case', path: TODAY_PATH, label: 'Case Overview', mobileLabel: 'Case', iconClass: 'case-flow-tab-icon--file' },
+  { id: 'evidence', path: TODAY_INVESTIGATION_PATH, label: 'Investigation Board', mobileLabel: 'Evidence', iconClass: 'case-flow-tab-icon--pin' },
+  { id: 'suspects', path: TODAY_SUSPECTS_PATH, label: 'Suspects Lineup', mobileLabel: 'Suspects', iconClass: 'case-flow-tab-icon--files' },
 ]
 
-export function CaseFlowNav() {
+interface CaseFlowNavProps {
+  currentCase: Case
+}
+
+export function CaseFlowNav({ currentCase }: CaseFlowNavProps) {
   const location = useLocation()
   const navigate = useNavigate()
+  const hasLocationsToResearch = currentCase.locations.some((caseLocation) => !caseLocation.investigated)
+  const notificationTab = hasLocationsToResearch ? 'evidence' : currentCase.status === 'active' ? 'suspects' : ''
 
   const isActiveTab = (path: string) => {
     if (path === TODAY_PATH) return location.pathname === TODAY_PATH
@@ -24,11 +31,12 @@ export function CaseFlowNav() {
           <button
             key={tab.path}
             type="button"
-            className={`case-flow-tab${isActive ? ' is-active' : ''}`}
+            className={`case-flow-tab${isActive ? ' is-active' : ''}${notificationTab === tab.id ? ' has-notification' : ''}`}
             aria-current={isActive ? 'page' : undefined}
             onClick={() => navigate(tab.path)}
           >
             <span className={`case-flow-tab-icon ${tab.iconClass}`} aria-hidden="true" />
+            {notificationTab === tab.id ? <span className="case-flow-tab-notification" aria-hidden="true" /> : null}
             <span className="case-flow-tab-label">{tab.label}</span>
             <span className="case-flow-tab-mobile-label">{tab.mobileLabel}</span>
           </button>

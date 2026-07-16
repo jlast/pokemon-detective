@@ -201,6 +201,7 @@
 }
 
 .case-flow-tab {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -240,6 +241,19 @@
   position: relative;
   top: 2px;
   margin-bottom: -2px;
+}
+
+.case-flow-tab-notification {
+  position: absolute;
+  top: 0.38rem;
+  right: 0.55rem;
+  z-index: 2;
+  width: 0.58rem;
+  height: 0.58rem;
+  border: 2px solid #fffaf0;
+  border-radius: 999px;
+  background: var(--danger);
+  box-shadow: 0 2px 5px rgba(95, 33, 33, 0.28);
 }
 
 .detail-back-link {
@@ -763,6 +777,50 @@
   background: #fff8df;
   border-color: var(--accent-yellow-deep);
   box-shadow: 0 8px 16px rgba(95, 69, 27, 0.12), inset 4px 0 0 var(--accent-yellow-deep);
+}
+
+.mobile-main-submenu {
+  display: grid;
+  gap: 0.42rem;
+  margin-top: -0.25rem;
+  padding: 0 0 0.15rem 3rem;
+}
+
+.mobile-main-submenu-item {
+  position: relative;
+  min-height: 2.35rem;
+  border: 1px solid rgba(199, 184, 159, 0.72);
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem 0.45rem 1rem;
+  background: rgba(255, 250, 240, 0.74);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mobile-main-submenu-item::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -1.2rem;
+  width: 0.8rem;
+  height: 1px;
+  background: rgba(139, 102, 64, 0.42);
+}
+
+.mobile-main-submenu-item:hover {
+  background: #fff8df;
+  color: var(--text-main);
+}
+
+.mobile-main-submenu-item.is-active {
+  border-color: var(--accent-yellow-deep);
+  background: #fff8df;
+  color: var(--text-main);
+  box-shadow: inset 3px 0 0 var(--accent-yellow-deep);
 }
 
 .mobile-main-menu-icon {
@@ -4288,13 +4346,13 @@
     width: auto;
     max-width: none;
     margin: 0;
-    padding: 0.3rem 0.55rem 0.45rem;
+    padding: 0.3rem 0.55rem 0;
     overflow: visible;
-    border: 1px solid var(--border);
-    border-width: 1px 0 0;
+    border: 0;
     border-radius: 0;
-    background: #f1e5ca;
-    box-shadow: 0 -8px 20px rgba(38, 36, 31, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.56);
+    background: transparent;
+    box-shadow: none;
+    transform: translateY(0.28rem);
   }
 
   .app-content,
@@ -4307,21 +4365,21 @@
 
   .case-flow-tab {
     position: relative;
-    min-height: 3.25rem;
+    min-height: 5.25rem;
     flex-direction: column;
-    gap: 0.18rem;
+    gap: 0.12rem;
     margin-top: 0.35rem;
     padding: 0.42rem 0.24rem 0.38rem;
     border: 1px solid #c8b99e;
     border-bottom: 0;
     border-left-width: 0;
     border-radius: 12px 12px 0 0;
-    background: #eadcc1;
+    background: #f2e4c7;
     color: #68728a;
     font-size: 0.68rem;
     letter-spacing: 0;
     text-transform: none;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
+    box-shadow: 0 -4px 12px rgba(38, 36, 31, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.62);
   }
 
   .case-flow-tab:first-child {
@@ -4339,7 +4397,7 @@
     border-bottom: 0;
     border-radius: 9px 9px 0 0;
     background: inherit;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
   }
 
   .case-flow-tab:hover {
@@ -4353,7 +4411,7 @@
     border-top-color: transparent;
     color: var(--text-main);
     z-index: 1;
-    box-shadow: 0 -5px 12px rgba(38, 36, 31, 0.08);
+    box-shadow: 0 0.7rem 0 var(--card), 0 -7px 18px rgba(38, 36, 31, 0.16);
   }
 
   .case-flow-tab.is-active::before {
@@ -4372,31 +4430,48 @@
     background: var(--accent-yellow-deep);
   }
 
+  .case-flow-tab-notification {
+    position: absolute;
+    top: 0.55rem;
+    right: calc(50% - 1.65rem);
+    z-index: 2;
+    width: 0.78rem;
+    height: 0.78rem;
+    border: 2px solid #fffaf0;
+    border-radius: 999px;
+    background: var(--danger);
+    box-shadow: 0 2px 5px rgba(95, 33, 33, 0.28);
+  }
+
   .case-flow-tab-icon {
     display: block;
     position: relative;
-    width: 1.08rem;
-    height: 1.08rem;
+    width: 3.24rem;
+    height: 3.24rem;
     color: currentColor;
   }
 
   .case-flow-tab-icon--file::before {
     content: '';
     position: absolute;
-    inset: 0.1rem 0.22rem;
-    border: 2px solid currentColor;
-    border-radius: 0.18rem;
-    background: linear-gradient(135deg, transparent 0 72%, currentColor 73% 100%) top right / 0.45rem 0.45rem no-repeat;
+    top: 0.48rem;
+    left: 50%;
+    width: 1.72rem;
+    height: 2.05rem;
+    border: 3px solid currentColor;
+    border-radius: 0.24rem;
+    background: linear-gradient(135deg, transparent 0 68%, currentColor 70% 100%) top right / 0.68rem 0.68rem no-repeat;
+    transform: translateX(-50%);
   }
 
   .case-flow-tab-icon--pin::before {
     content: '';
     position: absolute;
-    top: 0.04rem;
+    top: 0.36rem;
     left: 50%;
-    width: 0.5rem;
-    height: 0.5rem;
-    border: 2px solid currentColor;
+    width: 1.28rem;
+    height: 1.28rem;
+    border: 3px solid currentColor;
     border-radius: 50%;
     transform: translateX(-50%);
   }
@@ -4404,10 +4479,10 @@
   .case-flow-tab-icon--pin::after {
     content: '';
     position: absolute;
-    top: 0.55rem;
+    top: 1.55rem;
     left: 50%;
-    width: 2px;
-    height: 0.5rem;
+    width: 3px;
+    height: 1.35rem;
     border-radius: 999px;
     background: currentColor;
     transform: translateX(-50%);
@@ -4417,24 +4492,24 @@
   .case-flow-tab-icon--files::after {
     content: '';
     position: absolute;
-    border: 2px solid currentColor;
-    border-radius: 0.16rem;
+    border: 3px solid currentColor;
+    border-radius: 0.22rem;
     background: transparent;
   }
 
   .case-flow-tab-icon--files::before {
-    top: 0.08rem;
-    right: 0.02rem;
-    width: 0.62rem;
-    height: 0.72rem;
+    top: 0.36rem;
+    right: 0.38rem;
+    width: 1.35rem;
+    height: 1.6rem;
   }
 
   .case-flow-tab-icon--files::after {
-    bottom: 0.02rem;
-    left: 0.04rem;
-    width: 0.62rem;
-    height: 0.72rem;
-    background: #eadcc1;
+    bottom: 0.34rem;
+    left: 0.38rem;
+    width: 1.35rem;
+    height: 1.6rem;
+    background: #f2e4c7;
   }
 
   .case-flow-tab.is-active .case-flow-tab-icon--files::after {
@@ -4447,7 +4522,7 @@
 
   .case-flow-tab-mobile-label {
     display: block;
-    font-size: clamp(0.62rem, 2.9vw, 0.74rem);
+    font-size: clamp(0.82rem, 3.7vw, 0.98rem);
     font-weight: 800;
     line-height: 1.1;
   }

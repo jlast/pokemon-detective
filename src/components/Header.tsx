@@ -4,11 +4,14 @@ import type { UserProfile } from '../auth'
 interface HeaderProps {
   currentCase: Case
   activeSection: string
+  activeCasePage: 'overview' | 'investigation' | 'suspects' | ''
   authed: boolean
   userProfile: UserProfile | null
   isMenuOpen: boolean
   onToggleMenu: () => void
   onSelectCase: () => void
+  onSelectInvestigation: () => void
+  onSelectSuspects: () => void
   onSelectPokedex: () => void
   onSelectHowToPlay: () => void
   onLogin: () => void
@@ -18,11 +21,14 @@ interface HeaderProps {
 export function Header({
   currentCase,
   activeSection,
+  activeCasePage,
   authed,
   userProfile,
   isMenuOpen,
   onToggleMenu,
   onSelectCase,
+  onSelectInvestigation,
+  onSelectSuspects,
   onSelectPokedex,
   onSelectHowToPlay,
   onLogin,
@@ -84,6 +90,29 @@ export function Header({
                 <small>Open the active investigation</small>
               </span>
             </button>
+            <div className="mobile-main-submenu" aria-label="Case pages">
+              <button
+                type="button"
+                className={`mobile-main-submenu-item ${activeCasePage === 'overview' ? 'is-active' : ''}`}
+                onClick={onSelectCase}
+              >
+                Case overview
+              </button>
+              <button
+                type="button"
+                className={`mobile-main-submenu-item ${activeCasePage === 'investigation' ? 'is-active' : ''}`}
+                onClick={onSelectInvestigation}
+              >
+                Investigation board
+              </button>
+              <button
+                type="button"
+                className={`mobile-main-submenu-item ${activeCasePage === 'suspects' ? 'is-active' : ''}`}
+                onClick={onSelectSuspects}
+              >
+                Suspects lineup
+              </button>
+            </div>
             <button
               type="button"
               className={`mobile-main-menu-item ${activeSection === 'pokedex' ? 'is-active' : ''}`}

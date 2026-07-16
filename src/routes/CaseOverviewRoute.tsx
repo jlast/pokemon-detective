@@ -12,7 +12,7 @@ interface CaseOverviewRouteProps {
 export function CaseOverviewRoute({ attemptsLeft, currentCase, startInvestigation, inspectSuspect }: CaseOverviewRouteProps) {
   return (
     <div className="main-layout-single">
-      <CaseFlowNav />
+      <CaseFlowNav currentCase={currentCase} />
       <CaseOverview
         gameCase={currentCase}
         attemptsLeft={attemptsLeft}

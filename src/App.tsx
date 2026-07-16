@@ -164,6 +164,13 @@ function App() {
   const activeSidebarSection = currentRoute === '/' || currentRoute.startsWith(TODAY_PATH) || currentRoute.startsWith('/suspects') || currentRoute.startsWith('/investigation')
     ? 'case'
     : currentRoute.startsWith('/pokedex') ? 'pokedex' : currentRoute.startsWith('/how-to-play') ? 'how-to-play' : ''
+  const activeCasePage: 'overview' | 'investigation' | 'suspects' | '' = currentRoute.startsWith(TODAY_INVESTIGATION_PATH) || currentRoute.startsWith('/investigation')
+    ? 'investigation'
+    : currentRoute.startsWith(TODAY_SUSPECTS_PATH) || currentRoute.startsWith(TODAY_ACCUSE_PATH) || currentRoute.startsWith('/suspects') || currentRoute.startsWith('/accuse')
+      ? 'suspects'
+      : currentRoute === '/' || currentRoute === TODAY_PATH || currentRoute === '/home' || currentRoute === '/case'
+        ? 'overview'
+        : ''
 
   const clearScreenState = () => {
     setSelectedLocationId(null)
@@ -534,11 +541,14 @@ function App() {
         <Header
           currentCase={currentCase}
           activeSection={activeSidebarSection}
+          activeCasePage={activeCasePage}
           authed={authed}
           userProfile={userProfile}
           isMenuOpen={isMobileMenuOpen}
           onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
           onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
+          onSelectInvestigation={() => navigateAndCloseMenu(TODAY_INVESTIGATION_PATH)}
+          onSelectSuspects={() => navigateAndCloseMenu(TODAY_SUSPECTS_PATH)}
           onSelectPokedex={() => navigateAndCloseMenu('/pokedex')}
           onSelectHowToPlay={() => navigateAndCloseMenu('/how-to-play')}
           onLogin={() => navigateAndCloseMenu('/login')}
