@@ -40,6 +40,17 @@ import {
 const getTodayCaseId = () => new Date().toISOString().slice(0, 10)
 const MAX_ACCUSATIONS = 3
 
+const applyCurrentCaseAssets = (caseData: Case): Case => {
+  const currentConfig = allCases.find((caseConfig) => caseConfig.id === caseData.id)
+  if (!currentConfig) return caseData
+
+  return {
+    ...caseData,
+    sceneImage: currentConfig.sceneImage,
+    sceneImageAlt: currentConfig.sceneImageAlt,
+  }
+}
+
 function NavigateToTodayInvestigation() {
   const { locationId } = useParams()
   return <Navigate to={locationId ? investigationLocationPath(locationId) : TODAY_INVESTIGATION_PATH} replace />
@@ -168,7 +179,7 @@ function App() {
     setLoading(true)
     try {
       const data = await getCurrentCase()
-      setCaseData(data.case)
+      setCaseData(applyCurrentCaseAssets(data.case))
       setInvestigationsRemaining(data.investigationsRemaining)
       setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
       setAccusationHistory(data.accusationHistory ?? [])
