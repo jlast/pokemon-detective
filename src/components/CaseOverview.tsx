@@ -1,7 +1,7 @@
 import { LinedOverview } from './LinedOverview'
 import { PostIt } from './PostIt'
 import { MugShot } from './Suspects/MugShot'
-import type { Case } from "../game/caseModel";
+import type { Case } from '../game/caseModel'
 
 interface CaseOverviewProps {
   gameCase: Case

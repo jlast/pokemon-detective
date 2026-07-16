@@ -1834,6 +1834,35 @@
   font-weight: 700;
 }
 
+.suspect-file-adjacent-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.suspect-file-arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: fit-content;
+  min-height: 2.45rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 253, 247, 0.8);
+  color: var(--text-main);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.suspect-file-arrow-link-left {
+  justify-self: start;
+}
+
+.suspect-file-arrow-link-right {
+  justify-self: end;
+}
+
 .dossier-shell {
   display: grid;
 }
@@ -4194,10 +4223,6 @@
 
   .suspect-overview-identity {
     grid-row: span 2;
-  }
-
-  .suspect-overview-decision {
-    grid-column: 1 / -1;
   }
 
   .case-closed-hero {

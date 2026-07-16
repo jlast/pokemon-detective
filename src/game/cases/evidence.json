@@ -2,65 +2,65 @@
   {
     "id": "height-clue",
     "title": "Height Clue",
-    "clueText": "The missing item was disturbed at a telling height.",
+    "clueText": "",
     "hiddenTrait": "height",
-    "endExplanation": "The culprit's height matched the way the item was handled.",
+    "endExplanation": "",
     "discovered": false
   },
   {
     "id": "weight-clue",
     "title": "Track Clue",
-    "clueText": "The tracks showed a telling depth.",
+    "clueText": "",
     "hiddenTrait": "weight",
-    "endExplanation": "The culprit's weight matched the track depth.",
+    "endExplanation": "",
     "discovered": false
   },
   {
     "id": "type-residue-clue",
     "title": "Residue Clue",
-    "clueText": "There was a type-specific trace left behind.",
+    "clueText": "",
     "hiddenTrait": "typeResidue",
-    "endExplanation": "The culprit left residue that matched its type.",
+    "endExplanation": "",
     "discovered": false
   },
   {
     "id": "ground-trace-clue",
     "title": "Ground Clue",
-    "clueText": "The nearby ground showed a telling trace.",
+    "clueText": "",
     "hiddenTrait": "groundTrace",
-    "endExplanation": "The culprit disturbed the ground in a way that matched its type.",
+    "endExplanation": "",
     "discovered": false
   },
   {
     "id": "force-clue",
     "title": "Entry Clue",
-    "clueText": "The point of entry showed a telling mark.",
+    "clueText": "",
     "hiddenTrait": "force",
-    "endExplanation": "The culprit left a mark that matched how it forced entry.",
+    "endExplanation": "",
     "discovered": false
   },
   {
     "id": "witness-clue",
     "title": "Witness Clue",
-    "clueText": "A witness remembered a telling detail.",
+    "clueText": "",
     "hiddenTrait": "witness",
-    "endExplanation": "The witness detail matched the culprit.",
+    "endExplanation": "",
     "discovered": false
   },
   {
     "id": "highest-stat-clue",
     "title": "Strength Clue",
-    "clueText": "The scene showed what the culprit relied on most.",
+    "clueText": "",
     "hiddenTrait": "highestStat",
-    "endExplanation": "The culprit's strongest quality matched the clue.",
+    "endExplanation": "",
     "discovered": false
   },
   {
     "id": "lowest-stat-clue",
     "title": "Limitation Clue",
-    "clueText": "The route showed what the culprit avoided.",
+    "clueText": "",
     "hiddenTrait": "lowestStat",
-    "endExplanation": "The culprit's weakest quality matched the clue.",
+    "endExplanation": "",
     "discovered": false
   }
 ]

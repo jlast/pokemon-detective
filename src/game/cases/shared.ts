@@ -143,16 +143,16 @@ export const createSuspect = (pokemonId: number, isShinyOverride?: boolean): Sus
 
 export const baseEvidence: Evidence[] = evidenceRaw as Evidence[]
 
-const evidenceDefaults: Record<string, { evidenceId: string; title: string; text: string }> = {
-  crumbs: { evidenceId: 'height-clue', title: 'Height Clue', text: 'The missing item was disturbed at a telling height.' },
-  campers: { evidenceId: 'witness-clue', title: 'Witness Clue', text: 'A witness remembered a telling detail.' },
-  'measure-tracks': { evidenceId: 'weight-clue', title: 'Track Clue', text: 'The tracks showed a telling depth.' },
-  'follow-tracks': { evidenceId: 'type-residue-clue', title: 'Residue Clue', text: 'There was a type-specific trace left behind.' },
-  'check-roots': { evidenceId: 'ground-trace-clue', title: 'Ground Clue', text: 'The nearby ground showed a telling trace.' },
-  'inspect-lid': { evidenceId: 'force-clue', title: 'Entry Clue', text: 'The point of entry showed a telling mark.' },
-  'check-table': { evidenceId: 'height-clue', title: 'Height Clue', text: 'The missing item was disturbed at a telling height.' },
-  'interview-camper': { evidenceId: 'witness-clue', title: 'Witness Clue', text: 'A witness remembered a telling detail.' },
-  'check-wash-bucket': { evidenceId: 'type-residue-clue', title: 'Residue Clue', text: 'There was a type-specific trace left behind.' },
+const evidenceIdByActionId: Record<string, string> = {
+  crumbs: 'height-clue',
+  campers: 'witness-clue',
+  'measure-tracks': 'weight-clue',
+  'follow-tracks': 'type-residue-clue',
+  'check-roots': 'ground-trace-clue',
+  'inspect-lid': 'force-clue',
+  'check-table': 'height-clue',
+  'interview-camper': 'witness-clue',
+  'check-wash-bucket': 'type-residue-clue',
 }
 
 const location = (
@@ -175,9 +175,9 @@ const ev = (
   leadType: 'careful',
   description,
   outcomeType: 'evidence',
-  evidenceId: evidenceDefaults[id as keyof typeof evidenceDefaults]?.evidenceId ?? null,
-  evidenceTitle: evidenceDefaults[id as keyof typeof evidenceDefaults]?.title ?? null,
-  evidenceText: evidenceDefaults[id as keyof typeof evidenceDefaults]?.text ?? null,
+  evidenceId: evidenceIdByActionId[id as keyof typeof evidenceIdByActionId] ?? null,
+  evidenceTitle: null,
+  evidenceText: null,
   observationText,
   observationTextSmall: sizeOverrides?.small,
   observationTextMedium: sizeOverrides?.medium,
@@ -197,9 +197,9 @@ const wit = (
   leadType: 'uncertain',
   description,
   outcomeType: 'witness',
-  evidenceId: evidenceDefaults[id as keyof typeof evidenceDefaults]?.evidenceId ?? null,
-  evidenceTitle: evidenceDefaults[id as keyof typeof evidenceDefaults]?.title ?? null,
-  evidenceText: evidenceDefaults[id as keyof typeof evidenceDefaults]?.text ?? null,
+  evidenceId: evidenceIdByActionId[id as keyof typeof evidenceIdByActionId] ?? null,
+  evidenceTitle: null,
+  evidenceText: null,
   observationText,
   unlocksLocationIds: [],
   isUseful: true,

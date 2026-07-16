@@ -6,10 +6,6 @@ import { pokemonData } from '../../data/pokemon'
 import { TODAY_INVESTIGATION_PATH, TODAY_SUSPECTS_PATH } from '../../paths'
 import { InvestigationActionChooser } from './InvestigationActionChooser'
 
-const isPlaceholderWitnessText = (text: string | null | undefined) => (
-  text === 'A witness remembered a telling detail.'
-)
-
 interface InvestigationLocationPageProps {
   location: Location | null
   pointsLeft: number
@@ -50,10 +46,10 @@ export function InvestigationLocationPage({
   const hasEvidence = !!location.evidenceId
   const allLocationsInvestigated = resolvedCount >= totalLocations
   const evidenceTitle = hasEvidence
-    ? (isPlaceholderWitnessText(location.evidenceText) ? selectedAction?.evidenceTitle : location.evidenceTitle) ?? selectedAction?.evidenceTitle
+    ? selectedAction?.evidenceTitle ?? location.evidenceTitle
     : 'No Useful Evidence'
   const evidenceText = hasEvidence
-    ? (isPlaceholderWitnessText(location.evidenceText) ? selectedAction?.evidenceText : location.evidenceText) ?? selectedAction?.evidenceText
+    ? selectedAction?.evidenceText ?? location.evidenceText
     : (location.observationText ?? selectedAction?.observationText)
   const evidenceIcon = hasEvidence ? getEvidenceIcon(location.evidenceId, evidenceTitle) : null
   const locationIcon = getLocationIcon(location.name, location.icon)

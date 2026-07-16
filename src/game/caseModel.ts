@@ -128,8 +128,8 @@ export function getDiscoveredEvidence(caseData: Case): Evidence[] {
       const action = location.actions.find((a) => a.id === location.selectedActionId)
       discovered.push({
         id: location.evidenceId,
-        title: location.evidenceTitle ?? action?.evidenceTitle ?? 'Unknown',
-        clueText: location.evidenceText ?? action?.evidenceText ?? '',
+        title: action?.evidenceTitle ?? location.evidenceTitle ?? 'Unknown',
+        clueText: action?.evidenceText ?? location.evidenceText ?? '',
         hiddenTrait: '',
         endExplanation: '',
         discovered: true,

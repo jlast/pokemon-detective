@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { SelectedSuspectCaseFile } from '../components/Suspects/SelectedSuspectCaseFile'
 import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from '../game/caseModel'
-import { TODAY_SUSPECTS_PATH } from '../paths'
+import { suspectPath, TODAY_SUSPECTS_PATH } from '../paths'
 
 interface SuspectFileRouteProps {
   currentCase: Case
@@ -29,6 +29,13 @@ export function SuspectFileRoute({
     selectedSuspectOverride ??
     currentCase.suspects.find((suspect) => suspect.pokemonId === suspectId) ??
     null
+  const selectedSuspectIndex = selectedSuspect
+    ? currentCase.suspects.findIndex((suspect) => suspect.pokemonId === selectedSuspect.pokemonId)
+    : -1
+  const previousSuspect = selectedSuspectIndex > 0 ? currentCase.suspects[selectedSuspectIndex - 1] : null
+  const nextSuspect = selectedSuspectIndex >= 0 && selectedSuspectIndex < currentCase.suspects.length - 1
+    ? currentCase.suspects[selectedSuspectIndex + 1]
+    : null
 
   if (!selectedSuspect) {
     return (
@@ -52,6 +59,21 @@ export function SuspectFileRoute({
       <Link to={backLinkTo} className="subtle-link suspect-file-back-link">
         ← Back to Suspects Lineup
       </Link>
+
+      <nav className="suspect-file-adjacent-nav" aria-label="Adjacent suspects">
+        {previousSuspect ? (
+          <Link to={suspectPath(previousSuspect.pokemonId)} className="suspect-file-arrow-link suspect-file-arrow-link-left">
+            <span aria-hidden="true">←</span>
+            <span>Previous suspect</span>
+          </Link>
+        ) : <span />}
+        {nextSuspect ? (
+          <Link to={suspectPath(nextSuspect.pokemonId)} className="suspect-file-arrow-link suspect-file-arrow-link-right">
+            <span>Next suspect</span>
+            <span aria-hidden="true">→</span>
+          </Link>
+        ) : <span />}
+      </nav>
 
       <div className="dossier-shell">
         <SelectedSuspectCaseFile

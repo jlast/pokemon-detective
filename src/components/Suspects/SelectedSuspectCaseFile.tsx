@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from '../../game/caseModel'
+import { getDiscoveredEvidence, type Case, type Suspect, type SuspectInvestigationGroup, type SuspectNoteStatus } from '../../game/caseModel'
 import { getSuspectGroupDetails } from '../../game/suspectCaseFile'
 import { MugShot } from './MugShot'
 
@@ -62,7 +62,7 @@ export function SelectedSuspectCaseFile({
   const statusClassName = isFalseLead ? 'is-false-lead' : selectedSuspect.noteStatus === 'ruled-out' ? 'is-cleared' : 'is-suspect'
   const suspectIndex = currentCase.suspects.findIndex((suspect) => suspect.pokemonId === selectedSuspect.pokemonId)
   const caseFileNumber = String(suspectIndex + 1).padStart(2, '0')
-  const inspectedCount = investigationGroups.filter((groupKey) => selectedSuspect.inspectedGroups[groupKey]).length
+  const discoveredEvidence = getDiscoveredEvidence(currentCase)
 
   return (
     <div className="suspect-notebook-shell">
@@ -85,7 +85,7 @@ export function SelectedSuspectCaseFile({
         <div className="suspect-notebook-body">
           {activeTab === 'overview' ? (
             <div className="selected-suspect-overview-grid">
-            <section className="selected-suspect-section selected-suspect-section-plain inspect-item suspect-overview-identity">
+              <section className="selected-suspect-section selected-suspect-section-plain inspect-item suspect-overview-identity">
               <p className="dossier-file-number">Case File #{caseFileNumber}</p>
               <div className="selected-suspect-mugshot mugshot-frame">
                 <MugShot suspect={selectedSuspect} />
@@ -95,18 +95,16 @@ export function SelectedSuspectCaseFile({
                 <span className="selected-suspect-status-label">Status</span>
                 <span className={`status-stamp ${statusClassName}`}>{statusText}</span>
                 </div>
-                <div className="suspect-overview-progress">
-                  <strong>Investigation progress</strong>
-                  <div className="suspect-overview-progress-track" aria-hidden="true">
-                    {investigationGroups.map((groupKey) => (
-                      <span
-                        key={groupKey}
-                        className={`suspect-overview-progress-step ${selectedSuspect.inspectedGroups[groupKey] ? 'is-complete' : ''}`}
-                      />
-                    ))}
-                  </div>
-                  <p className="overview-section-hook">{inspectedCount} / {investigationGroups.length} folders inspected</p>
-                </div>
+                {!isFalseLead ? (
+                  <button
+                    type="button"
+                    className="primary-button suspect-overview-accuse-button"
+                    onClick={() => openAccusation(selectedSuspect.pokemonId)}
+                    disabled={currentCase.status !== 'active' || attemptsLeft <= 0}
+                  >
+                    Accuse this Pokemon
+                  </button>
+                ) : null}
               </section>
 
               <section className="selected-suspect-section inspect-item detective-notes suspect-overview-notes">
@@ -130,18 +128,27 @@ export function SelectedSuspectCaseFile({
                 )}
               </section>
 
-              {!isFalseLead ? (
-                <div className="selected-suspect-actions suspect-overview-decision">
-                  <button
-                    type="button"
-                    className="primary-button"
-                    onClick={() => openAccusation(selectedSuspect.pokemonId)}
-                    disabled={currentCase.status !== 'active' || attemptsLeft <= 0}
-                  >
-                    Accuse this Pokemon
-                  </button>
-                </div>
-              ) : null}
+              <section className="selected-suspect-section inspect-item suspect-overview-evidence">
+                <strong>Evidence Collected</strong>
+                {discoveredEvidence.length > 0 ? (
+                  <div className="suspect-evidence-list suspect-evidence-board-list">
+                    {discoveredEvidence.map((evidenceItem) => (
+                      <article key={evidenceItem.id} className="suspect-evidence-tag evidence-note-card">
+                        <span className="suspect-evidence-tag-icon" aria-hidden="true">
+                          📎
+                        </span>
+                        <div className="suspect-evidence-tag-copy">
+                          <strong>{evidenceItem.title}</strong>
+                          <span>{evidenceItem.clueText}</span>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="overview-section-hook">No evidence collected yet.</p>
+                )}
+              </section>
+
             </div>
           ) : null}
 

@@ -241,20 +241,12 @@ const createSuspectShinyMap = (fullCase: Case): Record<string, boolean> => Objec
   fullCase.suspects.map((suspect) => [String(suspect.pokemonId), Math.random() < SHINY_ODDS]),
 )
 
-const isPlaceholderEvidenceText = (evidenceId: string | undefined, text: string | undefined): boolean => (
-  evidenceId === 'witness-clue' && text === 'A witness remembered a telling detail.'
-)
-
 const resolveEvidenceTitle = (record: InvestigatedLocationRecord, action: LocationAction | undefined): string | undefined => (
-  isPlaceholderEvidenceText(record.evidenceId, record.evidenceText)
-    ? action?.evidenceTitle ?? record.evidenceTitle
-    : record.evidenceTitle ?? action?.evidenceTitle ?? undefined
+  action?.evidenceTitle ?? record.evidenceTitle ?? undefined
 )
 
 const resolveEvidenceText = (record: InvestigatedLocationRecord, action: LocationAction | undefined): string | undefined => (
-  !record.evidenceText || isPlaceholderEvidenceText(record.evidenceId, record.evidenceText)
-    ? action?.evidenceText ?? record.evidenceText
-    : record.evidenceText
+  action?.evidenceText ?? record.evidenceText
 )
 
 const hasCompleteSuspectShinyMap = (progress: PlayerProgressRecord, fullCase: Case): boolean => (
@@ -609,12 +601,8 @@ const handleInvestigate = async (
   const evidenceItem = action.evidenceId
     ? fullCase.evidence.find((item) => item.id === action.evidenceId)
     : undefined
-  const evidenceTitle = isPlaceholderEvidenceText(action.evidenceId ?? undefined, action.evidenceText ?? undefined)
-    ? evidenceItem?.title ?? action.evidenceTitle
-    : action.evidenceTitle ?? evidenceItem?.title
-  const evidenceText = isPlaceholderEvidenceText(action.evidenceId ?? undefined, action.evidenceText ?? undefined)
-    ? evidenceItem?.clueText ?? action.evidenceText
-    : action.evidenceText ?? evidenceItem?.clueText
+  const evidenceTitle = action.evidenceTitle ?? evidenceItem?.title
+  const evidenceText = action.evidenceText ?? evidenceItem?.clueText
 
   const witnessPokemonId = typeof body.witnessPokemonId === 'number' ? body.witnessPokemonId : undefined
   if (action.outcomeType === 'witness') {
