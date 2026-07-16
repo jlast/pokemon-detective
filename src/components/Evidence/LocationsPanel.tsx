@@ -80,7 +80,7 @@ export function LocationsPanel({
             />
           </div>
           <div className="case-scene-card__caption">
-            <strong>Scene photo</strong>
+            <strong>Exhibit A</strong>
             <span>{currentCase.title}</span>
           </div>
         </div>
