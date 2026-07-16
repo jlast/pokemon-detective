@@ -1,5 +1,6 @@
 import { allCases, createCaseById } from '../../src/game/cases/index'
 import { pokemonData } from '../../src/data/pokemon'
+import type { Case, LocationCardVariant } from '../../src/game/caseModel'
 import { putCaseData } from './caseDataDb'
 
 const getTodayUtc = (): string => {
@@ -9,6 +10,7 @@ const getTodayUtc = (): string => {
 
 const SESSION_TTL_DAYS = 7
 const WITNESS_OPTION_COUNT = 3
+const LOCATION_CARD_VARIANTS: LocationCardVariant[] = ['detective-note', 'clipboard', 'map-fragment']
 
 const shuffle = <T,>(items: T[]): T[] => {
   const copy = [...items]
@@ -26,6 +28,21 @@ const createWitnessPokemonIds = (suspectPokemonIds: number[]): number[] => {
   return shuffle(pokemonData.map((pokemon) => pokemon.id).filter((id) => !suspectIds.has(id)))
     .slice(0, WITNESS_OPTION_COUNT)
 }
+
+const createLocationCardVariantMap = (locations: Case['locations']): Record<string, LocationCardVariant> => {
+  const pool = shuffle(LOCATION_CARD_VARIANTS.flatMap((variant) => [variant, variant]))
+  return locations.reduce<Record<string, LocationCardVariant>>((variantMap, location, index) => {
+    variantMap[location.id] = pool[index % pool.length]
+    return variantMap
+  }, {})
+}
+
+const createLocationCardTiltMap = (locations: Case['locations']): Record<string, number> => (
+  locations.reduce<Record<string, number>>((tiltMap, location) => {
+    tiltMap[location.id] = Number((Math.random() * 4 - 2).toFixed(1))
+    return tiltMap
+  }, {})
+)
 
 interface CloudWatchEvent {
   version?: string
@@ -64,6 +81,8 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       suspectShinyMap[String(suspect.pokemonId)] = suspect.isShiny
     }
     const suspectPokemonIds = gameCase.suspects.map((s) => s.pokemonId)
+    const locationCardVariantMap = createLocationCardVariantMap(gameCase.locations)
+    const locationCardTiltMap = createLocationCardTiltMap(gameCase.locations)
 
     await putCaseData({
       caseId,
@@ -72,6 +91,8 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       suspectPokemonIds,
       suspectShinyMap,
       witnessPokemonIds: createWitnessPokemonIds(suspectPokemonIds),
+      locationCardVariantMap,
+      locationCardTiltMap,
       actionEvidenceMap,
       solution: {
         culpritRevealText: gameCase.solution?.culpritRevealText ?? '',

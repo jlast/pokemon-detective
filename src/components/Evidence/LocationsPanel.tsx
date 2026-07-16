@@ -1,10 +1,9 @@
-import { useMemo } from 'react'
-import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
+import { getDiscoveredEvidence, type Case, type LocationCardVariant } from '../../game/caseModel'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
-import { InvestigationLocationCard, type LocationCardVariant } from './InvestigationLocationCard'
+import { InvestigationLocationCard } from './InvestigationLocationCard'
 
 const placeholderSceneImage = '/case-scenes/placeholder.svg'
-const locationCardVariants: LocationCardVariant[] = ['detective-note', 'clipboard', 'polaroid', 'evidence-tag', 'map-fragment']
+const locationCardVariants: LocationCardVariant[] = ['detective-note', 'clipboard', 'map-fragment']
 
 const getPublicAssetUrl = (path: string) => {
   if (/^(https?:)?\/\//.test(path)) return path
@@ -49,16 +48,6 @@ const getEvidenceBoardCopy = (evidenceCount: number, maxInvestigations: number) 
   return `${evidenceCount} pieces of evidence pinned.`
 }
 
-const createLocationVariantAssignments = (locations: Case['locations']) => {
-  const pool = locationCardVariants.flatMap((variant) => [variant, variant])
-  const shuffledPool = [...pool].sort(() => Math.random() - 0.5)
-
-  return locations.reduce<Record<string, LocationCardVariant>>((assignments, location, index) => {
-    assignments[location.id] = shuffledPool[index % shuffledPool.length]
-    return assignments
-  }, {})
-}
-
 export function LocationsPanel({
   currentCase,
   isEvidenceTab,
@@ -78,11 +67,6 @@ export function LocationsPanel({
   const evidenceBoardCopy = getEvidenceBoardCopy(evidenceCollectedCount, maxInvestigations)
   const sceneImage = getPublicAssetUrl(currentCase.sceneImage ?? placeholderSceneImage)
   const sceneImageAlt = currentCase.sceneImageAlt ?? `Scene photo for ${currentCase.title}`
-  const locationAssignmentKey = currentCase.locations.map((location) => location.id).join('|')
-  const locationVariantAssignments = useMemo(
-    () => createLocationVariantAssignments(currentCase.locations),
-    [currentCase.id, locationAssignmentKey],
-  )
 
   return (
     <section
@@ -153,7 +137,7 @@ export function LocationsPanel({
               isNewEvidence={false}
               pointsLeft={pointsLeft}
               openPanel={openLocation}
-              variant={locationVariantAssignments[location.id] ?? locationCardVariants[index % locationCardVariants.length]}
+              variant={location.cardVariant ?? locationCardVariants[index % locationCardVariants.length]}
               evidenceNumber={index + 1}
               style={{ gridArea: area }}
             />

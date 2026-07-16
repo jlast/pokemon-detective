@@ -48,6 +48,8 @@ export interface LocationAction {
   isUseful: boolean
 }
 
+export type LocationCardVariant = 'detective-note' | 'clipboard' | 'map-fragment'
+
 export interface Location {
   id: string
   name: string
@@ -59,6 +61,8 @@ export interface Location {
   evidenceText?: string
   evidenceId?: string
   witnessPokemonId?: number
+  cardVariant?: LocationCardVariant
+  cardTiltDegrees?: number
   investigated: boolean
   selectedActionId: string | null
   actions: LocationAction[]

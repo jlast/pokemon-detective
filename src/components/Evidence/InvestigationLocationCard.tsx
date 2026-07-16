@@ -1,8 +1,4 @@
-import { useMemo } from 'react'
-import type { Location } from '../../game/caseModel'
-import { getLocationIcon } from '../../game/locationIcons'
-
-export type LocationCardVariant = 'detective-note' | 'clipboard' | 'polaroid' | 'evidence-tag' | 'map-fragment'
+import type { Location, LocationCardVariant } from '../../game/caseModel'
 
 interface InvestigationLocationCardProps {
   location: Location
@@ -25,6 +21,11 @@ const getObservation = (location: Location) => (
   ?? 'Initial signs are waiting to be checked.'
 )
 
+const getStableFallbackTilt = (locationId: string) => {
+  const hash = [...locationId].reduce((sum, char) => sum + char.charCodeAt(0), 0)
+  return ((hash % 41) - 20) / 10
+}
+
 export function InvestigationLocationCard({
   location,
   isActiveLocation,
@@ -45,12 +46,11 @@ export function InvestigationLocationCard({
         ? 'Locked'
         : 'Not searched'
 
-  const tiltAngle = useMemo(() => (Math.random() * 4 - 2).toFixed(1), [location.id])
+  const tiltAngle = location.cardTiltDegrees ?? getStableFallbackTilt(location.id)
 
   const actionable = !isSearching && !(!isComplete && pointsLeft <= 0)
   const isActionAvailable = actionable && !isComplete
 
-  const locationIcon = getLocationIcon(location.name, location.icon)
   const observation = getObservation(location)
   const variantClassName = `investigation-location-card--${variant}`
   const paperToneClassName = `investigation-location-card--tone-${evidenceNumber % 3}`
@@ -63,26 +63,6 @@ export function InvestigationLocationCard({
             <strong className="location-document__label">Inspection</strong>
             <h3 className="location-document__title">Location: {location.name}</h3>
             <span className="location-document__checkbox" aria-hidden="true">{isComplete ? '☑ Inspected' : '☐ Not inspected'}</span>
-            <p className="location-document__observation">{observation}</p>
-          </div>
-        )
-      case 'polaroid':
-        return (
-          <div className="location-document location-document--polaroid">
-            <div className="location-document__photo" aria-hidden="true">
-              <span>{locationIcon}</span>
-            </div>
-            <h3 className="location-document__caption">{location.name}</h3>
-            <p className="location-document__quote">“{observation}”</p>
-          </div>
-        )
-      case 'evidence-tag':
-        return (
-          <div className="location-document location-document--evidence-tag">
-            <span className="location-document__tag-hole" aria-hidden="true" />
-            <strong className="location-document__label">Evidence Tag #{String(evidenceNumber).padStart(2, '0')}</strong>
-            <span className="location-document__large-icon" aria-hidden="true">{locationIcon}</span>
-            <h3 className="location-document__title">{location.name}</h3>
             <p className="location-document__observation">{observation}</p>
           </div>
         )

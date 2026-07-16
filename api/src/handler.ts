@@ -1,6 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { allCases, createCaseById, rebuildFullCase } from '../../src/game/cases/index'
-import type { Case, CaseStatus, LocationAction } from '../../src/game/caseModel'
+import type { Case, CaseStatus, LocationCardVariant, LocationAction } from '../../src/game/caseModel'
 import { getShinySpriteUrl, pokemonData } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, putCaseData } from './caseDataDb'
@@ -26,6 +26,7 @@ const MAX_ACCUSATIONS = 3
 const DEFAULT_INVESTIGATIONS = 6
 const SHINY_ODDS = 0.01
 const WITNESS_OPTION_COUNT = 3
+const LOCATION_CARD_VARIANTS: LocationCardVariant[] = ['detective-note', 'clipboard', 'map-fragment']
 
 interface ApiGatewayEvent {
   path: string
@@ -96,6 +97,59 @@ const getUserInfo = async (event: ApiGatewayEvent): Promise<UserInfo> => {
 
 const getDateUserId = (sub: string, caseId: string): string => `${sub}:${caseId}`
 
+const shuffle = <T,>(items: T[]): T[] => {
+  const copy = [...items]
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1))
+    const current = copy[index]
+    copy[index] = copy[swapIndex]
+    copy[swapIndex] = current
+  }
+  return copy
+}
+
+const createLocationCardVariantMap = (locations: Case['locations']): Record<string, LocationCardVariant> => {
+  const pool = shuffle(LOCATION_CARD_VARIANTS.flatMap((variant) => [variant, variant]))
+  return locations.reduce<Record<string, LocationCardVariant>>((variantMap, location, index) => {
+    variantMap[location.id] = pool[index % pool.length]
+    return variantMap
+  }, {})
+}
+
+const createLocationCardTiltMap = (locations: Case['locations']): Record<string, number> => (
+  locations.reduce<Record<string, number>>((tiltMap, location) => {
+    tiltMap[location.id] = Number((Math.random() * 4 - 2).toFixed(1))
+    return tiltMap
+  }, {})
+)
+
+const hasCompleteLocationCardVariantMap = (
+  locations: Case['locations'],
+  variantMap: Record<string, string> | undefined,
+): variantMap is Record<string, LocationCardVariant> => (
+  !!variantMap && locations.every((location) => LOCATION_CARD_VARIANTS.includes(variantMap[location.id] as LocationCardVariant))
+)
+
+const hasCompleteLocationCardTiltMap = (
+  locations: Case['locations'],
+  tiltMap: Record<string, number> | undefined,
+): tiltMap is Record<string, number> => (
+  !!tiltMap && locations.every((location) => typeof tiltMap[location.id] === 'number')
+)
+
+const applyLocationCardVariants = (
+  fullCase: Case,
+  variantMap: Record<string, LocationCardVariant>,
+  tiltMap: Record<string, number>,
+): Case => ({
+  ...fullCase,
+  locations: fullCase.locations.map((location) => ({
+    ...location,
+    cardVariant: variantMap[location.id],
+    cardTiltDegrees: tiltMap[location.id],
+  })),
+})
+
 const getTodayUtc = (): string => {
   const now = new Date()
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`
@@ -123,17 +177,6 @@ const getProgressTtl = (): number => Math.floor(Date.now() / 1000) + SESSION_TTL
 const mergeUniqueIds = (current: number[], next: number[]): number[] => (
   [...new Set([...current, ...next])].sort((a, b) => a - b)
 )
-
-const shuffle = <T,>(items: T[]): T[] => {
-  const copy = [...items]
-  for (let index = copy.length - 1; index > 0; index -= 1) {
-    const swapIndex = Math.floor(Math.random() * (index + 1))
-    const current = copy[index]
-    copy[index] = copy[swapIndex]
-    copy[swapIndex] = current
-  }
-  return copy
-}
 
 const createWitnessPokemonIds = (suspectPokemonIds: number[]): number[] => {
   const suspectIds = new Set(suspectPokemonIds)
@@ -391,9 +434,6 @@ const loadCase = async (caseId: string) => {
   const record = await getCaseData(caseId)
   if (!record) return null
   const witnessPokemonIds = record.witnessPokemonIds ?? createWitnessPokemonIds(record.suspectPokemonIds)
-  if (!record.witnessPokemonIds) {
-    await putCaseData({ ...record, witnessPokemonIds })
-  }
   const fullCase = rebuildFullCase(
     record.configId,
     record.culpritPokemonId,
@@ -403,8 +443,23 @@ const loadCase = async (caseId: string) => {
     record.solution,
     witnessPokemonIds,
   )
+  const locationCardVariantMap = hasCompleteLocationCardVariantMap(fullCase.locations, record.locationCardVariantMap)
+    ? record.locationCardVariantMap
+    : createLocationCardVariantMap(fullCase.locations)
+  const locationCardTiltMap = hasCompleteLocationCardTiltMap(fullCase.locations, record.locationCardTiltMap)
+    ? record.locationCardTiltMap
+    : createLocationCardTiltMap(fullCase.locations)
+
+  if (
+    !record.witnessPokemonIds
+    || !hasCompleteLocationCardVariantMap(fullCase.locations, record.locationCardVariantMap)
+    || !hasCompleteLocationCardTiltMap(fullCase.locations, record.locationCardTiltMap)
+  ) {
+    await putCaseData({ ...record, witnessPokemonIds, locationCardVariantMap, locationCardTiltMap })
+  }
+
   fullCase.witnessPokemonIds = witnessPokemonIds
-  return fullCase
+  return applyLocationCardVariants(fullCase, locationCardVariantMap, locationCardTiltMap)
 }
 
 const generateAndStoreCase = async (caseId: string) => {
@@ -428,6 +483,8 @@ const generateAndStoreCase = async (caseId: string) => {
   }
   const suspectPokemonIds = gameCase.suspects.map((s) => s.pokemonId)
   const witnessPokemonIds = createWitnessPokemonIds(suspectPokemonIds)
+  const locationCardVariantMap = createLocationCardVariantMap(gameCase.locations)
+  const locationCardTiltMap = createLocationCardTiltMap(gameCase.locations)
 
   await putCaseData({
     caseId,
@@ -436,6 +493,8 @@ const generateAndStoreCase = async (caseId: string) => {
     suspectPokemonIds,
     suspectShinyMap,
     witnessPokemonIds,
+    locationCardVariantMap,
+    locationCardTiltMap,
     actionEvidenceMap,
     solution: {
       culpritRevealText: gameCase.solution?.culpritRevealText ?? '',
@@ -447,7 +506,7 @@ const generateAndStoreCase = async (caseId: string) => {
   })
 
   gameCase.witnessPokemonIds = witnessPokemonIds
-  return gameCase
+  return applyLocationCardVariants(gameCase, locationCardVariantMap, locationCardTiltMap)
 }
 
 const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
