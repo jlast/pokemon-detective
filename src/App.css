@@ -1842,6 +1842,106 @@
   border-color: #b7aa94;
 }
 
+.evidence-lead-card {
+  min-height: 290px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  padding: 20px;
+  text-align: left;
+  border: 1px solid rgba(177, 155, 113, 0.78);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fffaf0 0%, #f4ead6 100%);
+  color: inherit;
+  font: inherit;
+  box-shadow: 0 6px 16px rgba(32, 50, 80, 0.06);
+  cursor: pointer;
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+.evidence-lead-card:hover:not(:disabled) {
+  transform: translateY(-3px);
+  border-color: #a98438;
+  box-shadow: 0 10px 22px rgba(32, 50, 80, 0.1);
+}
+
+.evidence-lead-card:focus-visible {
+  outline: 3px solid var(--accent-yellow);
+  outline-offset: 3px;
+  border-color: #8f6f2b;
+}
+
+.evidence-lead-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+.evidence-lead-card.is-followed {
+  background: #e9e0d0;
+  border-color: #b7aa94;
+}
+
+.evidence-lead-card__visual {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border: 1px solid rgba(177, 155, 113, 0.52);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.45);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+}
+
+.evidence-lead-card__visual svg {
+  width: 34px;
+  height: 34px;
+}
+
+.evidence-lead-card__content {
+  flex: 1;
+}
+
+.evidence-lead-card__label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--ink);
+  font-size: 1.32rem;
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.evidence-lead-card__teaser {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.evidence-lead-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(166, 145, 107, 0.36);
+  color: #756a59;
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
+.evidence-lead-card__cta {
+  color: var(--ink);
+}
+
 .lead-option__type {
   display: inline-flex;
   align-items: center;

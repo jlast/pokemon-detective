@@ -1,5 +1,6 @@
 import type { LocationAction } from '../../game/caseModel'
 import { pokemonData, type Pokemon } from '../../data/pokemon'
+import { LeadVisualIcon, type LeadVisualType } from './leadVisualIcons'
 
 type LeadType = 'search' | 'inspect' | 'question'
 
@@ -27,60 +28,69 @@ const getLeadType = (action: LocationAction): LeadType => {
   return 'inspect'
 }
 
-const getBaseLeadTitle = (action: LocationAction, leadType: LeadType): string => {
-  if (action.id === 'crumbs') return 'Search the floor'
-  if (action.id === 'tents') return 'Inspect the surroundings'
-  if (action.id === 'search-branches') return 'Inspect high surfaces'
-  if (action.id === 'search-bedding') return 'Search nearby hiding spots'
-  if (action.id === 'check-table') return 'Inspect the nearby surface'
-  if (action.id === 'photograph-tracks') return 'Document the marks'
-  if (leadType === 'question') return action.label.replace(/^Interview /i, 'Question ')
-  return action.label
+const getLeadVisualType = (action: LocationAction): LeadVisualType => {
+  const text = `${action.id} ${action.label} ${action.description}`.toLowerCase()
+  if (/track|foot|print|crumb|scuff|trail/.test(text)) return 'footprints'
+  if (/lid|latch|forced|broken|damage|crack/.test(text)) return 'damage'
+  if (/screw|tool|mark|scrape|photograph/.test(text)) return 'tool-marks'
+  if (/dust|ash/.test(text)) return 'dust'
+  if (/listen|sound|noise|quiet/.test(text)) return 'sound'
+  if (/smell|scent/.test(text)) return 'scent'
+  if (/above|high|shelf|branch|top/.test(text)) return 'high-surface'
+  if (/ground|root|floor|under/.test(text)) return 'ground'
+  if (/case|jar|cabinet|drawer|chest|box|bucket|container/.test(text)) return 'container'
+  if (/follow|movement|route|path/.test(text)) return 'movement'
+  if (/table|display|object|item|surface/.test(text)) return 'object'
+  return 'generic-search'
 }
 
-const normalizeTitle = (title: string): string => title.trim().toLowerCase()
+const cleanLeadLabel = (label: string): string => (
+  label
+    .replace(/^(Search|Inspect|Check|Look|Study|Measure|Follow|Photograph|Document|Smell|Listen)\s+(the\s+)?/i, '')
+    .replace(/^around\s+/i, '')
+    .replace(/^near\s+/i, '')
+    .trim()
+)
 
-const getLeadTitles = (actions: LocationAction[]) => {
-  const baseTitles = actions.map((action) => getBaseLeadTitle(action, getLeadType(action)))
-  const titleCounts = baseTitles.reduce<Record<string, number>>((counts, title) => {
-    const key = normalizeTitle(title)
-    counts[key] = (counts[key] ?? 0) + 1
-    return counts
-  }, {})
-  const usedTitles = new Set<string>()
-
-  return new Map(actions.map((action, index) => {
-    const baseTitle = baseTitles[index]
-    const baseKey = normalizeTitle(baseTitle)
-    let title = baseTitle
-
-    if (titleCounts[baseKey] > 1) {
-      const labelKey = normalizeTitle(action.label)
-      title = labelKey && !usedTitles.has(labelKey) ? action.label : `${baseTitle} ${index + 1}`
-    }
-
-    usedTitles.add(normalizeTitle(title))
-    return [action.id, title]
-  }))
+const formatClueLabel = (label: string): string => {
+  const cleaned = cleanLeadLabel(label)
+  if (!cleaned) return 'Unusual trace'
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1)
 }
 
-const getLeadDescription = (action: LocationAction, leadType: LeadType): string => {
-  if (action.id === 'crumbs') return 'Fresh scuff marks may show where they moved.'
-  if (action.id === 'tents') return 'The quieter edges may reveal what was missed.'
-  if (action.id === 'inspect-lid') return 'The forced edge may reveal how it was opened.'
-  if (action.id === 'check-table') return 'The nearby surface may still hold a useful trace.'
-  if (action.id === 'check-roots') return 'Disturbed ground may show where someone paused.'
-  if (action.id === 'search-branches') return 'High surfaces may show what was touched or avoided.'
-  if (action.id === 'listen-quietly') return 'A quiet pause may reveal movement nearby.'
-  if (action.id === 'smell-jar') return 'A lingering scent could point to who handled it.'
-  if (action.id === 'measure-tracks') return 'The spacing of the marks may narrow the suspect.'
-  if (action.id === 'follow-tracks') return 'The trail may show where the culprit went next.'
-  if (action.id === 'photograph-tracks') return 'A careful record may reveal the pattern later.'
-  if (action.id === 'check-wash-bucket') return 'Even wet ground can preserve the right clue.'
-  if (action.id === 'search-bedding') return 'A hiding spot may explain who was nearby.'
-  if (leadType === 'question') return 'They may remember what felt wrong before it happened.'
-  if (leadType === 'search') return 'Fresh traces may reveal the path through the scene.'
-  if (leadType === 'inspect') return 'The condition of the scene may reveal how it happened.'
+const getEvidenceLeadLabel = (action: LocationAction): string => {
+  if (action.id === 'crumbs') return 'Footprints'
+  if (action.id === 'tents') return 'Disturbed edge'
+  if (action.id === 'measure-tracks') return 'Track depth'
+  if (action.id === 'follow-tracks') return 'Escape route'
+  if (action.id === 'photograph-tracks') return 'Track pattern'
+  if (action.id === 'check-roots') return 'Disturbed ground'
+  if (action.id === 'search-branches') return 'High surface'
+  if (action.id === 'listen-quietly') return 'Muffled noise'
+  if (action.id === 'inspect-lid') return 'Broken latch'
+  if (action.id === 'smell-jar') return 'Lingering scent'
+  if (action.id === 'check-table') return 'Nearby surface'
+  if (action.id === 'check-wash-bucket') return 'Wet trace'
+  if (action.id === 'search-bedding') return 'Hidden nook'
+  return formatClueLabel(action.label)
+}
+
+const getEvidenceLeadTeaser = (action: LocationAction): string => {
+  if (action.id === 'crumbs') return 'Fresh scuff marks stop where someone paused.'
+  if (action.id === 'tents') return 'The quieter edge looks less disturbed than the rest.'
+  if (action.id === 'measure-tracks') return 'The spacing and pressure may narrow who passed through.'
+  if (action.id === 'follow-tracks') return 'The trail bends away from the obvious exit.'
+  if (action.id === 'photograph-tracks') return 'A fixed record could reveal a pattern in the marks.'
+  if (action.id === 'check-roots') return 'The ground is shifted where someone may have stopped.'
+  if (action.id === 'search-branches') return 'Dust has been disturbed above eye level.'
+  if (action.id === 'listen-quietly') return 'A faint sound could expose movement out of sight.'
+  if (action.id === 'inspect-lid') return 'The lock held, but the edge looks forced.'
+  if (action.id === 'smell-jar') return 'A faint scent lingers where it should have faded.'
+  if (action.id === 'check-table') return 'The surface nearby holds marks away from the main mess.'
+  if (action.id === 'check-wash-bucket') return 'The wet area may have preserved what dry ground lost.'
+  if (action.id === 'search-bedding') return 'A tucked-away spot looks recently disturbed.'
+  if (/search|look/i.test(action.description)) return 'Something small may have been left where the scene looks ordinary.'
+  if (/inspect|study|check/i.test(action.description)) return 'One detail looks slightly out of place on closer inspection.'
   return action.description
 }
 
@@ -117,6 +127,49 @@ const getWitnessPrompt = (pokemonName: string, role: string, index: number): str
   return prompts[index % prompts.length]
 }
 
+interface EvidenceLeadCardProps {
+  visualType: LeadVisualType
+  label: string
+  teaser: string
+  actionCost: number
+  onFollow: () => void
+  disabled?: boolean
+  isFollowed?: boolean
+}
+
+function EvidenceLeadCard({
+  visualType,
+  label,
+  teaser,
+  actionCost,
+  onFollow,
+  disabled = false,
+  isFollowed = false,
+}: EvidenceLeadCardProps) {
+  return (
+    <button
+      type="button"
+      className={`evidence-lead-card evidence-lead-card--${visualType} ${isFollowed ? 'is-followed' : ''}`}
+      onClick={onFollow}
+      disabled={disabled}
+    >
+      <div className="evidence-lead-card__visual" aria-hidden="true">
+        <LeadVisualIcon visualType={visualType} />
+      </div>
+
+      <div className="evidence-lead-card__content">
+        <span className="evidence-lead-card__label">{label}</span>
+        <p className="evidence-lead-card__teaser">{teaser}</p>
+      </div>
+
+      <div className="evidence-lead-card__footer">
+        <span>{actionCost} {actionCost === 1 ? 'action' : 'actions'}</span>
+        <span className="evidence-lead-card__cta">{isFollowed ? 'Complete' : 'Follow lead →'}</span>
+      </div>
+    </button>
+  )
+}
+
 interface InvestigationActionChooserProps {
   actions: LocationAction[]
   interviewedWitnessPokemonIds?: number[]
@@ -136,7 +189,6 @@ export function InvestigationActionChooser({
 }: InvestigationActionChooserProps) {
   const interviewedWitnessIds = new Set(interviewedWitnessPokemonIds)
   const leadIcons = getLeadIcons(actions)
-  const leadTitles = getLeadTitles(actions)
 
   return (
     <div className="investigation-action-chooser">
@@ -213,27 +265,17 @@ export function InvestigationActionChooser({
             })
           }
 
-          const isUnavailable = disabled || isFollowed
-
           return (
-            <button
+            <EvidenceLeadCard
               key={action.id}
-              type="button"
-              className={`lead-option lead-option--${leadType} ${isFollowed ? 'is-followed' : ''}`}
-              onClick={() => chooseAction(action.id)}
-              disabled={isUnavailable}
-            >
-              <span className="lead-option__type">
-                <span className="lead-option__icon" aria-hidden="true">{leadIcon}</span>
-                {leadTypeLabels[leadType]}
-              </span>
-              <span className="lead-option__title">{leadTitles.get(action.id)}</span>
-              <span className="lead-option__description">{getLeadDescription(action, leadType)}</span>
-              <span className="lead-option__footer">
-                <span>{isFollowed ? 'Lead followed' : '1 action'}</span>
-                <span>{isFollowed ? 'Complete' : 'Follow lead →'}</span>
-              </span>
-            </button>
+              visualType={getLeadVisualType(action)}
+              label={getEvidenceLeadLabel(action)}
+              teaser={getEvidenceLeadTeaser(action)}
+              actionCost={1}
+              onFollow={() => chooseAction(action.id)}
+              disabled={disabled || isFollowed}
+              isFollowed={isFollowed}
+            />
           )
         })}
       </div>

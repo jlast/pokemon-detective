@@ -25,7 +25,7 @@ const SESSION_TTL_DAYS = 7
 const MAX_ACCUSATIONS = 3
 const DEFAULT_INVESTIGATIONS = 6
 const SHINY_ODDS = 0.01
-const WITNESS_OPTION_COUNT = 3
+const WITNESS_OPTION_COUNT = 1
 const LOCATION_CARD_VARIANTS: LocationCardVariant[] = ['detective-note', 'clipboard', 'map-fragment']
 
 interface ApiGatewayEvent {
@@ -150,8 +150,20 @@ const applyLocationCardVariants = (
   })),
 })
 
-const assignWitnessPokemonToActions = (fullCase: Case, witnessPokemonIds: number[]): Case => {
-  let witnessIndex = 0
+const getWitnessActionIds = (fullCase: Case): string[] => (
+  fullCase.locations.flatMap((location) => (
+    location.actions
+      .filter((action) => action.outcomeType === 'witness')
+      .map((action) => action.id)
+  ))
+)
+
+const flattenWitnessPokemonIdMap = (witnessPokemonIdMap: Record<string, number[]>): number[] => (
+  Object.values(witnessPokemonIdMap).flat()
+)
+
+const assignWitnessPokemonToActions = (fullCase: Case, witnessPokemonIdMap: Record<string, number[]>): Case => {
+  const witnessPokemonIds = flattenWitnessPokemonIdMap(witnessPokemonIdMap)
 
   return {
     ...fullCase,
@@ -160,9 +172,7 @@ const assignWitnessPokemonToActions = (fullCase: Case, witnessPokemonIds: number
       ...location,
       actions: location.actions.map((action) => {
         if (action.outcomeType !== 'witness') return action
-        const actionWitnessPokemonIds = witnessPokemonIds.slice(witnessIndex, witnessIndex + WITNESS_OPTION_COUNT)
-        witnessIndex += WITNESS_OPTION_COUNT
-        return { ...action, witnessPokemonIds: actionWitnessPokemonIds }
+        return { ...action, witnessPokemonIds: witnessPokemonIdMap[action.id] ?? [] }
       }),
     })),
   }
@@ -192,6 +202,27 @@ const hasCompleteWitnessPokemonIds = (
   }
 
   return true
+}
+
+const hasCompleteWitnessPokemonIdMap = (
+  witnessPokemonIdMap: Record<string, number[]> | undefined,
+  witnessActionIds: string[],
+  suspectPokemonIds: number[],
+): witnessPokemonIdMap is Record<string, number[]> => {
+  if (!witnessPokemonIdMap) return false
+  const witnessPokemonIds = witnessActionIds.flatMap((actionId) => witnessPokemonIdMap[actionId] ?? [])
+
+  return witnessActionIds.every((actionId) => witnessPokemonIdMap[actionId]?.length === WITNESS_OPTION_COUNT)
+    && Object.keys(witnessPokemonIdMap).every((actionId) => witnessActionIds.includes(actionId))
+    && hasCompleteWitnessPokemonIds(witnessPokemonIds, witnessActionIds.length * WITNESS_OPTION_COUNT, suspectPokemonIds)
+}
+
+const createWitnessPokemonIdMap = (fullCase: Case, witnessPokemonIds: number[]): Record<string, number[]> => {
+  const witnessActionIds = getWitnessActionIds(fullCase)
+  return Object.fromEntries(witnessActionIds.map((actionId, index) => [
+    actionId,
+    witnessPokemonIds.slice(index * WITNESS_OPTION_COUNT, (index + 1) * WITNESS_OPTION_COUNT),
+  ]))
 }
 
 const getTodayUtc = (): string => {
@@ -485,10 +516,14 @@ const loadCase = async (caseId: string) => {
     record.solution,
     record.witnessPokemonIds,
   )
-  const requiredWitnessPokemonCount = countWitnessActions(fullCase) * WITNESS_OPTION_COUNT
+  const witnessActionIds = getWitnessActionIds(fullCase)
+  const requiredWitnessPokemonCount = witnessActionIds.length * WITNESS_OPTION_COUNT
   const witnessPokemonIds = hasCompleteWitnessPokemonIds(record.witnessPokemonIds, requiredWitnessPokemonCount, record.suspectPokemonIds)
     ? record.witnessPokemonIds
     : createWitnessPokemonIds(record.suspectPokemonIds, requiredWitnessPokemonCount)
+  const witnessPokemonIdMap = hasCompleteWitnessPokemonIdMap(record.witnessPokemonIdMap, witnessActionIds, record.suspectPokemonIds)
+    ? record.witnessPokemonIdMap
+    : createWitnessPokemonIdMap(fullCase, witnessPokemonIds)
   const locationCardVariantMap = hasCompleteLocationCardVariantMap(fullCase.locations, record.locationCardVariantMap)
     ? record.locationCardVariantMap
     : createLocationCardVariantMap(fullCase.locations)
@@ -498,13 +533,14 @@ const loadCase = async (caseId: string) => {
 
   if (
     !hasCompleteWitnessPokemonIds(record.witnessPokemonIds, requiredWitnessPokemonCount, record.suspectPokemonIds)
+    || !hasCompleteWitnessPokemonIdMap(record.witnessPokemonIdMap, witnessActionIds, record.suspectPokemonIds)
     || !hasCompleteLocationCardVariantMap(fullCase.locations, record.locationCardVariantMap)
     || !hasCompleteLocationCardTiltMap(fullCase.locations, record.locationCardTiltMap)
   ) {
-    await putCaseData({ ...record, witnessPokemonIds, locationCardVariantMap, locationCardTiltMap })
+    await putCaseData({ ...record, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
   }
 
-  return applyLocationCardVariants(assignWitnessPokemonToActions(fullCase, witnessPokemonIds), locationCardVariantMap, locationCardTiltMap)
+  return applyLocationCardVariants(assignWitnessPokemonToActions(fullCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
 }
 
 const generateAndStoreCase = async (caseId: string) => {
@@ -528,6 +564,7 @@ const generateAndStoreCase = async (caseId: string) => {
   }
   const suspectPokemonIds = gameCase.suspects.map((s) => s.pokemonId)
   const witnessPokemonIds = createWitnessPokemonIds(suspectPokemonIds, countWitnessActions(gameCase) * WITNESS_OPTION_COUNT)
+  const witnessPokemonIdMap = createWitnessPokemonIdMap(gameCase, witnessPokemonIds)
   const locationCardVariantMap = createLocationCardVariantMap(gameCase.locations)
   const locationCardTiltMap = createLocationCardTiltMap(gameCase.locations)
 
@@ -538,6 +575,7 @@ const generateAndStoreCase = async (caseId: string) => {
     suspectPokemonIds,
     suspectShinyMap,
     witnessPokemonIds,
+    witnessPokemonIdMap,
     locationCardVariantMap,
     locationCardTiltMap,
     actionEvidenceMap,
@@ -550,7 +588,7 @@ const generateAndStoreCase = async (caseId: string) => {
     ttl: getProgressTtl(),
   })
 
-  return applyLocationCardVariants(assignWitnessPokemonToActions(gameCase, witnessPokemonIds), locationCardVariantMap, locationCardTiltMap)
+  return applyLocationCardVariants(assignWitnessPokemonToActions(gameCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
 }
 
 const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {

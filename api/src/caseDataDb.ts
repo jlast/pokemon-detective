@@ -11,6 +11,7 @@ export interface CaseDataRecord {
   suspectPokemonIds: number[]
   suspectShinyMap: Record<string, boolean>
   witnessPokemonIds?: number[]
+  witnessPokemonIdMap?: Record<string, number[]>
   actionEvidenceMap: Record<string, string>
   locationCardVariantMap?: Record<string, string>
   locationCardTiltMap?: Record<string, number>

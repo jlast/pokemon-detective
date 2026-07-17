@@ -9,7 +9,7 @@ const getTodayUtc = (): string => {
 }
 
 const SESSION_TTL_DAYS = 7
-const WITNESS_OPTION_COUNT = 3
+const WITNESS_OPTION_COUNT = 1
 const LOCATION_CARD_VARIANTS: LocationCardVariant[] = ['detective-note', 'clipboard', 'map-fragment']
 
 const shuffle = <T,>(items: T[]): T[] => {
@@ -30,6 +30,14 @@ const countWitnessActions = (gameCase: Case): number => (
   )
 )
 
+const getWitnessActionIds = (gameCase: Case): string[] => (
+  gameCase.locations.flatMap((location) => (
+    location.actions
+      .filter((action) => action.outcomeType === 'witness')
+      .map((action) => action.id)
+  ))
+)
+
 const createWitnessPokemonIds = (suspectPokemonIds: number[], count: number): number[] => {
   const suspectIds = new Set(suspectPokemonIds)
   const seenNames = new Set<string>()
@@ -41,6 +49,14 @@ const createWitnessPokemonIds = (suspectPokemonIds: number[], count: number): nu
     })
     .map((pokemon) => pokemon.id)
     .slice(0, count)
+}
+
+const createWitnessPokemonIdMap = (gameCase: Case, witnessPokemonIds: number[]): Record<string, number[]> => {
+  const witnessActionIds = getWitnessActionIds(gameCase)
+  return Object.fromEntries(witnessActionIds.map((actionId, index) => [
+    actionId,
+    witnessPokemonIds.slice(index * WITNESS_OPTION_COUNT, (index + 1) * WITNESS_OPTION_COUNT),
+  ]))
 }
 
 const createLocationCardVariantMap = (locations: Case['locations']): Record<string, LocationCardVariant> => {
@@ -95,6 +111,8 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       suspectShinyMap[String(suspect.pokemonId)] = suspect.isShiny
     }
     const suspectPokemonIds = gameCase.suspects.map((s) => s.pokemonId)
+    const witnessPokemonIds = createWitnessPokemonIds(suspectPokemonIds, countWitnessActions(gameCase) * WITNESS_OPTION_COUNT)
+    const witnessPokemonIdMap = createWitnessPokemonIdMap(gameCase, witnessPokemonIds)
     const locationCardVariantMap = createLocationCardVariantMap(gameCase.locations)
     const locationCardTiltMap = createLocationCardTiltMap(gameCase.locations)
 
@@ -104,7 +122,8 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       culpritPokemonId: gameCase.culpritPokemonId,
       suspectPokemonIds,
       suspectShinyMap,
-      witnessPokemonIds: createWitnessPokemonIds(suspectPokemonIds, countWitnessActions(gameCase) * WITNESS_OPTION_COUNT),
+      witnessPokemonIds,
+      witnessPokemonIdMap,
       locationCardVariantMap,
       locationCardTiltMap,
       actionEvidenceMap,

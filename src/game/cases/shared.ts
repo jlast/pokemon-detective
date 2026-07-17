@@ -225,7 +225,7 @@ const keepOneWitnessLocation = (locations: Location[]): Location[] => {
       .filter((action) => action.outcomeType === 'witness')
       .map((action) => ({ locationId: locationItem.id, actionId: action.id }))
   ))
-  const keptWitnessAction = witnessActions[0]
+  const keptWitnessAction = witnessActions.at(-1)
 
   if (!keptWitnessAction) return locations
 
@@ -290,7 +290,7 @@ const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Loc
     ev('check-table', `Check beside ${template.lockedObject}`, `Look along the nearby surface beside ${template.lockedObject}.`, `Whoever handled ${template.lockedObject} left traces {movementWord} nearby.`),
   ),
   location(`${caseId}-witness`, template.witnessArea, '🗣️', `Someone near ${template.witnessArea} noticed something odd.`,
-    wit('interview-camper', 'Interview the nearby witness', 'Ask what the nearby witness remembers.', 'The nearby witness is certain about that detail.'),
+    wit('interview-camper', `Question the ${template.witnessRole}`, `Ask what the ${template.witnessRole} remembers.`, `The ${template.witnessRole} is certain about that detail.`),
     ev('check-wash-bucket', `Check ${template.waterFeature}`, `Inspect the area around ${template.waterFeature}.`, `Even near ${template.waterFeature}, a line of {textureWord} stayed behind.`),
     act(noth('search-bedding', `Search around ${template.witnessArea}`, 'Check the nearby hiding spots.', 'The nearby area is cluttered but hides nothing useful.')),
   ),
