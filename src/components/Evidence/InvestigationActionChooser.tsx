@@ -58,6 +58,14 @@ const formatClueLabel = (label: string): string => {
   return cleaned.charAt(0).toUpperCase() + cleaned.slice(1)
 }
 
+const getLeadSubject = (action: LocationAction): string => {
+  const subject = cleanLeadLabel(action.label)
+    .replace(/^(the|a|an)\s+/i, '')
+    .toLowerCase()
+
+  return subject || 'nearby surface'
+}
+
 const getEvidenceLeadLabel = (action: LocationAction): string => {
   if (action.id === 'crumbs') return 'Footprints'
   if (action.id === 'tents') return 'Disturbed edge'
@@ -76,21 +84,23 @@ const getEvidenceLeadLabel = (action: LocationAction): string => {
 }
 
 const getEvidenceLeadTeaser = (action: LocationAction): string => {
-  if (action.id === 'crumbs') return 'Fresh scuff marks stop where someone paused.'
-  if (action.id === 'tents') return 'The quieter edge looks less disturbed than the rest.'
-  if (action.id === 'measure-tracks') return 'The spacing and pressure may narrow who passed through.'
-  if (action.id === 'follow-tracks') return 'The trail bends away from the obvious exit.'
-  if (action.id === 'photograph-tracks') return 'A fixed record could reveal a pattern in the marks.'
-  if (action.id === 'check-roots') return 'The ground is shifted where someone may have stopped.'
-  if (action.id === 'search-branches') return 'Dust has been disturbed above eye level.'
-  if (action.id === 'listen-quietly') return 'A faint sound could expose movement out of sight.'
-  if (action.id === 'inspect-lid') return 'The lock held, but the edge looks forced.'
-  if (action.id === 'smell-jar') return 'A faint scent lingers where it should have faded.'
-  if (action.id === 'check-table') return 'The surface nearby holds marks away from the main mess.'
-  if (action.id === 'check-wash-bucket') return 'The wet area may have preserved what dry ground lost.'
-  if (action.id === 'search-bedding') return 'A tucked-away spot looks recently disturbed.'
-  if (/search|look/i.test(action.description)) return 'Something small may have been left where the scene looks ordinary.'
-  if (/inspect|study|check/i.test(action.description)) return 'One detail looks slightly out of place on closer inspection.'
+  const subject = getLeadSubject(action)
+
+  if (action.id === 'crumbs') return `Fresh heel marks stop beside the ${subject}.`
+  if (action.id === 'tents') return `Leaves near the ${subject} remain untouched.`
+  if (action.id === 'measure-tracks') return `Deep prints cross the dirt beside the ${subject}.`
+  if (action.id === 'follow-tracks') return `A thin trail bends toward the side path.`
+  if (action.id === 'photograph-tracks') return `A clean photo could catch the spacing between prints.`
+  if (action.id === 'check-roots') return `Loose soil has piled against the ${subject}.`
+  if (action.id === 'search-branches') return `Dust on the ${subject} has a fresh gap.`
+  if (action.id === 'listen-quietly') return `A soft scrape comes from behind the shelves.`
+  if (action.id === 'inspect-lid') return `Bent metal curls around the ${subject}.`
+  if (action.id === 'smell-jar') return `A sharp scent clings to the ${subject}.`
+  if (action.id === 'check-table') return `Fine scratches run along the ${subject}.`
+  if (action.id === 'check-wash-bucket') return `Mud flecks ring the ${subject}.`
+  if (action.id === 'search-bedding') return `A tucked corner near the ${subject} is flattened.`
+  if (/search|look/i.test(action.description)) return `A small scrape sits beside the ${subject}.`
+  if (/inspect|study|check/i.test(action.description)) return `Fresh dust breaks along the ${subject}.`
   return action.description
 }
 
@@ -131,7 +141,6 @@ interface EvidenceLeadCardProps {
   visualType: LeadVisualType
   label: string
   teaser: string
-  actionCost: number
   onFollow: () => void
   disabled?: boolean
   isFollowed?: boolean
@@ -141,7 +150,6 @@ function EvidenceLeadCard({
   visualType,
   label,
   teaser,
-  actionCost,
   onFollow,
   disabled = false,
   isFollowed = false,
@@ -160,11 +168,6 @@ function EvidenceLeadCard({
       <div className="evidence-lead-card__content">
         <span className="evidence-lead-card__label">{label}</span>
         <p className="evidence-lead-card__teaser">{teaser}</p>
-      </div>
-
-      <div className="evidence-lead-card__footer">
-        <span>{actionCost} {actionCost === 1 ? 'action' : 'actions'}</span>
-        <span className="evidence-lead-card__cta">{isFollowed ? 'Complete' : 'Follow lead →'}</span>
       </div>
     </button>
   )
@@ -223,10 +226,6 @@ export function InvestigationActionChooser({
                   </span>
                   <span className="lead-option__title">No witnesses available</span>
                   <span className="lead-option__description">Every available witness has already been interviewed.</span>
-                  <span className="lead-option__footer">
-                    <span>{isFollowed ? 'Lead followed' : '1 action'}</span>
-                    <span>{isFollowed ? 'Complete' : 'Unavailable'}</span>
-                  </span>
                 </button>
               )
             }
@@ -256,10 +255,6 @@ export function InvestigationActionChooser({
                     </span>
                   </span>
                   <span className="lead-option__description">{getWitnessPrompt(pokemon.name, witnessRole, index)}</span>
-                  <span className="lead-option__footer">
-                    <span>{isFollowed ? 'Lead followed' : '1 action'}</span>
-                    <span>{isFollowed ? 'Complete' : 'Follow lead →'}</span>
-                  </span>
                 </button>
               )
             })
@@ -271,7 +266,6 @@ export function InvestigationActionChooser({
               visualType={getLeadVisualType(action)}
               label={getEvidenceLeadLabel(action)}
               teaser={getEvidenceLeadTeaser(action)}
-              actionCost={1}
               onFollow={() => chooseAction(action.id)}
               disabled={disabled || isFollowed}
               isFollowed={isFollowed}
