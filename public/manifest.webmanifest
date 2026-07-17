@@ -1,0 +1,21 @@
+{
+  "name": "PokéMystery",
+  "short_name": "PokéMystery",
+  "description": "Solve Pokémon-inspired mystery cases by gathering evidence and accusing the culprit.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f6d44f",
+  "icons": [
+    {
+      "src": "/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="PokéMystery preview image">
+  <rect width="1200" height="630" fill="#ffffff"/>
+  <g transform="translate(344 59)">
+    <path fill="#bf8f5a" d="M126 180a24 24 0 0 1 24-24h14v50h-38a13 13 0 0 1 0-26Zm260-24a24 24 0 0 1 24 24 13 13 0 0 1 0 26h-38v-50h14Z"/>
+    <path fill="#f6d44f" d="M153 205 111 121l73 63 19-6 15 24-55 27Z"/>
+    <path fill="#f6d44f" d="m359 205 42-84-73 63-19-6-15 24 55 27Z"/>
+    <path fill="#f6d44f" d="M111 218c0-80 65-131 145-131s145 51 145 131v43c0 80-65 131-145 131s-145-51-145-131v-43Z"/>
+    <path fill="#bf8f5a" d="M178 73h156c25 0 42 25 33 49l-34 84H179l-34-84c-9-24 8-49 33-49Z"/>
+    <circle cx="312" cy="286" r="52" fill="#f8d865" stroke="#9e7b55" stroke-width="20"/>
+    <path d="m351 325 50 50" fill="none" stroke="#9e7b55" stroke-width="24" stroke-linecap="round"/>
+  </g>
+</svg>
