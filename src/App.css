@@ -1318,6 +1318,35 @@
   line-height: 1.4;
 }
 
+.result-evidence-details {
+  display: grid;
+  gap: 0.55rem;
+  width: min(100%, 30rem);
+  margin-top: 0.25rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 16px;
+  background: rgba(255, 250, 240, 0.72);
+  border: 1px solid rgba(173, 143, 82, 0.38);
+  text-align: left;
+}
+
+.result-evidence-details div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.result-evidence-details span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.evidence-hero-copy .result-evidence-details p {
+  font-size: 0.92rem;
+}
+
 .evidence-hero-copy .result-save-confirmation {
   justify-self: center;
   display: inline-flex;

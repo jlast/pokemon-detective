@@ -150,6 +150,50 @@ const applyLocationCardVariants = (
   })),
 })
 
+const assignWitnessPokemonToActions = (fullCase: Case, witnessPokemonIds: number[]): Case => {
+  let witnessIndex = 0
+
+  return {
+    ...fullCase,
+    witnessPokemonIds,
+    locations: fullCase.locations.map((location) => ({
+      ...location,
+      actions: location.actions.map((action) => {
+        if (action.outcomeType !== 'witness') return action
+        const actionWitnessPokemonIds = witnessPokemonIds.slice(witnessIndex, witnessIndex + WITNESS_OPTION_COUNT)
+        witnessIndex += WITNESS_OPTION_COUNT
+        return { ...action, witnessPokemonIds: actionWitnessPokemonIds }
+      }),
+    })),
+  }
+}
+
+const countWitnessActions = (fullCase: Case): number => (
+  fullCase.locations.reduce(
+    (total, location) => total + location.actions.filter((action) => action.outcomeType === 'witness').length,
+    0,
+  )
+)
+
+const hasCompleteWitnessPokemonIds = (
+  witnessPokemonIds: number[] | undefined,
+  requiredCount: number,
+  suspectPokemonIds: number[],
+): witnessPokemonIds is number[] => {
+  if (!witnessPokemonIds || witnessPokemonIds.length !== requiredCount) return false
+  const suspectIds = new Set(suspectPokemonIds)
+  const witnessNames = new Set<string>()
+
+  for (const witnessPokemonId of witnessPokemonIds) {
+    if (suspectIds.has(witnessPokemonId)) return false
+    const pokemon = pokemonData.find((candidate) => candidate.id === witnessPokemonId)
+    if (!pokemon || witnessNames.has(pokemon.name)) return false
+    witnessNames.add(pokemon.name)
+  }
+
+  return true
+}
+
 const getTodayUtc = (): string => {
   const now = new Date()
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`
@@ -178,10 +222,17 @@ const mergeUniqueIds = (current: number[], next: number[]): number[] => (
   [...new Set([...current, ...next])].sort((a, b) => a - b)
 )
 
-const createWitnessPokemonIds = (suspectPokemonIds: number[]): number[] => {
+const createWitnessPokemonIds = (suspectPokemonIds: number[], count = WITNESS_OPTION_COUNT): number[] => {
   const suspectIds = new Set(suspectPokemonIds)
-  return shuffle(pokemonData.map((pokemon) => pokemon.id).filter((id) => !suspectIds.has(id)))
-    .slice(0, WITNESS_OPTION_COUNT)
+  const seenNames = new Set<string>()
+  return shuffle(pokemonData.filter((pokemon) => !suspectIds.has(pokemon.id)))
+    .filter((pokemon) => {
+      if (seenNames.has(pokemon.name)) return false
+      seenNames.add(pokemon.name)
+      return true
+    })
+    .map((pokemon) => pokemon.id)
+    .slice(0, count)
 }
 
 const getOrCreatePokedex = async (sub: string): Promise<PokedexRecord> => {
@@ -425,7 +476,6 @@ const getTodayCaseData = async () => {
 const loadCase = async (caseId: string) => {
   const record = await getCaseData(caseId)
   if (!record) return null
-  const witnessPokemonIds = record.witnessPokemonIds ?? createWitnessPokemonIds(record.suspectPokemonIds)
   const fullCase = rebuildFullCase(
     record.configId,
     record.culpritPokemonId,
@@ -433,8 +483,12 @@ const loadCase = async (caseId: string) => {
     record.suspectShinyMap,
     record.actionEvidenceMap,
     record.solution,
-    witnessPokemonIds,
+    record.witnessPokemonIds,
   )
+  const requiredWitnessPokemonCount = countWitnessActions(fullCase) * WITNESS_OPTION_COUNT
+  const witnessPokemonIds = hasCompleteWitnessPokemonIds(record.witnessPokemonIds, requiredWitnessPokemonCount, record.suspectPokemonIds)
+    ? record.witnessPokemonIds
+    : createWitnessPokemonIds(record.suspectPokemonIds, requiredWitnessPokemonCount)
   const locationCardVariantMap = hasCompleteLocationCardVariantMap(fullCase.locations, record.locationCardVariantMap)
     ? record.locationCardVariantMap
     : createLocationCardVariantMap(fullCase.locations)
@@ -443,15 +497,14 @@ const loadCase = async (caseId: string) => {
     : createLocationCardTiltMap(fullCase.locations)
 
   if (
-    !record.witnessPokemonIds
+    !hasCompleteWitnessPokemonIds(record.witnessPokemonIds, requiredWitnessPokemonCount, record.suspectPokemonIds)
     || !hasCompleteLocationCardVariantMap(fullCase.locations, record.locationCardVariantMap)
     || !hasCompleteLocationCardTiltMap(fullCase.locations, record.locationCardTiltMap)
   ) {
     await putCaseData({ ...record, witnessPokemonIds, locationCardVariantMap, locationCardTiltMap })
   }
 
-  fullCase.witnessPokemonIds = witnessPokemonIds
-  return applyLocationCardVariants(fullCase, locationCardVariantMap, locationCardTiltMap)
+  return applyLocationCardVariants(assignWitnessPokemonToActions(fullCase, witnessPokemonIds), locationCardVariantMap, locationCardTiltMap)
 }
 
 const generateAndStoreCase = async (caseId: string) => {
@@ -474,7 +527,7 @@ const generateAndStoreCase = async (caseId: string) => {
     suspectShinyMap[String(suspect.pokemonId)] = suspect.isShiny
   }
   const suspectPokemonIds = gameCase.suspects.map((s) => s.pokemonId)
-  const witnessPokemonIds = createWitnessPokemonIds(suspectPokemonIds)
+  const witnessPokemonIds = createWitnessPokemonIds(suspectPokemonIds, countWitnessActions(gameCase) * WITNESS_OPTION_COUNT)
   const locationCardVariantMap = createLocationCardVariantMap(gameCase.locations)
   const locationCardTiltMap = createLocationCardTiltMap(gameCase.locations)
 
@@ -497,8 +550,7 @@ const generateAndStoreCase = async (caseId: string) => {
     ttl: getProgressTtl(),
   })
 
-  gameCase.witnessPokemonIds = witnessPokemonIds
-  return applyLocationCardVariants(gameCase, locationCardVariantMap, locationCardTiltMap)
+  return applyLocationCardVariants(assignWitnessPokemonToActions(gameCase, witnessPokemonIds), locationCardVariantMap, locationCardTiltMap)
 }
 
 const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
@@ -607,7 +659,7 @@ const handleInvestigate = async (
   const witnessPokemonId = typeof body.witnessPokemonId === 'number' ? body.witnessPokemonId : undefined
   if (action.outcomeType === 'witness') {
     if (!witnessPokemonId) return err(400, 'Witness Pokemon required')
-    if (!(fullCase.witnessPokemonIds ?? []).includes(witnessPokemonId)) {
+    if (!(action.witnessPokemonIds ?? []).includes(witnessPokemonId)) {
       return err(400, 'Invalid witness Pokemon')
     }
     if ((progress.interviewedWitnessPokemonIds ?? []).includes(witnessPokemonId)) {

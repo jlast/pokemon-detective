@@ -21,7 +21,6 @@ const leadTypeLabels: Record<LocationAction['leadType'], string> = {
 
 interface InvestigationActionChooserProps {
   actions: LocationAction[]
-  witnessPokemonIds?: number[]
   interviewedWitnessPokemonIds?: number[]
   chooseAction: (actionId: string, witnessPokemonId?: number) => void
   disabled?: boolean
@@ -29,16 +28,11 @@ interface InvestigationActionChooserProps {
 
 export function InvestigationActionChooser({
   actions,
-  witnessPokemonIds = [],
   interviewedWitnessPokemonIds = [],
   chooseAction,
   disabled = false,
 }: InvestigationActionChooserProps) {
   const interviewedWitnessIds = new Set(interviewedWitnessPokemonIds)
-  const witnessPokemon = witnessPokemonIds
-    .filter((id) => !interviewedWitnessIds.has(id))
-    .map((id) => pokemonData.find((pokemon) => pokemon.id === id))
-    .filter((pokemon): pokemon is Pokemon => Boolean(pokemon))
 
   return (
     <div className="investigation-action-chooser">
@@ -48,7 +42,12 @@ export function InvestigationActionChooser({
       </div>
       <div className="investigation-action-list">
         {actions.map((action) => {
-          if (action.outcomeType === 'witness' && witnessPokemon.length > 0) {
+          if (action.outcomeType === 'witness') {
+            const witnessPokemon = (action.witnessPokemonIds ?? [])
+              .filter((id) => !interviewedWitnessIds.has(id))
+              .map((id) => pokemonData.find((pokemon) => pokemon.id === id))
+              .filter((pokemon): pokemon is Pokemon => Boolean(pokemon))
+
             return (
               <div key={action.id} className="investigation-action-option investigation-action-option--witness">
                 <div className="investigation-action-meta">
@@ -59,20 +58,24 @@ export function InvestigationActionChooser({
                 </div>
                 <span className="investigation-action-label">{action.label}</span>
                 <span className="investigation-action-description">{action.description}</span>
-                <div className="witness-pokemon-options" aria-label="Choose witness Pokemon">
-                  {witnessPokemon.map((pokemon) => (
-                    <button
-                      key={pokemon.id}
-                      type="button"
-                      className="witness-pokemon-option"
-                      onClick={() => chooseAction(action.id, pokemon.id)}
-                      disabled={disabled}
-                    >
-                      <img src={pokemon.sprite} alt="" className="witness-pokemon-sprite" />
-                      <span>{pokemon.name}</span>
-                    </button>
-                  ))}
-                </div>
+                {witnessPokemon.length > 0 ? (
+                  <div className="witness-pokemon-options" aria-label="Choose witness Pokemon">
+                    {witnessPokemon.map((pokemon) => (
+                      <button
+                        key={pokemon.id}
+                        type="button"
+                        className="witness-pokemon-option"
+                        onClick={() => chooseAction(action.id, pokemon.id)}
+                        disabled={disabled}
+                      >
+                        <img src={pokemon.sprite} alt="" className="witness-pokemon-sprite" />
+                        <span>{pokemon.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="investigation-action-description">No un-interviewed witnesses remain.</span>
+                )}
               </div>
             )
           }

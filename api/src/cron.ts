@@ -23,10 +23,24 @@ const shuffle = <T,>(items: T[]): T[] => {
   return copy
 }
 
-const createWitnessPokemonIds = (suspectPokemonIds: number[]): number[] => {
+const countWitnessActions = (gameCase: Case): number => (
+  gameCase.locations.reduce(
+    (total, location) => total + location.actions.filter((action) => action.outcomeType === 'witness').length,
+    0,
+  )
+)
+
+const createWitnessPokemonIds = (suspectPokemonIds: number[], count: number): number[] => {
   const suspectIds = new Set(suspectPokemonIds)
-  return shuffle(pokemonData.map((pokemon) => pokemon.id).filter((id) => !suspectIds.has(id)))
-    .slice(0, WITNESS_OPTION_COUNT)
+  const seenNames = new Set<string>()
+  return shuffle(pokemonData.filter((pokemon) => !suspectIds.has(pokemon.id)))
+    .filter((pokemon) => {
+      if (seenNames.has(pokemon.name)) return false
+      seenNames.add(pokemon.name)
+      return true
+    })
+    .map((pokemon) => pokemon.id)
+    .slice(0, count)
 }
 
 const createLocationCardVariantMap = (locations: Case['locations']): Record<string, LocationCardVariant> => {
@@ -90,7 +104,7 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       culpritPokemonId: gameCase.culpritPokemonId,
       suspectPokemonIds,
       suspectShinyMap,
-      witnessPokemonIds: createWitnessPokemonIds(suspectPokemonIds),
+      witnessPokemonIds: createWitnessPokemonIds(suspectPokemonIds, countWitnessActions(gameCase) * WITNESS_OPTION_COUNT),
       locationCardVariantMap,
       locationCardTiltMap,
       actionEvidenceMap,

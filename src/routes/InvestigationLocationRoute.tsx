@@ -61,7 +61,6 @@ export function InvestigationLocationRoute({
         resolvedCount={actionsUsed}
         totalLocations={currentCase.locations.length}
         isSearching={searchingLocationId === selectedLocationId}
-        witnessPokemonIds={currentCase.witnessPokemonIds}
         interviewedWitnessPokemonIds={currentCase.locations.flatMap((location) => location.witnessPokemonId ? [location.witnessPokemonId] : [])}
         chooseAction={chooseAction}
       />

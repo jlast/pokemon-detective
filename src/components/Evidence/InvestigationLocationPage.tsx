@@ -12,7 +12,6 @@ interface InvestigationLocationPageProps {
   resolvedCount: number
   totalLocations: number
   isSearching: boolean
-  witnessPokemonIds?: number[]
   interviewedWitnessPokemonIds?: number[]
   chooseAction: (locationId: string, actionId: string, witnessPokemonId?: number) => void
 }
@@ -23,7 +22,6 @@ export function InvestigationLocationPage({
   resolvedCount,
   totalLocations,
   isSearching,
-  witnessPokemonIds = [],
   interviewedWitnessPokemonIds = [],
   chooseAction,
 }: InvestigationLocationPageProps) {
@@ -79,7 +77,6 @@ export function InvestigationLocationPage({
           <>
             <InvestigationActionChooser
               actions={location.actions}
-              witnessPokemonIds={witnessPokemonIds}
               interviewedWitnessPokemonIds={interviewedWitnessPokemonIds}
               chooseAction={(actionId, witnessPokemonId) => chooseAction(location.id, actionId, witnessPokemonId)}
               disabled={isSearching}
@@ -111,6 +108,14 @@ export function InvestigationLocationPage({
                   <span className="result-status-pill">New Evidence</span>
                   <h3>{evidenceTitle}</h3>
                   <p>{evidenceText}</p>
+                  {selectedAction.implicationText ? (
+                    <div className="result-evidence-details">
+                      <div>
+                        <span>What it suggests</span>
+                        <p>{selectedAction.implicationText}</p>
+                      </div>
+                    </div>
+                  ) : null}
                   {witnessPokemon ? (
                     <p className="result-save-confirmation">Witness interviewed: {witnessPokemon.name}</p>
                   ) : null}

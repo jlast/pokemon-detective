@@ -39,6 +39,8 @@ export interface LocationAction {
   evidenceId?: string | null
   evidenceTitle?: string | null
   evidenceText?: string | null
+  witnessPokemonId?: number
+  witnessPokemonIds?: number[]
   observationText: string
   observationTextSmall?: string
   observationTextMedium?: string
