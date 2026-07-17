@@ -88,10 +88,15 @@ export const clearSuspect = async (
 export const accuse = async (
   caseId: string,
   suspectId: number,
+  progress?: { accusationHistory: number[], accusationsRemaining: number },
 ): Promise<SessionResponse> => {
   const res = await fetch(
     `${BASE}/api/cases/${enc(caseId)}/accuse/${suspectId}`,
-    { method: 'POST', headers: { 'Content-Type': 'application/json', ...await authHeaders() } },
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...await authHeaders() },
+      body: progress ? JSON.stringify(progress) : undefined,
+    },
   )
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()

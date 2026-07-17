@@ -100,10 +100,6 @@ function App() {
     navigate(path)
   }, [navigate])
 
-  const wrongAccusationIds = useMemo(() => {
-    return accusationHistory ?? []
-  }, [accusationHistory])
-
   const [suspectNotes, setSuspectNotes] = useState<Map<number, {
     noteStatus: SuspectNoteStatus
     inspectedGroups: Record<SuspectInvestigationGroup, boolean>
@@ -145,6 +141,11 @@ function App() {
     })
     return c
   }, [caseData, suspectNotes])
+
+  const wrongAccusationIds = useMemo(() => {
+    if (!currentCase?.culpritPokemonId) return accusationHistory ?? []
+    return (accusationHistory ?? []).filter((pokemonId) => pokemonId !== currentCase.culpritPokemonId)
+  }, [accusationHistory, currentCase?.culpritPokemonId])
 
   const attemptsLeft = accusationsRemaining
 
@@ -312,23 +313,29 @@ function App() {
         console.error('Accusation failed:', err)
       }
     } else {
-      const correct = accusationTarget.pokemonId === caseData.culpritPokemonId
-      const newHistory = [...accusationHistory, accusationTarget.pokemonId]
-      const remaining = correct ? accusationsRemaining : accusationsRemaining - 1
       let status: 'playing' | 'solved' | 'failed' = 'playing'
-      if (correct) status = 'solved'
-      else if (remaining <= 0) status = 'failed'
+      try {
+        const caseId = getTodayCaseId()
+        const data = await apiAccuse(caseId, accusationTarget.pokemonId, {
+          accusationHistory,
+          accusationsRemaining,
+        })
+        status = data.status
 
-      setAccusationHistory(newHistory)
-      setAccusationsRemaining(remaining)
-      setCaseData({
-        ...caseData,
-        status: status === 'playing' ? 'active' : status,
-        ...(status !== 'playing' ? { culpritPokemonId: accusationTarget.pokemonId } : {}),
-        solution: status !== 'playing'
-          ? { culpritRevealText: '', detectiveConclusion: '', evidenceExplanation: [], clearedSuspects: [] }
-          : undefined,
-      })
+        setAccusationHistory(data.accusationHistory ?? [])
+        setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
+        setCaseData({
+          ...caseData,
+          status: status === 'playing' ? 'active' : status,
+          ...(status !== 'playing' ? {
+            culpritPokemonId: data.case.culpritPokemonId,
+            solution: data.case.solution,
+          } : { solution: undefined }),
+        })
+      } catch (err) {
+        console.error('Accusation failed:', err)
+        return
+      }
       setAccusationTargetId(null)
 
       updateSuspectNote(accusationTarget.pokemonId, (prev) => ({

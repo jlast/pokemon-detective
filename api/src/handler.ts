@@ -719,12 +719,55 @@ const handleAccuse = async (
   event: ApiGatewayEvent,
 ): Promise<ApiGatewayResult> => {
   const userInfo = await getUserInfo(event)
-  if (!userInfo.sub) return err(401, 'Authentication required')
 
   const record = await getCaseData(caseId)
   if (!record) return err(404, 'Case not found')
   const fullCase = await loadCase(caseId)
   if (!fullCase) return err(500, 'Failed to load case')
+
+  const suspectId = Number(suspectIdStr)
+  if (Number.isNaN(suspectId)) return err(400, 'Invalid suspect ID')
+
+  if (!userInfo.sub) {
+    let body: { accusationHistory?: number[], accusationsRemaining?: number } = {}
+    try {
+      body = JSON.parse(event.body ?? '{}')
+    } catch {}
+
+    const previousHistory = Array.isArray(body.accusationHistory) ? body.accusationHistory : []
+    if (previousHistory.includes(suspectId)) {
+      return err(400, 'Already accused this suspect')
+    }
+
+    const previousRemaining = typeof body.accusationsRemaining === 'number'
+      ? body.accusationsRemaining
+      : MAX_ACCUSATIONS
+    const correct = suspectId === record.culpritPokemonId
+    const accusationHistory = [...previousHistory, suspectId]
+    const accusationsRemaining = correct ? previousRemaining : previousRemaining - 1
+
+    let status: 'playing' | 'solved' | 'failed' = 'playing'
+    if (correct) {
+      status = 'solved'
+    } else if (accusationsRemaining <= 0) {
+      status = 'failed'
+    }
+
+    const progress = {
+      ...createCaseProgress(`anonymous:${caseId}`, caseId, fullCase),
+      accusationHistory,
+      accusationsRemaining,
+      status,
+    }
+
+    return ok({
+      case: buildResponseCase(fullCase, progress),
+      investigationsRemaining: progress.investigationsRemaining,
+      accusationsRemaining: progress.accusationsRemaining,
+      accusationHistory: progress.accusationHistory,
+      status: progress.status,
+    })
+  }
 
   const userId = getDateUserId(userInfo.sub, caseId)
   let progress = await getProgress(userId)
@@ -737,9 +780,6 @@ const handleAccuse = async (
   }
 
   if (progress.status !== 'playing') return err(400, 'Game is already over')
-
-  const suspectId = Number(suspectIdStr)
-  if (Number.isNaN(suspectId)) return err(400, 'Invalid suspect ID')
 
   if (progress.accusationHistory.includes(suspectId)) {
     return err(400, 'Already accused this suspect')
