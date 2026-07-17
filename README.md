@@ -11,6 +11,8 @@ npm run dev:api
 npm run dev
 ```
 
+Local development is wired for the test environment. Copy `.env.example` to `.env.local` and fill the test Cognito values from Terraform outputs before starting the API.
+
 The frontend expects the API at `http://localhost:3001` by default. If that port is already in use, start the API on another port and point Vite at it:
 
 ```sh
@@ -20,11 +22,19 @@ VITE_API_TARGET=http://localhost:3002 npm run dev
 
 The frontend uses `localhost:5173` for local auth redirects. If that port is already in use, stop the existing Vite process rather than letting the app move to another port.
 
-The local API verifies Cognito tokens against `USER_POOL_ID`. The dev server defaults to this project's user pool; override it for another environment with:
+The local API loads `.env.local` and verifies Cognito tokens against `USER_POOL_ID`. Override it for another environment with:
 
 ```sh
-API_DEV_USER_POOL_ID=us-east-1_example npm run dev:api
+USER_POOL_ID=us-east-1_example npm run dev:api
 ```
+
+## Environments
+
+Production is not deployed automatically. Pushes to `main` deploy to the GitHub `test` environment only. Deploy production manually from the `Deploy` workflow with `environment=prod`.
+
+The deploy workflow intentionally uses prefixed secrets so test cannot accidentally reuse old production secrets. Configure `TEST_AWS_ACCESS_KEY_ID`, `TEST_AWS_SECRET_ACCESS_KEY`, `TEST_AWS_REGION`, `TEST_S3_BUCKET_NAME`, `TEST_CLOUDFRONT_DISTRIBUTION_ID`, and `TEST_VITE_COGNITO_CLIENT_ID` for automatic test deploys. Configure the matching `PROD_...` secrets for manual production deploys.
+
+Use separate Terraform variables per environment. Start test from `terraform/test.tfvars.example`; it configures `https://test.pokemysterygame.com`, creates DNS records in the parent `pokemysterygame.com` hosted zone, and uses separate DynamoDB tables: `CaseDataTest`, `PlayerProgressTest`, and `PokedexTest`.
 
 ## Case Hierarchy
 

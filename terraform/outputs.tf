@@ -20,7 +20,7 @@ output "cloudfront_domain_name" {
 
 output "api_gateway_url" {
   description = "API Gateway invocation URL (for testing)"
-  value       = "${aws_api_gateway_rest_api.api.id}.execute-api.${var.region}.amazonaws.com/prod"
+  value       = "${aws_api_gateway_rest_api.api.id}.execute-api.${var.region}.amazonaws.com/${var.api_stage_name}"
 }
 
 output "lambda_function_name" {
@@ -57,4 +57,3 @@ output "cognito_domain" {
   description = "Cognito Hosted UI domain"
   value       = "${aws_cognito_user_pool_domain.main.domain}.auth.${var.region}.amazoncognito.com"
 }
-

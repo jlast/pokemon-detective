@@ -26,6 +26,7 @@ dist-ssr
 # Terraform
 terraform/.terraform*
 terraform/terraform.tfvars
+terraform/test.tfvars
 terraform/*.tfstate
 terraform/*.tfstate.*
 

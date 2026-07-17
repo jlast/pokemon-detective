@@ -20,7 +20,7 @@ provider "aws" {
 # ─── S3 + CloudFront for static site ─────────────────────────────────────────
 
 data "aws_route53_zone" "site" {
-  name         = var.domain_name
+  name         = coalesce(var.hosted_zone_name, var.domain_name)
   private_zone = false
 }
 
@@ -74,7 +74,7 @@ data "aws_iam_policy_document" "cloudfront_oac" {
 resource "aws_acm_certificate" "site" {
   provider                  = aws.us_east_1
   domain_name               = var.primary_domain_name
-  subject_alternative_names = [var.domain_name]
+  subject_alternative_names = var.domain_name == var.primary_domain_name ? [] : [var.domain_name]
   validation_method         = "DNS"
   tags                      = var.tags
 
@@ -472,7 +472,7 @@ resource "aws_api_gateway_deployment" "api" {
   depends_on = [aws_api_gateway_integration.proxy_any]
 
   rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name  = "prod"
+  stage_name  = var.api_stage_name
 
   triggers = {
     redeployment = sha1(jsonencode([
@@ -497,7 +497,7 @@ function handler(event) {
   var hostHeader = request.headers.host;
   var host = hostHeader && hostHeader.value ? hostHeader.value.toLowerCase() : '';
 
-  if (host === '${var.domain_name}') {
+  if ('${var.domain_name}' !== '${var.primary_domain_name}' && host === '${var.domain_name}') {
     return {
       statusCode: 301,
       statusDescription: 'Moved Permanently',
@@ -554,7 +554,7 @@ resource "aws_cloudfront_distribution" "site" {
   default_root_object = "index.html"
   price_class         = var.price_class
   tags                = var.tags
-  aliases             = [var.domain_name, var.primary_domain_name]
+  aliases             = distinct([var.domain_name, var.primary_domain_name])
 
   # S3 origin for static assets
   origin {
@@ -567,7 +567,7 @@ resource "aws_cloudfront_distribution" "site" {
   origin {
     domain_name = "${aws_api_gateway_rest_api.api.id}.execute-api.${var.region}.amazonaws.com"
     origin_id   = "api-gateway-${aws_api_gateway_rest_api.api.id}"
-    origin_path = "/prod"
+    origin_path = "/${var.api_stage_name}"
 
     custom_origin_config {
       http_port              = 80
@@ -685,6 +685,8 @@ resource "aws_route53_record" "site_apex_ipv6" {
 }
 
 resource "aws_route53_record" "site_primary_ipv4" {
+  count = var.domain_name == var.primary_domain_name ? 0 : 1
+
   name    = var.primary_domain_name
   type    = "A"
   zone_id = data.aws_route53_zone.site.zone_id
@@ -697,6 +699,8 @@ resource "aws_route53_record" "site_primary_ipv4" {
 }
 
 resource "aws_route53_record" "site_primary_ipv6" {
+  count = var.domain_name == var.primary_domain_name ? 0 : 1
+
   name    = var.primary_domain_name
   type    = "AAAA"
   zone_id = data.aws_route53_zone.site.zone_id

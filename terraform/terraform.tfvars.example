@@ -1,6 +1,8 @@
 bucket_name           = "pokemon-detective-your-unique-suffix"
 region                = "us-east-1"
+api_stage_name        = "prod"
 app_url               = "https://www.example.com"
+hosted_zone_name      = "example.com"
 domain_name           = "example.com"
 primary_domain_name   = "www.example.com"
 handler_zip_path      = "../api/dist/handler.zip"

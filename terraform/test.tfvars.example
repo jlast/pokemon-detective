@@ -1,0 +1,22 @@
+project_name               = "pokemon-detective-test"
+bucket_name                = "pokemon-detective-test-your-unique-suffix"
+region                     = "us-east-1"
+api_stage_name             = "test"
+app_url                    = "https://test.pokemysterygame.com"
+hosted_zone_name           = "pokemysterygame.com"
+domain_name                = "test.pokemysterygame.com"
+primary_domain_name        = "test.pokemysterygame.com"
+handler_zip_path           = "../api/dist/handler.zip"
+cron_zip_path              = "../api/dist/cron.zip"
+cognito_domain             = "pokemon-detective-test"
+case_data_table_name       = "CaseDataTest"
+player_progress_table_name = "PlayerProgressTest"
+pokedex_table_name         = "PokedexTest"
+google_client_id           = "your-google-client-id.apps.googleusercontent.com"
+google_client_secret       = "your-google-client-secret"
+
+tags = {
+  Project     = "pokemon-detective"
+  Environment = "test"
+  ManagedBy   = "terraform"
+}

@@ -39,6 +39,12 @@ variable "region" {
   default     = "us-east-1"
 }
 
+variable "api_stage_name" {
+  description = "API Gateway stage name"
+  type        = string
+  default     = "prod"
+}
+
 variable "price_class" {
   description = "CloudFront price class (PriceClass_100, PriceClass_200, PriceClass_All)"
   type        = string
@@ -57,8 +63,14 @@ variable "app_url" {
 }
 
 variable "domain_name" {
-  description = "Apex domain name for the application"
+  description = "Domain name for the application"
   type        = string
+}
+
+variable "hosted_zone_name" {
+  description = "Route53 hosted zone name that contains the application domain. Defaults to domain_name. Set this to the parent zone when deploying to a subdomain."
+  type        = string
+  default     = null
 }
 
 variable "primary_domain_name" {
