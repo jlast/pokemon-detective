@@ -231,12 +231,13 @@ const keepOneWitnessLocation = (locations: Location[]): Location[] => {
 
   return locations.map((locationItem) => ({
     ...locationItem,
-    actions: locationItem.actions
-      .filter((action) => (
-        action.outcomeType !== 'witness'
-        || (locationItem.id === keptWitnessAction.locationId && action.id === keptWitnessAction.actionId)
-      ))
-      .filter((action) => locationItem.id !== keptWitnessAction.locationId || action.id === keptWitnessAction.actionId),
+    actions: locationItem.id === keptWitnessAction.locationId
+      ? locationItem.actions.filter((action) => action.id === keptWitnessAction.actionId)
+      : [
+          locationItem.actions.find((action) => action.outcomeType !== 'witness' && action.isUseful)
+          ?? locationItem.actions.find((action) => action.outcomeType !== 'witness')
+          ?? locationItem.actions[0],
+        ].filter((action): action is LocationAction => Boolean(action)),
   }))
 }
 
