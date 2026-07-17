@@ -30,6 +30,13 @@
             "observationText": "The tents are messy, but nothing points to the culprit."
           },
           {
+            "kind": "nothing",
+            "id": "check-fire-pit",
+            "label": "Check the fire pit",
+            "description": "Look through the ashes and stones.",
+            "observationText": "The fire pit is cold and gives you nothing useful."
+          },
+          {
             "kind": "witness",
             "id": "campers",
             "label": "Interview nearby campers",
@@ -189,6 +196,13 @@
             "label": "Search the armchairs",
             "description": "Check between the cushions.",
             "observationText": "The armchairs are rumpled, but nothing is hidden here."
+          },
+          {
+            "kind": "nothing",
+            "id": "check-reading-lamps",
+            "label": "Check the reading lamps",
+            "description": "Inspect the lamps beside the shelves.",
+            "observationText": "The lamps are dusty, but they reveal nothing useful."
           },
           {
             "kind": "witness",
@@ -378,6 +392,13 @@
             "observationText": "The lockers are messy but reveal nothing useful."
           },
           {
+            "kind": "nothing",
+            "id": "check-towel-bin",
+            "label": "Check the towel bin",
+            "description": "Search the nearby towel bin.",
+            "observationText": "The towel bin is full but points to no suspect."
+          },
+          {
             "kind": "witness",
             "id": "campers",
             "label": "Question the attendant",
@@ -565,6 +586,13 @@
             "observationText": "The shelves are disorganized but reveal no suspect."
           },
           {
+            "kind": "nothing",
+            "id": "check-storage-bins",
+            "label": "Check the storage bins",
+            "description": "Look through the bins near the door.",
+            "observationText": "The bins are jumbled, but nothing useful turns up."
+          },
+          {
             "kind": "witness",
             "id": "campers",
             "label": "Ask the chef",
@@ -734,6 +762,13 @@
             "label": "Search the alcoves",
             "description": "Check the side alcoves.",
             "observationText": "The alcoves are dusty but hold no clues."
+          },
+          {
+            "kind": "nothing",
+            "id": "check-display-ropes",
+            "label": "Check the display ropes",
+            "description": "Inspect the ropes around the hall.",
+            "observationText": "The ropes are slightly crooked but add nothing useful."
           },
           {
             "kind": "witness",

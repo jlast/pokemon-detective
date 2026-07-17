@@ -233,11 +233,7 @@ const keepOneWitnessLocation = (locations: Location[]): Location[] => {
     ...locationItem,
     actions: locationItem.id === keptWitnessAction.locationId
       ? locationItem.actions.filter((action) => action.id === keptWitnessAction.actionId)
-      : [
-          locationItem.actions.find((action) => action.outcomeType !== 'witness' && action.isUseful)
-          ?? locationItem.actions.find((action) => action.outcomeType !== 'witness')
-          ?? locationItem.actions[0],
-        ].filter((action): action is LocationAction => Boolean(action)),
+      : locationItem.actions.filter((action) => action.outcomeType !== 'witness'),
   }))
 }
 
@@ -272,7 +268,7 @@ const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Loc
   location(`${caseId}-scene`, template.area, '🔎', `${template.area} shows signs of a careful disturbance.`,
     ev('crumbs', `Search ${template.area}`, `Look for dropped traces around ${template.area}.`, `Loose traces were scattered {movementWord} through ${template.area}.`),
     act(noth('tents', `Check around ${template.area}`, `Search the less disturbed parts of ${template.area}.`, `Most of ${template.area} is messy, but that part reveals nothing useful.`)),
-    wit('campers', `Question the ${template.witnessRole}`, `Ask what the ${template.witnessRole} noticed.`, `The ${template.witnessRole} remembers one detail clearly.`),
+    noth('check-nearby-tools', `Check nearby tools`, `Look over the tools closest to ${template.area}.`, 'The nearby tools are scattered but add nothing useful.'),
   ),
   location(`${caseId}-traces`, template.traceArea, '👣', `${template.traceArea} has marks leading away from the scene.`,
     ev('measure-tracks', 'Measure the marks', `Check the marks across ${template.traceArea}.`, `The marks run steadily across ${template.traceArea}.`,
