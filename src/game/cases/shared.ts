@@ -219,6 +219,27 @@ const noth = (id: string, label: string, description: string, observationText: s
   isUseful: false,
 })
 
+const keepOneWitnessLocation = (locations: Location[]): Location[] => {
+  const witnessActions = locations.flatMap((locationItem) => (
+    locationItem.actions
+      .filter((action) => action.outcomeType === 'witness')
+      .map((action) => ({ locationId: locationItem.id, actionId: action.id }))
+  ))
+  const keptWitnessAction = witnessActions[0]
+
+  if (!keptWitnessAction) return locations
+
+  return locations.map((locationItem) => ({
+    ...locationItem,
+    actions: locationItem.actions
+      .filter((action) => (
+        action.outcomeType !== 'witness'
+        || (locationItem.id === keptWitnessAction.locationId && action.id === keptWitnessAction.actionId)
+      ))
+      .filter((action) => locationItem.id !== keptWitnessAction.locationId || action.id === keptWitnessAction.actionId),
+  }))
+}
+
 const leadByActionId: Record<string, LocationActionLeadType> = {
   'follow-tracks': 'risky',
   'photograph-tracks': 'quick',
@@ -297,7 +318,7 @@ export const hydrateCaseConfig = (rawCaseConfig: RawCaseConfig): CaseConfig => {
     sceneImageAlt: rawCaseConfig.sceneImageAlt ?? `Scene photo for ${rawCaseConfig.title}`,
     difficulty: rawCaseConfig.difficulty,
     maxInvestigations: rawCaseConfig.maxInvestigations,
-    locations,
+    locations: keepOneWitnessLocation(locations),
     evidenceOverrides: rawCaseConfig.evidenceOverrides,
   }
 }

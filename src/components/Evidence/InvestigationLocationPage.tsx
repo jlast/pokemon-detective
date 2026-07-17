@@ -16,6 +16,16 @@ interface InvestigationLocationPageProps {
   chooseAction: (locationId: string, actionId: string, witnessPokemonId?: number) => void
 }
 
+const getCompactTeaserText = (location: Location) => {
+  const teaserText = location.teaserText ?? 'Choose how to investigate this location.'
+  const repeatedPrefix = `${location.name} shows signs of `
+
+  if (!teaserText.toLowerCase().startsWith(repeatedPrefix.toLowerCase())) return teaserText
+
+  const shortened = teaserText.slice(repeatedPrefix.length)
+  return `Signs of ${shortened}`
+}
+
 export function InvestigationLocationPage({
   location,
   pointsLeft,
@@ -51,6 +61,7 @@ export function InvestigationLocationPage({
     : (location.observationText ?? selectedAction?.observationText)
   const evidenceIcon = hasEvidence ? getEvidenceIcon(location.evidenceId, evidenceTitle) : null
   const locationIcon = getLocationIcon(location.name, location.icon)
+  const compactTeaserText = getCompactTeaserText(location)
   const witnessPokemon = location.witnessPokemonId
     ? pokemonData.find((pokemon) => pokemon.id === location.witnessPokemonId)
     : null
@@ -63,32 +74,29 @@ export function InvestigationLocationPage({
             {locationIcon}
           </span>
           <div className="location-heading-copy">
-            <h2 className="location-name">{location.name}</h2>
-            <p className="location-description">{location.teaserText ?? 'Choose how to investigate this location.'}</p>
+            <div className="location-title-row">
+              <h2 className="location-name">{location.name}</h2>
+              <span className="location-status-stamp is-idle">
+                {statusLabel}
+              </span>
+            </div>
+            <p className="location-description">{compactTeaserText}</p>
           </div>
-          <span className="location-status-stamp is-idle">
-            {statusLabel}
-          </span>
         </div>
       ) : null}
 
       {!location.investigated ? (
-        pointsLeft > 0 ? (
-          <>
-            <InvestigationActionChooser
-              actions={location.actions}
-              interviewedWitnessPokemonIds={interviewedWitnessPokemonIds}
-              chooseAction={(actionId, witnessPokemonId) => chooseAction(location.id, actionId, witnessPokemonId)}
-              disabled={isSearching}
-            />
-            {isSearching ? <div className="active-investigation-resolving">Following lead...</div> : null}
-          </>
-        ) : (
-          <div className="inspect-item">
-            <strong>No investigation points left.</strong>
-            <p className="overview-section-hook">Review your evidence or inspect suspects.</p>
-          </div>
-        )
+        <>
+          <InvestigationActionChooser
+            actions={location.actions}
+            interviewedWitnessPokemonIds={interviewedWitnessPokemonIds}
+            chooseAction={(actionId, witnessPokemonId) => chooseAction(location.id, actionId, witnessPokemonId)}
+            disabled={isSearching || pointsLeft <= 0}
+            noActionsRemaining={pointsLeft <= 0}
+            followedActionId={location.selectedActionId}
+          />
+          {isSearching ? <div className="active-investigation-resolving">Following lead...</div> : null}
+        </>
       ) : selectedAction ? (
         <>
           {hasEvidence ? (

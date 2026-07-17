@@ -16,6 +16,7 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
   })
   const [loading, setLoading] = useState(authed)
   const [error, setError] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     if (!authed) {
@@ -74,6 +75,10 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
     seenShinyIds.has(pokemon.id) ||
     unlockedShinyIds.has(pokemon.id)
   ))
+  const normalizedSearchTerm = searchTerm.trim().toLowerCase()
+  const filteredPokemon = normalizedSearchTerm
+    ? registeredPokemon.filter((pokemon) => pokemon.name.toLowerCase().includes(normalizedSearchTerm))
+    : registeredPokemon
 
   return (
     <div className="main-layout-single">
@@ -93,15 +98,28 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
           </div>
         </div>
 
+        <label className="pokedex-search">
+          <span>Search by name</span>
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="Search Pokemon"
+            autoComplete="off"
+          />
+        </label>
+
         {loading ? (
           <p className="placeholder-page">Loading Pokedex records...</p>
         ) : error ? (
           <p className="placeholder-page">Could not load your Pokedex right now.</p>
         ) : registeredPokemon.length === 0 ? (
           <p className="placeholder-page">No Pokemon registered yet. Complete a case to add Pokemon to your Pokedex.</p>
+        ) : filteredPokemon.length === 0 ? (
+          <p className="placeholder-page">No Pokemon match your search.</p>
         ) : (
           <div className="pokedex-grid">
-            {registeredPokemon.map((pokemon) => {
+            {filteredPokemon.map((pokemon) => {
               const unlocked = unlockedIds.has(pokemon.id)
               const seen = unlocked || seenIds.has(pokemon.id) || seenShinyIds.has(pokemon.id)
               const shinyUnlocked = unlockedShinyIds.has(pokemon.id)
