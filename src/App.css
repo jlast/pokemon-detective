@@ -1864,6 +1864,28 @@
     background-color 140ms ease;
 }
 
+.evidence-lead-card--paper-notebook {
+  border-color: rgba(184, 154, 91, 0.72);
+  background:
+    repeating-linear-gradient(180deg, rgba(128, 152, 176, 0.12) 0 1px, transparent 1px 28px),
+    linear-gradient(180deg, #fff7df 0%, #f5e8c8 100%);
+}
+
+.evidence-lead-card--paper-tag {
+  border: 1px dashed rgba(133, 105, 55, 0.82);
+  background:
+    linear-gradient(90deg, rgba(122, 92, 45, 0.14) 0 6px, transparent 6px),
+    linear-gradient(180deg, #fffbf2 0%, #efe3ce 100%);
+  box-shadow: 0 6px 16px rgba(32, 50, 80, 0.05), inset 0 0 0 3px rgba(255, 255, 255, 0.36);
+}
+
+.evidence-lead-card--paper-clipboard {
+  border-color: rgba(130, 142, 148, 0.64);
+  background:
+    linear-gradient(180deg, rgba(111, 124, 132, 0.2) 0 12px, transparent 12px),
+    linear-gradient(180deg, #fffdf8 0%, #f1eadf 100%);
+}
+
 .evidence-lead-card:hover:not(:disabled) {
   transform: translateY(-3px);
   border-color: #a98438;
@@ -1923,6 +1945,17 @@
   font-size: 1rem;
   font-weight: 650;
   line-height: 1.45;
+}
+
+.evidence-lead-card__cta,
+.lead-option__cta {
+  align-self: flex-start;
+  margin-top: 18px;
+  color: #8a641d;
+  font-size: 0.84rem;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .lead-option__type {

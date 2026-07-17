@@ -3,6 +3,7 @@ import { pokemonData, type Pokemon } from '../../data/pokemon'
 import { LeadVisualIcon, type LeadVisualType } from './leadVisualIcons'
 
 type LeadType = 'search' | 'inspect' | 'question'
+type LeadPaperStyle = 'notebook' | 'tag' | 'clipboard'
 
 const leadTypeIcons: Record<LeadType, string> = {
   search: '👣',
@@ -83,6 +84,12 @@ const getEvidenceLeadLabel = (action: LocationAction): string => {
   return formatClueLabel(action.label)
 }
 
+const getLeadPaperStyle = (action: LocationAction): LeadPaperStyle => {
+  if (action.id === 'crumbs' || action.id === 'measure-tracks' || action.id === 'follow-tracks') return 'notebook'
+  if (action.id === 'tents' || action.id === 'photograph-tracks' || action.id === 'search-branches') return 'tag'
+  return 'clipboard'
+}
+
 const getEvidenceLeadTeaser = (action: LocationAction): string => {
   const subject = getLeadSubject(action)
 
@@ -139,6 +146,7 @@ const getWitnessPrompt = (pokemonName: string, role: string, index: number): str
 
 interface EvidenceLeadCardProps {
   visualType: LeadVisualType
+  paperStyle: LeadPaperStyle
   label: string
   teaser: string
   onFollow: () => void
@@ -148,6 +156,7 @@ interface EvidenceLeadCardProps {
 
 function EvidenceLeadCard({
   visualType,
+  paperStyle,
   label,
   teaser,
   onFollow,
@@ -157,7 +166,7 @@ function EvidenceLeadCard({
   return (
     <button
       type="button"
-      className={`evidence-lead-card evidence-lead-card--${visualType} ${isFollowed ? 'is-followed' : ''}`}
+      className={`evidence-lead-card evidence-lead-card--${visualType} evidence-lead-card--paper-${paperStyle} ${isFollowed ? 'is-followed' : ''}`}
       onClick={onFollow}
       disabled={disabled}
     >
@@ -169,6 +178,8 @@ function EvidenceLeadCard({
         <span className="evidence-lead-card__label">{label}</span>
         <p className="evidence-lead-card__teaser">{teaser}</p>
       </div>
+
+      <span className="evidence-lead-card__cta">{isFollowed ? 'Complete' : 'Click to investigate'}</span>
     </button>
   )
 }
@@ -255,6 +266,7 @@ export function InvestigationActionChooser({
                     </span>
                   </span>
                   <span className="lead-option__description">{getWitnessPrompt(pokemon.name, witnessRole, index)}</span>
+                  <span className="lead-option__cta">{isFollowed ? 'Complete' : 'Click to investigate'}</span>
                 </button>
               )
             })
@@ -264,6 +276,7 @@ export function InvestigationActionChooser({
             <EvidenceLeadCard
               key={action.id}
               visualType={getLeadVisualType(action)}
+              paperStyle={getLeadPaperStyle(action)}
               label={getEvidenceLeadLabel(action)}
               teaser={getEvidenceLeadTeaser(action)}
               onFollow={() => chooseAction(action.id)}
