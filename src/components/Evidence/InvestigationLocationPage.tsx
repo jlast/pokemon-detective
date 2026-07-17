@@ -108,14 +108,6 @@ export function InvestigationLocationPage({
                   <span className="result-status-pill">New Evidence</span>
                   <h3>{evidenceTitle}</h3>
                   <p>{evidenceText}</p>
-                  {selectedAction.implicationText ? (
-                    <div className="result-evidence-details">
-                      <div>
-                        <span>What it suggests</span>
-                        <p>{selectedAction.implicationText}</p>
-                      </div>
-                    </div>
-                  ) : null}
                   {witnessPokemon ? (
                     <p className="result-save-confirmation">Witness interviewed: {witnessPokemon.name}</p>
                   ) : null}

@@ -40,9 +40,6 @@ export function EndingScreen({
   const solutionEvidenceItems = solution?.evidenceExplanation ?? []
   const clearedSuspects = solution?.clearedSuspects ?? []
   const discoveredEvidenceCount = getDiscoveredEvidence(currentCase).length
-  const evidenceCollectedCount = currentCase.status === 'active'
-    ? discoveredEvidenceCount
-    : Math.max(discoveredEvidenceCount, solutionEvidenceItems.length)
   const displayedAttemptsLeft = isFailed ? 0 : attemptsLeft ?? Math.max(maxAccusations - wrongAccusationCount, 0)
   const displayedWrongGuesses = isFailed
     ? Math.max(wrongAccusationCount, maxAccusations - displayedAttemptsLeft)
@@ -107,7 +104,7 @@ export function EndingScreen({
       </section>
 
       <section className="case-result-stats" aria-label="Case summary">
-        <span className="case-result-stat"><strong>Evidence</strong> <span>{evidenceCollectedCount}/{currentCase.locations.length}</span></span>
+        <span className="case-result-stat"><strong>Evidence found</strong> <span>{discoveredEvidenceCount}/{currentCase.locations.length}</span></span>
         <span className="case-result-stat"><strong>Wrong guesses</strong> <span>{displayedWrongGuesses}</span></span>
         <span className="case-result-stat"><strong>Attempts left</strong> <span>{displayedAttemptsLeft}</span></span>
         <span className="case-result-stat next-case-timer" title="Daily at 00:00 UTC" aria-label="Next case refreshes daily at 00:00 UTC">
@@ -121,7 +118,7 @@ export function EndingScreen({
 
       <div className="ending-details-grid">
         <section className="inspect-item compact-result-panel evidence-used-panel">
-          <strong>Evidence used</strong>
+          <strong>Solution clues</strong>
           <div className="evidence-result-list">
             {solutionEvidenceItems.map(renderEvidenceRow)}
           </div>
