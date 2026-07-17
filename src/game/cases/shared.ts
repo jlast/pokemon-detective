@@ -219,6 +219,27 @@ const noth = (id: string, label: string, description: string, observationText: s
   isUseful: false,
 })
 
+const fillerLeadLabels = [
+  ['check-nearby-tools', 'Check nearby tools', 'Look over the closest loose items.', 'The nearby items are scattered but add nothing useful.'],
+  ['scan-quiet-corner', 'Scan the quiet corner', 'Check the least disturbed part of the area.', 'The quiet corner looks ordinary and points to no suspect.'],
+  ['inspect-side-surface', 'Inspect the side surface', 'Look over the nearby surface for anything missed.', 'The side surface has marks from normal use, but nothing helpful.'],
+] as const
+
+const ensureThreeNonWitnessActions = (locationItem: Location): Location => {
+  if (locationItem.actions.length >= 3) return locationItem
+
+  const existingActionIds = new Set(locationItem.actions.map((action) => action.id))
+  const addedActions = fillerLeadLabels
+    .filter(([id]) => !existingActionIds.has(id))
+    .slice(0, 3 - locationItem.actions.length)
+    .map(([id, label, description, observationText]) => noth(id, label, description, observationText))
+
+  return {
+    ...locationItem,
+    actions: [...locationItem.actions, ...addedActions],
+  }
+}
+
 const keepOneWitnessLocation = (locations: Location[]): Location[] => {
   const witnessActions = locations.flatMap((locationItem) => (
     locationItem.actions
@@ -229,12 +250,19 @@ const keepOneWitnessLocation = (locations: Location[]): Location[] => {
 
   if (!keptWitnessAction) return locations
 
-  return locations.map((locationItem) => ({
-    ...locationItem,
-    actions: locationItem.id === keptWitnessAction.locationId
-      ? locationItem.actions.filter((action) => action.id === keptWitnessAction.actionId)
-      : locationItem.actions.filter((action) => action.outcomeType !== 'witness'),
-  }))
+  return locations.map((locationItem) => {
+    if (locationItem.id === keptWitnessAction.locationId) {
+      return {
+        ...locationItem,
+        actions: locationItem.actions.filter((action) => action.id === keptWitnessAction.actionId),
+      }
+    }
+
+    return ensureThreeNonWitnessActions({
+      ...locationItem,
+      actions: locationItem.actions.filter((action) => action.outcomeType !== 'witness'),
+    })
+  })
 }
 
 const leadByActionId: Record<string, LocationActionLeadType> = {
