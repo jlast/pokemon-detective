@@ -97,21 +97,6 @@ const scenePreview = (label = 'Scene context'): CluePreview => ({
   label,
 })
 
-const sideRoutePreviewByActionId: Record<string, CluePreview> = {
-  tents: scenePreview('Size clue'),
-  'check-fire-pit': scenePreview('Type clue'),
-  'photograph-tracks': scenePreview('Movement clue'),
-  'search-branches': scenePreview('Height clue'),
-  'listen-quietly': scenePreview('Movement clue'),
-  'smell-jar': scenePreview('Type clue'),
-  'search-bedding': scenePreview('Handling clue'),
-  'check-nearby-tools': scenePreview('Force clue'),
-  'scan-quiet-corner': scenePreview('Movement clue'),
-  'inspect-side-surface': scenePreview('Handling clue'),
-  'check-reading-lamps': scenePreview('Type clue'),
-  'search-armchairs': scenePreview('Handling clue'),
-}
-
 const presentationByActionId: Record<string, LocationActionPresentation> = {
   crumbs: {
     kind: 'search',
@@ -331,73 +316,6 @@ const wit = (
   },
 })
 
-const noth = (id: string, label: string, description: string, observationText: string): LocationAction => ({
-  id,
-  label,
-  leadType: 'thorough',
-  description,
-  outcomeType: 'nothing',
-  evidenceId: null,
-  evidenceTitle: null,
-  evidenceText: null,
-  observationText,
-  cluePreview: sideRoutePreviewByActionId[id] ?? scenePreview('Side route'),
-  presentation: getPresentation(id, {
-    kind: 'inspect',
-    icon: '🔦',
-    visualType: 'generic-search',
-    paperStyle: 'clipboard',
-    displayLabel: label,
-    teaser: description,
-  }),
-})
-
-const fillerLeadLabels = [
-  ['check-nearby-tools', 'Check nearby tools', 'Look over the closest loose items.', 'The nearby items are scattered but add nothing useful.'],
-  ['scan-quiet-corner', 'Scan the quiet corner', 'Check the least disturbed part of the area.', 'The quiet corner looks ordinary and points to no suspect.'],
-  ['inspect-side-surface', 'Inspect the side surface', 'Look over the nearby surface for anything missed.', 'The side surface has marks from normal use, but nothing helpful.'],
-] as const
-
-const ensureThreeNonWitnessActions = (locationItem: Location): Location => {
-  if (locationItem.actions.length >= 3) return locationItem
-
-  const existingActionIds = new Set(locationItem.actions.map((action) => action.id))
-  const addedActions = fillerLeadLabels
-    .filter(([id]) => !existingActionIds.has(id))
-    .slice(0, 3 - locationItem.actions.length)
-    .map(([id, label, description, observationText]) => noth(id, label, description, observationText))
-
-  return {
-    ...locationItem,
-    actions: [...locationItem.actions, ...addedActions],
-  }
-}
-
-const keepOneWitnessLocation = (locations: Location[]): Location[] => {
-  const witnessActions = locations.flatMap((locationItem) => (
-    locationItem.actions
-      .filter((action) => action.outcomeType === 'witness')
-      .map((action) => ({ locationId: locationItem.id, actionId: action.id }))
-  ))
-  const keptWitnessAction = witnessActions.at(-1)
-
-  if (!keptWitnessAction) return locations
-
-  return locations.map((locationItem) => {
-    if (locationItem.id === keptWitnessAction.locationId) {
-      return {
-        ...locationItem,
-        actions: locationItem.actions.filter((action) => action.id === keptWitnessAction.actionId),
-      }
-    }
-
-    return ensureThreeNonWitnessActions({
-      ...locationItem,
-      actions: locationItem.actions.filter((action) => action.outcomeType !== 'witness'),
-    })
-  })
-}
-
 const leadByActionId: Record<string, LocationActionLeadType> = {
   'follow-tracks': 'risky',
   'photograph-tracks': 'quick',
@@ -417,29 +335,29 @@ const act = <T extends LocationAction>(action: T): T => {
 const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Location[] => [
   location(`${caseId}-scene`, template.area, '🔎', `${template.area} shows signs of a careful disturbance.`,
     ev('crumbs', 'height-clue', `Search ${template.area}`, `Look for dropped traces around ${template.area}.`, `Loose traces were scattered {movementWord} through ${template.area}.`),
-    act(noth('tents', `Check around ${template.area}`, `Search the less disturbed parts of ${template.area}.`, `Most of ${template.area} is messy, but that part reveals nothing useful.`)),
-    noth('check-nearby-tools', `Check nearby tools`, `Look over the tools closest to ${template.area}.`, 'The nearby tools are scattered but add nothing useful.'),
+    act(ev('tents', 'height-clue', `Check around ${template.area}`, `Search the less disturbed parts of ${template.area}.`, `The quieter edge of ${template.area} was disturbed {heightPosition}.`)),
+    ev('check-nearby-tools', 'force-clue', `Check nearby tools`, `Look over the tools closest to ${template.area}.`, 'One nearby tool showed {forceTrace}.'),
   ),
   location(`${caseId}-traces`, template.traceArea, '👣', `${template.traceArea} has marks leading away from the scene.`,
     ev('measure-tracks', 'weight-clue', 'Measure the marks', `Check the marks across ${template.traceArea}.`, `The marks run steadily across ${template.traceArea}.`,
       { small: `Small, light marks sit low across ${template.traceArea}.`, large: `Deep, heavy marks press into ${template.traceArea}.` }),
     act(ev('follow-tracks', 'type-residue-clue', 'Follow the trail', 'See where the trail leads.', `A line of {textureWord} trails across ${template.traceArea}.`)),
-    act(noth('photograph-tracks', 'Photograph the marks', 'Document the marks before they are disturbed.', 'The photo captures the pattern but adds nothing new.')),
+    act(ev('photograph-tracks', 'weight-clue', 'Photograph the marks', 'Document the marks before they are disturbed.', `The photo preserved marks that were {trackDepth} across ${template.traceArea}.`)),
   ),
   location(`${caseId}-storage`, template.storageArea, '📦', `${template.storageArea} looks disturbed near its base.`,
     ev('check-roots', 'ground-trace-clue', `Inspect ${template.storageArea}`, `Look under and around ${template.storageArea}.`, `The {groundWord} near ${template.storageArea} was disturbed.`),
-    act(noth('search-branches', `Check above ${template.storageArea}`, 'Search the higher surfaces nearby.', 'The higher surfaces are dusty but untouched.')),
-    noth('listen-quietly', 'Listen quietly', 'Pause and listen for movement.', 'The area is quiet. Whoever was here is gone.'),
+    act(ev('search-branches', 'height-clue', `Check above ${template.storageArea}`, 'Search the higher surfaces nearby.', `Dust near ${template.storageArea} was shifted {heightPosition}.`)),
+    ev('listen-quietly', 'witness-clue', 'Listen quietly', 'Pause and listen for movement.', `The quiet pause caught a report of someone {witnessDetail}.`),
   ),
   location(`${caseId}-lock`, template.lockedObject, '🔐', `${template.lockedObject} shows signs of tampering.`,
     act(ev('inspect-lid', 'force-clue', `Inspect ${template.lockedObject}`, `Study where ${template.lockedObject} was forced.`, `Something marked ${template.lockedObject} before it gave way.`)),
-    act(noth('smell-jar', `Smell near ${template.lockedObject}`, 'Check for any lingering scent.', 'Only the normal scent of the area remains. Nothing useful stands out.')),
+    act(ev('smell-jar', 'type-residue-clue', `Smell near ${template.lockedObject}`, 'Check for any lingering scent.', `A trace of {textureWord} clung near ${template.lockedObject}.`)),
     ev('check-table', 'height-clue', `Check beside ${template.lockedObject}`, `Look along the nearby surface beside ${template.lockedObject}.`, `Whoever handled ${template.lockedObject} left traces {movementWord} nearby.`),
   ),
   location(`${caseId}-witness`, template.witnessArea, '🗣️', `Someone near ${template.witnessArea} noticed something odd.`,
     wit('interview-camper', 'witness-clue', `Question the ${template.witnessRole}`, `Ask what the ${template.witnessRole} remembers.`, `The ${template.witnessRole} is certain about that detail.`, template.witnessRole),
     ev('check-wash-bucket', 'type-residue-clue', `Check ${template.waterFeature}`, `Inspect the area around ${template.waterFeature}.`, `Even near ${template.waterFeature}, a line of {textureWord} stayed behind.`),
-    act(noth('search-bedding', `Search around ${template.witnessArea}`, 'Check the nearby hiding spots.', 'The nearby area is cluttered but hides nothing useful.')),
+    act(ev('search-bedding', 'witness-clue', `Search around ${template.witnessArea}`, 'Check the nearby hiding spots.', `A note near ${template.witnessArea} described someone {witnessDetail}.`)),
   ),
 ]
 
@@ -455,7 +373,7 @@ export const hydrateCaseConfig = (rawCaseConfig: RawCaseConfig): CaseConfig => {
     sceneImageAlt: rawCaseConfig.sceneImageAlt ?? `Scene photo for ${rawCaseConfig.title}`,
     difficulty: rawCaseConfig.difficulty,
     maxInvestigations: rawCaseConfig.maxInvestigations,
-    locations: keepOneWitnessLocation(locations),
+    locations,
     evidenceOverrides: rawCaseConfig.evidenceOverrides,
   }
 }
