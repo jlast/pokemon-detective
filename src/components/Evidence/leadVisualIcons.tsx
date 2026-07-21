@@ -1,16 +1,4 @@
-export type LeadVisualType =
-  | 'footprints'
-  | 'object'
-  | 'tool-marks'
-  | 'dust'
-  | 'sound'
-  | 'scent'
-  | 'high-surface'
-  | 'ground'
-  | 'container'
-  | 'damage'
-  | 'movement'
-  | 'generic-search'
+import type { LeadVisualType } from '../../game/caseModel'
 
 interface LeadVisualIconProps {
   visualType: LeadVisualType

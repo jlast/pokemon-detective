@@ -19,6 +19,34 @@ export type LocationActionOutcomeType = 'evidence' | 'witness' | 'nothing'
 
 export type LocationActionLeadType = 'careful' | 'thorough' | 'quick' | 'risky' | 'uncertain' | 'obvious'
 
+export type InvestigationLeadKind = 'search' | 'inspect' | 'question'
+
+export type LeadPaperStyle = 'notebook' | 'tag' | 'clipboard'
+
+export type LeadVisualType =
+  | 'footprints'
+  | 'object'
+  | 'tool-marks'
+  | 'dust'
+  | 'sound'
+  | 'scent'
+  | 'high-surface'
+  | 'ground'
+  | 'container'
+  | 'damage'
+  | 'movement'
+  | 'generic-search'
+
+export interface LocationActionPresentation {
+  kind: InvestigationLeadKind
+  icon: string
+  visualType: LeadVisualType
+  paperStyle: LeadPaperStyle
+  displayLabel: string
+  teaser: string
+  witnessRole?: string
+}
+
 export type ClueAxis = 'height' | 'weight' | 'type' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'scene'
 
 export type CluePrecision = 'exact' | 'grouped' | 'none'
@@ -52,6 +80,7 @@ export interface LocationAction {
   implicationText?: string
   cluePreview: CluePreview
   clueRule?: ClueRule
+  presentation: LocationActionPresentation
 }
 
 export type LocationCardVariant = 'detective-note' | 'clipboard' | 'map-fragment'
