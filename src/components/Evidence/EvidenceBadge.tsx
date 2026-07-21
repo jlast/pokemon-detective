@@ -25,11 +25,11 @@ export function EvidenceBadge({ text, type, fallback }: EvidenceBadgeProps) {
 export function EvidenceBadgeList({ badges, fallback }: EvidenceBadgeListProps) {
   if (badges?.length) {
     return (
-      <>
+      <span className="evidence-badge-list">
         {badges.map((badge, index) => (
           <EvidenceBadge key={`${badge.text}-${index}`} text={badge.text} type={badge.type} />
         ))}
-      </>
+      </span>
     )
   }
 

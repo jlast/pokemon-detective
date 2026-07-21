@@ -2366,6 +2366,13 @@
   box-shadow: 0 5px 10px rgba(82, 66, 38, 0.08);
 }
 
+.evidence-badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
 .evidence-badge--type-bug { background: #a6b91a; color: #252906; }
 .evidence-badge--type-dark { background: #705746; color: #fff; }
 .evidence-badge--type-dragon { background: #6f35fc; color: #fff; }
