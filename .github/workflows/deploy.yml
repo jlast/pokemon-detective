@@ -18,19 +18,18 @@ jobs:
   deploy:
     name: Deploy ${{ github.event_name == 'push' && 'test' || inputs.environment }}
     runs-on: ubuntu-latest
-    environment: ${{ github.event_name == 'push' && 'test' || inputs.environment }}
     concurrency: deploy-${{ github.event_name == 'push' && 'test' || inputs.environment }}
     env:
       DEPLOY_ENV: ${{ github.event_name == 'push' && 'test' || inputs.environment }}
-      VITE_COGNITO_DOMAIN: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (vars.TEST_VITE_COGNITO_DOMAIN || 'pokemon-detective-test') || (vars.PROD_VITE_COGNITO_DOMAIN || 'pokemon-detective') }}
-      VITE_COGNITO_REGION: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (vars.TEST_VITE_COGNITO_REGION || 'us-east-1') || (vars.PROD_VITE_COGNITO_REGION || 'us-east-1') }}
-      VITE_COGNITO_CLIENT_ID: ${{ (github.event_name == 'push' || inputs.environment == 'test') && secrets.TEST_VITE_COGNITO_CLIENT_ID || secrets.PROD_VITE_COGNITO_CLIENT_ID }}
-      AWS_ACCESS_KEY_ID: ${{ (github.event_name == 'push' || inputs.environment == 'test') && secrets.TEST_AWS_ACCESS_KEY_ID || secrets.PROD_AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ (github.event_name == 'push' || inputs.environment == 'test') && secrets.TEST_AWS_SECRET_ACCESS_KEY || secrets.PROD_AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_AWS_REGION || 'us-east-1') || (secrets.PROD_AWS_REGION || 'us-east-1') }}
-      S3_BUCKET_NAME: ${{ (github.event_name == 'push' || inputs.environment == 'test') && secrets.TEST_S3_BUCKET_NAME || secrets.PROD_S3_BUCKET_NAME }}
-      CLOUDFRONT_DISTRIBUTION_ID: ${{ (github.event_name == 'push' || inputs.environment == 'test') && secrets.TEST_CLOUDFRONT_DISTRIBUTION_ID || secrets.PROD_CLOUDFRONT_DISTRIBUTION_ID }}
-      LAMBDA_FUNCTION_NAME: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (vars.TEST_LAMBDA_FUNCTION_NAME || 'pokemon-detective-test-api') || (vars.PROD_LAMBDA_FUNCTION_NAME || 'pokemon-detective-api') }}
+      VITE_COGNITO_DOMAIN: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_COGNITO_DOMAIN || 'pokemon-detective-test') || (secrets.PROD_COGNITO_DOMAIN || secrets.COGNITO_DOMAIN || 'pokemon-detective') }}
+      VITE_COGNITO_REGION: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_AWS_REGION || secrets.AWS_REGION || 'us-east-1') || (secrets.PROD_AWS_REGION || secrets.AWS_REGION || 'us-east-1') }}
+      VITE_COGNITO_CLIENT_ID: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_VITE_COGNITO_CLIENT_ID || secrets.VITE_COGNITO_CLIENT_ID) || (secrets.PROD_VITE_COGNITO_CLIENT_ID || secrets.VITE_COGNITO_CLIENT_ID) }}
+      AWS_ACCESS_KEY_ID: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_AWS_ACCESS_KEY_ID || secrets.AWS_ACCESS_KEY_ID) || (secrets.PROD_AWS_ACCESS_KEY_ID || secrets.AWS_ACCESS_KEY_ID) }}
+      AWS_SECRET_ACCESS_KEY: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_AWS_SECRET_ACCESS_KEY || secrets.AWS_SECRET_ACCESS_KEY) || (secrets.PROD_AWS_SECRET_ACCESS_KEY || secrets.AWS_SECRET_ACCESS_KEY) }}
+      AWS_REGION: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_AWS_REGION || secrets.AWS_REGION || 'us-east-1') || (secrets.PROD_AWS_REGION || secrets.AWS_REGION || 'us-east-1') }}
+      S3_BUCKET_NAME: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_S3_BUCKET_NAME || secrets.S3_BUCKET_NAME) || (secrets.PROD_S3_BUCKET_NAME || secrets.S3_BUCKET_NAME) }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_CLOUDFRONT_DISTRIBUTION_ID || secrets.CLOUDFRONT_DISTRIBUTION_ID) || (secrets.PROD_CLOUDFRONT_DISTRIBUTION_ID || secrets.CLOUDFRONT_DISTRIBUTION_ID) }}
+      LAMBDA_FUNCTION_NAME: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_LAMBDA_FUNCTION_NAME || 'pokemon-detective-test-api') || (secrets.PROD_LAMBDA_FUNCTION_NAME || 'pokemon-detective-api') }}
     steps:
       - uses: actions/checkout@v4
 
@@ -63,7 +62,7 @@ jobs:
           zip -r handler.zip handler.js
 
       # ── AWS auth ──
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}

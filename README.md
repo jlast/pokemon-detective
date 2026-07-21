@@ -32,7 +32,7 @@ USER_POOL_ID=us-east-1_example npm run dev:api
 
 Production is not deployed automatically. Pushes to `main` deploy to the GitHub `test` environment only. Deploy production manually from the `Deploy` workflow with `environment=prod`.
 
-The deploy workflow intentionally uses prefixed secrets so test cannot accidentally reuse old production secrets. Configure `TEST_AWS_ACCESS_KEY_ID`, `TEST_AWS_SECRET_ACCESS_KEY`, `TEST_AWS_REGION`, `TEST_S3_BUCKET_NAME`, `TEST_CLOUDFRONT_DISTRIBUTION_ID`, and `TEST_VITE_COGNITO_CLIENT_ID` for automatic test deploys. Configure the matching `PROD_...` secrets for manual production deploys.
+The deploy workflow uses repository secrets; GitHub Environments are not required. Test deploys prefer `TEST_AWS_ACCESS_KEY_ID`, `TEST_AWS_SECRET_ACCESS_KEY`, `TEST_AWS_REGION`, `TEST_S3_BUCKET_NAME`, `TEST_CLOUDFRONT_DISTRIBUTION_ID`, and `TEST_VITE_COGNITO_CLIENT_ID`, then fall back to the unprefixed production-era secret names. Test Cognito defaults to `pokemon-detective-test` unless `TEST_COGNITO_DOMAIN` is set. Production deploys prefer `PROD_...` secrets, then fall back to unprefixed secrets.
 
 Use separate Terraform variables per environment. Start test from `terraform/test.tfvars.example`; it configures `https://test.pokemysterygame.com`, creates DNS records in the parent `pokemysterygame.com` hosted zone, and uses separate DynamoDB tables: `CaseDataTest`, `PlayerProgressTest`, and `PokedexTest`.
 
