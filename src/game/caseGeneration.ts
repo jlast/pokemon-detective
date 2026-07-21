@@ -54,30 +54,30 @@ const evidenceTemplates: EvidenceTemplate[] = [
   {
     id: 'type-residue-clue',
     category: 'typeResidue',
-    titleTemplate: 'Residue Traces',
-    clueTemplate: 'There was {typeResidue} left behind.',
-    endTemplate: 'The culprit left {typeResidue} while moving through the scene.',
+    titleTemplate: '{typeClueTitle} Clue',
+    clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
+    endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
   },
   {
     id: 'ground-trace-clue',
     category: 'groundTrace',
-    titleTemplate: '{groundTitle}',
-    clueTemplate: 'The nearby ground showed {groundTrace}.',
-    endTemplate: 'The culprit disturbed {groundTrace} near the scene.',
+    titleTemplate: '{typeClueTitle} Clue',
+    clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
+    endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
   },
   {
     id: 'force-clue',
     category: 'force',
-    titleTemplate: '{forceTitle}',
-    clueTemplate: 'The point of entry showed {forceTrace}.',
-    endTemplate: 'The culprit got through by leaving {forceTrace}.',
+    titleTemplate: '{typeClueTitle} Clue',
+    clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
+    endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
   },
   {
     id: 'witness-clue',
     category: 'witness',
-    titleTemplate: '{witnessTitle}',
-    clueTemplate: 'A witness remembered the culprit {witnessDetail}.',
-    endTemplate: 'The witness account matched someone {witnessDetail}.',
+    titleTemplate: '{typeClueTitle} Clue',
+    clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
+    endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
   },
   {
     id: 'highest-stat-clue',
@@ -264,12 +264,23 @@ const getSelectedType = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot): PokemonT
   clueTypeSlot === 'secondary' ? pokemon.types[1] ?? null : pokemon.types[0]
 )
 
+const getTypeClueTitle = (hasSecondaryType: boolean, clueTypeSlot: TypeClueSlot): string => {
+  if (!hasSecondaryType) return 'Type'
+  return clueTypeSlot === 'secondary' ? 'Secondary Type' : 'Primary Type'
+}
+
+const getTypeClueLower = (hasSecondaryType: boolean, clueTypeSlot: TypeClueSlot): string => (
+  getTypeClueTitle(hasSecondaryType, clueTypeSlot).toLowerCase()
+)
+
 const getPokemonCaseProfile = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot): PokemonCaseProfile => {
   const height = getHeightBucket(pokemon)
   const weight = getWeightBucket(pokemon)
   const primaryType = pokemon.types[0]
   const clueType = getSelectedType(pokemon, clueTypeSlot)
   const typeForNarrative = clueType ?? primaryType
+  const hasSecondaryType = Boolean(pokemon.types[1])
+  const typeClueLower = getTypeClueLower(hasSecondaryType, clueTypeSlot)
   const highestStat = pickPriorityStat(pokemon, strongestStatPriority, 'max')
   const lowestStat = pickPriorityStat(pokemon, weakestStatPriority, 'min')
 
@@ -279,7 +290,7 @@ const getPokemonCaseProfile = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot): Po
     primaryType,
     clueType,
     clueTypeSlot,
-    hasSecondaryType: Boolean(pokemon.types[1]),
+    hasSecondaryType,
     highestStat,
     lowestStat,
     values: {
@@ -288,10 +299,16 @@ const getPokemonCaseProfile = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot): Po
       ...typeValues[typeForNarrative],
       ...strongStatValues[highestStat],
       ...weakStatValues[lowestStat],
+      typeClueTitle: getTypeClueTitle(hasSecondaryType, clueTypeSlot),
+      typeClueLower,
+      typeResidue: `${typeClueLower} clue traces`,
+      groundTrace: `${typeClueLower} clue traces`,
+      forceTrace: `${typeClueLower} clue marks`,
+      witnessDetail: `noticing a ${typeClueLower} clue`,
       movementWord: heightValues[height].heightPosition,
-      textureWord: typeValues[typeForNarrative].typeResidue,
-      groundWord: typeValues[typeForNarrative].groundTrace,
-      waterAvoidanceWord: typeValues[typeForNarrative].witnessDetail,
+      textureWord: `${typeClueLower} clue traces`,
+      groundWord: `${typeClueLower} clue traces`,
+      waterAvoidanceWord: `noticing a ${typeClueLower} clue`,
     },
   }
 }
@@ -316,8 +333,7 @@ const formatList = (values: string[]): string => {
 }
 
 const getTypeClueLabel = (profile: PokemonCaseProfile): string => {
-  if (!profile.hasSecondaryType) return 'Type'
-  return profile.clueTypeSlot === 'secondary' ? 'Secondary type' : 'Primary type'
+  return getTypeClueTitle(profile.hasSecondaryType, profile.clueTypeSlot)
 }
 
 const getClueRule = (category: EvidenceCategory, profile: PokemonCaseProfile): ClueRule => {
@@ -400,19 +416,20 @@ const scorePokemonAgainstProfile = (pokemonId: number, culpritProfile: PokemonCa
 }
 
 const getCategoryConclusionFragment = (category: EvidenceCategory, profile: PokemonCaseProfile): string => {
+  const typeGroup = formatList(profile.clueType ? getTypeClueGroup(profile.clueType) : [])
   switch (category) {
     case 'height':
       return `${profile.values.heightRequirement} enough to match the height clues`
     case 'weight':
       return `${profile.values.weightRequirement} enough to match the track depth`
     case 'typeResidue':
-      return `linked to ${formatList(profile.clueType ? getTypeClueGroup(profile.clueType) : [])} ${getTypeClueLabel(profile).toLowerCase()} traces`
+      return `linked to ${typeGroup} ${getTypeClueLabel(profile).toLowerCase()} traces`
     case 'groundTrace':
-      return `able to leave ${profile.values.groundTrace}`
+      return `linked to ${typeGroup} ${getTypeClueLabel(profile).toLowerCase()} ground traces`
     case 'force':
-      return `able to leave ${profile.values.forceTrace}`
+      return `linked to ${typeGroup} ${getTypeClueLabel(profile).toLowerCase()} entry marks`
     case 'witness':
-      return `seen ${profile.values.witnessDetail}`
+      return `linked to ${typeGroup} ${getTypeClueLabel(profile).toLowerCase()} witness signs`
     case 'highestStat':
       return `strong in ${profile.values.strongStatTrace}`
     case 'lowestStat':
@@ -421,19 +438,20 @@ const getCategoryConclusionFragment = (category: EvidenceCategory, profile: Poke
 }
 
 const getCategoryDeductionText = (category: EvidenceCategory, profile: PokemonCaseProfile): string => {
+  const typeGroup = formatList(profile.clueType ? getTypeClueGroup(profile.clueType) : [])
   switch (category) {
     case 'height':
       return `This pointed toward a ${profile.values.heightRequirement} Pokemon.`
     case 'weight':
       return `This pointed toward a ${profile.values.weightRequirement} Pokemon.`
     case 'typeResidue':
-      return `This narrowed the culprit's ${getTypeClueLabel(profile).toLowerCase()} to ${formatList(profile.clueType ? getTypeClueGroup(profile.clueType) : [])}.`
+      return `This narrowed the culprit's ${getTypeClueLabel(profile).toLowerCase()} to ${typeGroup}.`
     case 'groundTrace':
-      return `This suggested a Pokemon associated with ${profile.values.groundTrace}.`
+      return `This narrowed the culprit's ${getTypeClueLabel(profile).toLowerCase()} to ${typeGroup}.`
     case 'force':
-      return `This suggested a culprit capable of leaving ${profile.values.forceTrace}.`
+      return `This narrowed the culprit's ${getTypeClueLabel(profile).toLowerCase()} to ${typeGroup}.`
     case 'witness':
-      return `This matched a culprit ${profile.values.witnessDetail}.`
+      return `This narrowed the culprit's ${getTypeClueLabel(profile).toLowerCase()} to ${typeGroup}.`
     case 'highestStat':
       return `This suggested the culprit relied on ${profile.values.strongStatTrace}.`
     case 'lowestStat':
