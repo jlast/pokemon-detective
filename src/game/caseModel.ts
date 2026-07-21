@@ -146,6 +146,7 @@ export interface Case {
   sceneImageAlt: string
   difficulty: CaseDifficulty
   culpritPokemonId: number
+  typeClueSlot?: 'primary' | 'secondary'
   maxInvestigations: number
   witnessPokemonIds?: number[]
   suspects: Suspect[]

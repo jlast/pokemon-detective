@@ -537,6 +537,7 @@ const loadCase = async (caseId: string) => {
     record.actionEvidenceMap,
     record.solution,
     record.witnessPokemonIds,
+    record.typeClueSlot ?? 'primary',
   )
   const witnessActionIds = getWitnessActionIds(fullCase)
   const requiredWitnessPokemonCount = witnessActionIds.length * WITNESS_OPTION_COUNT
@@ -596,6 +597,7 @@ const generateAndStoreCase = async (caseId: string) => {
     caseId,
     configId: gameCase.id,
     culpritPokemonId: gameCase.culpritPokemonId,
+    typeClueSlot: gameCase.typeClueSlot,
     suspectPokemonIds,
     suspectShinyMap,
     witnessPokemonIds,
