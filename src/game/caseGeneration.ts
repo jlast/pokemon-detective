@@ -185,7 +185,7 @@ const typeValues: Record<PokemonType, Record<string, string>> = {
 }
 
 const heightValues: Record<HeightBucket, Record<string, string>> = {
-  short: { heightTitle: 'Low Traces', heightPosition: 'low to the ground', heightRequirement: 'short' },
+  short: { heightTitle: 'Low Traces', heightPosition: 'low to the ground', heightRequirement: 'small' },
   medium: { heightTitle: 'Mid-Height Traces', heightPosition: 'around table height', heightRequirement: 'medium-sized' },
   tall: { heightTitle: 'High Reach', heightPosition: 'from higher up', heightRequirement: 'tall' },
 }
@@ -315,10 +315,14 @@ const formatLabel = (value: string): string => (
     .replace(/\b\w/g, (letter) => letter.toUpperCase())
 )
 
+const formatHeightLabel = (height: HeightBucket): string => (
+  height === 'short' ? 'Small' : formatLabel(height)
+)
+
 const getEvidenceBadge = (category: EvidenceCategory, profile: PokemonCaseProfile): { badgeText: string; badgeType?: string } => {
   switch (category) {
     case 'height':
-      return { badgeText: `Height: ${formatLabel(profile.height)}` }
+      return { badgeText: `Height: ${formatHeightLabel(profile.height)}` }
     case 'weight':
       return { badgeText: `Weight: ${formatLabel(profile.weight)}` }
     case 'typeResidue':
