@@ -1,5 +1,5 @@
 import { getShinySpriteUrl, pokemonData } from '../../data/pokemon'
-import type { Case, CaseDifficulty, CluePreview, Evidence, Location, LocationAction, LocationActionLeadType, LocationActionPresentation, Suspect } from '../caseModel'
+import type { Case, CaseDifficulty, CluePreview, Evidence, Location, LocationAction, LocationActionPresentation, Suspect } from '../caseModel'
 import evidenceRaw from './evidence.json'
 
 export type EvidenceOverride = { title?: string; clueText?: string }
@@ -98,7 +98,7 @@ const scenePreview = (label = 'Scene context'): CluePreview => ({
 })
 
 const presentationByActionId: Record<string, LocationActionPresentation> = {
-  crumbs: {
+  'search-scene-traces': {
     kind: 'search',
     icon: '👣',
     visualType: 'footprints',
@@ -106,7 +106,7 @@ const presentationByActionId: Record<string, LocationActionPresentation> = {
     displayLabel: 'Footprints',
     teaser: 'Fresh heel marks stop beside the area.',
   },
-  tents: {
+  'check-scene-edge': {
     kind: 'search',
     icon: '🔍',
     visualType: 'object',
@@ -316,48 +316,32 @@ const wit = (
   },
 })
 
-const leadByActionId: Record<string, LocationActionLeadType> = {
-  'follow-tracks': 'risky',
-  'photograph-tracks': 'quick',
-  'inspect-lid': 'obvious',
-  'smell-jar': 'risky',
-  tents: 'thorough',
-  'search-branches': 'thorough',
-  'search-bedding': 'thorough',
-}
-
-const act = <T extends LocationAction>(action: T): T => {
-  const leadType = leadByActionId[action.id]
-  if (leadType) (action as LocationAction).leadType = leadType
-  return action
-}
-
 const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Location[] => [
   location(`${caseId}-scene`, template.area, '🔎', `${template.area} shows signs of a careful disturbance.`,
-    ev('crumbs', 'height-clue', `Search ${template.area}`, `Look for dropped traces around ${template.area}.`, `Loose traces were scattered {movementWord} through ${template.area}.`),
-    act(ev('tents', 'height-clue', `Check around ${template.area}`, `Search the less disturbed parts of ${template.area}.`, `The quieter edge of ${template.area} was disturbed {heightPosition}.`)),
+    ev('search-scene-traces', 'height-clue', `Search ${template.area}`, `Look for dropped traces around ${template.area}.`, `Loose traces were scattered {movementWord} through ${template.area}.`),
+    ev('check-scene-edge', 'height-clue', `Check around ${template.area}`, `Search the less disturbed parts of ${template.area}.`, `The quieter edge of ${template.area} was disturbed {heightPosition}.`),
     ev('check-nearby-tools', 'force-clue', `Check nearby tools`, `Look over the tools closest to ${template.area}.`, 'One nearby tool showed {forceTrace}.'),
   ),
   location(`${caseId}-traces`, template.traceArea, '👣', `${template.traceArea} has marks leading away from the scene.`,
     ev('measure-tracks', 'weight-clue', 'Measure the marks', `Check the marks across ${template.traceArea}.`, `The marks run steadily across ${template.traceArea}.`,
       { small: `Small, light marks sit low across ${template.traceArea}.`, large: `Deep, heavy marks press into ${template.traceArea}.` }),
-    act(ev('follow-tracks', 'type-residue-clue', 'Follow the trail', 'See where the trail leads.', `A line of {textureWord} trails across ${template.traceArea}.`)),
-    act(ev('photograph-tracks', 'weight-clue', 'Photograph the marks', 'Document the marks before they are disturbed.', `The photo preserved marks that were {trackDepth} across ${template.traceArea}.`)),
+    ev('follow-tracks', 'type-residue-clue', 'Follow the trail', 'See where the trail leads.', `A line of {textureWord} trails across ${template.traceArea}.`),
+    ev('photograph-tracks', 'weight-clue', 'Photograph the marks', 'Document the marks before they are disturbed.', `The photo preserved marks that were {trackDepth} across ${template.traceArea}.`),
   ),
   location(`${caseId}-storage`, template.storageArea, '📦', `${template.storageArea} looks disturbed near its base.`,
     ev('check-roots', 'ground-trace-clue', `Inspect ${template.storageArea}`, `Look under and around ${template.storageArea}.`, `The {groundWord} near ${template.storageArea} was disturbed.`),
-    act(ev('search-branches', 'height-clue', `Check above ${template.storageArea}`, 'Search the higher surfaces nearby.', `Dust near ${template.storageArea} was shifted {heightPosition}.`)),
+    ev('search-branches', 'height-clue', `Check above ${template.storageArea}`, 'Search the higher surfaces nearby.', `Dust near ${template.storageArea} was shifted {heightPosition}.`),
     ev('listen-quietly', 'witness-clue', 'Listen quietly', 'Pause and listen for movement.', `The quiet pause caught a report of someone {witnessDetail}.`),
   ),
   location(`${caseId}-lock`, template.lockedObject, '🔐', `${template.lockedObject} shows signs of tampering.`,
-    act(ev('inspect-lid', 'force-clue', `Inspect ${template.lockedObject}`, `Study where ${template.lockedObject} was forced.`, `Something marked ${template.lockedObject} before it gave way.`)),
-    act(ev('smell-jar', 'type-residue-clue', `Smell near ${template.lockedObject}`, 'Check for any lingering scent.', `A trace of {textureWord} clung near ${template.lockedObject}.`)),
+    ev('inspect-lid', 'force-clue', `Inspect ${template.lockedObject}`, `Study where ${template.lockedObject} was forced.`, `Something marked ${template.lockedObject} before it gave way.`),
+    ev('smell-jar', 'type-residue-clue', `Smell near ${template.lockedObject}`, 'Check for any lingering scent.', `A trace of {textureWord} clung near ${template.lockedObject}.`),
     ev('check-table', 'height-clue', `Check beside ${template.lockedObject}`, `Look along the nearby surface beside ${template.lockedObject}.`, `Whoever handled ${template.lockedObject} left traces {movementWord} nearby.`),
   ),
   location(`${caseId}-witness`, template.witnessArea, '🗣️', `Someone near ${template.witnessArea} noticed something odd.`,
     wit('interview-camper', 'witness-clue', `Question the ${template.witnessRole}`, `Ask what the ${template.witnessRole} remembers.`, `The ${template.witnessRole} is certain about that detail.`, template.witnessRole),
     ev('check-wash-bucket', 'type-residue-clue', `Check ${template.waterFeature}`, `Inspect the area around ${template.waterFeature}.`, `Even near ${template.waterFeature}, a line of {textureWord} stayed behind.`),
-    act(ev('search-bedding', 'witness-clue', `Search around ${template.witnessArea}`, 'Check the nearby hiding spots.', `A note near ${template.witnessArea} described someone {witnessDetail}.`)),
+    ev('search-bedding', 'witness-clue', `Search around ${template.witnessArea}`, 'Check the nearby hiding spots.', `A note near ${template.witnessArea} described someone {witnessDetail}.`),
   ),
 ]
 
