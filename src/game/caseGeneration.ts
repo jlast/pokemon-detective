@@ -574,7 +574,7 @@ const getMismatchEvidenceLabel = (suspectId: number, culpritProfile: PokemonCase
     case 'force':
       return 'Entry clue'
     case 'witness':
-      return 'Witness clue'
+      return 'Type clue'
     case 'highestStat':
       return 'Strength clue'
     case 'lowestStat':

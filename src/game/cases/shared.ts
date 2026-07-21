@@ -83,7 +83,7 @@ const cluePreviewByEvidenceId: Record<string, CluePreview> = {
     label: 'Force clue',
   },
   'witness-clue': {
-    label: 'Witness clue',
+    label: 'Type clue',
   },
   'highest-stat-clue': {
     label: 'Strong trait',
