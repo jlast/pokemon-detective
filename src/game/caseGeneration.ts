@@ -555,6 +555,35 @@ const getMismatchReason = (suspectId: number, culpritProfile: PokemonCaseProfile
   }
 }
 
+const getMismatchEvidenceLabel = (suspectId: number, culpritProfile: PokemonCaseProfile, categories: EvidenceCategory[]) => {
+  const profile = getPokemonCaseProfile(getPokemonById(suspectId))
+  const missingCategory = categories.find((category) => {
+    const rule = getClueRule(category, culpritProfile)
+    return !rule.matchingValues.includes(getClueRuleValue(profile, category))
+  })
+
+  switch (missingCategory) {
+    case 'height':
+      return 'Height clue'
+    case 'weight':
+      return 'Track clue'
+    case 'typeResidue':
+      return 'Type clue'
+    case 'groundTrace':
+      return 'Ground clue'
+    case 'force':
+      return 'Entry clue'
+    case 'witness':
+      return 'Witness clue'
+    case 'highestStat':
+      return 'Strength clue'
+    case 'lowestStat':
+      return 'Limitation clue'
+    default:
+      return 'Evidence mismatch'
+  }
+}
+
 const joinFragments = (fragments: string[]) => {
   if (fragments.length <= 1) {
     return fragments[0] ?? 'the evidence collected'
@@ -604,6 +633,7 @@ const buildSolution = (
     .map((suspectId) => ({
       pokemonId: suspectId,
       reason: getMismatchReason(suspectId, culpritProfile, relevantCategories),
+      evidenceLabel: getMismatchEvidenceLabel(suspectId, culpritProfile, relevantCategories),
     }))
 
   return {

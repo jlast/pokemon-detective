@@ -127,6 +127,7 @@ export interface CaseEvidenceExplanation {
 export interface ClearedSuspectExplanation {
   pokemonId: number
   reason: string
+  evidenceLabel?: string
 }
 
 export interface CaseSolution {

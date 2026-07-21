@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getDiscoveredEvidence, type Case, type Suspect } from '../game/caseModel'
-import { getClearedSuspectEvidenceLabel, getEvidenceIcon } from '../game/evidenceMeta'
+import { getEvidenceIcon } from '../game/evidenceMeta'
 import { MugShot } from './Suspects/MugShot'
 
 const maxAccusations = 3
@@ -79,7 +79,7 @@ export function EndingScreen({
         <MugShot suspect={suspect} />
         <span className="cleared-suspect-copy">
           <strong>{suspect.name}</strong>
-          <span><span className="cleared-suspect-cross" aria-hidden="true">×</span>{getClearedSuspectEvidenceLabel(explanation?.reason)}</span>
+          <span><span className="cleared-suspect-cross" aria-hidden="true">×</span>{explanation?.evidenceLabel ?? 'Evidence mismatch'}</span>
         </span>
       </div>
     )
