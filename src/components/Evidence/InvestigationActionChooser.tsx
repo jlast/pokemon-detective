@@ -11,10 +11,7 @@ const clueStrengthLabels: Record<CluePreviewStrength, string> = {
   weak: 'Weak',
 }
 
-const getCluePreview = (action: LocationAction): string => {
-  const strength = clueStrengthLabels[action.cluePreview.strength]
-  return `Pursues: ${action.cluePreview.label} (${strength})`
-}
+const getClueStrengthLabel = (action: LocationAction): string => clueStrengthLabels[action.cluePreview.strength]
 
 const leadTypeIcons: Record<LeadType, string> = {
   search: '👣',
@@ -160,8 +157,8 @@ interface EvidenceLeadCardProps {
   paperStyle: LeadPaperStyle
   label: string
   teaser: string
-  cluePreview: string
-  clueHint: string
+  clueLabel: string
+  clueStrength: string
   onFollow: () => void
   disabled?: boolean
   isFollowed?: boolean
@@ -172,8 +169,8 @@ function EvidenceLeadCard({
   paperStyle,
   label,
   teaser,
-  cluePreview,
-  clueHint,
+  clueLabel,
+  clueStrength,
   onFollow,
   disabled = false,
   isFollowed = false,
@@ -191,9 +188,11 @@ function EvidenceLeadCard({
 
       <div className="evidence-lead-card__content">
         <span className="evidence-lead-card__label">{label}</span>
-        <span className="lead-option__type">{cluePreview}</span>
-        <span className="lead-option__description">{clueHint}</span>
-        <p className="evidence-lead-card__teaser">{teaser}</p>
+        <span className={`lead-value-pill lead-value-pill--${clueStrength.toLowerCase()}`}>
+          <strong>{clueLabel}</strong>
+          <span>{clueStrength}</span>
+        </span>
+        <p className="lead-flavor">{teaser}</p>
       </div>
 
       <span className="evidence-lead-card__cta">{isFollowed ? 'Complete' : 'Click to investigate'}</span>
@@ -274,8 +273,10 @@ export function InvestigationActionChooser({
                     {leadTypeLabels[leadType]}
                   </span>
                   <span className="lead-option__title">Question {witnessRole}: {pokemon.name}</span>
-                  <span className="lead-option__type">{getCluePreview(action)}</span>
-                  <span className="lead-option__description">{action.cluePreview.hint}</span>
+                  <span className={`lead-value-pill lead-value-pill--${getClueStrengthLabel(action).toLowerCase()}`}>
+                    <strong>{action.cluePreview.label}</strong>
+                    <span>{getClueStrengthLabel(action)}</span>
+                  </span>
                   <span className="lead-option__pokemon-preview" aria-label="Available witness Pokemon">
                     <span className="lead-option__pokemon">
                       <span className="lead-option__pokemon-frame">
@@ -284,7 +285,7 @@ export function InvestigationActionChooser({
                       <span>{pokemon.name}</span>
                     </span>
                   </span>
-                  <span className="lead-option__description">{getWitnessPrompt(pokemon.name, witnessRole, index)}</span>
+                  <span className="lead-flavor">{getWitnessPrompt(pokemon.name, witnessRole, index)}</span>
                   <span className="lead-option__cta">{isFollowed ? 'Complete' : 'Click to investigate'}</span>
                 </button>
               )
@@ -298,8 +299,8 @@ export function InvestigationActionChooser({
               paperStyle={getLeadPaperStyle(action)}
               label={getEvidenceLeadLabel(action)}
               teaser={getEvidenceLeadTeaser(action)}
-              cluePreview={getCluePreview(action)}
-              clueHint={action.cluePreview.hint}
+              clueLabel={action.cluePreview.label}
+              clueStrength={getClueStrengthLabel(action)}
               onFollow={() => chooseAction(action.id)}
               disabled={disabled || isFollowed}
               isFollowed={isFollowed}
