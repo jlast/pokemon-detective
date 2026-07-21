@@ -108,7 +108,9 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
 
     const suspectShinyMap: Record<string, boolean> = {}
     for (const suspect of gameCase.suspects) {
-      suspectShinyMap[String(suspect.pokemonId)] = suspect.isShiny
+      if (suspect.isShiny) {
+        suspectShinyMap[String(suspect.pokemonId)] = true
+      }
     }
     const suspectPokemonIds = gameCase.suspects.map((s) => s.pokemonId)
     const witnessPokemonIds = createWitnessPokemonIds(suspectPokemonIds, countWitnessActions(gameCase) * WITNESS_OPTION_COUNT)

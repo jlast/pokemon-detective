@@ -19,7 +19,7 @@ export function InvestigationResult({
   const hasEvidence = action.outcomeType === 'evidence' || action.outcomeType === 'witness'
   const summaryText = hasEvidence
     ? `Evidence recovered: ${action.evidenceTitle}`
-    : 'No useful evidence recovered.'
+    : 'Lead closed without primary evidence.'
 
   return (
     <div className={`location-evidence-preview ${highlightResult ? 'is-revealed' : ''}`}>
@@ -31,7 +31,7 @@ export function InvestigationResult({
       {!isExpanded ? (
         <div className="location-evidence-list">
           <span>{summaryText}</span>
-          <span>{hasEvidence ? action.observationText : 'This lead does not strengthen your case.'}</span>
+          <span>{hasEvidence ? action.observationText : 'This route can be ruled out.'}</span>
         </div>
       ) : (
         hasEvidence ? (
@@ -51,10 +51,10 @@ export function InvestigationResult({
           </div>
         ) : (
           <div className="location-evidence-list">
-            <span>No useful evidence recovered.</span>
+            <span>Lead closed without primary evidence.</span>
             <span>{action.observationText}</span>
             <span className="location-evidence-copy">Observation</span>
-            <span>This lead does not strengthen your case.</span>
+            <span>This route can be ruled out while you focus on stronger clue paths.</span>
           </div>
         )
       )}

@@ -242,11 +242,15 @@ const stripActionOutcome = (action: LocationAction): LocationAction => {
     evidenceBadgeText: _evidenceBadgeText,
     evidenceBadgeType: _evidenceBadgeType,
     implicationText: _implicationText,
+    clueRule,
     unlocksLocationIds: _unlocksLocationIds,
     isUseful: _isUseful,
     ...rest
   } = action
-  return rest as LocationAction
+  return {
+    ...rest,
+    ...(clueRule ? { clueRule: { ...clueRule, matchingValues: [] } } : {}),
+  } as LocationAction
 }
 
 const getProgressTtl = (): number => Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400
@@ -321,9 +325,19 @@ const markPokedexSeen = async (sub: string, pokemonIds: number[]): Promise<void>
   })
 }
 
-const createSuspectShinyMap = (fullCase: Case): Record<string, boolean> => Object.fromEntries(
-  fullCase.suspects.map((suspect) => [String(suspect.pokemonId), Math.random() < SHINY_ODDS]),
+const compactSuspectShinyMap = (suspectShinyMap: Record<string, boolean>): Record<string, boolean> => Object.fromEntries(
+  Object.entries(suspectShinyMap).filter(([, isShiny]) => isShiny),
 )
+
+const createSuspectShinyMap = (fullCase: Case): Record<string, boolean> => {
+  const suspectShinyMap: Record<string, boolean> = {}
+  for (const suspect of fullCase.suspects) {
+    if (Math.random() < SHINY_ODDS) {
+      suspectShinyMap[String(suspect.pokemonId)] = true
+    }
+  }
+  return suspectShinyMap
+}
 
 const resolveEvidenceTitle = (record: InvestigatedLocationRecord, action: LocationAction | undefined): string | undefined => (
   action?.evidenceTitle ?? record.evidenceTitle ?? undefined
@@ -341,9 +355,7 @@ const resolveEvidenceBadgeType = (record: InvestigatedLocationRecord, action: Lo
   action?.evidenceBadgeType ?? record.evidenceBadgeType
 )
 
-const hasCompleteSuspectShinyMap = (progress: PlayerProgressRecord, fullCase: Case): boolean => (
-  fullCase.suspects.every((suspect) => typeof progress.suspectShinyMap?.[String(suspect.pokemonId)] === 'boolean')
-)
+const hasSuspectShinyMap = (progress: PlayerProgressRecord): boolean => progress.suspectShinyMap !== undefined
 
 const createCaseProgress = (
   userId: string,
@@ -407,22 +419,20 @@ const ensureProgressDefaults = async (
     updates.interviewedWitnessPokemonIds = next.interviewedWitnessPokemonIds
   }
 
-  if (hasCompleteSuspectShinyMap(next, fullCase)) {
+  if (hasSuspectShinyMap(next)) {
+    const suspectShinyMap = compactSuspectShinyMap(next.suspectShinyMap)
+    if (Object.keys(suspectShinyMap).length !== Object.keys(next.suspectShinyMap).length) {
+      next.suspectShinyMap = suspectShinyMap
+      updates.suspectShinyMap = suspectShinyMap
+    }
+
     if (Object.keys(updates).length > 0) {
       await updateProgress(userId, { ...updates, ttl: getProgressTtl() })
     }
     return next
   }
 
-  const suspectShinyMap = {
-    ...(next.suspectShinyMap ?? {}),
-  }
-
-  for (const suspect of fullCase.suspects) {
-    const key = String(suspect.pokemonId)
-    suspectShinyMap[key] ??= Math.random() < SHINY_ODDS
-  }
-
+  const suspectShinyMap = createSuspectShinyMap(fullCase)
   next.suspectShinyMap = suspectShinyMap
   updates.suspectShinyMap = suspectShinyMap
 
@@ -574,7 +584,9 @@ const generateAndStoreCase = async (caseId: string) => {
 
   const suspectShinyMap: Record<string, boolean> = {}
   for (const suspect of gameCase.suspects) {
-    suspectShinyMap[String(suspect.pokemonId)] = suspect.isShiny
+    if (suspect.isShiny) {
+      suspectShinyMap[String(suspect.pokemonId)] = true
+    }
   }
   const suspectPokemonIds = gameCase.suspects.map((s) => s.pokemonId)
   const witnessPokemonIds = createWitnessPokemonIds(suspectPokemonIds, countWitnessActions(gameCase) * WITNESS_OPTION_COUNT)

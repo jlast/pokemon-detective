@@ -1,9 +1,47 @@
-import type { LocationAction } from '../../game/caseModel'
+import type { CluePrecision, LocationAction } from '../../game/caseModel'
 import { pokemonData, type Pokemon } from '../../data/pokemon'
 import { LeadVisualIcon, type LeadVisualType } from './leadVisualIcons'
 
 type LeadType = 'search' | 'inspect' | 'question'
 type LeadPaperStyle = 'notebook' | 'tag' | 'clipboard'
+
+const cluePrecisionLabels: Record<CluePrecision, string> = {
+  exact: 'Strong',
+  grouped: 'Medium',
+  broad: 'Broad',
+  negative: 'Exclusion',
+  none: 'Low',
+}
+
+const getClueAxisLabel = (action: LocationAction): string => {
+  switch (action.clueRule?.axis) {
+    case 'height':
+      return 'Height / reach'
+    case 'weight':
+      return 'Weight'
+    case 'type':
+      return 'Type group'
+    case 'groundTrace':
+      return 'Ground trace'
+    case 'force':
+      return 'Force'
+    case 'witness':
+      return 'Witness account'
+    case 'highestStat':
+      return 'Strong trait'
+    case 'lowestStat':
+      return 'Limitation'
+    case 'scene':
+      return 'Scene context'
+    default:
+      return action.outcomeType === 'nothing' ? 'Low-confidence lead' : 'Unknown clue'
+  }
+}
+
+const getCluePreview = (action: LocationAction): string => {
+  const precision = cluePrecisionLabels[action.clueRule?.precision ?? (action.outcomeType === 'nothing' ? 'none' : 'broad')]
+  return `May reveal: ${getClueAxisLabel(action)} (${precision})`
+}
 
 const leadTypeIcons: Record<LeadType, string> = {
   search: '👣',
@@ -149,6 +187,7 @@ interface EvidenceLeadCardProps {
   paperStyle: LeadPaperStyle
   label: string
   teaser: string
+  cluePreview: string
   onFollow: () => void
   disabled?: boolean
   isFollowed?: boolean
@@ -159,6 +198,7 @@ function EvidenceLeadCard({
   paperStyle,
   label,
   teaser,
+  cluePreview,
   onFollow,
   disabled = false,
   isFollowed = false,
@@ -176,6 +216,7 @@ function EvidenceLeadCard({
 
       <div className="evidence-lead-card__content">
         <span className="evidence-lead-card__label">{label}</span>
+        <span className="lead-option__type">{cluePreview}</span>
         <p className="evidence-lead-card__teaser">{teaser}</p>
       </div>
 
@@ -257,6 +298,7 @@ export function InvestigationActionChooser({
                     {leadTypeLabels[leadType]}
                   </span>
                   <span className="lead-option__title">Question {witnessRole}: {pokemon.name}</span>
+                  <span className="lead-option__type">{getCluePreview(action)}</span>
                   <span className="lead-option__pokemon-preview" aria-label="Available witness Pokemon">
                     <span className="lead-option__pokemon">
                       <span className="lead-option__pokemon-frame">
@@ -279,6 +321,7 @@ export function InvestigationActionChooser({
               paperStyle={getLeadPaperStyle(action)}
               label={getEvidenceLeadLabel(action)}
               teaser={getEvidenceLeadTeaser(action)}
+              cluePreview={getCluePreview(action)}
               onFollow={() => chooseAction(action.id)}
               disabled={disabled || isFollowed}
               isFollowed={isFollowed}

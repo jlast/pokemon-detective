@@ -30,6 +30,16 @@ export type LocationActionOutcomeType = 'evidence' | 'witness' | 'nothing' | 'un
 
 export type LocationActionLeadType = 'careful' | 'thorough' | 'quick' | 'risky' | 'uncertain' | 'obvious'
 
+export type ClueAxis = 'height' | 'weight' | 'type' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'scene'
+
+export type CluePrecision = 'exact' | 'grouped' | 'broad' | 'negative' | 'none'
+
+export interface ClueRule {
+  axis: ClueAxis
+  precision: CluePrecision
+  matchingValues: string[]
+}
+
 export interface LocationAction {
   id: string
   label: string
@@ -48,6 +58,7 @@ export interface LocationAction {
   observationTextMedium?: string
   observationTextLarge?: string
   implicationText?: string
+  clueRule?: ClueRule
   unlocksLocationIds?: string[]
   isUseful: boolean
 }
@@ -81,6 +92,7 @@ export interface Evidence {
   badgeText?: string
   badgeType?: string
   hiddenTrait: string
+  rule: ClueRule
   endExplanation: string
   discovered: boolean
 }
@@ -143,6 +155,7 @@ export function getDiscoveredEvidence(caseData: Case): Evidence[] {
         badgeText: action?.evidenceBadgeText ?? location.evidenceBadgeText,
         badgeType: action?.evidenceBadgeType ?? location.evidenceBadgeType,
         hiddenTrait: '',
+        rule: action?.clueRule ?? { axis: 'scene', precision: 'none', matchingValues: [] },
         endExplanation: '',
         discovered: true,
       })

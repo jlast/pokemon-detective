@@ -134,10 +134,10 @@ export function InvestigationLocationPage({
           ) : (
             <section className="no-evidence-result-card">
               <p className="no-evidence-location">✓ {location.name} investigated</p>
-              <h3>Nothing useful here</h3>
+              <h3>Lead closed</h3>
               <div className="no-evidence-copy">
-                <p>The area appears undisturbed.</p>
-                <p>This location can be ruled out.</p>
+                <p>{evidenceText ?? 'This lead did not produce a primary clue.'}</p>
+                <p>No evidence was pinned, but this route is now ruled out.</p>
               </div>
             </section>
           )}

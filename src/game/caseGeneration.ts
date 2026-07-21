@@ -1,5 +1,5 @@
 import { pokemonData, type Pokemon, type PokemonType } from '../data/pokemon'
-import type { CaseEvidenceExplanation, ClearedSuspectExplanation, Evidence, Location, LocationAction } from './caseModel'
+import type { CaseEvidenceExplanation, ClearedSuspectExplanation, ClueRule, Evidence, Location, LocationAction } from './caseModel'
 import { getPokemonById } from './suspectCaseFile'
 
 type StatName = 'hp' | 'attack' | 'defense' | 'specialAttack' | 'specialDefense' | 'speed'
@@ -20,6 +20,7 @@ type GeneratedEvidence = {
   clueText: string
   badgeText: string
   badgeType?: string
+  rule: ClueRule
   endExplanation: string
   deductionText: string
 }
@@ -184,6 +185,15 @@ const typeValues: Record<PokemonType, Record<string, string>> = {
   },
 }
 
+const typeClueGroups: PokemonType[][] = [
+  ['fire', 'water', 'ground'],
+  ['electric', 'steel', 'rock'],
+  ['grass', 'bug', 'poison'],
+  ['ghost', 'psychic', 'dark'],
+  ['flying', 'dragon', 'fairy'],
+  ['normal', 'fighting', 'ice'],
+]
+
 const heightValues: Record<HeightBucket, Record<string, string>> = {
   short: { heightTitle: 'Low Traces', heightPosition: 'low to the ground', heightRequirement: 'small' },
   medium: { heightTitle: 'Mid-Height Traces', heightPosition: 'around table height', heightRequirement: 'medium-sized' },
@@ -291,7 +301,39 @@ const fillNarrativeTemplate = (template: string, profile: PokemonCaseProfile): s
 
 const getEvidenceTemplate = (evidenceId: string): EvidenceTemplate => evidenceTemplateById.get(evidenceId) ?? evidenceTemplates[0]!
 
-const getProfileCategoryValue = (profile: PokemonCaseProfile, category: EvidenceCategory): string => {
+const getTypeClueGroup = (type: PokemonType): PokemonType[] => (
+  typeClueGroups.find((group) => group.includes(type)) ?? [type]
+)
+
+const formatList = (values: string[]): string => {
+  const labels = values.map(formatLabel)
+  if (labels.length <= 1) return labels[0] ?? ''
+  if (labels.length === 2) return `${labels[0]} or ${labels[1]}`
+  return `${labels.slice(0, -1).join(', ')}, or ${labels.at(-1)}`
+}
+
+const getClueRule = (category: EvidenceCategory, profile: PokemonCaseProfile): ClueRule => {
+  switch (category) {
+    case 'height':
+      return { axis: 'height', precision: 'exact', matchingValues: [profile.height] }
+    case 'weight':
+      return { axis: 'weight', precision: 'exact', matchingValues: [profile.weight] }
+    case 'typeResidue':
+      return { axis: 'type', precision: 'grouped', matchingValues: getTypeClueGroup(profile.primaryType) }
+    case 'groundTrace':
+      return { axis: 'groundTrace', precision: 'exact', matchingValues: [profile.primaryType] }
+    case 'force':
+      return { axis: 'force', precision: 'exact', matchingValues: [profile.primaryType] }
+    case 'witness':
+      return { axis: 'witness', precision: 'exact', matchingValues: [profile.primaryType] }
+    case 'highestStat':
+      return { axis: 'highestStat', precision: 'exact', matchingValues: [profile.highestStat] }
+    case 'lowestStat':
+      return { axis: 'lowestStat', precision: 'exact', matchingValues: [profile.lowestStat] }
+  }
+}
+
+const getClueRuleValue = (profile: PokemonCaseProfile, category: EvidenceCategory): string => {
   switch (category) {
     case 'height':
       return profile.height
@@ -326,6 +368,7 @@ const getEvidenceBadge = (category: EvidenceCategory, profile: PokemonCaseProfil
     case 'weight':
       return { badgeText: `Weight: ${formatLabel(profile.weight)}` }
     case 'typeResidue':
+      return { badgeText: `Type group: ${formatList(getTypeClueGroup(profile.primaryType))}` }
     case 'groundTrace':
     case 'force':
     case 'witness':
@@ -342,11 +385,11 @@ const getRelevantCategories = (_pokemon: Pokemon): EvidenceCategory[] => ['heigh
 const scorePokemonAgainstProfile = (pokemonId: number, culpritProfile: PokemonCaseProfile, categories: EvidenceCategory[]) => {
   const profile = getPokemonCaseProfile(getPokemonById(pokemonId))
 
-  return categories.reduce((score, category) => (
-    getProfileCategoryValue(profile, category) === getProfileCategoryValue(culpritProfile, category)
-      ? score + 1
-      : score
-  ), 0)
+  return categories.reduce((score, category) => {
+    const rule = getClueRule(category, culpritProfile)
+    const value = getClueRuleValue(profile, category)
+    return rule.matchingValues.includes(value) ? score + 1 : score
+  }, 0)
 }
 
 const getCategoryConclusionFragment = (category: EvidenceCategory, profile: PokemonCaseProfile): string => {
@@ -356,7 +399,7 @@ const getCategoryConclusionFragment = (category: EvidenceCategory, profile: Poke
     case 'weight':
       return `${profile.values.weightRequirement} enough to match the track depth`
     case 'typeResidue':
-      return `linked to ${profile.values.typeResidue}`
+      return `linked to ${formatList(getTypeClueGroup(profile.primaryType))} type traces`
     case 'groundTrace':
       return `able to leave ${profile.values.groundTrace}`
     case 'force':
@@ -377,7 +420,7 @@ const getCategoryDeductionText = (category: EvidenceCategory, profile: PokemonCa
     case 'weight':
       return `This pointed toward a ${profile.values.weightRequirement} Pokemon.`
     case 'typeResidue':
-      return `This suggested a Pokemon that could leave ${profile.values.typeResidue}.`
+      return `This narrowed the culprit to ${formatList(getTypeClueGroup(profile.primaryType))} types.`
     case 'groundTrace':
       return `This suggested a Pokemon associated with ${profile.values.groundTrace}.`
     case 'force':
@@ -395,11 +438,25 @@ const buildEvidenceFromTemplate = (evidenceId: string, culprit: Pokemon): Genera
   const profile = getPokemonCaseProfile(culprit)
   const template = getEvidenceTemplate(evidenceId)
   const badge = getEvidenceBadge(template.category, profile)
+  const rule = getClueRule(template.category, profile)
+
+  if (template.category === 'typeResidue') {
+    const typeGroup = formatList(rule.matchingValues)
+    return {
+      title: 'Mixed Type Residue',
+      clueText: `The residue matched a small cluster of possible types: ${typeGroup}.`,
+      ...badge,
+      rule,
+      endExplanation: `The culprit left residue consistent with ${typeGroup} types.`,
+      deductionText: getCategoryDeductionText(template.category, profile),
+    }
+  }
 
   return {
     title: fillTemplate(template.titleTemplate, profile.values),
     clueText: fillTemplate(template.clueTemplate, profile.values),
     ...badge,
+    rule,
     endExplanation: fillTemplate(template.endTemplate, profile.values),
     deductionText: getCategoryDeductionText(template.category, profile),
   }
@@ -449,6 +506,7 @@ export const generateCaseEvidence = (
       clueText: override?.clueText ? fillNarrativeTemplate(override.clueText, profile) : generated.clueText,
       badgeText: generated.badgeText,
       badgeType: generated.badgeType,
+      rule: generated.rule,
       endExplanation: override?.endExplanation ? fillNarrativeTemplate(override.endExplanation, profile) : generated.endExplanation,
       hiddenTrait: getEvidenceTemplate(evidenceItem.id).category,
     }
@@ -488,6 +546,7 @@ export const generateCaseLocations = (
         evidenceText: generatedEvidenceItem?.clueText ?? action.evidenceText,
         evidenceBadgeText: generatedEvidenceItem?.badgeText,
         evidenceBadgeType: generatedEvidenceItem?.badgeType,
+        clueRule: generatedEvidenceItem?.rule,
         observationText: generatedNarrative.observationText,
         implicationText: generatedNarrative.implicationText,
       }
@@ -497,9 +556,10 @@ export const generateCaseLocations = (
 
 const getMismatchReason = (suspectId: number, culpritProfile: PokemonCaseProfile, categories: EvidenceCategory[]) => {
   const profile = getPokemonCaseProfile(getPokemonById(suspectId))
-  const missingCategory = categories.find((category) => (
-    getProfileCategoryValue(profile, category) !== getProfileCategoryValue(culpritProfile, category)
-  ))
+  const missingCategory = categories.find((category) => {
+    const rule = getClueRule(category, culpritProfile)
+    return !rule.matchingValues.includes(getClueRuleValue(profile, category))
+  })
 
   switch (missingCategory) {
     case 'height':
@@ -507,7 +567,7 @@ const getMismatchReason = (suspectId: number, culpritProfile: PokemonCaseProfile
     case 'weight':
       return `Did not fit the ${culpritProfile.values.weightRequirement} track clues.`
     case 'typeResidue':
-      return `Did not match the ${culpritProfile.values.typeResidue} left behind.`
+      return `Did not match the ${formatList(getTypeClueGroup(culpritProfile.primaryType))} type residue group.`
     case 'groundTrace':
       return `Did not explain the ${culpritProfile.values.groundTrace} at the scene.`
     case 'force':
