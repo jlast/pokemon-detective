@@ -2,9 +2,9 @@ import type { Case, CaseSolution } from '../caseModel'
 import { getPokemonById } from '../suspectCaseFile'
 import { generateCaseEvidence, generateCaseLineup, generateCaseLocations } from '../caseGeneration'
 import { createBaseCase, createSuspect, hydrateCaseConfig, type CaseConfig, type RawCaseConfig } from './shared'
-import additionalCasesRaw from './additionalCases.json'
+import { cases as casesRaw } from './cases'
 
-export const allCases: CaseConfig[] = (additionalCasesRaw as RawCaseConfig[]).map(hydrateCaseConfig)
+export const allCases: CaseConfig[] = (casesRaw as RawCaseConfig[]).map(hydrateCaseConfig)
 
 const buildCase = (caseConfig: CaseConfig): Case => {
   const baseCase = createBaseCase(caseConfig)
@@ -15,8 +15,6 @@ const buildCase = (caseConfig: CaseConfig): Case => {
     culpritPokemonId: generated.culpritPokemonId,
     suspects: generated.suspectPokemonIds.map((id) => createSuspect(id)).map((suspect) => ({
       ...suspect,
-      inspectedGroups: { ...suspect.inspectedGroups },
-      inspectedFacts: suspect.inspectedFacts.map((fact) => ({ ...fact })),
     })),
     locations: generated.locations.map((locationItem) => ({
       ...locationItem,

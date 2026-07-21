@@ -15,7 +15,7 @@ import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
 import { getCurrentCase, investigate as apiInvestigate, accuse as apiAccuse, clearSuspect as apiClearSuspect } from './api'
 import { allCases } from './game/cases'
-import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from './game/caseModel'
+import type { Case, Suspect, SuspectNoteStatus } from './game/caseModel'
 import {
   TODAY_ACCUSE_PATH,
   TODAY_ENDING_PATH,
@@ -102,24 +102,20 @@ function App() {
 
   const [suspectNotes, setSuspectNotes] = useState<Map<number, {
     noteStatus: SuspectNoteStatus
-    inspectedGroups: Record<SuspectInvestigationGroup, boolean>
   }>>(new Map())
 
   const updateSuspectNote = (
     pokemonId: number,
     updater: (prev: {
       noteStatus: SuspectNoteStatus
-      inspectedGroups: Record<SuspectInvestigationGroup, boolean>
     }) => {
       noteStatus: SuspectNoteStatus
-      inspectedGroups: Record<SuspectInvestigationGroup, boolean>
     },
   ) => {
     setSuspectNotes((prev) => {
       const next = new Map(prev)
       const current = next.get(pokemonId) ?? {
         noteStatus: 'suspect' as const,
-        inspectedGroups: { appearance: false, records: false, habitat: false, ability: false },
       }
       next.set(pokemonId, updater(current))
       return next
@@ -135,7 +131,6 @@ function App() {
       return {
         ...s,
         noteStatus: notes.noteStatus,
-        inspectedGroups: notes.inspectedGroups,
         manuallyRuledOut: s.manuallyRuledOut || notes.noteStatus === 'ruled-out',
       }
     })
@@ -238,10 +233,7 @@ function App() {
   const toggleRuledOut = (suspectId: number) => {
     const current = suspectNotes.get(suspectId)
     const newStatus = current?.noteStatus === 'ruled-out' ? 'suspect' : 'ruled-out'
-    updateSuspectNote(suspectId, (prev) => ({
-      noteStatus: newStatus,
-      inspectedGroups: prev.inspectedGroups,
-    }))
+    updateSuspectNote(suspectId, () => ({ noteStatus: newStatus }))
     if (authed) {
       apiClearSuspect(getTodayCaseId(), suspectId, newStatus === 'ruled-out').catch((err) =>
         console.error('Failed to sync suspect status:', err),
@@ -250,10 +242,7 @@ function App() {
   }
 
   const setSuspectNoteStatus = (suspectId: number, noteStatus: SuspectNoteStatus) => {
-    updateSuspectNote(suspectId, (prev) => ({
-      noteStatus,
-      inspectedGroups: prev.inspectedGroups,
-    }))
+    updateSuspectNote(suspectId, () => ({ noteStatus }))
     if (authed) {
       apiClearSuspect(getTodayCaseId(), suspectId, noteStatus === 'ruled-out').catch((err) =>
         console.error('Failed to sync suspect status:', err),
@@ -263,13 +252,6 @@ function App() {
 
   const inspectSuspect = (suspectId: number) => {
     navigate(suspectPath(suspectId))
-  }
-
-  const inspectGroup = (suspectId: number, groupKey: SuspectInvestigationGroup) => {
-    updateSuspectNote(suspectId, (prev) => ({
-      ...prev,
-      inspectedGroups: { ...prev.inspectedGroups, [groupKey]: true },
-    }))
   }
 
   const openAccusation = (suspectId: number) => {
@@ -510,7 +492,6 @@ function App() {
     lastInvestigatedLocationId,
     wrongAccusationIds,
     inspectSuspect,
-    inspectGroup,
     setSuspectNoteStatus,
     toggleRuledOut,
     openAccusation,
@@ -620,7 +601,6 @@ function App() {
               <SuspectFileRoute
                 currentCase={currentCase}
                 wrongAccusationIds={wrongAccusationIds}
-                inspectGroup={inspectGroup}
                 setSuspectNoteStatus={setSuspectNoteStatus}
                 openAccusation={openAccusation}
                 attemptsLeft={attemptsLeft}

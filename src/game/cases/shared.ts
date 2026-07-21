@@ -1,5 +1,5 @@
 import { getShinySpriteUrl, pokemonData } from '../../data/pokemon'
-import type { Case, CaseDifficulty, CluePreview, Evidence, InspectedFact, Location, LocationAction, LocationActionLeadType, Suspect } from '../caseModel'
+import type { Case, CaseDifficulty, CluePreview, Evidence, Location, LocationAction, LocationActionLeadType, Suspect } from '../caseModel'
 import { getAbilityText, getEvolutionLineText, getHabitatNote } from '../suspectCaseFile'
 import evidenceRaw from './evidence.json'
 
@@ -71,55 +71,6 @@ const getPokemon = (pokemonId: number) => {
   return pokemon
 }
 
-export const createHiddenFacts = (pokemonId: number): InspectedFact[] => {
-  const pokemon = getPokemon(pokemonId)
-
-  return [
-    {
-      key: 'type',
-      label: 'Type',
-      value: pokemon.types.map((type) => type[0].toUpperCase() + type.slice(1)).join(' / '),
-      discovered: false,
-    },
-    {
-      key: 'region',
-      label: 'Region',
-      value: pokemon.region,
-      discovered: false,
-    },
-    {
-      key: 'height',
-      label: 'Height',
-      value: `${pokemon.heightM} m`,
-      discovered: false,
-    },
-    {
-      key: 'weight',
-      label: 'Weight',
-      value: `${pokemon.weightKg} kg`,
-      discovered: false,
-    },
-    {
-      key: 'ability',
-      label: 'Ability',
-      value: getAbilityText(pokemonId),
-      discovered: false,
-    },
-    {
-      key: 'evolution-line',
-      label: 'Evolution line',
-      value: getEvolutionLineText(pokemon),
-      discovered: false,
-    },
-    {
-      key: 'habitat-note',
-      label: 'Habitat note',
-      value: getHabitatNote(pokemonId),
-      discovered: false,
-    },
-  ]
-}
-
 export const createSuspect = (pokemonId: number, isShinyOverride?: boolean): Suspect => {
   const pokemon = getPokemon(pokemonId)
   const isShiny = isShinyOverride ?? (Math.random() < 0.01)
@@ -131,13 +82,6 @@ export const createSuspect = (pokemonId: number, isShinyOverride?: boolean): Sus
     isShiny,
     manuallyRuledOut: false,
     noteStatus: 'suspect',
-    inspectedGroups: {
-      appearance: false,
-      records: false,
-      habitat: false,
-      ability: false,
-    },
-    inspectedFacts: createHiddenFacts(pokemonId),
   }
 }
 
@@ -159,37 +103,37 @@ const cluePreviewByEvidenceId: Record<string, CluePreview> = {
   'height-clue': {
     axis: 'height',
     strength: 'strong',
-    label: 'Height / reach',
+    label: 'Size clue',
     hint: 'Checks whether the culprit was small, medium-sized, or tall.',
   },
   'weight-clue': {
     axis: 'weight',
     strength: 'strong',
-    label: 'Weight',
+    label: 'Weight clue',
     hint: 'Checks how heavy the culprit was from pressure or track depth.',
   },
   'type-residue-clue': {
     axis: 'type',
     strength: 'medium',
-    label: 'Type group',
+    label: 'Type clue',
     hint: 'Narrows the culprit to a small set of possible Pokemon types.',
   },
   'ground-trace-clue': {
     axis: 'groundTrace',
     strength: 'strong',
-    label: 'Ground trace',
+    label: 'Movement clue',
     hint: 'Checks what kind of trace the culprit left on nearby terrain.',
   },
   'force-clue': {
     axis: 'force',
     strength: 'strong',
-    label: 'Force',
+    label: 'Force clue',
     hint: 'Checks what kind of force or entry mark the culprit could leave.',
   },
   'witness-clue': {
     axis: 'witness',
     strength: 'medium',
-    label: 'Witness account',
+    label: 'Witness clue',
     hint: 'Gets a remembered movement or behavior detail from a witness.',
   },
   'highest-stat-clue': {
@@ -214,18 +158,18 @@ const scenePreview = (label = 'Scene context'): CluePreview => ({
 })
 
 const sideRoutePreviewByActionId: Record<string, CluePreview> = {
-  tents: scenePreview('Disturbed edge'),
-  'check-fire-pit': scenePreview('Heat check'),
-  'photograph-tracks': scenePreview('Track pattern'),
-  'search-branches': scenePreview('High-surface check'),
-  'listen-quietly': scenePreview('Sound check'),
-  'smell-jar': scenePreview('Scent check'),
-  'search-bedding': scenePreview('Hidden nook'),
-  'check-nearby-tools': scenePreview('Tool check'),
-  'scan-quiet-corner': scenePreview('Quiet-corner check'),
-  'inspect-side-surface': scenePreview('Side-surface check'),
-  'check-reading-lamps': scenePreview('Light check'),
-  'search-armchairs': scenePreview('Hiding-place check'),
+  tents: scenePreview('Size clue'),
+  'check-fire-pit': scenePreview('Type clue'),
+  'photograph-tracks': scenePreview('Movement clue'),
+  'search-branches': scenePreview('Height clue'),
+  'listen-quietly': scenePreview('Movement clue'),
+  'smell-jar': scenePreview('Type clue'),
+  'search-bedding': scenePreview('Handling clue'),
+  'check-nearby-tools': scenePreview('Force clue'),
+  'scan-quiet-corner': scenePreview('Movement clue'),
+  'inspect-side-surface': scenePreview('Handling clue'),
+  'check-reading-lamps': scenePreview('Type clue'),
+  'search-armchairs': scenePreview('Handling clue'),
 }
 
 const previewForEvidenceId = (evidenceId?: string | null): CluePreview => (
@@ -260,8 +204,6 @@ const ev = (
   observationTextMedium: sizeOverrides?.medium,
   observationTextLarge: sizeOverrides?.large,
   cluePreview: previewForEvidenceId(evidenceIdByActionId[id as keyof typeof evidenceIdByActionId]),
-  unlocksLocationIds: [],
-  isUseful: true,
 })
 
 const wit = (
@@ -280,8 +222,6 @@ const wit = (
   evidenceText: null,
   observationText,
   cluePreview: previewForEvidenceId(evidenceIdByActionId[id as keyof typeof evidenceIdByActionId] ?? 'witness-clue'),
-  unlocksLocationIds: [],
-  isUseful: true,
 })
 
 const noth = (id: string, label: string, description: string, observationText: string): LocationAction => ({
@@ -295,8 +235,6 @@ const noth = (id: string, label: string, description: string, observationText: s
   evidenceText: null,
   observationText,
   cluePreview: sideRoutePreviewByActionId[id] ?? scenePreview('Side route'),
-  unlocksLocationIds: [],
-  isUseful: false,
 })
 
 const fillerLeadLabels = [

@@ -1,17 +1,41 @@
-import type { CluePreviewStrength, LocationAction } from '../../game/caseModel'
+import type { CluePreview, LocationAction } from '../../game/caseModel'
 import { pokemonData, type Pokemon } from '../../data/pokemon'
 import { LeadVisualIcon, type LeadVisualType } from './leadVisualIcons'
 
 type LeadType = 'search' | 'inspect' | 'question'
 type LeadPaperStyle = 'notebook' | 'tag' | 'clipboard'
 
-const clueStrengthLabels: Record<CluePreviewStrength, string> = {
-  strong: 'Strong',
-  medium: 'Medium',
-  weak: 'Weak',
+const fallbackPreviewByActionId: Record<string, CluePreview> = {
+  crumbs: { axis: 'height', strength: 'strong', label: 'Size clue', hint: '' },
+  'measure-tracks': { axis: 'weight', strength: 'strong', label: 'Weight clue', hint: '' },
+  'follow-tracks': { axis: 'type', strength: 'medium', label: 'Type clue', hint: '' },
+  'check-roots': { axis: 'groundTrace', strength: 'strong', label: 'Movement clue', hint: '' },
+  'inspect-lid': { axis: 'force', strength: 'strong', label: 'Force clue', hint: '' },
+  'check-table': { axis: 'height', strength: 'strong', label: 'Height clue', hint: '' },
+  campers: { axis: 'witness', strength: 'medium', label: 'Witness clue', hint: '' },
+  'interview-camper': { axis: 'witness', strength: 'medium', label: 'Witness clue', hint: '' },
+  'check-wash-bucket': { axis: 'type', strength: 'medium', label: 'Type clue', hint: '' },
+  tents: { axis: 'scene', strength: 'weak', label: 'Size clue', hint: '' },
+  'check-fire-pit': { axis: 'scene', strength: 'weak', label: 'Type clue', hint: '' },
+  'photograph-tracks': { axis: 'scene', strength: 'weak', label: 'Movement clue', hint: '' },
+  'search-branches': { axis: 'scene', strength: 'weak', label: 'Height clue', hint: '' },
+  'listen-quietly': { axis: 'scene', strength: 'weak', label: 'Movement clue', hint: '' },
+  'smell-jar': { axis: 'scene', strength: 'weak', label: 'Type clue', hint: '' },
+  'search-bedding': { axis: 'scene', strength: 'weak', label: 'Handling clue', hint: '' },
+  'check-nearby-tools': { axis: 'scene', strength: 'weak', label: 'Force clue', hint: '' },
+  'scan-quiet-corner': { axis: 'scene', strength: 'weak', label: 'Movement clue', hint: '' },
+  'inspect-side-surface': { axis: 'scene', strength: 'weak', label: 'Handling clue', hint: '' },
 }
 
-const getClueStrengthLabel = (action: LocationAction): string => clueStrengthLabels[action.cluePreview.strength]
+const inferCluePreview = (action: LocationAction): CluePreview => {
+  if (action.cluePreview) return action.cluePreview
+  if (fallbackPreviewByActionId[action.id]) return fallbackPreviewByActionId[action.id]
+  if (action.outcomeType === 'witness') return { axis: 'witness', strength: 'medium', label: 'Witness clue', hint: '' }
+  if (/track|print|depth/i.test(`${action.id} ${action.label}`)) return { axis: 'weight', strength: 'strong', label: 'Weight clue', hint: '' }
+  if (/trail|residue|bucket/i.test(`${action.id} ${action.label}`)) return { axis: 'type', strength: 'medium', label: 'Type clue', hint: '' }
+  if (/lid|lock|force|broken/i.test(`${action.id} ${action.label}`)) return { axis: 'force', strength: 'strong', label: 'Force clue', hint: '' }
+  return { axis: 'scene', strength: 'weak', label: 'Handling clue', hint: '' }
+}
 
 const leadTypeIcons: Record<LeadType, string> = {
   search: '👣',
@@ -158,7 +182,6 @@ interface EvidenceLeadCardProps {
   label: string
   teaser: string
   clueLabel: string
-  clueStrength: string
   onFollow: () => void
   disabled?: boolean
   isFollowed?: boolean
@@ -170,7 +193,6 @@ function EvidenceLeadCard({
   label,
   teaser,
   clueLabel,
-  clueStrength,
   onFollow,
   disabled = false,
   isFollowed = false,
@@ -188,9 +210,8 @@ function EvidenceLeadCard({
 
       <div className="evidence-lead-card__content">
         <span className="evidence-lead-card__label">{label}</span>
-        <span className={`lead-value-pill lead-value-pill--${clueStrength.toLowerCase()}`}>
+        <span className="lead-value-pill">
           <strong>{clueLabel}</strong>
-          <span>{clueStrength}</span>
         </span>
         <p className="lead-flavor">{teaser}</p>
       </div>
@@ -229,6 +250,7 @@ export function InvestigationActionChooser({
       <div className="location-leads">
         {actions.map((action) => {
           const leadType = getLeadType(action)
+          const cluePreview = inferCluePreview(action)
           const isFollowed = action.id === followedActionId
           const witnessPokemon = leadType === 'question'
             ? (action.witnessPokemonIds ?? [])
@@ -273,9 +295,8 @@ export function InvestigationActionChooser({
                     {leadTypeLabels[leadType]}
                   </span>
                   <span className="lead-option__title">Question {witnessRole}: {pokemon.name}</span>
-                  <span className={`lead-value-pill lead-value-pill--${getClueStrengthLabel(action).toLowerCase()}`}>
-                    <strong>{action.cluePreview.label}</strong>
-                    <span>{getClueStrengthLabel(action)}</span>
+                  <span className="lead-value-pill">
+                    <strong>{cluePreview.label}</strong>
                   </span>
                   <span className="lead-option__pokemon-preview" aria-label="Available witness Pokemon">
                     <span className="lead-option__pokemon">
@@ -299,8 +320,7 @@ export function InvestigationActionChooser({
               paperStyle={getLeadPaperStyle(action)}
               label={getEvidenceLeadLabel(action)}
               teaser={getEvidenceLeadTeaser(action)}
-              clueLabel={action.cluePreview.label}
-              clueStrength={getClueStrengthLabel(action)}
+              clueLabel={cluePreview.label}
               onFollow={() => chooseAction(action.id)}
               disabled={disabled || isFollowed}
               isFollowed={isFollowed}

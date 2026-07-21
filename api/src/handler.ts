@@ -243,8 +243,6 @@ const stripActionOutcome = (action: LocationAction): LocationAction => {
     evidenceBadgeType: _evidenceBadgeType,
     implicationText: _implicationText,
     clueRule,
-    unlocksLocationIds: _unlocksLocationIds,
-    isUseful: _isUseful,
     ...rest
   } = action
   return {

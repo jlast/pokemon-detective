@@ -1,6 +1,6 @@
 # Case Scene Image Sources
 
-Scene images in `src/game/cases/additionalCases.json` are stored locally in this directory. Each source below is marked CC0 1.0 or Public Domain Mark 1.0 by Openverse.
+Scene images in `src/game/cases/cases.json` are stored locally in this directory. Each source below is marked CC0 1.0 or Public Domain Mark 1.0 by Openverse.
 
 | Case | Local file | License | Source |
 | --- | --- | --- | --- |

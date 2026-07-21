@@ -1,15 +1,6 @@
-export type CaseStatus = 'active' | 'solved' | 'failed' | 'gave-up'
+export type CaseStatus = 'active' | 'solved' | 'failed'
 
 export type CaseDifficulty = 'easy' | 'medium' | 'hard'
-
-export interface InspectedFact {
-  key: string
-  label: string
-  value: string
-  discovered: boolean
-}
-
-export type SuspectInvestigationGroup = 'appearance' | 'records' | 'habitat' | 'ability'
 
 export type SuspectNoteStatus =
   | 'suspect'
@@ -22,17 +13,15 @@ export interface Suspect {
   isShiny: boolean
   manuallyRuledOut: boolean
   noteStatus: SuspectNoteStatus
-  inspectedGroups: Record<SuspectInvestigationGroup, boolean>
-  inspectedFacts: InspectedFact[]
 }
 
-export type LocationActionOutcomeType = 'evidence' | 'witness' | 'nothing' | 'unlock'
+export type LocationActionOutcomeType = 'evidence' | 'witness' | 'nothing'
 
 export type LocationActionLeadType = 'careful' | 'thorough' | 'quick' | 'risky' | 'uncertain' | 'obvious'
 
 export type ClueAxis = 'height' | 'weight' | 'type' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'scene'
 
-export type CluePrecision = 'exact' | 'grouped' | 'broad' | 'negative' | 'none'
+export type CluePrecision = 'exact' | 'grouped' | 'none'
 
 export interface ClueRule {
   axis: ClueAxis
@@ -60,7 +49,6 @@ export interface LocationAction {
   evidenceText?: string | null
   evidenceBadgeText?: string | null
   evidenceBadgeType?: string | null
-  witnessPokemonId?: number
   witnessPokemonIds?: number[]
   observationText: string
   observationTextSmall?: string
@@ -69,8 +57,6 @@ export interface LocationAction {
   implicationText?: string
   cluePreview: CluePreview
   clueRule?: ClueRule
-  unlocksLocationIds?: string[]
-  isUseful: boolean
 }
 
 export type LocationCardVariant = 'detective-note' | 'clipboard' | 'map-fragment'
@@ -101,10 +87,7 @@ export interface Evidence {
   clueText: string
   badgeText?: string
   badgeType?: string
-  hiddenTrait: string
   rule: ClueRule
-  endExplanation: string
-  discovered: boolean
 }
 
 export interface CaseEvidenceExplanation {
@@ -164,10 +147,7 @@ export function getDiscoveredEvidence(caseData: Case): Evidence[] {
         clueText: action?.evidenceText ?? location.evidenceText ?? '',
         badgeText: action?.evidenceBadgeText ?? location.evidenceBadgeText,
         badgeType: action?.evidenceBadgeType ?? location.evidenceBadgeType,
-        hiddenTrait: '',
         rule: action?.clueRule ?? { axis: 'scene', precision: 'none', matchingValues: [] },
-        endExplanation: '',
-        discovered: true,
       })
     }
   }

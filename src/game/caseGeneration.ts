@@ -21,7 +21,6 @@ type GeneratedEvidence = {
   badgeText: string
   badgeType?: string
   rule: ClueRule
-  endExplanation: string
   deductionText: string
 }
 
@@ -32,18 +31,6 @@ type PokemonCaseProfile = {
   highestStat: StatName
   lowestStat: StatName
   values: Record<string, string>
-}
-
-const actionEvidenceIds: Record<string, string> = {
-  crumbs: 'height-clue',
-  campers: 'witness-clue',
-  'measure-tracks': 'weight-clue',
-  'follow-tracks': 'type-residue-clue',
-  'check-roots': 'ground-trace-clue',
-  'inspect-lid': 'force-clue',
-  'check-table': 'height-clue',
-  'interview-camper': 'witness-clue',
-  'check-wash-bucket': 'type-residue-clue',
 }
 
 const evidenceTemplates: EvidenceTemplate[] = [
@@ -440,24 +427,11 @@ const buildEvidenceFromTemplate = (evidenceId: string, culprit: Pokemon): Genera
   const badge = getEvidenceBadge(template.category, profile)
   const rule = getClueRule(template.category, profile)
 
-  if (template.category === 'typeResidue') {
-    const typeGroup = formatList(rule.matchingValues)
-    return {
-      title: 'Mixed Type Residue',
-      clueText: `The residue matched a small cluster of possible types: ${typeGroup}.`,
-      ...badge,
-      rule,
-      endExplanation: `The culprit left residue consistent with ${typeGroup} types.`,
-      deductionText: getCategoryDeductionText(template.category, profile),
-    }
-  }
-
   return {
     title: fillTemplate(template.titleTemplate, profile.values),
     clueText: fillTemplate(template.clueTemplate, profile.values),
     ...badge,
     rule,
-    endExplanation: fillTemplate(template.endTemplate, profile.values),
     deductionText: getCategoryDeductionText(template.category, profile),
   }
 }
@@ -507,8 +481,6 @@ export const generateCaseEvidence = (
       badgeText: generated.badgeText,
       badgeType: generated.badgeType,
       rule: generated.rule,
-      endExplanation: override?.endExplanation ? fillNarrativeTemplate(override.endExplanation, profile) : generated.endExplanation,
-      hiddenTrait: getEvidenceTemplate(evidenceItem.id).category,
     }
   })
 
@@ -689,17 +661,9 @@ export const generateCaseLineup = (
       continue
     }
 
-    const overriddenLocations = locations.map((location) => ({
-      ...location,
-      actions: location.actions.map((action) => {
-        const evidenceId = action.evidenceId ? (actionEvidenceIds[action.id] ?? action.evidenceId) : null
-        return evidenceId ? { ...action, evidenceId } : action
-      }),
-    }))
-
     const suspectIds = shuffle([culprit.id, ...uniqueDistractors])
     const { generatedEvidence, generatedEvidenceById } = generateCaseEvidence(culprit, evidence, evidenceOverrides)
-    const generatedLocations = generateCaseLocations(culprit, overriddenLocations, evidenceOverrides)
+    const generatedLocations = generateCaseLocations(culprit, locations, evidenceOverrides)
 
     return {
       culpritPokemonId: culprit.id,

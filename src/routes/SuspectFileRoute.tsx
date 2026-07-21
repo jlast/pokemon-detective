@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { SelectedSuspectCaseFile } from '../components/Suspects/SelectedSuspectCaseFile'
-import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from '../game/caseModel'
+import type { Case, Suspect, SuspectNoteStatus } from '../game/caseModel'
 import { suspectPath, TODAY_SUSPECTS_PATH } from '../paths'
 
 interface SuspectFileRouteProps {
@@ -8,7 +8,6 @@ interface SuspectFileRouteProps {
   selectedSuspectOverride?: Suspect | null
   backLinkTo?: string
   wrongAccusationIds: number[]
-  inspectGroup: (suspectId: number, groupKey: SuspectInvestigationGroup) => void
   setSuspectNoteStatus: (suspectId: number, noteStatus: SuspectNoteStatus) => void
   openAccusation: (suspectId: number) => void
   attemptsLeft: number

@@ -2,65 +2,41 @@
   {
     "id": "height-clue",
     "title": "Height Clue",
-    "clueText": "",
-    "hiddenTrait": "height",
-    "endExplanation": "",
-    "discovered": false
+    "clueText": ""
   },
   {
     "id": "weight-clue",
     "title": "Track Clue",
-    "clueText": "",
-    "hiddenTrait": "weight",
-    "endExplanation": "",
-    "discovered": false
+    "clueText": ""
   },
   {
     "id": "type-residue-clue",
     "title": "Residue Clue",
-    "clueText": "",
-    "hiddenTrait": "typeResidue",
-    "endExplanation": "",
-    "discovered": false
+    "clueText": ""
   },
   {
     "id": "ground-trace-clue",
     "title": "Ground Clue",
-    "clueText": "",
-    "hiddenTrait": "groundTrace",
-    "endExplanation": "",
-    "discovered": false
+    "clueText": ""
   },
   {
     "id": "force-clue",
     "title": "Entry Clue",
-    "clueText": "",
-    "hiddenTrait": "force",
-    "endExplanation": "",
-    "discovered": false
+    "clueText": ""
   },
   {
     "id": "witness-clue",
     "title": "Witness Clue",
-    "clueText": "",
-    "hiddenTrait": "witness",
-    "endExplanation": "",
-    "discovered": false
+    "clueText": ""
   },
   {
     "id": "highest-stat-clue",
     "title": "Strength Clue",
-    "clueText": "",
-    "hiddenTrait": "highestStat",
-    "endExplanation": "",
-    "discovered": false
+    "clueText": ""
   },
   {
     "id": "lowest-stat-clue",
     "title": "Limitation Clue",
-    "clueText": "",
-    "hiddenTrait": "lowestStat",
-    "endExplanation": "",
-    "discovered": false
+    "clueText": ""
   }
 ]

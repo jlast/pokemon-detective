@@ -1964,8 +1964,7 @@
 .lead-value-pill {
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
+  justify-content: center;
   width: fit-content;
   max-width: 100%;
   padding: 0.42rem 0.55rem;
@@ -1978,31 +1977,8 @@
   line-height: 1;
 }
 
-.lead-value-pill strong,
-.lead-value-pill span {
+.lead-value-pill strong {
   white-space: nowrap;
-}
-
-.lead-value-pill span {
-  color: #7a5a19;
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.lead-value-pill--strong {
-  background: rgba(109, 138, 87, 0.16);
-  border-color: rgba(109, 138, 87, 0.28);
-}
-
-.lead-value-pill--medium {
-  background: rgba(178, 130, 43, 0.14);
-  border-color: rgba(178, 130, 43, 0.26);
-}
-
-.lead-value-pill--weak {
-  background: rgba(108, 116, 130, 0.12);
-  border-color: rgba(108, 116, 130, 0.24);
 }
 
 .lead-option__type {

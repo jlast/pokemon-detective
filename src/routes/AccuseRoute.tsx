@@ -1,5 +1,5 @@
 import { AccusationsPanel } from '../components/Suspects/AccusationsPanel'
-import type { Case, Suspect, SuspectInvestigationGroup, SuspectNoteStatus } from '../game/caseModel'
+import type { Case, Suspect, SuspectNoteStatus } from '../game/caseModel'
 import { TODAY_SUSPECTS_PATH } from '../paths'
 import { SuspectFileRoute } from './SuspectFileRoute'
 
@@ -8,7 +8,6 @@ interface AccuseRouteProps {
   currentCase: Case
   accusationTarget: Suspect
   wrongAccusationIds: number[]
-  inspectGroup: (suspectId: number, groupKey: SuspectInvestigationGroup) => void
   setSuspectNoteStatus: (suspectId: number, noteStatus: SuspectNoteStatus) => void
   openAccusation: (suspectId: number) => void
   closeAccusation: () => void
@@ -20,7 +19,6 @@ export function AccuseRoute({
   currentCase,
   accusationTarget,
   wrongAccusationIds,
-  inspectGroup,
   setSuspectNoteStatus,
   openAccusation,
   closeAccusation,
@@ -33,7 +31,6 @@ export function AccuseRoute({
         selectedSuspectOverride={accusationTarget}
         backLinkTo={TODAY_SUSPECTS_PATH}
         wrongAccusationIds={wrongAccusationIds}
-        inspectGroup={inspectGroup}
         setSuspectNoteStatus={setSuspectNoteStatus}
         openAccusation={openAccusation}
         attemptsLeft={attemptsLeft}
