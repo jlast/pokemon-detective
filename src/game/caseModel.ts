@@ -40,6 +40,15 @@ export interface ClueRule {
   matchingValues: string[]
 }
 
+export type CluePreviewStrength = 'strong' | 'medium' | 'weak'
+
+export interface CluePreview {
+  axis: ClueAxis
+  strength: CluePreviewStrength
+  label: string
+  hint: string
+}
+
 export interface LocationAction {
   id: string
   label: string
@@ -58,6 +67,7 @@ export interface LocationAction {
   observationTextMedium?: string
   observationTextLarge?: string
   implicationText?: string
+  cluePreview: CluePreview
   clueRule?: ClueRule
   unlocksLocationIds?: string[]
   isUseful: boolean

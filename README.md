@@ -13,6 +13,14 @@ npm run dev
 
 Local development is wired for the test environment. Copy `.env.example` to `.env.local` and fill the test Cognito values from Terraform outputs before starting the API.
 
+To clear test case and player progress data, run:
+
+```sh
+npm --prefix api run db:clear:test
+```
+
+The cleanup script loads `.env.local` and refuses to run unless `CASE_DATA_TABLE` and `PLAYER_PROGRESS_TABLE` both target tables ending in `Test`.
+
 The frontend expects the API at `http://localhost:3001` by default. If that port is already in use, start the API on another port and point Vite at it:
 
 ```sh

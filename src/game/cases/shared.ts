@@ -1,5 +1,5 @@
 import { getShinySpriteUrl, pokemonData } from '../../data/pokemon'
-import type { Case, CaseDifficulty, Evidence, InspectedFact, Location, LocationAction, LocationActionLeadType, Suspect } from '../caseModel'
+import type { Case, CaseDifficulty, CluePreview, Evidence, InspectedFact, Location, LocationAction, LocationActionLeadType, Suspect } from '../caseModel'
 import { getAbilityText, getEvolutionLineText, getHabitatNote } from '../suspectCaseFile'
 import evidenceRaw from './evidence.json'
 
@@ -155,6 +155,83 @@ const evidenceIdByActionId: Record<string, string> = {
   'check-wash-bucket': 'type-residue-clue',
 }
 
+const cluePreviewByEvidenceId: Record<string, CluePreview> = {
+  'height-clue': {
+    axis: 'height',
+    strength: 'strong',
+    label: 'Height / reach',
+    hint: 'Checks whether the culprit was small, medium-sized, or tall.',
+  },
+  'weight-clue': {
+    axis: 'weight',
+    strength: 'strong',
+    label: 'Weight',
+    hint: 'Checks how heavy the culprit was from pressure or track depth.',
+  },
+  'type-residue-clue': {
+    axis: 'type',
+    strength: 'medium',
+    label: 'Type group',
+    hint: 'Narrows the culprit to a small set of possible Pokemon types.',
+  },
+  'ground-trace-clue': {
+    axis: 'groundTrace',
+    strength: 'strong',
+    label: 'Ground trace',
+    hint: 'Checks what kind of trace the culprit left on nearby terrain.',
+  },
+  'force-clue': {
+    axis: 'force',
+    strength: 'strong',
+    label: 'Force',
+    hint: 'Checks what kind of force or entry mark the culprit could leave.',
+  },
+  'witness-clue': {
+    axis: 'witness',
+    strength: 'medium',
+    label: 'Witness account',
+    hint: 'Gets a remembered movement or behavior detail from a witness.',
+  },
+  'highest-stat-clue': {
+    axis: 'highestStat',
+    strength: 'medium',
+    label: 'Strong trait',
+    hint: 'Looks for the culprit trait most visible during the escape.',
+  },
+  'lowest-stat-clue': {
+    axis: 'lowestStat',
+    strength: 'weak',
+    label: 'Limitation',
+    hint: 'Looks for what the culprit avoided or handled poorly.',
+  },
+}
+
+const scenePreview = (label = 'Scene context'): CluePreview => ({
+  axis: 'scene',
+  strength: 'weak',
+  label,
+  hint: 'Checks a side route. It may close off a theory, but rarely gives a primary clue.',
+})
+
+const sideRoutePreviewByActionId: Record<string, CluePreview> = {
+  tents: scenePreview('Disturbed edge'),
+  'check-fire-pit': scenePreview('Heat check'),
+  'photograph-tracks': scenePreview('Track pattern'),
+  'search-branches': scenePreview('High-surface check'),
+  'listen-quietly': scenePreview('Sound check'),
+  'smell-jar': scenePreview('Scent check'),
+  'search-bedding': scenePreview('Hidden nook'),
+  'check-nearby-tools': scenePreview('Tool check'),
+  'scan-quiet-corner': scenePreview('Quiet-corner check'),
+  'inspect-side-surface': scenePreview('Side-surface check'),
+  'check-reading-lamps': scenePreview('Light check'),
+  'search-armchairs': scenePreview('Hiding-place check'),
+}
+
+const previewForEvidenceId = (evidenceId?: string | null): CluePreview => (
+  evidenceId ? cluePreviewByEvidenceId[evidenceId] ?? scenePreview('Scene context') : scenePreview('Scene context')
+)
+
 const location = (
   id: string,
   name: string,
@@ -182,6 +259,7 @@ const ev = (
   observationTextSmall: sizeOverrides?.small,
   observationTextMedium: sizeOverrides?.medium,
   observationTextLarge: sizeOverrides?.large,
+  cluePreview: previewForEvidenceId(evidenceIdByActionId[id as keyof typeof evidenceIdByActionId]),
   unlocksLocationIds: [],
   isUseful: true,
 })
@@ -201,6 +279,7 @@ const wit = (
   evidenceTitle: null,
   evidenceText: null,
   observationText,
+  cluePreview: previewForEvidenceId(evidenceIdByActionId[id as keyof typeof evidenceIdByActionId] ?? 'witness-clue'),
   unlocksLocationIds: [],
   isUseful: true,
 })
@@ -215,6 +294,7 @@ const noth = (id: string, label: string, description: string, observationText: s
   evidenceTitle: null,
   evidenceText: null,
   observationText,
+  cluePreview: sideRoutePreviewByActionId[id] ?? scenePreview('Side route'),
   unlocksLocationIds: [],
   isUseful: false,
 })
