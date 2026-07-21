@@ -40,56 +40,56 @@ const evidenceTemplates: EvidenceTemplate[] = [
   {
     id: 'height-clue',
     category: 'height',
-    titleTemplate: '{heightTitle}',
+    titleTemplate: 'Height Clue',
     clueTemplate: 'The missing item was disturbed {heightPosition}.',
     endTemplate: 'The culprit moved {heightPosition} while handling the stolen item.',
   },
   {
     id: 'weight-clue',
     category: 'weight',
-    titleTemplate: '{trackTitle}',
+    titleTemplate: 'Weight Clue',
     clueTemplate: 'The tracks were {trackDepth} where the culprit passed.',
     endTemplate: 'The culprit left {trackDepth} along the escape route.',
   },
   {
     id: 'type-residue-clue',
     category: 'typeResidue',
-    titleTemplate: '{typeClueTitle} Clue',
+    titleTemplate: 'Type Clue',
     clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
     endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
   },
   {
     id: 'ground-trace-clue',
     category: 'groundTrace',
-    titleTemplate: '{typeClueTitle} Clue',
+    titleTemplate: 'Type Clue',
     clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
     endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
   },
   {
     id: 'force-clue',
     category: 'force',
-    titleTemplate: '{typeClueTitle} Clue',
+    titleTemplate: 'Type Clue',
     clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
     endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
   },
   {
     id: 'witness-clue',
     category: 'witness',
-    titleTemplate: '{typeClueTitle} Clue',
+    titleTemplate: 'Type Clue',
     clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
     endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
   },
   {
     id: 'highest-stat-clue',
     category: 'highestStat',
-    titleTemplate: '{strongStatTitle}',
+    titleTemplate: 'Stat Clue',
     clueTemplate: 'The scene showed {strongStatTrace}.',
     endTemplate: 'The culprit relied on {strongStatTrace} during the escape.',
   },
   {
     id: 'lowest-stat-clue',
     category: 'lowestStat',
-    titleTemplate: '{weakStatTitle}',
+    titleTemplate: 'Stat Clue',
     clueTemplate: 'The route suggested {weakStatTrace}.',
     endTemplate: 'The culprit avoided trouble by showing {weakStatTrace}.',
   },
@@ -608,19 +608,15 @@ const getMismatchEvidenceLabel = (suspectId: number, culpritProfile: PokemonCase
     case 'height':
       return 'Height clue'
     case 'weight':
-      return 'Track clue'
+      return 'Weight clue'
     case 'typeResidue':
-      return 'Type clue'
     case 'groundTrace':
-      return 'Ground clue'
     case 'force':
-      return 'Entry clue'
     case 'witness':
       return 'Type clue'
     case 'highestStat':
-      return 'Strength clue'
     case 'lowestStat':
-      return 'Limitation clue'
+      return 'Stat clue'
     default:
       return 'Evidence mismatch'
   }

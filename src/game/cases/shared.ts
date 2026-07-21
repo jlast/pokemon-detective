@@ -68,7 +68,7 @@ export const baseEvidence: Evidence[] = evidenceRaw as Evidence[]
 
 const cluePreviewByEvidenceId: Record<string, CluePreview> = {
   'height-clue': {
-    label: 'Size clue',
+    label: 'Height clue',
   },
   'weight-clue': {
     label: 'Weight clue',
@@ -77,19 +77,19 @@ const cluePreviewByEvidenceId: Record<string, CluePreview> = {
     label: 'Type clue',
   },
   'ground-trace-clue': {
-    label: 'Movement clue',
+    label: 'Type clue',
   },
   'force-clue': {
-    label: 'Force clue',
+    label: 'Type clue',
   },
   'witness-clue': {
     label: 'Type clue',
   },
   'highest-stat-clue': {
-    label: 'Strong trait',
+    label: 'Stat clue',
   },
   'lowest-stat-clue': {
-    label: 'Limitation',
+    label: 'Stat clue',
   },
 }
 
