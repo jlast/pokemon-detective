@@ -63,6 +63,11 @@ export interface CluePreview {
   label: string
 }
 
+export interface EvidenceBadgeData {
+  text: string
+  type?: string
+}
+
 export interface LocationAction {
   id: string
   label: string
@@ -72,8 +77,7 @@ export interface LocationAction {
   evidenceId?: string | null
   evidenceTitle?: string | null
   evidenceText?: string | null
-  evidenceBadgeText?: string | null
-  evidenceBadgeType?: string | null
+  evidenceBadges?: EvidenceBadgeData[] | null
   witnessPokemonIds?: number[]
   observationText: string
   observationTextSmall?: string
@@ -95,8 +99,7 @@ export interface Location {
   observationText?: string
   evidenceTitle?: string
   evidenceText?: string
-  evidenceBadgeText?: string
-  evidenceBadgeType?: string
+  evidenceBadges?: EvidenceBadgeData[]
   evidenceId?: string
   witnessPokemonId?: number
   cardVariant?: LocationCardVariant
@@ -110,8 +113,7 @@ export interface Evidence {
   id: string
   title: string
   clueText: string
-  badgeText?: string
-  badgeType?: string
+  badges?: EvidenceBadgeData[]
   rule: ClueRule
 }
 
@@ -119,8 +121,7 @@ export interface CaseEvidenceExplanation {
   locationId: string
   evidenceTitle: string
   clueText: string
-  badgeText?: string
-  badgeType?: string
+  badges?: EvidenceBadgeData[]
   deductionText: string
 }
 
@@ -172,8 +173,7 @@ export function getDiscoveredEvidence(caseData: Case): Evidence[] {
         id: location.evidenceId,
         title: action?.evidenceTitle ?? location.evidenceTitle ?? 'Unknown',
         clueText: action?.evidenceText ?? location.evidenceText ?? '',
-        badgeText: action?.evidenceBadgeText ?? location.evidenceBadgeText,
-        badgeType: action?.evidenceBadgeType ?? location.evidenceBadgeType,
+        badges: action?.evidenceBadges ?? location.evidenceBadges,
         rule: action?.clueRule ?? { axis: 'scene', precision: 'none', matchingValues: [] },
       })
     }

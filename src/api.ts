@@ -1,5 +1,5 @@
 import { ensureValidSession, getToken } from './auth'
-import type { Case } from './game/caseModel'
+import type { Case, EvidenceBadgeData } from './game/caseModel'
 
 const BASE = import.meta.env.VITE_API_BASE ?? ''
 
@@ -20,8 +20,7 @@ export interface InvestigationResponse {
     evidenceId?: string
     evidenceTitle?: string
     evidenceText?: string
-    evidenceBadgeText?: string
-    evidenceBadgeType?: string
+    evidenceBadges?: EvidenceBadgeData[]
     witnessPokemonId?: number
   }
   investigationsRemaining: number

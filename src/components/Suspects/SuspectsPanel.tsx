@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { EvidenceBadge } from '../Evidence/EvidenceBadge'
+import { EvidenceBadgeList } from '../Evidence/EvidenceBadge'
 import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
 import { TODAY_INVESTIGATION_PATH } from '../../paths'
 import { SuspectCard } from './SuspectCard'
@@ -39,7 +39,10 @@ export function SuspectsPanel({
                 </span>
                 <div className="suspect-evidence-tag-copy">
                   <strong>{evidenceItem.title}</strong>
-                  <EvidenceBadge text={evidenceItem.badgeText} type={evidenceItem.badgeType} fallback={evidenceItem.clueText} />
+                  <EvidenceBadgeList
+                    badges={evidenceItem.badges}
+                    fallback={evidenceItem.clueText}
+                  />
                 </div>
               </article>
             ))}

@@ -1,5 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb'
+import type { EvidenceBadgeData } from '../../src/game/caseModel'
 
 const client = new DynamoDBClient({})
 const doc = DynamoDBDocumentClient.from(client, { marshallOptions: { removeUndefinedValues: true } })
@@ -19,7 +20,7 @@ export interface CaseDataRecord {
   solution: {
     culpritRevealText: string
     detectiveConclusion: string
-    evidenceExplanation: { locationId: string; evidenceTitle: string; clueText: string; badgeText?: string; badgeType?: string; deductionText: string }[]
+    evidenceExplanation: { locationId: string; evidenceTitle: string; clueText: string; badges?: EvidenceBadgeData[]; deductionText: string }[]
     clearedSuspects: { pokemonId: number; reason: string; evidenceLabel?: string }[]
   }
   ttl: number

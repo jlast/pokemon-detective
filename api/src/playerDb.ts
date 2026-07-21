@@ -1,5 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import type { EvidenceBadgeData } from '../../src/game/caseModel'
 
 const client = new DynamoDBClient({})
 const doc = DynamoDBDocumentClient.from(client, { marshallOptions: { removeUndefinedValues: true } })
@@ -12,8 +13,11 @@ export interface InvestigatedLocationRecord {
   evidenceId?: string
   evidenceTitle?: string
   evidenceText?: string
+  evidenceBadges?: EvidenceBadgeData[]
   evidenceBadgeText?: string
+  evidenceBadgeTexts?: string[]
   evidenceBadgeType?: string
+  evidenceBadgeTypes?: string[]
   witnessPokemonId?: number
 }
 

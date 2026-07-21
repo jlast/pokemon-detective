@@ -361,8 +361,7 @@ function App() {
                     evidenceId: data.result.evidenceId,
                     evidenceTitle: data.result.evidenceTitle,
                     evidenceText: data.result.evidenceText,
-                    evidenceBadgeText: data.result.evidenceBadgeText,
-                    evidenceBadgeType: data.result.evidenceBadgeType,
+                    evidenceBadges: data.result.evidenceBadges,
                     witnessPokemonId: data.result.witnessPokemonId,
                   }
                 : location,
@@ -399,8 +398,7 @@ function App() {
                 evidenceId: rawAction?.evidenceId ?? undefined,
                 evidenceTitle: rawAction?.evidenceTitle ?? undefined,
                 evidenceText: rawAction?.evidenceText ?? undefined,
-                evidenceBadgeText: rawAction?.evidenceBadgeText ?? undefined,
-                evidenceBadgeType: rawAction?.evidenceBadgeType ?? undefined,
+                evidenceBadges: rawAction?.evidenceBadges ?? undefined,
                 witnessPokemonId,
               }
             : l,

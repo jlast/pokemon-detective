@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { EvidenceBadge } from '../Evidence/EvidenceBadge'
+import { EvidenceBadgeList } from '../Evidence/EvidenceBadge'
 import { getDiscoveredEvidence, type Case, type Suspect, type SuspectNoteStatus } from '../../game/caseModel'
 import { getSuspectGroupDetails, type SuspectInvestigationGroup } from '../../game/suspectCaseFile'
 import { MugShot } from './MugShot'
@@ -140,7 +140,10 @@ export function SelectedSuspectCaseFile({
                         </span>
                         <div className="suspect-evidence-tag-copy">
                           <strong>{evidenceItem.title}</strong>
-                          <EvidenceBadge text={evidenceItem.badgeText} type={evidenceItem.badgeType} fallback={evidenceItem.clueText} />
+                          <EvidenceBadgeList
+                            badges={evidenceItem.badges}
+                            fallback={evidenceItem.clueText}
+                          />
                         </div>
                       </article>
                     ))}

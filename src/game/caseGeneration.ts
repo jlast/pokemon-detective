@@ -1,5 +1,5 @@
 import { pokemonData, type Pokemon, type PokemonType } from '../data/pokemon'
-import type { CaseEvidenceExplanation, ClearedSuspectExplanation, ClueRule, Evidence, Location, LocationAction } from './caseModel'
+import type { CaseEvidenceExplanation, ClearedSuspectExplanation, ClueRule, Evidence, EvidenceBadgeData, Location, LocationAction } from './caseModel'
 import { getPokemonById } from './suspectCaseFile'
 
 type StatName = 'hp' | 'attack' | 'defense' | 'specialAttack' | 'specialDefense' | 'speed'
@@ -19,8 +19,7 @@ type EvidenceTemplate = {
 type GeneratedEvidence = {
   title: string
   clueText: string
-  badgeText: string
-  badgeType?: string
+  badges?: EvidenceBadgeData[]
   rule: ClueRule
   deductionText: string
 }
@@ -55,7 +54,7 @@ const evidenceTemplates: EvidenceTemplate[] = [
   {
     id: 'type-residue-clue',
     category: 'typeResidue',
-    titleTemplate: '{residueTitle}',
+    titleTemplate: 'Residue Traces',
     clueTemplate: 'There was {typeResidue} left behind.',
     endTemplate: 'The culprit left {typeResidue} while moving through the scene.',
   },
@@ -330,11 +329,11 @@ const getClueRule = (category: EvidenceCategory, profile: PokemonCaseProfile): C
     case 'typeResidue':
       return { axis: 'type', precision: 'grouped', matchingValues: profile.clueType ? getTypeClueGroup(profile.clueType) : [] }
     case 'groundTrace':
-      return { axis: 'groundTrace', precision: 'exact', matchingValues: profile.clueType ? [profile.clueType] : [] }
+      return { axis: 'groundTrace', precision: 'grouped', matchingValues: profile.clueType ? getTypeClueGroup(profile.clueType) : [] }
     case 'force':
-      return { axis: 'force', precision: 'exact', matchingValues: profile.clueType ? [profile.clueType] : [] }
+      return { axis: 'force', precision: 'grouped', matchingValues: profile.clueType ? getTypeClueGroup(profile.clueType) : [] }
     case 'witness':
-      return { axis: 'witness', precision: 'exact', matchingValues: profile.clueType ? [profile.clueType] : [] }
+      return { axis: 'witness', precision: 'grouped', matchingValues: profile.clueType ? getTypeClueGroup(profile.clueType) : [] }
     case 'highestStat':
       return { axis: 'highestStat', precision: 'exact', matchingValues: [profile.highestStat] }
     case 'lowestStat':
@@ -370,22 +369,21 @@ const formatHeightLabel = (height: HeightBucket): string => (
   height === 'short' ? 'Small' : formatLabel(height)
 )
 
-const getEvidenceBadge = (category: EvidenceCategory, profile: PokemonCaseProfile): { badgeText: string; badgeType?: string } => {
+const getEvidenceBadges = (category: EvidenceCategory, profile: PokemonCaseProfile): EvidenceBadgeData[] => {
   switch (category) {
     case 'height':
-      return { badgeText: `Height: ${formatHeightLabel(profile.height)}` }
+      return [{ text: `Height: ${formatHeightLabel(profile.height)}` }]
     case 'weight':
-      return { badgeText: `Weight: ${formatLabel(profile.weight)}` }
+      return [{ text: `Weight: ${formatLabel(profile.weight)}` }]
     case 'typeResidue':
-      return { badgeText: `${getTypeClueLabel(profile)} group: ${formatList(profile.clueType ? getTypeClueGroup(profile.clueType) : [])}` }
     case 'groundTrace':
     case 'force':
     case 'witness':
-      return { badgeText: `${getTypeClueLabel(profile)}: ${formatLabel(profile.clueType ?? profile.primaryType)}`, badgeType: profile.clueType ?? profile.primaryType }
+      return profile.clueType ? getTypeClueGroup(profile.clueType).map((type) => ({ text: formatLabel(type), type })) : []
     case 'highestStat':
-      return { badgeText: `Strength: ${formatLabel(profile.highestStat)}` }
+      return [{ text: `Strength: ${formatLabel(profile.highestStat)}` }]
     case 'lowestStat':
-      return { badgeText: `Weakness: ${formatLabel(profile.lowestStat)}` }
+      return [{ text: `Weakness: ${formatLabel(profile.lowestStat)}` }]
   }
 }
 
@@ -446,13 +444,13 @@ const getCategoryDeductionText = (category: EvidenceCategory, profile: PokemonCa
 const buildEvidenceFromTemplate = (evidenceId: string, culprit: Pokemon, clueTypeSlot: TypeClueSlot): GeneratedEvidence => {
   const profile = getPokemonCaseProfile(culprit, clueTypeSlot)
   const template = getEvidenceTemplate(evidenceId)
-  const badge = getEvidenceBadge(template.category, profile)
+  const badges = getEvidenceBadges(template.category, profile)
   const rule = getClueRule(template.category, profile)
 
   return {
     title: fillTemplate(template.titleTemplate, profile.values),
     clueText: fillTemplate(template.clueTemplate, profile.values),
-    ...badge,
+    badges,
     rule,
     deductionText: getCategoryDeductionText(template.category, profile),
   }
@@ -502,8 +500,7 @@ export const generateCaseEvidence = (
       ...evidenceItem,
       title: override?.title ? fillNarrativeTemplate(override.title, profile) : generated.title,
       clueText: override?.clueText ? fillNarrativeTemplate(override.clueText, profile) : generated.clueText,
-      badgeText: generated.badgeText,
-      badgeType: generated.badgeType,
+      badges: generated.badges,
       rule: generated.rule,
     }
   })
@@ -541,8 +538,7 @@ export const generateCaseLocations = (
         ...action,
         evidenceTitle: generatedEvidenceItem?.title ?? action.evidenceTitle,
         evidenceText: generatedEvidenceItem?.clueText ?? action.evidenceText,
-        evidenceBadgeText: generatedEvidenceItem?.badgeText,
-        evidenceBadgeType: generatedEvidenceItem?.badgeType,
+        evidenceBadges: generatedEvidenceItem?.badges,
         clueRule: generatedEvidenceItem?.rule,
         cluePreview: generatedEvidenceItem
           ? { label: generatedEvidenceItem.rule.axis === 'witness' ? generatedEvidenceItem.clueText : generatedEvidenceItem.title }
@@ -651,8 +647,7 @@ const buildSolution = (
         locationId: location.id,
         evidenceTitle: primaryAction.evidenceTitle ?? evidenceItem.title,
         clueText: primaryAction.evidenceText ?? evidenceItem.clueText,
-        badgeText: primaryAction.evidenceBadgeText ?? evidenceItem.badgeText,
-        badgeType: primaryAction.evidenceBadgeType ?? evidenceItem.badgeType,
+        badges: primaryAction.evidenceBadges ?? evidenceItem.badges,
         deductionText: generatedEvidenceById.get(evidenceId)?.deductionText ?? getCategoryDeductionText(getEvidenceTemplate(evidenceId).category, culpritProfile),
       }]
     })

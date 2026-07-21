@@ -1,6 +1,13 @@
+import type { EvidenceBadgeData } from '../../game/caseModel'
+
 interface EvidenceBadgeProps {
   text?: string | null
   type?: string | null
+  fallback?: string | null
+}
+
+interface EvidenceBadgeListProps {
+  badges?: EvidenceBadgeData[] | null
   fallback?: string | null
 }
 
@@ -13,4 +20,18 @@ export function EvidenceBadge({ text, type, fallback }: EvidenceBadgeProps) {
       {badgeText}
     </span>
   )
+}
+
+export function EvidenceBadgeList({ badges, fallback }: EvidenceBadgeListProps) {
+  if (badges?.length) {
+    return (
+      <>
+        {badges.map((badge, index) => (
+          <EvidenceBadge key={`${badge.text}-${index}`} text={badge.text} type={badge.type} />
+        ))}
+      </>
+    )
+  }
+
+  return <EvidenceBadge fallback={fallback} />
 }

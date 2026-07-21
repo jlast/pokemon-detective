@@ -239,8 +239,11 @@ const stripActionOutcome = (action: LocationAction): LocationAction => {
     evidenceId: _evidenceId,
     evidenceTitle: _evidenceTitle,
     evidenceText: _evidenceText,
+    evidenceBadges: _evidenceBadges,
     evidenceBadgeText: _evidenceBadgeText,
+    evidenceBadgeTexts: _evidenceBadgeTexts,
     evidenceBadgeType: _evidenceBadgeType,
+    evidenceBadgeTypes: _evidenceBadgeTypes,
     implicationText: _implicationText,
     clueRule,
     ...rest
@@ -345,13 +348,15 @@ const resolveEvidenceText = (record: InvestigatedLocationRecord, action: Locatio
   action?.evidenceText ?? record.evidenceText
 )
 
-const resolveEvidenceBadgeText = (record: InvestigatedLocationRecord, action: LocationAction | undefined): string | undefined => (
-  action?.evidenceBadgeText ?? record.evidenceBadgeText
-)
-
-const resolveEvidenceBadgeType = (record: InvestigatedLocationRecord, action: LocationAction | undefined): string | undefined => (
-  action?.evidenceBadgeType ?? record.evidenceBadgeType
-)
+const resolveEvidenceBadges = (record: InvestigatedLocationRecord, action: LocationAction | undefined) => {
+  if (action?.evidenceBadges?.length) return action.evidenceBadges
+  if (record.evidenceBadges?.length) return record.evidenceBadges
+  if (record.evidenceBadgeTexts?.length) {
+    return record.evidenceBadgeTexts.map((text, index) => ({ text, type: record.evidenceBadgeTypes?.[index] }))
+  }
+  if (record.evidenceBadgeText) return [{ text: record.evidenceBadgeText, type: record.evidenceBadgeType }]
+  return undefined
+}
 
 const hasSuspectShinyMap = (progress: PlayerProgressRecord): boolean => progress.suspectShinyMap !== undefined
 
@@ -492,8 +497,7 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
           observationText: record.observationText,
           evidenceTitle: resolveEvidenceTitle(record, selectedAction) ?? null,
           evidenceText: resolveEvidenceText(record, selectedAction) ?? null,
-          evidenceBadgeText: resolveEvidenceBadgeText(record, selectedAction) ?? null,
-          evidenceBadgeType: resolveEvidenceBadgeType(record, selectedAction) ?? null,
+          evidenceBadges: resolveEvidenceBadges(record, selectedAction) ?? null,
           evidenceId: record.evidenceId ?? null,
           witnessPokemonId: record.witnessPokemonId,
         }
@@ -505,8 +509,7 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
         observationText: undefined,
         evidenceTitle: null,
         evidenceText: null,
-        evidenceBadgeText: null,
-        evidenceBadgeType: null,
+        evidenceBadges: null,
         evidenceId: null,
         actions: loc.actions.map(stripActionOutcome),
       }
@@ -719,8 +722,7 @@ const handleInvestigate = async (
     : undefined
   const evidenceTitle = action.evidenceTitle ?? evidenceItem?.title
   const evidenceText = action.evidenceText ?? evidenceItem?.clueText
-  const evidenceBadgeText = action.evidenceBadgeText ?? evidenceItem?.badgeText
-  const evidenceBadgeType = action.evidenceBadgeType ?? evidenceItem?.badgeType
+  const evidenceBadges = action.evidenceBadges ?? evidenceItem?.badges
 
   const witnessPokemonId = typeof body.witnessPokemonId === 'number' ? body.witnessPokemonId : undefined
   if (action.outcomeType === 'witness') {
@@ -743,8 +745,7 @@ const handleInvestigate = async (
     evidenceId: action.evidenceId ?? undefined,
     evidenceTitle,
     evidenceText,
-    evidenceBadgeText,
-    evidenceBadgeType,
+    evidenceBadges,
     witnessPokemonId,
   }
 
