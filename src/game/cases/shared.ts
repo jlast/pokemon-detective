@@ -122,22 +122,6 @@ const presentationByActionId: Record<string, LocationActionPresentation> = {
     displayLabel: 'Nearby tools',
     teaser: 'A small scrape sits beside the closest tools.',
   },
-  'scan-quiet-corner': {
-    kind: 'inspect',
-    icon: '🔦',
-    visualType: 'object',
-    paperStyle: 'clipboard',
-    displayLabel: 'Quiet corner',
-    teaser: 'Fresh dust breaks along the quiet corner.',
-  },
-  'inspect-side-surface': {
-    kind: 'inspect',
-    icon: '🗄️',
-    visualType: 'object',
-    paperStyle: 'clipboard',
-    displayLabel: 'Side surface',
-    teaser: 'Fresh dust breaks along the side surface.',
-  },
   'measure-tracks': {
     kind: 'search',
     icon: '👣',
@@ -162,7 +146,7 @@ const presentationByActionId: Record<string, LocationActionPresentation> = {
     displayLabel: 'Track pattern',
     teaser: 'A clean photo could catch the spacing between prints.',
   },
-  'check-roots': {
+  'inspect-storage-base': {
     kind: 'inspect',
     icon: '🔦',
     visualType: 'ground',
@@ -170,7 +154,7 @@ const presentationByActionId: Record<string, LocationActionPresentation> = {
     displayLabel: 'Disturbed ground',
     teaser: 'Loose soil has piled against the base.',
   },
-  'search-branches': {
+  'check-high-surfaces': {
     kind: 'search',
     icon: '👣',
     visualType: 'high-surface',
@@ -186,7 +170,7 @@ const presentationByActionId: Record<string, LocationActionPresentation> = {
     displayLabel: 'Muffled noise',
     teaser: 'A soft scrape comes from behind the shelves.',
   },
-  'inspect-lid': {
+  'inspect-forced-entry': {
     kind: 'inspect',
     icon: '🔦',
     visualType: 'damage',
@@ -194,7 +178,7 @@ const presentationByActionId: Record<string, LocationActionPresentation> = {
     displayLabel: 'Broken latch',
     teaser: 'Bent metal curls around the lock.',
   },
-  'smell-jar': {
+  'check-lingering-scent': {
     kind: 'inspect',
     icon: '📋',
     visualType: 'scent',
@@ -202,7 +186,7 @@ const presentationByActionId: Record<string, LocationActionPresentation> = {
     displayLabel: 'Lingering scent',
     teaser: 'A sharp scent clings to the container.',
   },
-  'check-table': {
+  'check-nearby-surface': {
     kind: 'inspect',
     icon: '🗄️',
     visualType: 'object',
@@ -335,14 +319,14 @@ const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Loc
     ev('photograph-tracks', 'weight-clue', 'Photograph the marks', 'Document the marks before they are disturbed.', `The photo preserved marks that were {trackDepth} across ${template.traceArea}.`),
   ),
   location(`${caseId}-storage`, template.storageArea, '📦', `${template.storageArea} looks disturbed near its base.`,
-    ev('check-roots', 'ground-trace-clue', `Inspect ${template.storageArea}`, `Look under and around ${template.storageArea}.`, `The {groundWord} near ${template.storageArea} was disturbed.`),
-    ev('search-branches', 'height-clue', `Check above ${template.storageArea}`, 'Search the higher surfaces nearby.', `Dust near ${template.storageArea} was shifted {heightPosition}.`),
+    ev('inspect-storage-base', 'ground-trace-clue', `Inspect ${template.storageArea}`, `Look under and around ${template.storageArea}.`, `The {groundWord} near ${template.storageArea} was disturbed.`),
+    ev('check-high-surfaces', 'height-clue', `Check above ${template.storageArea}`, 'Search the higher surfaces nearby.', `Dust near ${template.storageArea} was shifted {heightPosition}.`),
     ev('listen-quietly', 'witness-clue', 'Listen quietly', 'Pause and listen for movement.', `The quiet pause caught a report of someone {witnessDetail}.`),
   ),
   location(`${caseId}-lock`, template.lockedObject, '🔐', `${template.lockedObject} shows signs of tampering.`,
-    ev('inspect-lid', 'force-clue', `Inspect ${template.lockedObject}`, `Study where ${template.lockedObject} was forced.`, `Something marked ${template.lockedObject} before it gave way.`),
-    ev('smell-jar', 'type-residue-clue', `Smell near ${template.lockedObject}`, 'Check for any lingering scent.', `A trace of {textureWord} clung near ${template.lockedObject}.`),
-    ev('check-table', 'height-clue', `Check beside ${template.lockedObject}`, `Look along the nearby surface beside ${template.lockedObject}.`, `Whoever handled ${template.lockedObject} left traces {movementWord} nearby.`),
+    ev('inspect-forced-entry', 'force-clue', `Inspect ${template.lockedObject}`, `Study where ${template.lockedObject} was forced.`, `Something marked ${template.lockedObject} before it gave way.`),
+    ev('check-lingering-scent', 'type-residue-clue', `Smell near ${template.lockedObject}`, 'Check for any lingering scent.', `A trace of {textureWord} clung near ${template.lockedObject}.`),
+    ev('check-nearby-surface', 'height-clue', `Check beside ${template.lockedObject}`, `Look along the nearby surface beside ${template.lockedObject}.`, `Whoever handled ${template.lockedObject} left traces {movementWord} nearby.`),
   ),
   location(`${caseId}-witness`, template.witnessArea, '🗣️', `Someone near ${template.witnessArea} noticed something odd.`,
     wit('question-primary-witness', 'witness-clue', `Question the ${template.witnessRole}`, `Ask what the ${template.witnessRole} remembers.`, `The ${template.witnessRole} is certain about that detail.`, template.witnessRole,
