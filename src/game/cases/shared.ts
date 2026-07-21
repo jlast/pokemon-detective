@@ -210,30 +210,32 @@ const presentationByActionId: Record<string, LocationActionPresentation> = {
     displayLabel: 'Nearby surface',
     teaser: 'Fine scratches run along the nearby surface.',
   },
-  'interview-camper': {
+  'question-primary-witness': {
     kind: 'question',
     icon: '💬',
     visualType: 'generic-search',
     paperStyle: 'clipboard',
     displayLabel: 'Witness account',
-    teaser: 'Ask what changed during the handoff, cleanup, or closing routine.',
+    teaser: 'Ask what the main witness saw before the item disappeared.',
     witnessRole: 'witness',
   },
-  'check-wash-bucket': {
-    kind: 'inspect',
-    icon: '🔦',
-    visualType: 'container',
+  'question-assistant': {
+    kind: 'question',
+    icon: '💬',
+    visualType: 'generic-search',
     paperStyle: 'clipboard',
-    displayLabel: 'Wet trace',
-    teaser: 'Mud flecks ring the water feature.',
+    displayLabel: 'Assistant account',
+    teaser: 'Ask what changed during the handoff, cleanup, or closing routine.',
+    witnessRole: 'the assistant',
   },
-  'search-bedding': {
-    kind: 'search',
-    icon: '👣',
-    visualType: 'high-surface',
-    paperStyle: 'tag',
-    displayLabel: 'Hidden nook',
-    teaser: 'A tucked corner near the witness area is flattened.',
+  'question-passerby': {
+    kind: 'question',
+    icon: '💬',
+    visualType: 'generic-search',
+    paperStyle: 'clipboard',
+    displayLabel: 'Passerby account',
+    teaser: 'Ask who passed through and whether anything sounded or moved strangely.',
+    witnessRole: 'a passerby',
   },
 }
 
@@ -291,6 +293,8 @@ const wit = (
   description: string,
   observationText: string,
   witnessRole: string,
+  witnessRoles: string[],
+  witnessPromptTemplates: string[],
 ): LocationAction => ({
   id,
   label,
@@ -313,6 +317,8 @@ const wit = (
       witnessRole,
     }),
     witnessRole,
+    witnessRoles,
+    witnessPromptTemplates,
   },
 })
 
@@ -339,9 +345,20 @@ const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Loc
     ev('check-table', 'height-clue', `Check beside ${template.lockedObject}`, `Look along the nearby surface beside ${template.lockedObject}.`, `Whoever handled ${template.lockedObject} left traces {movementWord} nearby.`),
   ),
   location(`${caseId}-witness`, template.witnessArea, '🗣️', `Someone near ${template.witnessArea} noticed something odd.`,
-    wit('interview-camper', 'witness-clue', `Question the ${template.witnessRole}`, `Ask what the ${template.witnessRole} remembers.`, `The ${template.witnessRole} is certain about that detail.`, template.witnessRole),
-    ev('check-wash-bucket', 'type-residue-clue', `Check ${template.waterFeature}`, `Inspect the area around ${template.waterFeature}.`, `Even near ${template.waterFeature}, a line of {textureWord} stayed behind.`),
-    ev('search-bedding', 'witness-clue', `Search around ${template.witnessArea}`, 'Check the nearby hiding spots.', `A note near ${template.witnessArea} described someone {witnessDetail}.`),
+    wit('question-primary-witness', 'witness-clue', `Question the ${template.witnessRole}`, `Ask what the ${template.witnessRole} remembers.`, `The ${template.witnessRole} is certain about that detail.`, template.witnessRole,
+      [template.witnessRole],
+      [
+        'Ask {pokemonName} what {witnessRole} saw around the missing item before it disappeared.',
+      ],
+    ),
+    wit('question-assistant', 'witness-clue', 'Question the assistant', 'Ask what changed during the routine.', 'The assistant remembers a useful detail.', 'the assistant',
+      ['the assistant'],
+      ['Ask {pokemonName} what changed during the handoff, cleanup, or closing routine.'],
+    ),
+    wit('question-passerby', 'witness-clue', 'Question a passerby', 'Ask who passed through the area.', 'The passerby remembers a useful detail.', 'a passerby',
+      ['a passerby'],
+      ['Ask {pokemonName} who passed through and whether anything sounded or moved strangely.'],
+    ),
   ),
 ]
 

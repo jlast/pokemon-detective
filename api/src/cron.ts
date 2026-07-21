@@ -9,7 +9,7 @@ const getTodayUtc = (): string => {
 }
 
 const SESSION_TTL_DAYS = 7
-const WITNESS_OPTION_COUNT = 3
+const WITNESS_OPTION_COUNT = 1
 const LOCATION_CARD_VARIANTS: LocationCardVariant[] = ['detective-note', 'clipboard', 'map-fragment']
 
 const shuffle = <T,>(items: T[]): T[] => {

@@ -8,22 +8,11 @@ const leadKindLabels: Record<InvestigationLeadKind, string> = {
   question: 'Question',
 }
 
-const getWitnessRole = (action: LocationAction, index: number): string => {
-  const baseRole = action.presentation.witnessRole ?? 'witness'
-  const roles = [baseRole, 'the assistant', 'a passerby']
-
-  return roles[index % roles.length]
-}
-
-const getWitnessPrompt = (pokemonName: string, role: string, index: number): string => {
-  const prompts = [
-    `Ask ${pokemonName} what ${role} saw around the missing item before it disappeared.`,
-    `Ask ${pokemonName} what changed during the handoff, cleanup, or closing routine.`,
-    `Ask ${pokemonName} who passed through and whether anything sounded or moved strangely.`,
-  ]
-
-  return prompts[index % prompts.length]
-}
+const fillWitnessPrompt = (template: string, pokemonName: string, witnessRole: string): string => (
+  template
+    .replaceAll('{pokemonName}', pokemonName)
+    .replaceAll('{witnessRole}', witnessRole)
+)
 
 interface EvidenceLeadCardProps {
   visualType: LeadVisualType
@@ -128,7 +117,10 @@ export function InvestigationActionChooser({
             }
 
             return witnessPokemon.map((pokemon, index) => {
-              const witnessRole = getWitnessRole(action, index)
+              const witnessRoles = presentation.witnessRoles ?? [presentation.witnessRole ?? 'witness']
+              const witnessPromptTemplates = presentation.witnessPromptTemplates ?? [presentation.teaser]
+              const witnessRole = witnessRoles[index % witnessRoles.length] ?? 'witness'
+              const witnessPromptTemplate = witnessPromptTemplates[index % witnessPromptTemplates.length] ?? presentation.teaser
 
               return (
                 <button
@@ -154,7 +146,7 @@ export function InvestigationActionChooser({
                       <span>{pokemon.name}</span>
                     </span>
                   </span>
-                  <span className="lead-flavor">{getWitnessPrompt(pokemon.name, witnessRole, index)}</span>
+                  <span className="lead-flavor">{fillWitnessPrompt(witnessPromptTemplate, pokemon.name, witnessRole)}</span>
                   <span className="lead-option__cta">{isFollowed ? 'Complete' : 'Click to investigate'}</span>
                 </button>
               )

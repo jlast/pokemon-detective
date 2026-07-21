@@ -45,6 +45,8 @@ export interface LocationActionPresentation {
   displayLabel: string
   teaser: string
   witnessRole?: string
+  witnessRoles?: string[]
+  witnessPromptTemplates?: string[]
 }
 
 export type ClueAxis = 'height' | 'weight' | 'type' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'scene'

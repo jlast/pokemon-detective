@@ -25,7 +25,7 @@ const SESSION_TTL_DAYS = 7
 const MAX_ACCUSATIONS = 3
 const DEFAULT_INVESTIGATIONS = 6
 const SHINY_ODDS = 0.01
-const WITNESS_OPTION_COUNT = 3
+const WITNESS_OPTION_COUNT = 1
 const LOCATION_CARD_VARIANTS: LocationCardVariant[] = ['detective-note', 'clipboard', 'map-fragment']
 
 interface ApiGatewayEvent {
