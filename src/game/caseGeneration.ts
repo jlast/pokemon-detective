@@ -464,7 +464,7 @@ const buildActionNarrative = (
 export const generateCaseEvidence = (
   culprit: Pokemon,
   baseEvidence: Evidence[],
-  evidenceOverrides?: Record<string, { title?: string; clueText?: string; endExplanation?: string }>,
+  evidenceOverrides?: Record<string, { title?: string; clueText?: string }>,
 ) => {
   const generatedEvidenceById = new Map<string, GeneratedEvidence>()
   const profile = getPokemonCaseProfile(culprit)
@@ -490,7 +490,7 @@ export const generateCaseEvidence = (
 export const generateCaseLocations = (
   culprit: Pokemon,
   baseLocations: Location[],
-  evidenceOverrides?: Record<string, { title?: string; clueText?: string; endExplanation?: string }>,
+  evidenceOverrides?: Record<string, { title?: string; clueText?: string }>,
 ) => {
   const profile = getPokemonCaseProfile(culprit)
   const generatedEvidence = new Map(
@@ -617,7 +617,7 @@ const buildSolution = (
 export const generateCaseLineup = (
   evidence: Evidence[],
   locations: Location[],
-  evidenceOverrides?: Record<string, { title?: string; clueText?: string; endExplanation?: string }>,
+  evidenceOverrides?: Record<string, { title?: string; clueText?: string }>,
 ) => {
   for (let attempt = 0; attempt < 1000; attempt += 1) {
     const culprit = pokemonData[Math.floor(Math.random() * pokemonData.length)]

@@ -1,41 +1,9 @@
-import type { CluePreview, LocationAction } from '../../game/caseModel'
+import type { LocationAction } from '../../game/caseModel'
 import { pokemonData, type Pokemon } from '../../data/pokemon'
 import { LeadVisualIcon, type LeadVisualType } from './leadVisualIcons'
 
 type LeadType = 'search' | 'inspect' | 'question'
 type LeadPaperStyle = 'notebook' | 'tag' | 'clipboard'
-
-const fallbackPreviewByActionId: Record<string, CluePreview> = {
-  crumbs: { axis: 'height', strength: 'strong', label: 'Size clue', hint: '' },
-  'measure-tracks': { axis: 'weight', strength: 'strong', label: 'Weight clue', hint: '' },
-  'follow-tracks': { axis: 'type', strength: 'medium', label: 'Type clue', hint: '' },
-  'check-roots': { axis: 'groundTrace', strength: 'strong', label: 'Movement clue', hint: '' },
-  'inspect-lid': { axis: 'force', strength: 'strong', label: 'Force clue', hint: '' },
-  'check-table': { axis: 'height', strength: 'strong', label: 'Height clue', hint: '' },
-  campers: { axis: 'witness', strength: 'medium', label: 'Witness clue', hint: '' },
-  'interview-camper': { axis: 'witness', strength: 'medium', label: 'Witness clue', hint: '' },
-  'check-wash-bucket': { axis: 'type', strength: 'medium', label: 'Type clue', hint: '' },
-  tents: { axis: 'scene', strength: 'weak', label: 'Size clue', hint: '' },
-  'check-fire-pit': { axis: 'scene', strength: 'weak', label: 'Type clue', hint: '' },
-  'photograph-tracks': { axis: 'scene', strength: 'weak', label: 'Movement clue', hint: '' },
-  'search-branches': { axis: 'scene', strength: 'weak', label: 'Height clue', hint: '' },
-  'listen-quietly': { axis: 'scene', strength: 'weak', label: 'Movement clue', hint: '' },
-  'smell-jar': { axis: 'scene', strength: 'weak', label: 'Type clue', hint: '' },
-  'search-bedding': { axis: 'scene', strength: 'weak', label: 'Handling clue', hint: '' },
-  'check-nearby-tools': { axis: 'scene', strength: 'weak', label: 'Force clue', hint: '' },
-  'scan-quiet-corner': { axis: 'scene', strength: 'weak', label: 'Movement clue', hint: '' },
-  'inspect-side-surface': { axis: 'scene', strength: 'weak', label: 'Handling clue', hint: '' },
-}
-
-const inferCluePreview = (action: LocationAction): CluePreview => {
-  if (action.cluePreview) return action.cluePreview
-  if (fallbackPreviewByActionId[action.id]) return fallbackPreviewByActionId[action.id]
-  if (action.outcomeType === 'witness') return { axis: 'witness', strength: 'medium', label: 'Witness clue', hint: '' }
-  if (/track|print|depth/i.test(`${action.id} ${action.label}`)) return { axis: 'weight', strength: 'strong', label: 'Weight clue', hint: '' }
-  if (/trail|residue|bucket/i.test(`${action.id} ${action.label}`)) return { axis: 'type', strength: 'medium', label: 'Type clue', hint: '' }
-  if (/lid|lock|force|broken/i.test(`${action.id} ${action.label}`)) return { axis: 'force', strength: 'strong', label: 'Force clue', hint: '' }
-  return { axis: 'scene', strength: 'weak', label: 'Handling clue', hint: '' }
-}
 
 const leadTypeIcons: Record<LeadType, string> = {
   search: '👣',
@@ -250,7 +218,7 @@ export function InvestigationActionChooser({
       <div className="location-leads">
         {actions.map((action) => {
           const leadType = getLeadType(action)
-          const cluePreview = inferCluePreview(action)
+          const cluePreview = action.cluePreview
           const isFollowed = action.id === followedActionId
           const witnessPokemon = leadType === 'question'
             ? (action.witnessPokemonIds ?? [])

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { EvidenceBadge } from '../Evidence/EvidenceBadge'
-import { getDiscoveredEvidence, type Case, type Suspect, type SuspectInvestigationGroup, type SuspectNoteStatus } from '../../game/caseModel'
-import { getSuspectGroupDetails } from '../../game/suspectCaseFile'
+import { getDiscoveredEvidence, type Case, type Suspect, type SuspectNoteStatus } from '../../game/caseModel'
+import { getSuspectGroupDetails, type SuspectInvestigationGroup } from '../../game/suspectCaseFile'
 import { MugShot } from './MugShot'
 
 type SuspectNotebookTab = 'overview' | 'investigations'

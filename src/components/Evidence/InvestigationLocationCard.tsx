@@ -15,7 +15,6 @@ interface InvestigationLocationCardProps {
 const getObservation = (location: Location) => (
   location.teaserText
   ?? location.observationText
-  ?? location.description
   ?? location.actions[0]?.observationTextSmall
   ?? location.actions[0]?.observationText
   ?? 'Initial signs are waiting to be checked.'

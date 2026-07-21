@@ -1,26 +1,6 @@
-import { pokemonData, type Pokemon, type PokemonType } from '../data/pokemon'
-import type { SuspectInvestigationGroup } from './caseModel'
+import { pokemonData, type Pokemon } from '../data/pokemon'
 
-const abilityByPrimaryType: Record<PokemonType, string> = {
-  bug: 'Swarm',
-  dark: 'Inner Focus',
-  dragon: 'Shed Skin',
-  electric: 'Static',
-  fairy: 'Cute Charm',
-  fighting: 'Guts',
-  fire: 'Flash Fire',
-  flying: 'Keen Eye',
-  ghost: 'Levitate',
-  grass: 'Overgrow',
-  ground: 'Sand Veil',
-  ice: 'Snow Cloak',
-  normal: 'Run Away',
-  poison: 'Poison Point',
-  psychic: 'Synchronize',
-  rock: 'Rock Head',
-  steel: 'Sturdy',
-  water: 'Torrent',
-}
+export type SuspectInvestigationGroup = 'appearance' | 'records' | 'habitat'
 
 const evolutionLineByPokemonId: Record<number, string> = {
   27: 'Sandshrew -> Sandslash',
@@ -94,12 +74,6 @@ export const getPokemonById = (pokemonId: number): Pokemon => {
   }
 
   return pokemon
-}
-
-export const getAbilityText = (pokemonId: number) => {
-  const pokemon = getPokemonById(pokemonId)
-
-  return abilityByPrimaryType[pokemon.types[0]] ?? 'Unknown ability'
 }
 
 export const getHabitatNote = (pokemonId: number) => {
@@ -188,12 +162,6 @@ export const getSuspectGroupDetails = (pokemonId: number) => {
       title: 'Habitat check',
       prompt: 'Look at where this Pokemon is usually found.',
       rows: [{ label: 'Habitat note', value: getHabitatNote(pokemonId) }],
-    },
-    ability: {
-      icon: '✨',
-      title: 'Ability check',
-      prompt: 'Check whether an ability could explain the evidence.',
-      rows: [{ label: 'Ability', value: getAbilityText(pokemonId) }],
     },
   } satisfies Record<
     SuspectInvestigationGroup,

@@ -1,9 +1,8 @@
 import { getShinySpriteUrl, pokemonData } from '../../data/pokemon'
 import type { Case, CaseDifficulty, CluePreview, Evidence, Location, LocationAction, LocationActionLeadType, Suspect } from '../caseModel'
-import { getAbilityText, getEvolutionLineText, getHabitatNote } from '../suspectCaseFile'
 import evidenceRaw from './evidence.json'
 
-export type EvidenceOverride = { title?: string; clueText?: string; endExplanation?: string }
+export type EvidenceOverride = { title?: string; clueText?: string }
 
 export type CaseConfig = {
   id: string
@@ -16,25 +15,6 @@ export type CaseConfig = {
   maxInvestigations: number
   locations: Location[]
   evidenceOverrides?: Record<string, EvidenceOverride>
-}
-
-type RawCaseActionKind = 'evidence' | 'witness' | 'nothing'
-
-type RawCaseAction = {
-  kind: RawCaseActionKind
-  id: string
-  label: string
-  description: string
-  observationText: string
-  sizeOverrides?: { small?: string; medium?: string; large?: string }
-}
-
-type RawCaseLocation = {
-  id: string
-  name: string
-  icon: string
-  teaserText: string
-  actions: RawCaseAction[]
 }
 
 type RawCaseTemplate = {
@@ -56,8 +36,7 @@ export type RawCaseConfig = {
   sceneImageAlt?: string
   difficulty: CaseDifficulty
   maxInvestigations: number
-  locations?: RawCaseLocation[]
-  template?: RawCaseTemplate
+  template: RawCaseTemplate
   evidenceOverrides?: Record<string, EvidenceOverride>
 }
 
@@ -87,74 +66,35 @@ export const createSuspect = (pokemonId: number, isShinyOverride?: boolean): Sus
 
 export const baseEvidence: Evidence[] = evidenceRaw as Evidence[]
 
-const evidenceIdByActionId: Record<string, string> = {
-  crumbs: 'height-clue',
-  campers: 'witness-clue',
-  'measure-tracks': 'weight-clue',
-  'follow-tracks': 'type-residue-clue',
-  'check-roots': 'ground-trace-clue',
-  'inspect-lid': 'force-clue',
-  'check-table': 'height-clue',
-  'interview-camper': 'witness-clue',
-  'check-wash-bucket': 'type-residue-clue',
-}
-
 const cluePreviewByEvidenceId: Record<string, CluePreview> = {
   'height-clue': {
-    axis: 'height',
-    strength: 'strong',
     label: 'Size clue',
-    hint: 'Checks whether the culprit was small, medium-sized, or tall.',
   },
   'weight-clue': {
-    axis: 'weight',
-    strength: 'strong',
     label: 'Weight clue',
-    hint: 'Checks how heavy the culprit was from pressure or track depth.',
   },
   'type-residue-clue': {
-    axis: 'type',
-    strength: 'medium',
     label: 'Type clue',
-    hint: 'Narrows the culprit to a small set of possible Pokemon types.',
   },
   'ground-trace-clue': {
-    axis: 'groundTrace',
-    strength: 'strong',
     label: 'Movement clue',
-    hint: 'Checks what kind of trace the culprit left on nearby terrain.',
   },
   'force-clue': {
-    axis: 'force',
-    strength: 'strong',
     label: 'Force clue',
-    hint: 'Checks what kind of force or entry mark the culprit could leave.',
   },
   'witness-clue': {
-    axis: 'witness',
-    strength: 'medium',
     label: 'Witness clue',
-    hint: 'Gets a remembered movement or behavior detail from a witness.',
   },
   'highest-stat-clue': {
-    axis: 'highestStat',
-    strength: 'medium',
     label: 'Strong trait',
-    hint: 'Looks for the culprit trait most visible during the escape.',
   },
   'lowest-stat-clue': {
-    axis: 'lowestStat',
-    strength: 'weak',
     label: 'Limitation',
-    hint: 'Looks for what the culprit avoided or handled poorly.',
   },
 }
 
 const scenePreview = (label = 'Scene context'): CluePreview => ({
-  axis: 'scene',
-  strength: 'weak',
   label,
-  hint: 'Checks a side route. It may close off a theory, but rarely gives a primary clue.',
 })
 
 const sideRoutePreviewByActionId: Record<string, CluePreview> = {
@@ -186,6 +126,7 @@ const location = (
 
 const ev = (
   id: string,
+  evidenceId: string,
   label: string,
   description: string,
   observationText: string,
@@ -196,18 +137,19 @@ const ev = (
   leadType: 'careful',
   description,
   outcomeType: 'evidence',
-  evidenceId: evidenceIdByActionId[id as keyof typeof evidenceIdByActionId] ?? null,
+  evidenceId,
   evidenceTitle: null,
   evidenceText: null,
   observationText,
   observationTextSmall: sizeOverrides?.small,
   observationTextMedium: sizeOverrides?.medium,
   observationTextLarge: sizeOverrides?.large,
-  cluePreview: previewForEvidenceId(evidenceIdByActionId[id as keyof typeof evidenceIdByActionId]),
+  cluePreview: previewForEvidenceId(evidenceId),
 })
 
 const wit = (
   id: string,
+  evidenceId: string,
   label: string,
   description: string,
   observationText: string,
@@ -217,11 +159,11 @@ const wit = (
   leadType: 'uncertain',
   description,
   outcomeType: 'witness',
-  evidenceId: evidenceIdByActionId[id as keyof typeof evidenceIdByActionId] ?? null,
+  evidenceId,
   evidenceTitle: null,
   evidenceText: null,
   observationText,
-  cluePreview: previewForEvidenceId(evidenceIdByActionId[id as keyof typeof evidenceIdByActionId] ?? 'witness-clue'),
+  cluePreview: previewForEvidenceId(evidenceId),
 })
 
 const noth = (id: string, label: string, description: string, observationText: string): LocationAction => ({
@@ -299,58 +241,37 @@ const act = <T extends LocationAction>(action: T): T => {
   return action
 }
 
-const buildAction = (action: RawCaseAction): LocationAction => {
-  const builtAction =
-    action.kind === 'evidence'
-      ? ev(action.id, action.label, action.description, action.observationText, action.sizeOverrides)
-      : action.kind === 'witness'
-        ? wit(action.id, action.label, action.description, action.observationText)
-        : noth(action.id, action.label, action.description, action.observationText)
-
-  return act(builtAction)
-}
-
 const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Location[] => [
   location(`${caseId}-scene`, template.area, '🔎', `${template.area} shows signs of a careful disturbance.`,
-    ev('crumbs', `Search ${template.area}`, `Look for dropped traces around ${template.area}.`, `Loose traces were scattered {movementWord} through ${template.area}.`),
+    ev('crumbs', 'height-clue', `Search ${template.area}`, `Look for dropped traces around ${template.area}.`, `Loose traces were scattered {movementWord} through ${template.area}.`),
     act(noth('tents', `Check around ${template.area}`, `Search the less disturbed parts of ${template.area}.`, `Most of ${template.area} is messy, but that part reveals nothing useful.`)),
     noth('check-nearby-tools', `Check nearby tools`, `Look over the tools closest to ${template.area}.`, 'The nearby tools are scattered but add nothing useful.'),
   ),
   location(`${caseId}-traces`, template.traceArea, '👣', `${template.traceArea} has marks leading away from the scene.`,
-    ev('measure-tracks', 'Measure the marks', `Check the marks across ${template.traceArea}.`, `The marks run steadily across ${template.traceArea}.`,
+    ev('measure-tracks', 'weight-clue', 'Measure the marks', `Check the marks across ${template.traceArea}.`, `The marks run steadily across ${template.traceArea}.`,
       { small: `Small, light marks sit low across ${template.traceArea}.`, large: `Deep, heavy marks press into ${template.traceArea}.` }),
-    act(ev('follow-tracks', 'Follow the trail', 'See where the trail leads.', `A line of {textureWord} trails across ${template.traceArea}.`)),
+    act(ev('follow-tracks', 'type-residue-clue', 'Follow the trail', 'See where the trail leads.', `A line of {textureWord} trails across ${template.traceArea}.`)),
     act(noth('photograph-tracks', 'Photograph the marks', 'Document the marks before they are disturbed.', 'The photo captures the pattern but adds nothing new.')),
   ),
   location(`${caseId}-storage`, template.storageArea, '📦', `${template.storageArea} looks disturbed near its base.`,
-    ev('check-roots', `Inspect ${template.storageArea}`, `Look under and around ${template.storageArea}.`, `The {groundWord} near ${template.storageArea} was disturbed.`),
+    ev('check-roots', 'ground-trace-clue', `Inspect ${template.storageArea}`, `Look under and around ${template.storageArea}.`, `The {groundWord} near ${template.storageArea} was disturbed.`),
     act(noth('search-branches', `Check above ${template.storageArea}`, 'Search the higher surfaces nearby.', 'The higher surfaces are dusty but untouched.')),
     noth('listen-quietly', 'Listen quietly', 'Pause and listen for movement.', 'The area is quiet. Whoever was here is gone.'),
   ),
   location(`${caseId}-lock`, template.lockedObject, '🔐', `${template.lockedObject} shows signs of tampering.`,
-    act(ev('inspect-lid', `Inspect ${template.lockedObject}`, `Study where ${template.lockedObject} was forced.`, `Something marked ${template.lockedObject} before it gave way.`)),
+    act(ev('inspect-lid', 'force-clue', `Inspect ${template.lockedObject}`, `Study where ${template.lockedObject} was forced.`, `Something marked ${template.lockedObject} before it gave way.`)),
     act(noth('smell-jar', `Smell near ${template.lockedObject}`, 'Check for any lingering scent.', 'Only the normal scent of the area remains. Nothing useful stands out.')),
-    ev('check-table', `Check beside ${template.lockedObject}`, `Look along the nearby surface beside ${template.lockedObject}.`, `Whoever handled ${template.lockedObject} left traces {movementWord} nearby.`),
+    ev('check-table', 'height-clue', `Check beside ${template.lockedObject}`, `Look along the nearby surface beside ${template.lockedObject}.`, `Whoever handled ${template.lockedObject} left traces {movementWord} nearby.`),
   ),
   location(`${caseId}-witness`, template.witnessArea, '🗣️', `Someone near ${template.witnessArea} noticed something odd.`,
-    wit('interview-camper', `Question the ${template.witnessRole}`, `Ask what the ${template.witnessRole} remembers.`, `The ${template.witnessRole} is certain about that detail.`),
-    ev('check-wash-bucket', `Check ${template.waterFeature}`, `Inspect the area around ${template.waterFeature}.`, `Even near ${template.waterFeature}, a line of {textureWord} stayed behind.`),
+    wit('interview-camper', 'witness-clue', `Question the ${template.witnessRole}`, `Ask what the ${template.witnessRole} remembers.`, `The ${template.witnessRole} is certain about that detail.`),
+    ev('check-wash-bucket', 'type-residue-clue', `Check ${template.waterFeature}`, `Inspect the area around ${template.waterFeature}.`, `Even near ${template.waterFeature}, a line of {textureWord} stayed behind.`),
     act(noth('search-bedding', `Search around ${template.witnessArea}`, 'Check the nearby hiding spots.', 'The nearby area is cluttered but hides nothing useful.')),
   ),
 ]
 
 export const hydrateCaseConfig = (rawCaseConfig: RawCaseConfig): CaseConfig => {
-  const locations = rawCaseConfig.locations
-    ? rawCaseConfig.locations.map((rawLocation) =>
-        location(
-          rawLocation.id,
-          rawLocation.name,
-          rawLocation.icon,
-          rawLocation.teaserText,
-          ...rawLocation.actions.map(buildAction),
-        )
-      )
-    : buildTemplatedLocations(rawCaseConfig.id, rawCaseConfig.template!)
+  const locations = buildTemplatedLocations(rawCaseConfig.id, rawCaseConfig.template)
 
   return {
     id: rawCaseConfig.id,

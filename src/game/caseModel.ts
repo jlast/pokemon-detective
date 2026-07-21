@@ -29,13 +29,8 @@ export interface ClueRule {
   matchingValues: string[]
 }
 
-export type CluePreviewStrength = 'strong' | 'medium' | 'weak'
-
 export interface CluePreview {
-  axis: ClueAxis
-  strength: CluePreviewStrength
   label: string
-  hint: string
 }
 
 export interface LocationAction {
@@ -65,7 +60,6 @@ export interface Location {
   id: string
   name: string
   icon: string
-  description?: string
   teaserText?: string
   observationText?: string
   evidenceTitle?: string

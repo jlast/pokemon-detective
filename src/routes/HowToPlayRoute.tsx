@@ -9,7 +9,7 @@ const playSteps = [
   },
   {
     title: 'Inspect suspects',
-    body: 'Compare clues against each suspect file. Check appearance, records, habitat, and ability notes, then mark Pokemon as suspect or ruled out as your theory changes.',
+    body: 'Compare clues against each suspect file. Check appearance, records, and habitat notes, then mark Pokemon as suspect or ruled out as your theory changes.',
   },
   {
     title: 'Make an accusation',

@@ -9,7 +9,8 @@
     "generate:data": "node scripts/generate-pokemon-data.mjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prune": "ts-prune"
   },
   "dependencies": {
     "react": "^19.2.7",
