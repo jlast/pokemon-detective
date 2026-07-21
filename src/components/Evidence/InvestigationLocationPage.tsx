@@ -4,6 +4,7 @@ import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { getLocationIcon } from '../../game/locationIcons'
 import { pokemonData } from '../../data/pokemon'
 import { TODAY_INVESTIGATION_PATH, TODAY_SUSPECTS_PATH } from '../../paths'
+import { EvidenceBadge } from './EvidenceBadge'
 import { InvestigationActionChooser } from './InvestigationActionChooser'
 
 interface InvestigationLocationPageProps {
@@ -59,6 +60,12 @@ export function InvestigationLocationPage({
   const evidenceText = hasEvidence
     ? selectedAction?.evidenceText ?? location.evidenceText
     : (location.observationText ?? selectedAction?.observationText)
+  const evidenceBadgeText = hasEvidence
+    ? selectedAction?.evidenceBadgeText ?? location.evidenceBadgeText
+    : null
+  const evidenceBadgeType = hasEvidence
+    ? selectedAction?.evidenceBadgeType ?? location.evidenceBadgeType
+    : null
   const evidenceIcon = hasEvidence ? getEvidenceIcon(location.evidenceId, evidenceTitle) : null
   const locationIcon = getLocationIcon(location.name, location.icon)
   const compactTeaserText = getCompactTeaserText(location)
@@ -115,6 +122,7 @@ export function InvestigationLocationPage({
                 <div className="evidence-hero-copy">
                   <span className="result-status-pill">New Evidence</span>
                   <h3>{evidenceTitle}</h3>
+                  <EvidenceBadge text={evidenceBadgeText} type={evidenceBadgeType} />
                   <p>{evidenceText}</p>
                   {witnessPokemon ? (
                     <p className="result-save-confirmation">Witness interviewed: {witnessPokemon.name}</p>

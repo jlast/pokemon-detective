@@ -239,6 +239,8 @@ const stripActionOutcome = (action: LocationAction): LocationAction => {
     evidenceId: _evidenceId,
     evidenceTitle: _evidenceTitle,
     evidenceText: _evidenceText,
+    evidenceBadgeText: _evidenceBadgeText,
+    evidenceBadgeType: _evidenceBadgeType,
     implicationText: _implicationText,
     unlocksLocationIds: _unlocksLocationIds,
     isUseful: _isUseful,
@@ -329,6 +331,14 @@ const resolveEvidenceTitle = (record: InvestigatedLocationRecord, action: Locati
 
 const resolveEvidenceText = (record: InvestigatedLocationRecord, action: LocationAction | undefined): string | undefined => (
   action?.evidenceText ?? record.evidenceText
+)
+
+const resolveEvidenceBadgeText = (record: InvestigatedLocationRecord, action: LocationAction | undefined): string | undefined => (
+  action?.evidenceBadgeText ?? record.evidenceBadgeText
+)
+
+const resolveEvidenceBadgeType = (record: InvestigatedLocationRecord, action: LocationAction | undefined): string | undefined => (
+  action?.evidenceBadgeType ?? record.evidenceBadgeType
 )
 
 const hasCompleteSuspectShinyMap = (progress: PlayerProgressRecord, fullCase: Case): boolean => (
@@ -474,6 +484,8 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
           observationText: record.observationText,
           evidenceTitle: resolveEvidenceTitle(record, selectedAction) ?? null,
           evidenceText: resolveEvidenceText(record, selectedAction) ?? null,
+          evidenceBadgeText: resolveEvidenceBadgeText(record, selectedAction) ?? null,
+          evidenceBadgeType: resolveEvidenceBadgeType(record, selectedAction) ?? null,
           evidenceId: record.evidenceId ?? null,
           witnessPokemonId: record.witnessPokemonId,
         }
@@ -485,6 +497,8 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
         observationText: undefined,
         evidenceTitle: null,
         evidenceText: null,
+        evidenceBadgeText: null,
+        evidenceBadgeType: null,
         evidenceId: null,
         actions: loc.actions.map(stripActionOutcome),
       }
@@ -693,6 +707,8 @@ const handleInvestigate = async (
     : undefined
   const evidenceTitle = action.evidenceTitle ?? evidenceItem?.title
   const evidenceText = action.evidenceText ?? evidenceItem?.clueText
+  const evidenceBadgeText = action.evidenceBadgeText ?? evidenceItem?.badgeText
+  const evidenceBadgeType = action.evidenceBadgeType ?? evidenceItem?.badgeType
 
   const witnessPokemonId = typeof body.witnessPokemonId === 'number' ? body.witnessPokemonId : undefined
   if (action.outcomeType === 'witness') {
@@ -715,6 +731,8 @@ const handleInvestigate = async (
     evidenceId: action.evidenceId ?? undefined,
     evidenceTitle,
     evidenceText,
+    evidenceBadgeText,
+    evidenceBadgeType,
     witnessPokemonId,
   }
 

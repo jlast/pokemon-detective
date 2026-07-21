@@ -2326,6 +2326,42 @@
   line-height: 1.4;
 }
 
+.evidence-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 1.85rem;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(78, 64, 38, 0.18);
+  background: #f2e7c8;
+  color: #4c3b20;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  box-shadow: 0 5px 10px rgba(82, 66, 38, 0.08);
+}
+
+.evidence-badge--type-bug { background: #a6b91a; color: #252906; }
+.evidence-badge--type-dark { background: #705746; color: #fff7ee; }
+.evidence-badge--type-dragon { background: #6f35fc; color: #fff; }
+.evidence-badge--type-electric { background: #f7d02c; color: #382d00; }
+.evidence-badge--type-fairy { background: #d685ad; color: #35111f; }
+.evidence-badge--type-fighting { background: #c22e28; color: #fff8f8; }
+.evidence-badge--type-fire { background: #ee8130; color: #351500; }
+.evidence-badge--type-flying { background: #a98ff3; color: #211340; }
+.evidence-badge--type-ghost { background: #735797; color: #fff; }
+.evidence-badge--type-grass { background: #7ac74c; color: #163107; }
+.evidence-badge--type-ground { background: #e2bf65; color: #3a2a00; }
+.evidence-badge--type-ice { background: #96d9d6; color: #0d3331; }
+.evidence-badge--type-normal { background: #a8a77a; color: #2f2e18; }
+.evidence-badge--type-poison { background: #a33ea1; color: #fff; }
+.evidence-badge--type-psychic { background: #f95587; color: #fff; }
+.evidence-badge--type-rock { background: #b6a136; color: #302806; }
+.evidence-badge--type-steel { background: #b7b7ce; color: #252537; }
+.evidence-badge--type-water { background: #6390f0; color: #fff; }
+
 .suspect-evidence-empty {
   display: grid;
   justify-items: start;

@@ -39,6 +39,8 @@ export interface LocationAction {
   evidenceId?: string | null
   evidenceTitle?: string | null
   evidenceText?: string | null
+  evidenceBadgeText?: string | null
+  evidenceBadgeType?: string | null
   witnessPokemonId?: number
   witnessPokemonIds?: number[]
   observationText: string
@@ -61,6 +63,8 @@ export interface Location {
   observationText?: string
   evidenceTitle?: string
   evidenceText?: string
+  evidenceBadgeText?: string
+  evidenceBadgeType?: string
   evidenceId?: string
   witnessPokemonId?: number
   cardVariant?: LocationCardVariant
@@ -74,6 +78,8 @@ export interface Evidence {
   id: string
   title: string
   clueText: string
+  badgeText?: string
+  badgeType?: string
   hiddenTrait: string
   endExplanation: string
   discovered: boolean
@@ -83,6 +89,8 @@ export interface CaseEvidenceExplanation {
   locationId: string
   evidenceTitle: string
   clueText: string
+  badgeText?: string
+  badgeType?: string
   deductionText: string
 }
 
@@ -132,6 +140,8 @@ export function getDiscoveredEvidence(caseData: Case): Evidence[] {
         id: location.evidenceId,
         title: action?.evidenceTitle ?? location.evidenceTitle ?? 'Unknown',
         clueText: action?.evidenceText ?? location.evidenceText ?? '',
+        badgeText: action?.evidenceBadgeText ?? location.evidenceBadgeText,
+        badgeType: action?.evidenceBadgeType ?? location.evidenceBadgeType,
         hiddenTrait: '',
         endExplanation: '',
         discovered: true,

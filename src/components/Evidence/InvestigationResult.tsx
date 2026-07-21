@@ -1,4 +1,5 @@
 import type { LocationAction } from '../../game/caseModel'
+import { EvidenceBadge } from './EvidenceBadge'
 
 interface InvestigationResultProps {
   action: LocationAction
@@ -36,6 +37,7 @@ export function InvestigationResult({
         hasEvidence ? (
           <div className="location-evidence-list">
             <span>✓ {action.evidenceTitle}</span>
+            <EvidenceBadge text={action.evidenceBadgeText} type={action.evidenceBadgeType} />
             <span className="location-evidence-copy">Observation</span>
             <span>{action.observationText}</span>
             <span className="location-evidence-copy">Evidence details</span>

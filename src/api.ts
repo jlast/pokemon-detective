@@ -20,6 +20,8 @@ export interface InvestigationResponse {
     evidenceId?: string
     evidenceTitle?: string
     evidenceText?: string
+    evidenceBadgeText?: string
+    evidenceBadgeType?: string
     witnessPokemonId?: number
   }
   investigationsRemaining: number

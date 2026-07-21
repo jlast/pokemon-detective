@@ -18,6 +18,8 @@ type EvidenceTemplate = {
 type GeneratedEvidence = {
   title: string
   clueText: string
+  badgeText: string
+  badgeType?: string
   endExplanation: string
   deductionText: string
 }
@@ -307,6 +309,30 @@ const getProfileCategoryValue = (profile: PokemonCaseProfile, category: Evidence
   }
 }
 
+const formatLabel = (value: string): string => (
+  value
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase())
+)
+
+const getEvidenceBadge = (category: EvidenceCategory, profile: PokemonCaseProfile): { badgeText: string; badgeType?: string } => {
+  switch (category) {
+    case 'height':
+      return { badgeText: `Height: ${formatLabel(profile.height)}` }
+    case 'weight':
+      return { badgeText: `Weight: ${formatLabel(profile.weight)}` }
+    case 'typeResidue':
+    case 'groundTrace':
+    case 'force':
+    case 'witness':
+      return { badgeText: formatLabel(profile.primaryType), badgeType: profile.primaryType }
+    case 'highestStat':
+      return { badgeText: `Strength: ${formatLabel(profile.highestStat)}` }
+    case 'lowestStat':
+      return { badgeText: `Weakness: ${formatLabel(profile.lowestStat)}` }
+  }
+}
+
 const getRelevantCategories = (_pokemon: Pokemon): EvidenceCategory[] => ['height', 'weight', 'typeResidue', 'groundTrace', 'force', 'witness', 'highestStat', 'lowestStat']
 
 const scorePokemonAgainstProfile = (pokemonId: number, culpritProfile: PokemonCaseProfile, categories: EvidenceCategory[]) => {
@@ -364,10 +390,12 @@ const getCategoryDeductionText = (category: EvidenceCategory, profile: PokemonCa
 const buildEvidenceFromTemplate = (evidenceId: string, culprit: Pokemon): GeneratedEvidence => {
   const profile = getPokemonCaseProfile(culprit)
   const template = getEvidenceTemplate(evidenceId)
+  const badge = getEvidenceBadge(template.category, profile)
 
   return {
     title: fillTemplate(template.titleTemplate, profile.values),
     clueText: fillTemplate(template.clueTemplate, profile.values),
+    ...badge,
     endExplanation: fillTemplate(template.endTemplate, profile.values),
     deductionText: getCategoryDeductionText(template.category, profile),
   }
@@ -415,6 +443,8 @@ export const generateCaseEvidence = (
       ...evidenceItem,
       title: override?.title ? fillNarrativeTemplate(override.title, profile) : generated.title,
       clueText: override?.clueText ? fillNarrativeTemplate(override.clueText, profile) : generated.clueText,
+      badgeText: generated.badgeText,
+      badgeType: generated.badgeType,
       endExplanation: override?.endExplanation ? fillNarrativeTemplate(override.endExplanation, profile) : generated.endExplanation,
       hiddenTrait: getEvidenceTemplate(evidenceItem.id).category,
     }
@@ -452,6 +482,8 @@ export const generateCaseLocations = (
         ...action,
         evidenceTitle: generatedEvidenceItem?.title ?? action.evidenceTitle,
         evidenceText: generatedEvidenceItem?.clueText ?? action.evidenceText,
+        evidenceBadgeText: generatedEvidenceItem?.badgeText,
+        evidenceBadgeType: generatedEvidenceItem?.badgeType,
         observationText: generatedNarrative.observationText,
         implicationText: generatedNarrative.implicationText,
       }
@@ -525,6 +557,8 @@ const buildSolution = (
         locationId: location.id,
         evidenceTitle: primaryAction.evidenceTitle ?? evidenceItem.title,
         clueText: primaryAction.evidenceText ?? evidenceItem.clueText,
+        badgeText: primaryAction.evidenceBadgeText ?? evidenceItem.badgeText,
+        badgeType: primaryAction.evidenceBadgeType ?? evidenceItem.badgeType,
         deductionText: generatedEvidenceById.get(evidenceId)?.deductionText ?? getCategoryDeductionText(getEvidenceTemplate(evidenceId).category, culpritProfile),
       }]
     })
