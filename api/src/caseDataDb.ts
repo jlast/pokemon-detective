@@ -12,6 +12,7 @@ export interface CaseDataRecord {
   culpritPokemonId: number
   typeClueSlot?: 'primary' | 'secondary'
   typeClueGroup?: PokemonType[]
+  typeClueGroups?: Record<string, PokemonType[]>
   suspectPokemonIds: number[]
   suspectShinyMap: Record<string, boolean>
   witnessPokemonIds?: number[]
