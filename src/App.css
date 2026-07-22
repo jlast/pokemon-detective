@@ -4020,9 +4020,25 @@
 }
 
 .case-scene-card__image-frame--sprite::before {
-  top: 50%;
-  width: 46%;
-  height: 46%;
+  content: none;
+}
+
+.case-scene-card__image-frame--sprite {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  background:
+    radial-gradient(circle at 48% 45%, rgba(255, 255, 255, 0.34), transparent 36%),
+    linear-gradient(135deg, #e8e1d2, #a9a293 68%, #6f695f);
+}
+
+.case-scene-card__image-frame--sprite::after {
+  background:
+    radial-gradient(ellipse at center, transparent 48%, rgba(26, 23, 20, 0.42) 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 5px),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 34%),
+    rgba(91, 82, 70, 0.16);
+  mix-blend-mode: multiply;
 }
 
 .case-scene-card__image-frame::after {
@@ -4060,10 +4076,16 @@
 }
 
 .case-scene-card__image-frame--sprite .case-scene-card__image {
-  padding: 1.4rem;
+  box-sizing: border-box;
+  width: 82%;
+  height: 82%;
+  padding: 0;
+  aspect-ratio: auto;
+  background: transparent;
   object-fit: contain;
+  object-position: center;
   image-rendering: pixelated;
-  filter: contrast(1.08) saturate(1.16) brightness(1.04);
+  filter: grayscale(1) sepia(0.18) contrast(1.35) brightness(0.96);
   transform: none;
 }
 
