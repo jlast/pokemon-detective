@@ -4019,6 +4019,12 @@
   box-shadow: 0 0 0 1px rgba(255, 225, 210, 0.28);
 }
 
+.case-scene-card__image-frame--sprite::before {
+  top: 50%;
+  width: 46%;
+  height: 46%;
+}
+
 .case-scene-card__image-frame::after {
   content: '';
   position: absolute;
@@ -4051,6 +4057,14 @@
   background: #efe0bd;
   filter: contrast(1.24) saturate(1.22) brightness(1.05);
   transform: scale(1.02);
+}
+
+.case-scene-card__image-frame--sprite .case-scene-card__image {
+  padding: 1.4rem;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: contrast(1.08) saturate(1.16) brightness(1.04);
+  transform: none;
 }
 
 .case-scene-card__caption {
@@ -4181,6 +4195,7 @@
   --location-paper: #dedbd1;
   border-color: rgba(86, 85, 78, 0.34);
   box-shadow: 0 3px 9px rgba(62, 61, 56, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.46);
+  cursor: default;
   filter: grayscale(0.38) saturate(0.78);
 }
 

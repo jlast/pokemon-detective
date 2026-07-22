@@ -133,6 +133,21 @@ export interface ClearedSuspectExplanation {
   evidenceLabel?: string
 }
 
+export type CaseTheme =
+  | {
+      kind: 'stolen-item'
+      name: string
+      image: string
+      alt: string
+    }
+  | {
+      kind: 'missing-pokemon'
+      pokemonId: number
+      name: string
+      image: string
+      alt: string
+    }
+
 export interface CaseSolution {
   culpritRevealText: string
   detectiveConclusion: string
@@ -147,6 +162,7 @@ export interface Case {
   crimeIcon: string
   sceneImage: string
   sceneImageAlt: string
+  theme?: CaseTheme
   difficulty: CaseDifficulty
   culpritPokemonId: number
   typeClueSlot?: 'primary' | 'secondary'

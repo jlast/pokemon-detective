@@ -7,6 +7,7 @@
     "dev": "vite",
     "dev:api": "npm --prefix api run dev:server",
     "generate:data": "node scripts/generate-pokemon-data.mjs",
+    "generate:items": "node scripts/generate-item-data.mjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",

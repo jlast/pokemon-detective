@@ -1,6 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb'
-import type { EvidenceBadgeData } from '../../src/game/caseModel'
+import type { CaseTheme, EvidenceBadgeData } from '../../src/game/caseModel'
 import type { PokemonType } from '../../src/data/pokemon'
 
 const client = new DynamoDBClient({})
@@ -21,6 +21,7 @@ export interface CaseDataRecord {
   actionEvidenceMap: Record<string, string>
   locationCardVariantMap?: Record<string, string>
   locationCardTiltMap?: Record<string, number>
+  theme?: CaseTheme
   solution: {
     culpritRevealText: string
     detectiveConclusion: string

@@ -2,6 +2,7 @@ import { LinedOverview } from './LinedOverview'
 import { PostIt } from './PostIt'
 import { MugShot } from './Suspects/MugShot'
 import type { Case } from '../game/caseModel'
+import { getCaseThemeNote } from '../game/caseTheme'
 
 interface CaseOverviewProps {
   gameCase: Case
@@ -85,7 +86,7 @@ export function CaseOverview({
           </LinedOverview>
           <PostIt title="Known scene notes">
             <span>INITIAL REPORT</span>
-            <span>A small statue disappeared from the academy courtyard.</span>
+            <span>{getCaseThemeNote(selectedCase)}</span>
           </PostIt>
           {startInvestigation ? (
             <div className="case-overview-cta">

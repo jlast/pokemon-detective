@@ -65,8 +65,14 @@ export function LocationsPanel({
   const pointsLeft = Math.max(maxInvestigations - actionsUsed, 0)
   const workingTheoryCopy = getWorkingTheoryCopy(evidenceCollectedCount, pointsLeft, currentCase.suspects.length)
   const evidenceBoardCopy = getEvidenceBoardCopy(evidenceCollectedCount, maxInvestigations)
-  const sceneImage = getPublicAssetUrl(currentCase.sceneImage ?? placeholderSceneImage)
-  const sceneImageAlt = currentCase.sceneImageAlt ?? `Scene photo for ${currentCase.title}`
+  const exhibitImage = getPublicAssetUrl(currentCase.theme?.image ?? currentCase.sceneImage ?? placeholderSceneImage)
+  const exhibitAlt = currentCase.theme?.alt ?? currentCase.sceneImageAlt ?? `Scene photo for ${currentCase.title}`
+  const exhibitLabel = currentCase.theme?.kind === 'stolen-item'
+    ? 'Exhibit A: Stolen Item'
+    : currentCase.theme?.kind === 'missing-pokemon'
+      ? 'Exhibit A: Missing Pokemon'
+      : 'Exhibit A'
+  const exhibitTitle = currentCase.theme?.name ?? currentCase.title
 
   return (
     <section
@@ -90,16 +96,16 @@ export function LocationsPanel({
 
         <div className="pinboard-card case-scene-card" style={{ gridArea: 'budget' }}>
           <div className="case-scene-card__pin" aria-hidden="true" />
-          <div className="case-scene-card__image-frame">
+          <div className={`case-scene-card__image-frame ${currentCase.theme ? 'case-scene-card__image-frame--sprite' : ''}`}>
             <img
               className="case-scene-card__image"
-              src={sceneImage}
-              alt={sceneImageAlt}
+              src={exhibitImage}
+              alt={exhibitAlt}
             />
           </div>
           <div className="case-scene-card__caption">
-            <strong>Exhibit A</strong>
-            <span>{currentCase.title}</span>
+            <strong>{exhibitLabel}</strong>
+            <span>{exhibitTitle}</span>
           </div>
         </div>
 

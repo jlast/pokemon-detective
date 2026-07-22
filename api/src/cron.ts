@@ -130,6 +130,7 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       witnessPokemonIdMap,
       locationCardVariantMap,
       locationCardTiltMap,
+      theme: gameCase.theme,
       actionEvidenceMap,
       solution: {
         culpritRevealText: gameCase.solution?.culpritRevealText ?? '',

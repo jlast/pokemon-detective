@@ -561,6 +561,7 @@ const loadCase = async (caseId: string) => {
     record.typeClueSlot ?? 'primary',
     storedTypeClueSlots,
     storedTypeClueGroups,
+    record.theme,
   )
   const witnessActionIds = getWitnessActionIds(fullCase)
   const requiredWitnessPokemonCount = witnessActionIds.length * WITNESS_OPTION_COUNT
@@ -584,8 +585,9 @@ const loadCase = async (caseId: string) => {
     || !hasCompleteLocationCardTiltMap(fullCase.locations, record.locationCardTiltMap)
     || !record.typeClueSlots
     || !record.typeClueGroups
+    || !record.theme
   ) {
-    await putCaseData({ ...record, typeClueSlots: fullCase.typeClueSlots, typeClueGroups: fullCase.typeClueGroups, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
+    await putCaseData({ ...record, typeClueSlots: fullCase.typeClueSlots, typeClueGroups: fullCase.typeClueGroups, theme: fullCase.theme, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
   }
 
   return applyLocationCardVariants(assignWitnessPokemonToActions(fullCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
@@ -630,6 +632,7 @@ const generateAndStoreCase = async (caseId: string) => {
     witnessPokemonIdMap,
     locationCardVariantMap,
     locationCardTiltMap,
+    theme: gameCase.theme,
     actionEvidenceMap,
     solution: {
       culpritRevealText: gameCase.solution?.culpritRevealText ?? '',

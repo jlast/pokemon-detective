@@ -2,6 +2,7 @@ import type { Case, CaseSolution } from '../caseModel'
 import type { PokemonType } from '../../data/pokemon'
 import { getPokemonById } from '../suspectCaseFile'
 import { generateCaseEvidence, generateCaseLineup, generateCaseLocations } from '../caseGeneration'
+import { applyCaseTheme, createCaseTheme } from '../caseTheme'
 import { createBaseCase, createSuspect, hydrateCaseConfig, type CaseConfig, type RawCaseConfig } from './shared'
 import { cases as casesRaw } from './cases'
 
@@ -10,8 +11,9 @@ export const allCases: CaseConfig[] = (casesRaw as RawCaseConfig[]).map(hydrateC
 const buildCase = (caseConfig: CaseConfig): Case => {
   const baseCase = createBaseCase(caseConfig)
   const generated = generateCaseLineup(baseCase.evidence, baseCase.locations, caseConfig.evidenceOverrides)
+  const theme = createCaseTheme(generated.suspectPokemonIds)
 
-  return {
+  return applyCaseTheme({
     ...baseCase,
     culpritPokemonId: generated.culpritPokemonId,
     typeClueSlots: generated.typeClueSlots,
@@ -29,7 +31,7 @@ const buildCase = (caseConfig: CaseConfig): Case => {
       evidenceExplanation: generated.solution.evidenceExplanation.map((item) => ({ ...item })),
       clearedSuspects: generated.solution.clearedSuspects.map((item) => ({ ...item })),
     },
-  }
+  }, theme)
 }
 
 const createRequiredCaseById = (id: string): Case => {
@@ -62,6 +64,7 @@ export const rebuildFullCase = (
   _typeClueSlot: 'primary' | 'secondary' = 'primary',
   typeClueSlots?: Record<string, 'primary' | 'secondary'>,
   typeClueGroups?: Record<string, PokemonType[]>,
+  theme = createCaseTheme(suspectPokemonIds),
 ): Case => {
   const config = allCases.find((c) => c.id === configId)
   if (!config) throw new Error(`Case config not found: ${configId}`)
@@ -82,7 +85,7 @@ export const rebuildFullCase = (
 
   const suspects = suspectPokemonIds.map((id) => createSuspect(id, suspectShinyMap[id]))
 
-  return {
+  return applyCaseTheme({
     ...baseCase,
     culpritPokemonId,
     typeClueSlots: resolvedTypeClueSlots,
@@ -93,5 +96,5 @@ export const rebuildFullCase = (
     evidence: generatedEvidence,
     solution,
     status: 'active' as const,
-  }
+  }, theme)
 }
