@@ -728,7 +728,7 @@ export const generateCaseLineup = (
     const typeClueSlots = createTypeClueSlots(culprit)
     const typeClueGroups = createTypeClueGroups(culprit, typeClueSlots)
     const culpritProfile = getPokemonCaseProfile(culprit, typeClueSlots, typeClueGroups)
-    const relevantClues = getRelevantClues(culprit).slice(0, 6)
+    const relevantClues = getRelevantClues(culprit)
 
     const scoredDistractors = shuffle(
       pokemonData
