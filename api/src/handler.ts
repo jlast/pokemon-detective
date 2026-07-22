@@ -456,7 +456,7 @@ const applyPlayerShinyMap = (fullCase: Case, progress: PlayerProgressRecord): Ca
 )
 
 const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null): Case => {
-  const { evidence: _ev, culpritPokemonId: _cp, typeClueSlot: _typeClueSlot, typeClueGroups: _typeClueGroups, ...caseWithoutEvidence } = fullCase
+  const { evidence: _ev, culpritPokemonId: _cp, typeClueSlot: _typeClueSlot, typeClueSlots: _typeClueSlots, typeClueGroups: _typeClueGroups, ...caseWithoutEvidence } = fullCase
   if (!progress) {
     return {
       ...caseWithoutEvidence,
@@ -531,8 +531,15 @@ const getTodayCaseData = async () => {
 
 const typeEvidenceIds = ['type-residue-clue', 'ground-trace-clue', 'force-clue', 'witness-clue']
 
+const getStoredTypeClueSlots = (record: Awaited<ReturnType<typeof getCaseData>>) => {
+  if (!record) return undefined
+  if (record.typeClueSlots) return record.typeClueSlots
+  return undefined
+}
+
 const getStoredTypeClueGroups = (record: Awaited<ReturnType<typeof getCaseData>>) => {
   if (!record) return undefined
+  if (!record.typeClueSlots) return undefined
   if (record.typeClueGroups) return record.typeClueGroups
   if (record.typeClueGroup) return Object.fromEntries(typeEvidenceIds.map((evidenceId) => [evidenceId, record.typeClueGroup]))
   return undefined
@@ -541,6 +548,7 @@ const getStoredTypeClueGroups = (record: Awaited<ReturnType<typeof getCaseData>>
 const loadCase = async (caseId: string) => {
   const record = await getCaseData(caseId)
   if (!record) return null
+  const storedTypeClueSlots = getStoredTypeClueSlots(record)
   const storedTypeClueGroups = getStoredTypeClueGroups(record)
   const fullCase = rebuildFullCase(
     record.configId,
@@ -551,6 +559,7 @@ const loadCase = async (caseId: string) => {
     record.solution,
     record.witnessPokemonIds,
     record.typeClueSlot ?? 'primary',
+    storedTypeClueSlots,
     storedTypeClueGroups,
   )
   const witnessActionIds = getWitnessActionIds(fullCase)
@@ -573,9 +582,10 @@ const loadCase = async (caseId: string) => {
     || !hasCompleteWitnessPokemonIdMap(record.witnessPokemonIdMap, witnessActionIds, record.suspectPokemonIds)
     || !hasCompleteLocationCardVariantMap(fullCase.locations, record.locationCardVariantMap)
     || !hasCompleteLocationCardTiltMap(fullCase.locations, record.locationCardTiltMap)
+    || !record.typeClueSlots
     || !record.typeClueGroups
   ) {
-    await putCaseData({ ...record, typeClueGroups: fullCase.typeClueGroups, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
+    await putCaseData({ ...record, typeClueSlots: fullCase.typeClueSlots, typeClueGroups: fullCase.typeClueGroups, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
   }
 
   return applyLocationCardVariants(assignWitnessPokemonToActions(fullCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
@@ -612,7 +622,7 @@ const generateAndStoreCase = async (caseId: string) => {
     caseId,
     configId: gameCase.id,
     culpritPokemonId: gameCase.culpritPokemonId,
-    typeClueSlot: gameCase.typeClueSlot,
+    typeClueSlots: gameCase.typeClueSlots,
     typeClueGroups: gameCase.typeClueGroups,
     suspectPokemonIds,
     suspectShinyMap,

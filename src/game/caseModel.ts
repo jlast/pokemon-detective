@@ -150,6 +150,7 @@ export interface Case {
   difficulty: CaseDifficulty
   culpritPokemonId: number
   typeClueSlot?: 'primary' | 'secondary'
+  typeClueSlots?: Record<string, 'primary' | 'secondary'>
   typeClueGroups?: Record<string, PokemonType[]>
   maxInvestigations: number
   witnessPokemonIds?: number[]

@@ -122,7 +122,7 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       caseId,
       configId: gameCase.id,
       culpritPokemonId: gameCase.culpritPokemonId,
-      typeClueSlot: gameCase.typeClueSlot,
+      typeClueSlots: gameCase.typeClueSlots,
       typeClueGroups: gameCase.typeClueGroups,
       suspectPokemonIds,
       suspectShinyMap,

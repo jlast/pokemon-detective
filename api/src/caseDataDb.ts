@@ -11,6 +11,7 @@ export interface CaseDataRecord {
   configId: string
   culpritPokemonId: number
   typeClueSlot?: 'primary' | 'secondary'
+  typeClueSlots?: Record<string, 'primary' | 'secondary'>
   typeClueGroup?: PokemonType[]
   typeClueGroups?: Record<string, PokemonType[]>
   suspectPokemonIds: number[]
