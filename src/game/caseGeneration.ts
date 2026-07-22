@@ -55,29 +55,29 @@ const evidenceTemplates: EvidenceTemplate[] = [
     id: 'type-residue-clue',
     category: 'typeResidue',
     titleTemplate: 'Type Clue',
-    clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
-    endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
+    clueTemplate: "Residue at the scene gave a {typeClueLower} clue.",
+    endTemplate: "Residue at the scene gave a {typeClueLower} clue.",
   },
   {
     id: 'ground-trace-clue',
     category: 'groundTrace',
     titleTemplate: 'Type Clue',
-    clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
-    endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
+    clueTemplate: "Ground traces gave a {typeClueLower} clue.",
+    endTemplate: "Ground traces gave a {typeClueLower} clue.",
   },
   {
     id: 'force-clue',
     category: 'force',
     titleTemplate: 'Type Clue',
-    clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
-    endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
+    clueTemplate: "Marks at the entry point gave a {typeClueLower} clue.",
+    endTemplate: "Marks at the entry point gave a {typeClueLower} clue.",
   },
   {
     id: 'witness-clue',
     category: 'witness',
     titleTemplate: 'Type Clue',
-    clueTemplate: "This clue points to possible matches for the culprit's {typeClueLower}.",
-    endTemplate: "This clue pointed to possible matches for the culprit's {typeClueLower}.",
+    clueTemplate: "A witness report gave a {typeClueLower} clue.",
+    endTemplate: "A witness report gave a {typeClueLower} clue.",
   },
   {
     id: 'highest-stat-clue',
@@ -304,11 +304,11 @@ const getPokemonCaseProfile = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot): Po
       typeResidue: `${typeClueLower} clue traces`,
       groundTrace: `${typeClueLower} clue traces`,
       forceTrace: `${typeClueLower} clue marks`,
-      witnessDetail: `noticing a ${typeClueLower} clue`,
+      witnessDetail: `reporting a ${typeClueLower} clue`,
       movementWord: heightValues[height].heightPosition,
       textureWord: `${typeClueLower} clue traces`,
       groundWord: `${typeClueLower} clue traces`,
-      waterAvoidanceWord: `noticing a ${typeClueLower} clue`,
+      waterAvoidanceWord: `reporting a ${typeClueLower} clue`,
     },
   }
 }
@@ -559,7 +559,7 @@ export const generateCaseLocations = (
         evidenceBadges: generatedEvidenceItem?.badges,
         clueRule: generatedEvidenceItem?.rule,
         cluePreview: generatedEvidenceItem
-          ? { label: generatedEvidenceItem.rule.axis === 'witness' ? generatedEvidenceItem.clueText : generatedEvidenceItem.title }
+          ? { label: generatedEvidenceItem.title }
           : action.cluePreview,
         observationText: generatedNarrative.observationText,
         implicationText: generatedNarrative.implicationText,
