@@ -4177,13 +4177,31 @@
 }
 
 .investigation-location-card.is-complete {
-  opacity: 0.85;
-  --location-paper: #fffaf0;
-  border-color: rgba(86, 130, 72, 0.44);
+  opacity: 0.78;
+  --location-paper: #dedbd1;
+  border-color: rgba(86, 85, 78, 0.34);
+  box-shadow: 0 3px 9px rgba(62, 61, 56, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.46);
+  filter: grayscale(0.38) saturate(0.78);
 }
 
 .investigation-location-card.is-complete::before {
-  background: #6d9a55;
+  background: #8a8982;
+}
+
+.investigation-location-card.is-complete .location-document {
+  color: #4e4d48;
+}
+
+.investigation-location-card.is-complete .location-document__label,
+.investigation-location-card.is-complete .location-document__observation,
+.investigation-location-card.is-complete .location-document__quote,
+.investigation-location-card.is-complete .location-document__checkbox {
+  color: #67645d;
+}
+
+.investigation-location-card.is-complete .location-document__title,
+.investigation-location-card.is-complete .location-document__caption {
+  color: #3f3e39;
 }
 
 .investigation-location-card.is-disabled {
@@ -4361,7 +4379,9 @@
 }
 
 .pin-location-button.is-review {
-  background: var(--paper);
+  border-color: #b7b2a7;
+  background: #d8d4ca;
+  color: #4d4a43;
 }
 
 @keyframes clue-fade {
