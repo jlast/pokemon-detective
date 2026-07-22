@@ -264,10 +264,11 @@ const getSelectedType = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot): PokemonT
   clueTypeSlot === 'secondary' ? pokemon.types[1] ?? null : pokemon.types[0]
 )
 
-const createTypeClueGroup = (clueType: PokemonType | null): PokemonType[] => {
+const createTypeClueGroup = (clueType: PokemonType | null, culpritTypes: PokemonType[]): PokemonType[] => {
   if (!clueType) return []
 
-  const distractors = shuffle(pokemonTypes.filter((type) => type !== clueType)).slice(0, 2)
+  const culpritTypeSet = new Set(culpritTypes)
+  const distractors = shuffle(pokemonTypes.filter((type) => !culpritTypeSet.has(type))).slice(0, 2)
   return shuffle([clueType, ...distractors])
 }
 
@@ -275,10 +276,10 @@ const isTypeClueCategory = (category: EvidenceCategory): boolean => (
   category === 'typeResidue' || category === 'groundTrace' || category === 'force' || category === 'witness'
 )
 
-const createTypeClueGroups = (clueType: PokemonType | null): TypeClueGroups => Object.fromEntries(
+const createTypeClueGroups = (clueType: PokemonType | null, culpritTypes: PokemonType[]): TypeClueGroups => Object.fromEntries(
   evidenceTemplates
     .filter((template) => isTypeClueCategory(template.category))
-    .map((template) => [template.id, createTypeClueGroup(clueType)]),
+    .map((template) => [template.id, createTypeClueGroup(clueType, culpritTypes)]),
 )
 
 const getTypeClueGroup = (profile: PokemonCaseProfile, evidenceId: string): PokemonType[] => (
@@ -310,7 +311,7 @@ const getPokemonCaseProfile = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot, typ
     weight,
     primaryType,
     clueType,
-    typeClueGroups: typeClueGroups ?? createTypeClueGroups(clueType),
+    typeClueGroups: typeClueGroups ?? createTypeClueGroups(clueType, pokemon.types),
     clueTypeSlot,
     hasSecondaryType,
     highestStat,
@@ -528,7 +529,7 @@ export const generateCaseEvidence = (
   baseEvidence: Evidence[],
   evidenceOverrides?: Record<string, { title?: string; clueText?: string }>,
   clueTypeSlot: TypeClueSlot = getClueTypeSlot(culprit),
-  typeClueGroups: TypeClueGroups = createTypeClueGroups(getSelectedType(culprit, clueTypeSlot)),
+  typeClueGroups: TypeClueGroups = createTypeClueGroups(getSelectedType(culprit, clueTypeSlot), culprit.types),
 ) => {
   const generatedEvidenceById = new Map<string, GeneratedEvidence>()
   const profile = getPokemonCaseProfile(culprit, clueTypeSlot, typeClueGroups)
@@ -555,7 +556,7 @@ export const generateCaseLocations = (
   baseLocations: Location[],
   evidenceOverrides?: Record<string, { title?: string; clueText?: string }>,
   clueTypeSlot: TypeClueSlot = getClueTypeSlot(culprit),
-  typeClueGroups: TypeClueGroups = createTypeClueGroups(getSelectedType(culprit, clueTypeSlot)),
+  typeClueGroups: TypeClueGroups = createTypeClueGroups(getSelectedType(culprit, clueTypeSlot), culprit.types),
 ) => {
   const profile = getPokemonCaseProfile(culprit, clueTypeSlot, typeClueGroups)
   const generatedEvidence = new Map(
@@ -714,7 +715,7 @@ export const generateCaseLineup = (
   for (let attempt = 0; attempt < 1000; attempt += 1) {
     const culprit = pokemonData[Math.floor(Math.random() * pokemonData.length)]
     const clueTypeSlot = getClueTypeSlot(culprit)
-    const typeClueGroups = createTypeClueGroups(getSelectedType(culprit, clueTypeSlot))
+    const typeClueGroups = createTypeClueGroups(getSelectedType(culprit, clueTypeSlot), culprit.types)
     const culpritProfile = getPokemonCaseProfile(culprit, clueTypeSlot, typeClueGroups)
     const relevantClues = getRelevantClues(culprit).slice(0, 6)
 
