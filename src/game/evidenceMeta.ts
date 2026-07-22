@@ -1,12 +1,12 @@
 const evidenceMetaById: Record<string, { icon: string; title: string }> = {
   'height-clue': { icon: '📏', title: 'Height Clue' },
-  'weight-clue': { icon: '👣', title: 'Weight Clue' },
-  'type-residue-clue': { icon: '✨', title: 'Type Clue' },
-  'ground-trace-clue': { icon: '🪨', title: 'Type Clue' },
-  'force-clue': { icon: '🔐', title: 'Type Clue' },
-  'witness-clue': { icon: '🗣️', title: 'Type Clue' },
-  'highest-stat-clue': { icon: '💪', title: 'Stat Clue' },
-  'lowest-stat-clue': { icon: '🧭', title: 'Stat Clue' },
+  'weight-clue': { icon: '👣', title: 'Track Clue' },
+  'type-residue-clue': { icon: '✨', title: 'Residue Clue' },
+  'ground-trace-clue': { icon: '🪨', title: 'Ground Clue' },
+  'force-clue': { icon: '🔐', title: 'Entry Clue' },
+  'witness-clue': { icon: '🗣️', title: 'Witness Clue' },
+  'highest-stat-clue': { icon: '💪', title: 'Strength Clue' },
+  'lowest-stat-clue': { icon: '🧭', title: 'Limitation Clue' },
 }
 
 export const evidenceIcons: Record<string, string> = Object.fromEntries(

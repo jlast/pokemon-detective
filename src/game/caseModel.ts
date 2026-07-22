@@ -1,3 +1,5 @@
+import type { PokemonType } from '../data/pokemon'
+
 export type CaseStatus = 'active' | 'solved' | 'failed'
 
 export type CaseDifficulty = 'easy' | 'medium' | 'hard'
@@ -148,6 +150,7 @@ export interface Case {
   difficulty: CaseDifficulty
   culpritPokemonId: number
   typeClueSlot?: 'primary' | 'secondary'
+  typeClueGroup?: PokemonType[]
   maxInvestigations: number
   witnessPokemonIds?: number[]
   suspects: Suspect[]

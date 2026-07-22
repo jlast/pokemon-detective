@@ -6,37 +6,37 @@
   },
   {
     "id": "weight-clue",
-    "title": "Weight Clue",
+    "title": "Track Clue",
     "clueText": ""
   },
   {
     "id": "type-residue-clue",
-    "title": "Type Clue",
+    "title": "Residue Clue",
     "clueText": ""
   },
   {
     "id": "ground-trace-clue",
-    "title": "Type Clue",
+    "title": "Ground Clue",
     "clueText": ""
   },
   {
     "id": "force-clue",
-    "title": "Type Clue",
+    "title": "Entry Clue",
     "clueText": ""
   },
   {
     "id": "witness-clue",
-    "title": "Type Clue",
+    "title": "Witness Clue",
     "clueText": ""
   },
   {
     "id": "highest-stat-clue",
-    "title": "Stat Clue",
+    "title": "Strength Clue",
     "clueText": ""
   },
   {
     "id": "lowest-stat-clue",
-    "title": "Stat Clue",
+    "title": "Limitation Clue",
     "clueText": ""
   }
 ]

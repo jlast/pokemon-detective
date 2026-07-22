@@ -29,6 +29,7 @@ type PokemonCaseProfile = {
   weight: WeightBucket
   primaryType: PokemonType
   clueType: PokemonType | null
+  typeClueGroup: PokemonType[]
   clueTypeSlot: TypeClueSlot
   hasSecondaryType: boolean
   highestStat: StatName
@@ -40,56 +41,56 @@ const evidenceTemplates: EvidenceTemplate[] = [
   {
     id: 'height-clue',
     category: 'height',
-    titleTemplate: 'Height Clue',
+    titleTemplate: '{heightTitle}',
     clueTemplate: 'The missing item was disturbed {heightPosition}.',
     endTemplate: 'The culprit moved {heightPosition} while handling the stolen item.',
   },
   {
     id: 'weight-clue',
     category: 'weight',
-    titleTemplate: 'Weight Clue',
+    titleTemplate: '{trackTitle}',
     clueTemplate: 'The tracks were {trackDepth} where the culprit passed.',
     endTemplate: 'The culprit left {trackDepth} along the escape route.',
   },
   {
     id: 'type-residue-clue',
     category: 'typeResidue',
-    titleTemplate: 'Type Clue',
+    titleTemplate: '{residueTitle}',
     clueTemplate: "Residue at the scene gave a {typeClueLower} clue.",
     endTemplate: "Residue at the scene gave a {typeClueLower} clue.",
   },
   {
     id: 'ground-trace-clue',
     category: 'groundTrace',
-    titleTemplate: 'Type Clue',
+    titleTemplate: '{groundTitle}',
     clueTemplate: "Ground traces gave a {typeClueLower} clue.",
     endTemplate: "Ground traces gave a {typeClueLower} clue.",
   },
   {
     id: 'force-clue',
     category: 'force',
-    titleTemplate: 'Type Clue',
+    titleTemplate: '{forceTitle}',
     clueTemplate: "Marks at the entry point gave a {typeClueLower} clue.",
     endTemplate: "Marks at the entry point gave a {typeClueLower} clue.",
   },
   {
     id: 'witness-clue',
     category: 'witness',
-    titleTemplate: 'Type Clue',
+    titleTemplate: '{witnessTitle}',
     clueTemplate: "A witness report gave a {typeClueLower} clue.",
     endTemplate: "A witness report gave a {typeClueLower} clue.",
   },
   {
     id: 'highest-stat-clue',
     category: 'highestStat',
-    titleTemplate: 'Stat Clue',
+    titleTemplate: '{strongStatTitle}',
     clueTemplate: 'The scene showed {strongStatTrace}.',
     endTemplate: 'The culprit relied on {strongStatTrace} during the escape.',
   },
   {
     id: 'lowest-stat-clue',
     category: 'lowestStat',
-    titleTemplate: 'Stat Clue',
+    titleTemplate: '{weakStatTitle}',
     clueTemplate: 'The route suggested {weakStatTrace}.',
     endTemplate: 'The culprit avoided trouble by showing {weakStatTrace}.',
   },
@@ -175,14 +176,7 @@ const typeValues: Record<PokemonType, Record<string, string>> = {
   },
 }
 
-const typeClueGroups: PokemonType[][] = [
-  ['fire', 'water', 'ground'],
-  ['electric', 'steel', 'rock'],
-  ['grass', 'bug', 'poison'],
-  ['ghost', 'psychic', 'dark'],
-  ['flying', 'dragon', 'fairy'],
-  ['normal', 'fighting', 'ice'],
-]
+const pokemonTypes = Object.keys(typeValues) as PokemonType[]
 
 const heightValues: Record<HeightBucket, Record<string, string>> = {
   short: { heightTitle: 'Low Traces', heightPosition: 'low to the ground', heightRequirement: 'small' },
@@ -264,6 +258,13 @@ const getSelectedType = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot): PokemonT
   clueTypeSlot === 'secondary' ? pokemon.types[1] ?? null : pokemon.types[0]
 )
 
+const createTypeClueGroup = (clueType: PokemonType | null): PokemonType[] => {
+  if (!clueType) return []
+
+  const distractors = shuffle(pokemonTypes.filter((type) => type !== clueType)).slice(0, 2)
+  return shuffle([clueType, ...distractors])
+}
+
 const getTypeClueTitle = (hasSecondaryType: boolean, clueTypeSlot: TypeClueSlot): string => {
   if (!hasSecondaryType) return 'Type'
   return clueTypeSlot === 'secondary' ? 'Secondary Type' : 'Primary Type'
@@ -273,7 +274,7 @@ const getTypeClueLower = (hasSecondaryType: boolean, clueTypeSlot: TypeClueSlot)
   getTypeClueTitle(hasSecondaryType, clueTypeSlot).toLowerCase()
 )
 
-const getPokemonCaseProfile = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot): PokemonCaseProfile => {
+const getPokemonCaseProfile = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot, typeClueGroup?: PokemonType[]): PokemonCaseProfile => {
   const height = getHeightBucket(pokemon)
   const weight = getWeightBucket(pokemon)
   const primaryType = pokemon.types[0]
@@ -289,6 +290,7 @@ const getPokemonCaseProfile = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot): Po
     weight,
     primaryType,
     clueType,
+    typeClueGroup: typeClueGroup ?? createTypeClueGroup(clueType),
     clueTypeSlot,
     hasSecondaryType,
     highestStat,
@@ -321,10 +323,6 @@ const fillNarrativeTemplate = (template: string, profile: PokemonCaseProfile): s
 
 const getEvidenceTemplate = (evidenceId: string): EvidenceTemplate => evidenceTemplateById.get(evidenceId) ?? evidenceTemplates[0]!
 
-const getTypeClueGroup = (type: PokemonType): PokemonType[] => (
-  typeClueGroups.find((group) => group.includes(type)) ?? [type]
-)
-
 const formatList = (values: string[]): string => {
   const labels = values.map(formatLabel)
   if (labels.length <= 1) return labels[0] ?? ''
@@ -343,13 +341,13 @@ const getClueRule = (category: EvidenceCategory, profile: PokemonCaseProfile): C
     case 'weight':
       return { axis: 'weight', precision: 'exact', matchingValues: [profile.weight] }
     case 'typeResidue':
-      return { axis: 'type', precision: 'grouped', matchingValues: profile.clueType ? getTypeClueGroup(profile.clueType) : [] }
+      return { axis: 'type', precision: 'grouped', matchingValues: profile.typeClueGroup }
     case 'groundTrace':
-      return { axis: 'groundTrace', precision: 'grouped', matchingValues: profile.clueType ? getTypeClueGroup(profile.clueType) : [] }
+      return { axis: 'groundTrace', precision: 'grouped', matchingValues: profile.typeClueGroup }
     case 'force':
-      return { axis: 'force', precision: 'grouped', matchingValues: profile.clueType ? getTypeClueGroup(profile.clueType) : [] }
+      return { axis: 'force', precision: 'grouped', matchingValues: profile.typeClueGroup }
     case 'witness':
-      return { axis: 'witness', precision: 'grouped', matchingValues: profile.clueType ? getTypeClueGroup(profile.clueType) : [] }
+      return { axis: 'witness', precision: 'grouped', matchingValues: profile.typeClueGroup }
     case 'highestStat':
       return { axis: 'highestStat', precision: 'exact', matchingValues: [profile.highestStat] }
     case 'lowestStat':
@@ -395,7 +393,7 @@ const getEvidenceBadges = (category: EvidenceCategory, profile: PokemonCaseProfi
     case 'groundTrace':
     case 'force':
     case 'witness':
-      return profile.clueType ? getTypeClueGroup(profile.clueType).map((type) => ({ text: formatLabel(type), type })) : []
+      return profile.typeClueGroup.map((type) => ({ text: formatLabel(type), type }))
     case 'highestStat':
       return [{ text: `Strength: ${formatLabel(profile.highestStat)}` }]
     case 'lowestStat':
@@ -416,7 +414,7 @@ const scorePokemonAgainstProfile = (pokemonId: number, culpritProfile: PokemonCa
 }
 
 const getCategoryConclusionFragment = (category: EvidenceCategory, profile: PokemonCaseProfile): string => {
-  const typeGroup = formatList(profile.clueType ? getTypeClueGroup(profile.clueType) : [])
+  const typeGroup = formatList(profile.typeClueGroup)
   switch (category) {
     case 'height':
       return `${profile.values.heightRequirement} enough to match the height clues`
@@ -438,7 +436,7 @@ const getCategoryConclusionFragment = (category: EvidenceCategory, profile: Poke
 }
 
 const getCategoryDeductionText = (category: EvidenceCategory, profile: PokemonCaseProfile): string => {
-  const typeGroup = formatList(profile.clueType ? getTypeClueGroup(profile.clueType) : [])
+  const typeGroup = formatList(profile.typeClueGroup)
   switch (category) {
     case 'height':
       return `This pointed toward a ${profile.values.heightRequirement} Pokemon.`
@@ -459,8 +457,8 @@ const getCategoryDeductionText = (category: EvidenceCategory, profile: PokemonCa
   }
 }
 
-const buildEvidenceFromTemplate = (evidenceId: string, culprit: Pokemon, clueTypeSlot: TypeClueSlot): GeneratedEvidence => {
-  const profile = getPokemonCaseProfile(culprit, clueTypeSlot)
+const buildEvidenceFromTemplate = (evidenceId: string, culprit: Pokemon, clueTypeSlot: TypeClueSlot, typeClueGroup: PokemonType[]): GeneratedEvidence => {
+  const profile = getPokemonCaseProfile(culprit, clueTypeSlot, typeClueGroup)
   const template = getEvidenceTemplate(evidenceId)
   const badges = getEvidenceBadges(template.category, profile)
   const rule = getClueRule(template.category, profile)
@@ -478,9 +476,10 @@ const buildActionNarrative = (
   action: LocationAction,
   culprit: Pokemon,
   clueTypeSlot: TypeClueSlot,
+  typeClueGroup: PokemonType[],
   generatedEvidence?: Map<string, GeneratedEvidence>,
 ) => {
-  const profile = getPokemonCaseProfile(culprit, clueTypeSlot)
+  const profile = getPokemonCaseProfile(culprit, clueTypeSlot, typeClueGroup)
   const deductionText = action.evidenceId && generatedEvidence
     ? generatedEvidence.get(action.evidenceId)?.deductionText
     : null
@@ -505,12 +504,13 @@ export const generateCaseEvidence = (
   baseEvidence: Evidence[],
   evidenceOverrides?: Record<string, { title?: string; clueText?: string }>,
   clueTypeSlot: TypeClueSlot = getClueTypeSlot(culprit),
+  typeClueGroup: PokemonType[] = createTypeClueGroup(getSelectedType(culprit, clueTypeSlot)),
 ) => {
   const generatedEvidenceById = new Map<string, GeneratedEvidence>()
-  const profile = getPokemonCaseProfile(culprit, clueTypeSlot)
+  const profile = getPokemonCaseProfile(culprit, clueTypeSlot, typeClueGroup)
 
   const generatedEvidence = baseEvidence.map((evidenceItem) => {
-    const generated = buildEvidenceFromTemplate(evidenceItem.id, culprit, clueTypeSlot)
+    const generated = buildEvidenceFromTemplate(evidenceItem.id, culprit, clueTypeSlot, typeClueGroup)
     generatedEvidenceById.set(evidenceItem.id, generated)
     const override = evidenceOverrides?.[evidenceItem.id]
 
@@ -523,7 +523,7 @@ export const generateCaseEvidence = (
     }
   })
 
-  return { generatedEvidence, generatedEvidenceById, clueTypeSlot }
+  return { generatedEvidence, generatedEvidenceById, clueTypeSlot, typeClueGroup }
 }
 
 export const generateCaseLocations = (
@@ -531,12 +531,13 @@ export const generateCaseLocations = (
   baseLocations: Location[],
   evidenceOverrides?: Record<string, { title?: string; clueText?: string }>,
   clueTypeSlot: TypeClueSlot = getClueTypeSlot(culprit),
+  typeClueGroup: PokemonType[] = createTypeClueGroup(getSelectedType(culprit, clueTypeSlot)),
 ) => {
-  const profile = getPokemonCaseProfile(culprit, clueTypeSlot)
+  const profile = getPokemonCaseProfile(culprit, clueTypeSlot, typeClueGroup)
   const generatedEvidence = new Map(
     evidenceTemplates.map((template) => {
       const evidenceId = template.id
-      const generated = buildEvidenceFromTemplate(evidenceId, culprit, clueTypeSlot)
+      const generated = buildEvidenceFromTemplate(evidenceId, culprit, clueTypeSlot, typeClueGroup)
       const override = evidenceOverrides?.[evidenceId]
       return [evidenceId, {
         ...generated,
@@ -550,7 +551,7 @@ export const generateCaseLocations = (
     ...location,
     actions: location.actions.map((action) => {
       const generatedEvidenceItem = action.evidenceId ? generatedEvidence.get(action.evidenceId) : null
-      const generatedNarrative = buildActionNarrative(action, culprit, clueTypeSlot, generatedEvidence)
+      const generatedNarrative = buildActionNarrative(action, culprit, clueTypeSlot, typeClueGroup, generatedEvidence)
 
       return {
         ...action,
@@ -558,9 +559,7 @@ export const generateCaseLocations = (
         evidenceText: generatedEvidenceItem?.clueText ?? action.evidenceText,
         evidenceBadges: generatedEvidenceItem?.badges,
         clueRule: generatedEvidenceItem?.rule,
-        cluePreview: generatedEvidenceItem
-          ? { label: generatedEvidenceItem.title }
-          : action.cluePreview,
+        cluePreview: action.cluePreview,
         observationText: generatedNarrative.observationText,
         implicationText: generatedNarrative.implicationText,
       }
@@ -581,7 +580,7 @@ const getMismatchReason = (suspectId: number, culpritProfile: PokemonCaseProfile
     case 'weight':
       return `Did not fit the ${culpritProfile.values.weightRequirement} track clues.`
     case 'typeResidue':
-      return `Did not match the ${formatList(culpritProfile.clueType ? getTypeClueGroup(culpritProfile.clueType) : [])} ${getTypeClueLabel(culpritProfile).toLowerCase()} residue group.`
+      return `Did not match the ${formatList(culpritProfile.typeClueGroup)} ${getTypeClueLabel(culpritProfile).toLowerCase()} residue group.`
     case 'groundTrace':
       return `Did not explain the ${culpritProfile.values.groundTrace} at the scene.`
     case 'force':
@@ -642,9 +641,10 @@ const buildSolution = (
   relevantCategories: EvidenceCategory[],
   generatedEvidenceById: Map<string, GeneratedEvidence>,
   clueTypeSlot: TypeClueSlot,
+  typeClueGroup: PokemonType[],
 ) => {
   const culprit = getPokemonById(culpritId)
-  const culpritProfile = getPokemonCaseProfile(culprit, clueTypeSlot)
+  const culpritProfile = getPokemonCaseProfile(culprit, clueTypeSlot, typeClueGroup)
   const evidenceById = new Map(evidence.map((item) => [item.id, item]))
 
   const evidenceExplanation: CaseEvidenceExplanation[] = locations
@@ -690,7 +690,8 @@ export const generateCaseLineup = (
   for (let attempt = 0; attempt < 1000; attempt += 1) {
     const culprit = pokemonData[Math.floor(Math.random() * pokemonData.length)]
     const clueTypeSlot = getClueTypeSlot(culprit)
-    const culpritProfile = getPokemonCaseProfile(culprit, clueTypeSlot)
+    const typeClueGroup = createTypeClueGroup(getSelectedType(culprit, clueTypeSlot))
+    const culpritProfile = getPokemonCaseProfile(culprit, clueTypeSlot, typeClueGroup)
     const relevantCategories = getRelevantCategories(culprit).slice(0, 6)
 
     const scoredDistractors = shuffle(
@@ -731,8 +732,8 @@ export const generateCaseLineup = (
     }
 
     const suspectIds = shuffle([culprit.id, ...uniqueDistractors])
-    const { generatedEvidence, generatedEvidenceById } = generateCaseEvidence(culprit, evidence, evidenceOverrides, clueTypeSlot)
-    const generatedLocations = generateCaseLocations(culprit, locations, evidenceOverrides, clueTypeSlot)
+    const { generatedEvidence, generatedEvidenceById } = generateCaseEvidence(culprit, evidence, evidenceOverrides, clueTypeSlot, typeClueGroup)
+    const generatedLocations = generateCaseLocations(culprit, locations, evidenceOverrides, clueTypeSlot, typeClueGroup)
 
     return {
       culpritPokemonId: culprit.id,
@@ -740,6 +741,7 @@ export const generateCaseLineup = (
       evidence: generatedEvidence,
       locations: generatedLocations,
       clueTypeSlot,
+      typeClueGroup,
       solution: buildSolution(
         culprit.id,
         suspectIds,
@@ -748,6 +750,7 @@ export const generateCaseLineup = (
         relevantCategories,
         generatedEvidenceById,
         clueTypeSlot,
+        typeClueGroup,
       ),
     }
   }

@@ -456,7 +456,7 @@ const applyPlayerShinyMap = (fullCase: Case, progress: PlayerProgressRecord): Ca
 )
 
 const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null): Case => {
-  const { evidence: _ev, culpritPokemonId: _cp, ...caseWithoutEvidence } = fullCase
+  const { evidence: _ev, culpritPokemonId: _cp, typeClueSlot: _typeClueSlot, typeClueGroup: _typeClueGroup, ...caseWithoutEvidence } = fullCase
   if (!progress) {
     return {
       ...caseWithoutEvidence,
@@ -541,6 +541,7 @@ const loadCase = async (caseId: string) => {
     record.solution,
     record.witnessPokemonIds,
     record.typeClueSlot ?? 'primary',
+    record.typeClueGroup,
   )
   const witnessActionIds = getWitnessActionIds(fullCase)
   const requiredWitnessPokemonCount = witnessActionIds.length * WITNESS_OPTION_COUNT
@@ -562,8 +563,9 @@ const loadCase = async (caseId: string) => {
     || !hasCompleteWitnessPokemonIdMap(record.witnessPokemonIdMap, witnessActionIds, record.suspectPokemonIds)
     || !hasCompleteLocationCardVariantMap(fullCase.locations, record.locationCardVariantMap)
     || !hasCompleteLocationCardTiltMap(fullCase.locations, record.locationCardTiltMap)
+    || !record.typeClueGroup?.length
   ) {
-    await putCaseData({ ...record, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
+    await putCaseData({ ...record, typeClueGroup: fullCase.typeClueGroup, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
   }
 
   return applyLocationCardVariants(assignWitnessPokemonToActions(fullCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
@@ -601,6 +603,7 @@ const generateAndStoreCase = async (caseId: string) => {
     configId: gameCase.id,
     culpritPokemonId: gameCase.culpritPokemonId,
     typeClueSlot: gameCase.typeClueSlot,
+    typeClueGroup: gameCase.typeClueGroup,
     suspectPokemonIds,
     suspectShinyMap,
     witnessPokemonIds,

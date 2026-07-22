@@ -1,4 +1,5 @@
 import type { Case, CaseSolution } from '../caseModel'
+import type { PokemonType } from '../../data/pokemon'
 import { getPokemonById } from '../suspectCaseFile'
 import { generateCaseEvidence, generateCaseLineup, generateCaseLocations } from '../caseGeneration'
 import { createBaseCase, createSuspect, hydrateCaseConfig, type CaseConfig, type RawCaseConfig } from './shared'
@@ -14,6 +15,7 @@ const buildCase = (caseConfig: CaseConfig): Case => {
     ...baseCase,
     culpritPokemonId: generated.culpritPokemonId,
     typeClueSlot: generated.clueTypeSlot,
+    typeClueGroup: generated.typeClueGroup,
     suspects: generated.suspectPokemonIds.map((id) => createSuspect(id)).map((suspect) => ({
       ...suspect,
     })),
@@ -58,6 +60,7 @@ export const rebuildFullCase = (
   solution: CaseSolution,
   witnessPokemonIds?: number[],
   typeClueSlot: 'primary' | 'secondary' = 'primary',
+  typeClueGroup?: PokemonType[],
 ): Case => {
   const config = allCases.find((c) => c.id === configId)
   if (!config) throw new Error(`Case config not found: ${configId}`)
@@ -73,8 +76,8 @@ export const rebuildFullCase = (
     }),
   }))
 
-  const { generatedEvidence } = generateCaseEvidence(culprit, baseCase.evidence, config.evidenceOverrides, typeClueSlot)
-  const generatedLocations = generateCaseLocations(culprit, overriddenLocations, config.evidenceOverrides, typeClueSlot)
+  const { generatedEvidence, typeClueGroup: resolvedTypeClueGroup } = generateCaseEvidence(culprit, baseCase.evidence, config.evidenceOverrides, typeClueSlot, typeClueGroup)
+  const generatedLocations = generateCaseLocations(culprit, overriddenLocations, config.evidenceOverrides, typeClueSlot, resolvedTypeClueGroup)
 
   const suspects = suspectPokemonIds.map((id) => createSuspect(id, suspectShinyMap[id]))
 
@@ -82,6 +85,7 @@ export const rebuildFullCase = (
     ...baseCase,
     culpritPokemonId,
     typeClueSlot,
+    typeClueGroup: resolvedTypeClueGroup,
     witnessPokemonIds,
     suspects,
     locations: generatedLocations,
