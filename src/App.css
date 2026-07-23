@@ -3012,13 +3012,6 @@
   padding: 0.45rem 0.6rem;
   background: rgba(255, 251, 239, 0.86);
   box-shadow: 0 6px 14px rgba(81, 67, 41, 0.08);
-  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
-}
-
-.evidence-result-row:hover {
-  border-color: rgba(164, 129, 62, 0.55);
-  box-shadow: 0 10px 18px rgba(81, 67, 41, 0.12);
-  transform: translateY(-1px);
 }
 
 .cleared-suspect-row {

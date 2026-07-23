@@ -64,29 +64,29 @@ const evidenceTemplates: EvidenceTemplate[] = [
     id: 'type-residue-clue',
     category: 'typeResidue',
     titleTemplate: '{residueTitle}',
-    clueTemplate: "Residue at the scene gave a {typeClueLower} clue.",
-    endTemplate: "Residue at the scene gave a {typeClueLower} clue.",
+    clueTemplate: 'Residue at the scene matched a {profileLabel}.',
+    endTemplate: 'Residue at the scene matched a {profileLabel}.',
   },
   {
     id: 'ground-trace-clue',
     category: 'groundTrace',
     titleTemplate: '{groundTitle}',
-    clueTemplate: "Ground traces gave a {typeClueLower} clue.",
-    endTemplate: "Ground traces gave a {typeClueLower} clue.",
+    clueTemplate: 'Ground traces matched a {traceProfileLabel}.',
+    endTemplate: 'Ground traces matched a {traceProfileLabel}.',
   },
   {
     id: 'force-clue',
     category: 'force',
     titleTemplate: '{forceTitle}',
-    clueTemplate: "Marks at the entry point gave a {typeClueLower} clue.",
-    endTemplate: "Marks at the entry point gave a {typeClueLower} clue.",
+    clueTemplate: 'Marks at the entry point matched the {entryProfileLabel}.',
+    endTemplate: 'Marks at the entry point matched the {entryProfileLabel}.',
   },
   {
     id: 'witness-clue',
     category: 'witness',
     titleTemplate: '{witnessTitle}',
-    clueTemplate: "A witness report gave a {typeClueLower} clue.",
-    endTemplate: "A witness report gave a {typeClueLower} clue.",
+    clueTemplate: 'A witness report matched a {witnessProfileLabel}.',
+    endTemplate: 'A witness report matched a {witnessProfileLabel}.',
   },
   {
     id: 'highest-stat-clue',
@@ -111,20 +111,20 @@ const weakestStatPriority: StatName[] = ['hp', 'defense', 'specialDefense', 'att
 
 const typeValues: Record<PokemonType, Record<string, string>> = {
   bug: {
-    residueTitle: 'Wing Dust', typeResidue: 'shed wing dust', groundTitle: 'Tunneled Soil', groundTrace: 'tunneled soil',
+    residueTitle: 'Fine Specks', typeResidue: 'fine powdery specks', groundTitle: 'Tiny Furrows', groundTrace: 'tiny furrows in the soil',
     forceTitle: 'Fine Scrapes', forceTrace: 'fine scraping marks', witnessTitle: 'Skittering Witness', witnessDetail: 'skittering quickly past the scene',
   },
   dark: {
-    residueTitle: 'Shadow Smudge', typeResidue: 'a shadowy smudge', groundTitle: 'Darkened Earth', groundTrace: 'darkened earth',
+    residueTitle: 'Dusky Smudge', typeResidue: 'a dusky smudge', groundTitle: 'Dimmed Soil', groundTrace: 'dimmed soil',
     forceTitle: 'Subtle Tampering', forceTrace: 'subtle pry marks', witnessTitle: 'Shadowy Movement', witnessDetail: 'slipping through the shadows',
   },
   dragon: {
-    residueTitle: 'Scale Dust', typeResidue: 'primal scale dust', groundTitle: 'Raw Earth', groundTrace: 'raw earth',
+    residueTitle: 'Rough Dust', typeResidue: 'rough mineral dust', groundTitle: 'Raw Scrape', groundTrace: 'raw scraped earth',
     forceTitle: 'Heavy Scoring', forceTrace: 'deep scoring marks', witnessTitle: 'Powerful Stride', witnessDetail: 'moving with a powerful stride',
   },
   electric: {
-    residueTitle: 'Static Traces', typeResidue: 'static traces', groundTitle: 'Scuffed Ground', groundTrace: 'scuffed ground',
-    forceTitle: 'Static Mark', forceTrace: 'a faint static scorch', witnessTitle: 'Flickering Lights', witnessDetail: 'passing as the lights flickered',
+    residueTitle: 'Charged Specks', typeResidue: 'charged specks', groundTitle: 'Scuffed Ground', groundTrace: 'scuffed ground',
+    forceTitle: 'Faint Scorch', forceTrace: 'a faint scorch', witnessTitle: 'Flickering Lights', witnessDetail: 'passing as the lights flickered',
   },
   fairy: {
     residueTitle: 'Glitter Dust', typeResidue: 'glittering dust', groundTitle: 'Soft Moss', groundTrace: 'soft moss pressed flat',
@@ -135,19 +135,19 @@ const typeValues: Record<PokemonType, Record<string, string>> = {
     forceTitle: 'Forceful Entry', forceTrace: 'direct force marks', witnessTitle: 'Stomping Steps', witnessDetail: 'stomping with purpose',
   },
   fire: {
-    residueTitle: 'Ash Scatter', typeResidue: 'fine ash', groundTitle: 'Scorched Earth', groundTrace: 'scorched earth',
-    forceTitle: 'Heat Mark', forceTrace: 'a faint burn mark', witnessTitle: 'Warm Draft', witnessDetail: 'leaving a warm draft behind',
+    residueTitle: 'Ash Scatter', typeResidue: 'fine ash', groundTitle: 'Blackened Soil', groundTrace: 'blackened soil',
+    forceTitle: 'Warm Mark', forceTrace: 'a faint warm mark', witnessTitle: 'Warm Draft', witnessDetail: 'leaving a warm draft behind',
   },
   flying: {
-    residueTitle: 'Feather Drift', typeResidue: 'light down', groundTitle: 'Disturbed Dust', groundTrace: 'dust disturbed from above',
+    residueTitle: 'Light Drift', typeResidue: 'light drifting fibers', groundTitle: 'Disturbed Dust', groundTrace: 'dust disturbed from above',
     forceTitle: 'Grazing Marks', forceTrace: 'grazing marks from above', witnessTitle: 'Overhead Movement', witnessDetail: 'moving overhead',
   },
   ghost: {
-    residueTitle: 'Faint Mist', typeResidue: 'faint mist', groundTitle: 'Chilled Soil', groundTrace: 'chilled soil',
+    residueTitle: 'Faint Haze', typeResidue: 'a faint haze', groundTitle: 'Chilled Soil', groundTrace: 'chilled soil',
     forceTitle: 'Strange Distortion', forceTrace: 'strange distortion around the latch', witnessTitle: 'Eerie Passage', witnessDetail: 'passing through the area eerily',
   },
   grass: {
-    residueTitle: 'Leaf Traces', typeResidue: 'leaf litter', groundTitle: 'Disturbed Roots', groundTrace: 'disturbed roots',
+    residueTitle: 'Green Flecks', typeResidue: 'green flecks', groundTitle: 'Disturbed Roots', groundTrace: 'disturbed roots',
     forceTitle: 'Vine Marks', forceTrace: 'thin vine-like marks', witnessTitle: 'Rustling Leaves', witnessDetail: 'rustling through nearby leaves',
   },
   ground: {
@@ -155,7 +155,7 @@ const typeValues: Record<PokemonType, Record<string, string>> = {
     forceTitle: 'Gritty Scrapes', forceTrace: 'gritty scrape marks', witnessTitle: 'Dry Trail', witnessDetail: 'skirting the wettest ground',
   },
   ice: {
-    residueTitle: 'Frost Trail', typeResidue: 'frost film', groundTitle: 'Frozen Earth', groundTrace: 'frozen earth',
+    residueTitle: 'Cold Film', typeResidue: 'a cold film', groundTitle: 'Hardened Soil', groundTrace: 'hardened soil',
     forceTitle: 'Cold Crack', forceTrace: 'cold-stressed cracks', witnessTitle: 'Cold Spot', witnessDetail: 'leaving a chill in the air',
   },
   normal: {
@@ -167,20 +167,20 @@ const typeValues: Record<PokemonType, Record<string, string>> = {
     forceTitle: 'Caustic Mark', forceTrace: 'a caustic mark', witnessTitle: 'Oozing Trail', witnessDetail: 'oozing around the obstacle',
   },
   psychic: {
-    residueTitle: 'Psychic Echo', typeResidue: 'a faint shimmer', groundTitle: 'Subtle Impressions', groundTrace: 'subtle impressions',
+    residueTitle: 'Faint Shimmer', typeResidue: 'a faint shimmer', groundTitle: 'Subtle Impressions', groundTrace: 'subtle impressions',
     forceTitle: 'Odd Distortion', forceTrace: 'odd distortion marks', witnessTitle: 'Uneasy Feeling', witnessDetail: 'leaving an uneasy feeling behind',
   },
   rock: {
-    residueTitle: 'Stone Chips', typeResidue: 'stone chips', groundTitle: 'Broken Stone', groundTrace: 'broken stone',
-    forceTitle: 'Stone Scrape', forceTrace: 'hard stone scrapes', witnessTitle: 'Scraping Steps', witnessDetail: 'scraping across the ground',
+    residueTitle: 'Hard Chips', typeResidue: 'hard chips', groundTitle: 'Broken Surface', groundTrace: 'a broken surface',
+    forceTitle: 'Hard Scrape', forceTrace: 'hard scrapes', witnessTitle: 'Scraping Steps', witnessDetail: 'scraping across the ground',
   },
   steel: {
-    residueTitle: 'Metal Shaving', typeResidue: 'metal filings', groundTitle: 'Scraped Ground', groundTrace: 'scraped ground',
-    forceTitle: 'Metal Score', forceTrace: 'metal score marks', witnessTitle: 'Metallic Sound', witnessDetail: 'making a faint metallic sound',
+    residueTitle: 'Silver Filings', typeResidue: 'silver filings', groundTitle: 'Scraped Ground', groundTrace: 'scraped ground',
+    forceTitle: 'Bright Score', forceTrace: 'bright score marks', witnessTitle: 'Clinking Sound', witnessDetail: 'making a faint clinking sound',
   },
   water: {
     residueTitle: 'Wet Smears', typeResidue: 'damp residue', groundTitle: 'Soft Mud', groundTrace: 'soft mud',
-    forceTitle: 'Water Mark', forceTrace: 'water-worn marks', witnessTitle: 'Splashing Movement', witnessDetail: 'splashing near the water',
+    forceTitle: 'Washed Mark', forceTrace: 'washed-smooth marks', witnessTitle: 'Splashing Movement', witnessDetail: 'splashing near the wet ground',
   },
 }
 
@@ -293,14 +293,10 @@ const getTypeClueGroup = (profile: PokemonCaseProfile, evidenceId: string): Poke
   profile.typeClueGroups[evidenceId] ?? []
 )
 
-const getTypeClueTitle = (hasSecondaryType: boolean, clueTypeSlot: TypeClueSlot): string => {
-  if (!hasSecondaryType) return 'Type'
-  return clueTypeSlot === 'secondary' ? 'Secondary Type' : 'Primary Type'
+const getProfileLabel = (hasSecondaryType: boolean, clueTypeSlot: TypeClueSlot): string => {
+  if (!hasSecondaryType) return 'profile'
+  return clueTypeSlot === 'secondary' ? 'secondary profile' : 'primary profile'
 }
-
-const getTypeClueLower = (hasSecondaryType: boolean, clueTypeSlot: TypeClueSlot): string => (
-  getTypeClueTitle(hasSecondaryType, clueTypeSlot).toLowerCase()
-)
 
 const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, typeClueGroups?: TypeClueGroups, activeEvidenceId?: string): PokemonCaseProfile => {
   const height = getHeightBucket(pokemon)
@@ -310,7 +306,7 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
   const clueType = getSelectedType(pokemon, clueTypeSlot)
   const typeForNarrative = clueType ?? primaryType
   const hasSecondaryType = Boolean(pokemon.types[1])
-  const typeClueLower = getTypeClueLower(hasSecondaryType, clueTypeSlot)
+  const profileLabel = getProfileLabel(hasSecondaryType, clueTypeSlot)
   const highestStat = pickPriorityStat(pokemon, strongestStatPriority, 'max')
   const lowestStat = pickPriorityStat(pokemon, weakestStatPriority, 'min')
 
@@ -331,16 +327,18 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
       ...typeValues[typeForNarrative],
       ...strongStatValues[highestStat],
       ...weakStatValues[lowestStat],
-      typeClueTitle: getTypeClueTitle(hasSecondaryType, clueTypeSlot),
-      typeClueLower,
-      typeResidue: `${typeClueLower} clue traces`,
-      groundTrace: `${typeClueLower} clue traces`,
-      forceTrace: `${typeClueLower} clue marks`,
-      witnessDetail: `reporting a ${typeClueLower} clue`,
+      profileLabel,
+      traceProfileLabel: profileLabel,
+      entryProfileLabel: profileLabel,
+      witnessProfileLabel: profileLabel,
+      typeResidue: 'unusual residue traces',
+      groundTrace: 'unusual trace marks',
+      forceTrace: 'unusual entry marks',
+      witnessDetail: `describing a ${profileLabel}`,
       movementWord: heightValues[height].heightPosition,
-      textureWord: `${typeClueLower} clue traces`,
-      groundWord: `${typeClueLower} clue traces`,
-      waterAvoidanceWord: `reporting a ${typeClueLower} clue`,
+      textureWord: 'unusual residue traces',
+      groundWord: 'unusual trace marks',
+      waterAvoidanceWord: `describing a ${profileLabel}`,
     },
   }
 }
@@ -361,7 +359,24 @@ const formatList = (values: string[]): string => {
 }
 
 const getTypeClueLabel = (profile: PokemonCaseProfile): string => {
-  return getTypeClueTitle(profile.hasSecondaryType, profile.clueTypeSlot)
+  return getProfileLabel(profile.hasSecondaryType, profile.clueTypeSlot)
+}
+
+const getCategoryProfileLabel = (clue: EvidenceClue, profile: PokemonCaseProfile): string => {
+  const profileLabel = getTypeClueLabel(profile)
+
+  switch (clue.category) {
+    case 'typeResidue':
+      return `residue ${profileLabel}`
+    case 'groundTrace':
+      return `trace ${profileLabel}`
+    case 'force':
+      return `entry ${profileLabel}`
+    case 'witness':
+      return `witness ${profileLabel}`
+    default:
+      return profileLabel
+  }
 }
 
 const getClueRule = (clue: EvidenceClue, profile: PokemonCaseProfile): ClueRule => {
@@ -456,13 +471,13 @@ const getCategoryConclusionFragment = (clue: EvidenceClue, profile: PokemonCaseP
     case 'weight':
       return `${profile.values.weightRequirement} enough to match the track depth`
     case 'typeResidue':
-      return `linked to ${typeGroup} ${getTypeClueLabel(profile).toLowerCase()} traces`
+      return `linked to ${typeGroup} residue profiles`
     case 'groundTrace':
-      return `linked to ${typeGroup} ${getTypeClueLabel(profile).toLowerCase()} ground traces`
+      return `linked to ${typeGroup} trace profiles`
     case 'force':
-      return `linked to ${typeGroup} ${getTypeClueLabel(profile).toLowerCase()} entry marks`
+      return `linked to ${typeGroup} entry profiles`
     case 'witness':
-      return `linked to ${typeGroup} ${getTypeClueLabel(profile).toLowerCase()} witness signs`
+      return `linked to ${typeGroup} witness profiles`
     case 'highestStat':
       return `strong in ${profile.values.strongStatTrace}`
     case 'lowestStat':
@@ -478,13 +493,10 @@ const getCategoryDeductionText = (clue: EvidenceClue, profile: PokemonCaseProfil
     case 'weight':
       return `This pointed toward a ${profile.values.weightRequirement} Pokemon.`
     case 'typeResidue':
-      return `This narrowed the culprit's ${getTypeClueLabel(profile).toLowerCase()} to ${typeGroup}.`
     case 'groundTrace':
-      return `This narrowed the culprit's ${getTypeClueLabel(profile).toLowerCase()} to ${typeGroup}.`
     case 'force':
-      return `This narrowed the culprit's ${getTypeClueLabel(profile).toLowerCase()} to ${typeGroup}.`
     case 'witness':
-      return `This narrowed the culprit's ${getTypeClueLabel(profile).toLowerCase()} to ${typeGroup}.`
+      return `This narrowed the ${getCategoryProfileLabel(clue, profile)} to ${typeGroup}.`
     case 'highestStat':
       return `This suggested the culprit relied on ${profile.values.strongStatTrace}.`
     case 'lowestStat':
@@ -616,7 +628,7 @@ const getMismatchReason = (suspectId: number, culpritProfile: PokemonCaseProfile
     case 'weight':
       return `Did not fit the ${culpritProfile.values.weightRequirement} track clues.`
     case 'typeResidue':
-      return `Did not match the ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} ${getTypeClueLabel(culpritProfile).toLowerCase()} residue group.`
+      return `Did not match the ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} residue profile.`
     case 'groundTrace':
       return `Did not explain the ${culpritProfile.values.groundTrace} at the scene.`
     case 'force':
@@ -645,13 +657,13 @@ const getMismatchEvidenceLabel = (suspectId: number, culpritProfile: PokemonCase
     case 'weight':
       return `Track mismatch: needed a ${culpritProfile.values.weightRequirement} Pokemon`
     case 'typeResidue':
-      return `Residue mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} ${getTypeClueLabel(culpritProfile).toLowerCase()}`
+      return `Residue mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} profile`
     case 'groundTrace':
-      return `Ground trace mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} ${getTypeClueLabel(culpritProfile).toLowerCase()}`
+      return `Ground trace mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} profile`
     case 'force':
-      return `Entry mark mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} ${getTypeClueLabel(culpritProfile).toLowerCase()}`
+      return `Entry mark mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} profile`
     case 'witness':
-      return `Witness mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} ${getTypeClueLabel(culpritProfile).toLowerCase()}`
+      return `Witness mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} profile`
     case 'highestStat':
       return `Strength mismatch: needed ${formatLabel(culpritProfile.highestStat)}`
     case 'lowestStat':

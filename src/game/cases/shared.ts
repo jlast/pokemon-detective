@@ -74,16 +74,16 @@ const cluePreviewByEvidenceId: Record<string, CluePreview> = {
     label: 'Weight clue',
   },
   'type-residue-clue': {
-    label: 'Type clue',
+    label: 'Residue clue',
   },
   'ground-trace-clue': {
-    label: 'Type clue',
+    label: 'Trace clue',
   },
   'force-clue': {
-    label: 'Type clue',
+    label: 'Entry clue',
   },
   'witness-clue': {
-    label: 'Type clue',
+    label: 'Witness clue',
   },
   'highest-stat-clue': {
     label: 'Stat clue',

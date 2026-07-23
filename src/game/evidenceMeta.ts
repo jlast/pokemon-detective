@@ -2,7 +2,7 @@ const evidenceMetaById: Record<string, { icon: string; title: string }> = {
   'height-clue': { icon: '📏', title: 'Height Clue' },
   'weight-clue': { icon: '👣', title: 'Track Clue' },
   'type-residue-clue': { icon: '✨', title: 'Residue Clue' },
-  'ground-trace-clue': { icon: '🪨', title: 'Ground Clue' },
+  'ground-trace-clue': { icon: '🪨', title: 'Trace Clue' },
   'force-clue': { icon: '🔐', title: 'Entry Clue' },
   'witness-clue': { icon: '🗣️', title: 'Witness Clue' },
   'highest-stat-clue': { icon: '💪', title: 'Strength Clue' },
