@@ -641,19 +641,23 @@ const getMismatchEvidenceLabel = (suspectId: number, culpritProfile: PokemonCase
 
   switch (missingClue?.category) {
     case 'height':
-      return 'Height clue'
+      return `Height mismatch: needed a ${culpritProfile.values.heightRequirement} Pokemon`
     case 'weight':
-      return 'Weight clue'
+      return `Track mismatch: needed a ${culpritProfile.values.weightRequirement} Pokemon`
     case 'typeResidue':
+      return `Residue mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} ${getTypeClueLabel(culpritProfile).toLowerCase()}`
     case 'groundTrace':
+      return `Ground trace mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} ${getTypeClueLabel(culpritProfile).toLowerCase()}`
     case 'force':
+      return `Entry mark mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} ${getTypeClueLabel(culpritProfile).toLowerCase()}`
     case 'witness':
-      return 'Type clue'
+      return `Witness mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} ${getTypeClueLabel(culpritProfile).toLowerCase()}`
     case 'highestStat':
+      return `Strength mismatch: needed ${formatLabel(culpritProfile.highestStat)}`
     case 'lowestStat':
-      return 'Stat clue'
+      return `Weakness mismatch: needed ${formatLabel(culpritProfile.lowestStat)}`
     default:
-      return 'Evidence mismatch'
+      return 'Clue profile mismatch: did not match the collected evidence'
   }
 }
 
