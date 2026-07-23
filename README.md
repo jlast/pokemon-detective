@@ -13,6 +13,8 @@ npm run dev
 
 Local development is wired for the test environment. Copy `.env.example` to `.env.local` and fill the test Cognito values from Terraform outputs before starting the API.
 
+Google Analytics page tracking uses `VITE_GA_MEASUREMENT_ID`. Leave it blank to disable tracking for a local build.
+
 To clear test case and player progress data, run:
 
 ```sh
@@ -40,7 +42,7 @@ USER_POOL_ID=us-east-1_example npm run dev:api
 
 Production is not deployed automatically. Pushes to `main` deploy to the GitHub `test` environment only. Deploy production manually from the `Deploy` workflow with `environment=prod`.
 
-The deploy workflow uses repository secrets; GitHub Environments are not required. Test deploys prefer `TEST_AWS_ACCESS_KEY_ID`, `TEST_AWS_SECRET_ACCESS_KEY`, `TEST_AWS_REGION`, `TEST_S3_BUCKET_NAME`, `TEST_CLOUDFRONT_DISTRIBUTION_ID`, and `TEST_VITE_COGNITO_CLIENT_ID`, then fall back to the unprefixed production-era secret names. Test Cognito defaults to `pokemon-detective-test` unless `TEST_COGNITO_DOMAIN` is set. Production deploys prefer `PROD_...` secrets, then fall back to unprefixed secrets.
+The deploy workflow uses repository secrets; GitHub Environments are not required. Test deploys prefer `TEST_AWS_ACCESS_KEY_ID`, `TEST_AWS_SECRET_ACCESS_KEY`, `TEST_AWS_REGION`, `TEST_S3_BUCKET_NAME`, `TEST_CLOUDFRONT_DISTRIBUTION_ID`, and `TEST_VITE_COGNITO_CLIENT_ID`, then fall back to the unprefixed production-era secret names. Test Cognito defaults to `pokemon-detective-test` unless `TEST_COGNITO_DOMAIN` is set. Test analytics is disabled unless `TEST_VITE_GA_MEASUREMENT_ID` is set. Production deploys prefer `PROD_...` secrets, then fall back to unprefixed secrets.
 
 Use separate Terraform variables per environment. Start test from `terraform/test.tfvars.example`; it configures `https://test.pokemysterygame.com`, creates DNS records in the parent `pokemysterygame.com` hosted zone, and uses separate DynamoDB tables: `CaseDataTest`, `PlayerProgressTest`, and `PokedexTest`.
 

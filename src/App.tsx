@@ -14,6 +14,7 @@ import { PokedexRoute } from './routes/PokedexRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
 import { getCurrentCase, investigate as apiInvestigate, accuse as apiAccuse, clearSuspect as apiClearSuspect } from './api'
+import { trackPageView } from './analytics'
 import { allCases } from './game/cases'
 import type { Case, Suspect, SuspectNoteStatus } from './game/caseModel'
 import {
@@ -221,6 +222,10 @@ function App() {
   useEffect(() => {
     setIsMobileMenuOpen(false)
   }, [currentRoute])
+
+  useEffect(() => {
+    trackPageView(`${location.pathname}${location.search}`)
+  }, [location.pathname, location.search])
 
   useEffect(() => {
     loadCase()

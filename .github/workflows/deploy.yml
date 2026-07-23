@@ -24,6 +24,7 @@ jobs:
       VITE_COGNITO_DOMAIN: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_COGNITO_DOMAIN || 'pokemon-detective-test') || (secrets.PROD_COGNITO_DOMAIN || secrets.COGNITO_DOMAIN || 'pokemon-detective') }}
       VITE_COGNITO_REGION: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_AWS_REGION || secrets.AWS_REGION || 'us-east-1') || (secrets.PROD_AWS_REGION || secrets.AWS_REGION || 'us-east-1') }}
       VITE_COGNITO_CLIENT_ID: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_VITE_COGNITO_CLIENT_ID || secrets.VITE_COGNITO_CLIENT_ID) || (secrets.PROD_VITE_COGNITO_CLIENT_ID || secrets.VITE_COGNITO_CLIENT_ID) }}
+      VITE_GA_MEASUREMENT_ID: ${{ github.event_name == 'push' && secrets.TEST_VITE_GA_MEASUREMENT_ID || inputs.environment == 'test' && secrets.TEST_VITE_GA_MEASUREMENT_ID || inputs.environment == 'prod' && (secrets.PROD_VITE_GA_MEASUREMENT_ID || secrets.VITE_GA_MEASUREMENT_ID) }}
       AWS_ACCESS_KEY_ID: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_AWS_ACCESS_KEY_ID || secrets.AWS_ACCESS_KEY_ID) || (secrets.PROD_AWS_ACCESS_KEY_ID || secrets.AWS_ACCESS_KEY_ID) }}
       AWS_SECRET_ACCESS_KEY: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_AWS_SECRET_ACCESS_KEY || secrets.AWS_SECRET_ACCESS_KEY) || (secrets.PROD_AWS_SECRET_ACCESS_KEY || secrets.AWS_SECRET_ACCESS_KEY) }}
       AWS_REGION: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_AWS_REGION || secrets.AWS_REGION || 'us-east-1') || (secrets.PROD_AWS_REGION || secrets.AWS_REGION || 'us-east-1') }}
@@ -45,6 +46,7 @@ jobs:
           VITE_COGNITO_DOMAIN: ${{ env.VITE_COGNITO_DOMAIN }}
           VITE_COGNITO_REGION: ${{ env.VITE_COGNITO_REGION }}
           VITE_COGNITO_CLIENT_ID: ${{ env.VITE_COGNITO_CLIENT_ID }}
+          VITE_GA_MEASUREMENT_ID: ${{ env.VITE_GA_MEASUREMENT_ID }}
 
       # ── Build Lambdas ──
       - working-directory: api
