@@ -1,7 +1,7 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
-import { allCases, createCaseById, rebuildFullCase } from '../../src/game/cases/index'
-import type { Case, CaseStatus, LocationCardVariant, LocationAction } from '../../src/game/caseModel'
-import { getShinySpriteUrl, pokemonData } from '../../src/data/pokemon'
+import { allCases, createCaseById, pickRandomCaseDifficulty, rebuildFullCase } from '../../src/game/cases/index'
+import type { Case, CaseDifficulty, CaseStatus, LocationCardVariant, LocationAction } from '../../src/game/caseModel'
+import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, putCaseData } from './caseDataDb'
 import {
@@ -42,6 +42,13 @@ interface ApiGatewayResult {
   statusCode: number
   headers: Record<string, string>
   body: string
+}
+
+type LegacyLocationActionBadges = {
+  evidenceBadgeText?: string
+  evidenceBadgeTexts?: string[]
+  evidenceBadgeType?: string
+  evidenceBadgeTypes?: string[]
 }
 
 const corsHeaders: Record<string, string> = {
@@ -230,7 +237,7 @@ const getTodayUtc = (): string => {
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`
 }
 
-const stripActionOutcome = (action: LocationAction): LocationAction => {
+const stripActionOutcome = (action: LocationAction & LegacyLocationActionBadges): LocationAction => {
   const {
     observationText: _observationText,
     observationTextSmall: _observationTextSmall,
@@ -473,7 +480,7 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
         manuallyRuledOut: false,
         noteStatus: 'suspect' as const,
       })),
-    }
+    } as Case
   }
 
   const investigatedMap = new Map(progress.investigatedLocations.map((r) => [r.locationId, r]))
@@ -519,7 +526,7 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
       manuallyRuledOut: accusedSet.has(s.pokemonId) || clearedSet.has(s.pokemonId) || s.manuallyRuledOut,
       noteStatus: accusedSet.has(s.pokemonId) || clearedSet.has(s.pokemonId) ? 'ruled-out' as const : s.noteStatus,
     })),
-  }
+  } as Case
 }
 
 const getTodayCaseData = async () => {
@@ -537,12 +544,18 @@ const getStoredTypeClueSlots = (record: Awaited<ReturnType<typeof getCaseData>>)
   return undefined
 }
 
-const getStoredTypeClueGroups = (record: Awaited<ReturnType<typeof getCaseData>>) => {
+const getStoredTypeClueGroups = (record: Awaited<ReturnType<typeof getCaseData>>): Record<string, PokemonType[]> | undefined => {
   if (!record) return undefined
   if (!record.typeClueSlots) return undefined
   if (record.typeClueGroups) return record.typeClueGroups
-  if (record.typeClueGroup) return Object.fromEntries(typeEvidenceIds.map((evidenceId) => [evidenceId, record.typeClueGroup]))
+  if (record.typeClueGroup) return Object.fromEntries(typeEvidenceIds.map((evidenceId) => [evidenceId, record.typeClueGroup as PokemonType[]]))
   return undefined
+}
+
+const getStoredDifficulty = (record: Awaited<ReturnType<typeof getCaseData>>): CaseDifficulty | undefined => {
+  if (!record) return undefined
+  if (record.difficulty) return record.difficulty
+  return record.suspectPokemonIds.length >= 9 ? 'hard' : 'easy'
 }
 
 const loadCase = async (caseId: string) => {
@@ -550,6 +563,7 @@ const loadCase = async (caseId: string) => {
   if (!record) return null
   const storedTypeClueSlots = getStoredTypeClueSlots(record)
   const storedTypeClueGroups = getStoredTypeClueGroups(record)
+  const storedDifficulty = getStoredDifficulty(record)
   const fullCase = rebuildFullCase(
     record.configId,
     record.culpritPokemonId,
@@ -562,6 +576,7 @@ const loadCase = async (caseId: string) => {
     storedTypeClueSlots,
     storedTypeClueGroups,
     record.theme,
+    storedDifficulty,
   )
   const witnessActionIds = getWitnessActionIds(fullCase)
   const requiredWitnessPokemonCount = witnessActionIds.length * WITNESS_OPTION_COUNT
@@ -586,8 +601,9 @@ const loadCase = async (caseId: string) => {
     || !record.typeClueSlots
     || !record.typeClueGroups
     || !record.theme
+    || !record.difficulty
   ) {
-    await putCaseData({ ...record, typeClueSlots: fullCase.typeClueSlots, typeClueGroups: fullCase.typeClueGroups, theme: fullCase.theme, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
+    await putCaseData({ ...record, difficulty: fullCase.difficulty, typeClueSlots: fullCase.typeClueSlots, typeClueGroups: fullCase.typeClueGroups, theme: fullCase.theme, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
   }
 
   return applyLocationCardVariants(assignWitnessPokemonToActions(fullCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
@@ -596,7 +612,8 @@ const loadCase = async (caseId: string) => {
 const generateAndStoreCase = async (caseId: string) => {
   const config = allCases[Math.floor(Math.random() * allCases.length)]
   if (!config) return null
-  const gameCase = createCaseById(config.id)
+  const difficulty = pickRandomCaseDifficulty()
+  const gameCase = createCaseById(config.id, difficulty)
   if (!gameCase) return null
 
   const actionEvidenceMap: Record<string, string> = {}
@@ -623,6 +640,7 @@ const generateAndStoreCase = async (caseId: string) => {
   await putCaseData({
     caseId,
     configId: gameCase.id,
+    difficulty: gameCase.difficulty,
     culpritPokemonId: gameCase.culpritPokemonId,
     typeClueSlots: gameCase.typeClueSlots,
     typeClueGroups: gameCase.typeClueGroups,

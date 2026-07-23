@@ -1,4 +1,4 @@
-import { allCases, createCaseById } from '../../src/game/cases/index'
+import { allCases, createCaseById, pickRandomCaseDifficulty } from '../../src/game/cases/index'
 import { pokemonData } from '../../src/data/pokemon'
 import type { Case, LocationCardVariant } from '../../src/game/caseModel'
 import { putCaseData } from './caseDataDb'
@@ -94,7 +94,8 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
     const config = allCases[configIndex]
     if (!config) throw new Error('No case configs available')
 
-    const gameCase = createCaseById(config.id)
+    const difficulty = pickRandomCaseDifficulty()
+    const gameCase = createCaseById(config.id, difficulty)
     if (!gameCase) throw new Error(`Failed to generate case for config: ${config.id}`)
 
     const actionEvidenceMap: Record<string, string> = {}
@@ -121,6 +122,7 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
     await putCaseData({
       caseId,
       configId: gameCase.id,
+      difficulty: gameCase.difficulty,
       culpritPokemonId: gameCase.culpritPokemonId,
       typeClueSlots: gameCase.typeClueSlots,
       typeClueGroups: gameCase.typeClueGroups,
@@ -141,8 +143,8 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
     })
 
-    console.log(`Generated daily case ${caseId} using config "${config.id}"`)
-    return { statusCode: 200, body: JSON.stringify({ caseId, configId: config.id }) }
+    console.log(`Generated daily case ${caseId} using config "${config.id}" at ${gameCase.difficulty} difficulty`)
+    return { statusCode: 200, body: JSON.stringify({ caseId, configId: config.id, difficulty: gameCase.difficulty }) }
   } catch (error) {
     console.error('Cron handler error:', error)
     return { statusCode: 500, body: JSON.stringify({ error: 'Failed to generate daily case' }) }

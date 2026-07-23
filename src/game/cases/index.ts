@@ -1,20 +1,38 @@
-import type { Case, CaseSolution } from '../caseModel'
+import type { Case, CaseDifficulty, CaseSolution } from '../caseModel'
 import type { PokemonType } from '../../data/pokemon'
 import { getPokemonById } from '../suspectCaseFile'
-import { generateCaseEvidence, generateCaseLineup, generateCaseLocations } from '../caseGeneration'
+import { generateCaseEvidence, generateCaseLineup, generateCaseLocations, type CaseLineupOptions } from '../caseGeneration'
 import { applyCaseTheme, createCaseTheme } from '../caseTheme'
 import { createBaseCase, createSuspect, hydrateCaseConfig, type CaseConfig, type RawCaseConfig } from './shared'
 import { cases as casesRaw } from './cases'
 
 export const allCases: CaseConfig[] = (casesRaw as RawCaseConfig[]).map(hydrateCaseConfig)
 
-const buildCase = (caseConfig: CaseConfig): Case => {
+const caseDifficulties: CaseDifficulty[] = ['easy', 'medium', 'hard']
+
+export const pickRandomCaseDifficulty = (): CaseDifficulty => (
+  caseDifficulties[Math.floor(Math.random() * caseDifficulties.length)] ?? 'easy'
+)
+
+const getLineupOptions = (difficulty: CaseDifficulty): CaseLineupOptions => {
+  switch (difficulty) {
+    case 'hard':
+      return { suspectCount: 9, similarity: 'similar' }
+    case 'medium':
+      return { suspectCount: 6, similarity: 'similar' }
+    case 'easy':
+      return { suspectCount: 6, similarity: 'mixed' }
+  }
+}
+
+const buildCase = (caseConfig: CaseConfig, difficulty = caseConfig.difficulty): Case => {
   const baseCase = createBaseCase(caseConfig)
-  const generated = generateCaseLineup(baseCase.evidence, baseCase.locations, caseConfig.evidenceOverrides)
+  const generated = generateCaseLineup(baseCase.evidence, baseCase.locations, caseConfig.evidenceOverrides, getLineupOptions(difficulty))
   const theme = createCaseTheme(generated.suspectPokemonIds)
 
   return applyCaseTheme({
     ...baseCase,
+    difficulty,
     culpritPokemonId: generated.culpritPokemonId,
     typeClueSlots: generated.typeClueSlots,
     typeClueGroups: generated.typeClueGroups,
@@ -48,9 +66,9 @@ export const createStolenArtifactCase = (): Case => createRequiredCaseById('stol
 
 export const getCaseList = () => allCases.map((c) => ({ id: c.id, title: c.title, shortStory: c.shortStory, crimeIcon: c.crimeIcon, difficulty: c.difficulty }))
 
-export const createCaseById = (id: string): Case | undefined => {
+export const createCaseById = (id: string, difficulty?: CaseDifficulty): Case | undefined => {
   const config = allCases.find((c) => c.id === id)
-  return config ? buildCase(config) : undefined
+  return config ? buildCase(config, difficulty) : undefined
 }
 
 export const rebuildFullCase = (
@@ -65,6 +83,7 @@ export const rebuildFullCase = (
   typeClueSlots?: Record<string, 'primary' | 'secondary'>,
   typeClueGroups?: Record<string, PokemonType[]>,
   theme = createCaseTheme(suspectPokemonIds),
+  difficultyOverride?: CaseDifficulty,
 ): Case => {
   const config = allCases.find((c) => c.id === configId)
   if (!config) throw new Error(`Case config not found: ${configId}`)
@@ -87,6 +106,7 @@ export const rebuildFullCase = (
 
   return applyCaseTheme({
     ...baseCase,
+    difficulty: difficultyOverride ?? baseCase.difficulty,
     culpritPokemonId,
     typeClueSlots: resolvedTypeClueSlots,
     typeClueGroups: resolvedTypeClueGroups,

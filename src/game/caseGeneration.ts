@@ -1,5 +1,5 @@
 import { pokemonData, type Pokemon, type PokemonType } from '../data/pokemon'
-import type { CaseEvidenceExplanation, ClearedSuspectExplanation, ClueRule, Evidence, EvidenceBadgeData, Location, LocationAction } from './caseModel'
+import type { CaseDifficulty, CaseEvidenceExplanation, ClearedSuspectExplanation, ClueRule, Evidence, EvidenceBadgeData, Location, LocationAction } from './caseModel'
 import { getPokemonById } from './suspectCaseFile'
 
 type StatName = 'hp' | 'attack' | 'defense' | 'specialAttack' | 'specialDefense' | 'speed'
@@ -29,6 +29,14 @@ type GeneratedEvidence = {
   badges?: EvidenceBadgeData[]
   rule: ClueRule
   deductionText: string
+}
+
+type LineupSimilarity = 'mixed' | 'similar'
+
+export type CaseLineupOptions = {
+  difficulty?: CaseDifficulty
+  suspectCount?: number
+  similarity?: LineupSimilarity
 }
 
 type PokemonCaseProfile = {
@@ -738,7 +746,11 @@ export const generateCaseLineup = (
   evidence: Evidence[],
   locations: Location[],
   evidenceOverrides?: Record<string, { title?: string; clueText?: string }>,
+  options: CaseLineupOptions = {},
 ) => {
+  const suspectCount = options.suspectCount ?? 6
+  const distractorCount = suspectCount - 1
+
   for (let attempt = 0; attempt < 1000; attempt += 1) {
     const culprit = pokemonData[Math.floor(Math.random() * pokemonData.length)]
     const typeClueSlots = createTypeClueSlots(culprit)
@@ -756,22 +768,26 @@ export const generateCaseLineup = (
         .filter((entry) => entry.score < relevantClues.length),
     ).sort((left, right) => right.score - left.score)
 
-    const nearMatches = scoredDistractors.filter((entry) => entry.score >= Math.max(relevantClues.length - 2, 1))
-    const mediumMatches = scoredDistractors.filter((entry) => entry.score >= 1 && entry.score < Math.max(relevantClues.length - 2, 1))
-    const weakMatches = scoredDistractors.filter((entry) => entry.score === 0)
+    const chosen = options.similarity === 'similar'
+      ? scoredDistractors
+      : (() => {
+          const nearMatches = scoredDistractors.filter((entry) => entry.score >= Math.max(relevantClues.length - 2, 1))
+          const mediumMatches = scoredDistractors.filter((entry) => entry.score >= 1 && entry.score < Math.max(relevantClues.length - 2, 1))
+          const weakMatches = scoredDistractors.filter((entry) => entry.score === 0)
 
-    const chosen = [
-      ...nearMatches.slice(0, 2),
-      ...mediumMatches.slice(0, 2),
-      ...weakMatches.slice(0, 2),
-      ...scoredDistractors,
-    ]
+          return [
+            ...nearMatches.slice(0, 2),
+            ...mediumMatches.slice(0, 2),
+            ...weakMatches.slice(0, Math.max(distractorCount - 4, 0)),
+            ...scoredDistractors,
+          ]
+        })()
 
     const uniqueDistractors = Array.from(new Map(chosen.map((entry) => [entry.pokemonId, entry])).values())
-      .slice(0, 5)
+      .slice(0, distractorCount)
       .map((entry) => entry.pokemonId)
 
-    if (uniqueDistractors.length < 5) {
+    if (uniqueDistractors.length < distractorCount) {
       continue
     }
 

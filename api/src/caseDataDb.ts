@@ -1,6 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb'
-import type { CaseTheme, EvidenceBadgeData } from '../../src/game/caseModel'
+import type { CaseDifficulty, CaseTheme, EvidenceBadgeData } from '../../src/game/caseModel'
 import type { PokemonType } from '../../src/data/pokemon'
 
 const client = new DynamoDBClient({})
@@ -9,6 +9,7 @@ const doc = DynamoDBDocumentClient.from(client, { marshallOptions: { removeUndef
 export interface CaseDataRecord {
   caseId: string
   configId: string
+  difficulty?: CaseDifficulty
   culpritPokemonId: number
   typeClueSlot?: 'primary' | 'secondary'
   typeClueSlots?: Record<string, 'primary' | 'secondary'>
