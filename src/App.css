@@ -4085,7 +4085,7 @@
   object-fit: contain;
   object-position: center;
   image-rendering: pixelated;
-  filter: grayscale(1) sepia(0.18) contrast(1.35) brightness(0.96);
+  filter: grayscale(0.62) sepia(0.24) saturate(0.78) contrast(1.22) brightness(0.98);
   transform: none;
 }
 
