@@ -1,15 +1,15 @@
 const playSteps = [
   {
     title: 'Read the case file',
-    body: 'Start with the scene report and the suspect lineup. The culprit is one of the listed Pokemon, and the story gives you the first hints about what to investigate.',
+    body: 'Start with the scene report and the suspect lineup. The culprit is one of the listed Pokemon, and the story sets up where to begin investigating.',
   },
   {
-    title: 'Search locations',
-    body: 'Open the investigation board, choose a location, then pick one action. Each search spends one investigation and may reveal evidence, witness notes, or a dead end.',
+    title: 'Follow leads',
+    body: 'Open the investigation board, choose a location, then pick one lead. Each lead spends one investigation and reveals a clue or witness note. Leads for clues already in your case file are greyed out.',
   },
   {
-    title: 'Inspect suspects',
-    body: 'Compare clues against each suspect file. Check appearance, records, and habitat notes, then mark Pokemon as suspect or ruled out as your theory changes.',
+    title: 'Compare suspect files',
+    body: 'Match evidence badges against each suspect file. Check appearance, Pokedex records, stats, and habitat notes, then mark Pokemon as suspect or cleared as your theory changes.',
   },
   {
     title: 'Make an accusation',
@@ -18,9 +18,10 @@ const playSteps = [
 ]
 
 const detectiveTips = [
-  'Evidence usually clears more suspects than it condemns. Look for Pokemon that do not fit the clue.',
-  'A dead-end search still teaches you where the answer probably is not.',
-  'Use ruled-out markers aggressively. They make the final accusation much safer.',
+  'Evidence usually clears more suspects than it condemns. Look for Pokemon that do not fit the clue profile.',
+  'Residue, trace, entry, and witness clues narrow the culprit to a small group. Cross-check that group against Pokedex records.',
+  'Do not chase duplicate clue types. Greyed-out leads point to something your case file already covers.',
+  'Use cleared markers aggressively. The game never marks suspects automatically.',
   'Login to keep Pokedex progress across cases. Failed cases mark Pokemon as seen; solved cases unlock full records.',
 ]
 
@@ -40,7 +41,7 @@ export function HowToPlayRoute() {
           <div className="how-to-play-case-note" aria-label="Case limits">
             <span className="how-to-play-case-note__label">Remember</span>
             <strong>Investigations are limited.</strong>
-            <span>Every location action matters. Gather enough proof before you accuse.</span>
+            <span>Every lead matters. Gather enough matching profiles before you accuse.</span>
           </div>
         </div>
 

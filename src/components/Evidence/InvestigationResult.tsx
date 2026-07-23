@@ -19,20 +19,20 @@ export function InvestigationResult({
   const hasEvidence = action.outcomeType === 'evidence' || action.outcomeType === 'witness'
   const summaryText = hasEvidence
     ? `Evidence recovered: ${action.evidenceTitle}`
-    : 'Lead closed without primary evidence.'
+    : 'Lead reviewed.'
 
   return (
     <div className={`location-evidence-preview ${highlightResult ? 'is-revealed' : ''}`}>
       <div className="location-evidence-summary-row">
         <strong>{action.label}</strong>
-        <span className="location-evidence-count">{hasEvidence ? 'Complete' : 'Closed lead'}</span>
+        <span className="location-evidence-count">{hasEvidence ? 'Complete' : 'Reviewed'}</span>
       </div>
 
       {!isExpanded ? (
-        <div className="location-evidence-list">
-          <span>{summaryText}</span>
-          <span>{hasEvidence ? action.observationText : 'This route can be ruled out.'}</span>
-        </div>
+          <div className="location-evidence-list">
+            <span>{summaryText}</span>
+            <span>{action.observationText}</span>
+          </div>
       ) : (
         hasEvidence ? (
           <div className="location-evidence-list">
@@ -53,10 +53,10 @@ export function InvestigationResult({
           </div>
         ) : (
           <div className="location-evidence-list">
-            <span>Lead closed without primary evidence.</span>
+            <span>Lead reviewed.</span>
             <span>{action.observationText}</span>
             <span className="location-evidence-copy">Observation</span>
-            <span>This route can be ruled out while you focus on stronger clue paths.</span>
+            <span>Your notes have been updated for this investigation path.</span>
           </div>
         )
       )}

@@ -60,7 +60,7 @@ export function InvestigationLocationPage({
   const allLocationsInvestigated = resolvedCount >= totalLocations
   const evidenceTitle = hasEvidence
     ? selectedAction?.evidenceTitle ?? location.evidenceTitle
-    : 'No Useful Evidence'
+    : 'Lead Reviewed'
   const evidenceText = hasEvidence
     ? selectedAction?.evidenceText ?? location.evidenceText
     : (location.observationText ?? selectedAction?.observationText)
@@ -137,10 +137,10 @@ export function InvestigationLocationPage({
           ) : (
             <section className="no-evidence-result-card">
               <p className="no-evidence-location">✓ {location.name} investigated</p>
-              <h3>Lead closed</h3>
+              <h3>Lead reviewed</h3>
               <div className="no-evidence-copy">
                 <p>{evidenceText ?? 'This lead did not produce a primary clue.'}</p>
-                <p>No evidence was pinned, but this route is now ruled out.</p>
+                <p>Your notes have been updated for this investigation path.</p>
               </div>
             </section>
           )}
