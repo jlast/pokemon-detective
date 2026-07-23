@@ -1842,6 +1842,16 @@
   border-color: #b7aa94;
 }
 
+.lead-option.is-already-collected {
+  pointer-events: none;
+  background: linear-gradient(180deg, #e6e6e1 0%, #d4d4ce 100%);
+  border-color: #9d9b93;
+  color: #65645f;
+  filter: grayscale(1);
+  opacity: 0.5;
+  box-shadow: none;
+}
+
 .evidence-lead-card {
   min-height: 176px;
   display: flex;
@@ -1906,6 +1916,27 @@
 .evidence-lead-card.is-followed {
   background: #e9e0d0;
   border-color: #b7aa94;
+}
+
+.evidence-lead-card.is-already-collected {
+  pointer-events: none;
+  background: linear-gradient(180deg, #e6e6e1 0%, #d4d4ce 100%);
+  border-color: #9d9b93;
+  color: #65645f;
+  filter: grayscale(1);
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+.lead-option.is-already-collected .lead-value-pill,
+.evidence-lead-card.is-already-collected .lead-value-pill {
+  background: rgba(80, 80, 76, 0.12);
+  color: #5e5d58;
+}
+
+.lead-option.is-already-collected .lead-option__cta,
+.evidence-lead-card.is-already-collected .evidence-lead-card__cta {
+  color: #55544f;
 }
 
 .evidence-lead-card__visual {

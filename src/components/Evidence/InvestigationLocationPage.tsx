@@ -14,6 +14,8 @@ interface InvestigationLocationPageProps {
   totalLocations: number
   isSearching: boolean
   interviewedWitnessPokemonIds?: number[]
+  collectedEvidenceIds?: string[]
+  collectedClueLabels?: string[]
   chooseAction: (locationId: string, actionId: string, witnessPokemonId?: number) => void
 }
 
@@ -34,6 +36,8 @@ export function InvestigationLocationPage({
   totalLocations,
   isSearching,
   interviewedWitnessPokemonIds = [],
+  collectedEvidenceIds = [],
+  collectedClueLabels = [],
   chooseAction,
 }: InvestigationLocationPageProps) {
   if (!location) {
@@ -94,6 +98,8 @@ export function InvestigationLocationPage({
           <InvestigationActionChooser
             actions={location.actions}
             interviewedWitnessPokemonIds={interviewedWitnessPokemonIds}
+            collectedEvidenceIds={collectedEvidenceIds}
+            collectedClueLabels={collectedClueLabels}
             chooseAction={(actionId, witnessPokemonId) => chooseAction(location.id, actionId, witnessPokemonId)}
             disabled={isSearching || pointsLeft <= 0}
             noActionsRemaining={pointsLeft <= 0}

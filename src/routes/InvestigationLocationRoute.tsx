@@ -23,6 +23,14 @@ export function InvestigationLocationRoute({
   const selectedLocation =
     currentCase.locations.find((location) => location.id === selectedLocationId) ?? null
   const actionsUsed = currentCase.locations.filter((location) => location.investigated).length
+  const collectedEvidenceIds = currentCase.locations.flatMap((location) => (
+    location.investigated && location.evidenceId ? [location.evidenceId] : []
+  ))
+  const collectedClueLabels = currentCase.locations.flatMap((location) => {
+    if (!location.investigated || !location.selectedActionId) return []
+    const action = location.actions.find((locationAction) => locationAction.id === location.selectedActionId)
+    return action?.cluePreview.label ? [action.cluePreview.label] : []
+  })
   const pointsLeft = Math.max(currentCase.maxInvestigations - actionsUsed, 0)
 
   useEffect(() => {
@@ -62,6 +70,8 @@ export function InvestigationLocationRoute({
         totalLocations={currentCase.locations.length}
         isSearching={searchingLocationId === selectedLocationId}
         interviewedWitnessPokemonIds={currentCase.locations.flatMap((location) => location.witnessPokemonId ? [location.witnessPokemonId] : [])}
+        collectedEvidenceIds={collectedEvidenceIds}
+        collectedClueLabels={collectedClueLabels}
         chooseAction={chooseAction}
       />
     </InvestigationRouteFrame>

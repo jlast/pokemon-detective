@@ -23,6 +23,7 @@ interface EvidenceLeadCardProps {
   onFollow: () => void
   disabled?: boolean
   isFollowed?: boolean
+  isAlreadyCollected?: boolean
 }
 
 function EvidenceLeadCard({
@@ -34,11 +35,14 @@ function EvidenceLeadCard({
   onFollow,
   disabled = false,
   isFollowed = false,
+  isAlreadyCollected = false,
 }: EvidenceLeadCardProps) {
+  const statusText = isAlreadyCollected ? 'You already know this clue' : isFollowed ? 'Complete' : 'Click to investigate'
+
   return (
     <button
       type="button"
-      className={`evidence-lead-card evidence-lead-card--${visualType} evidence-lead-card--paper-${paperStyle} ${isFollowed ? 'is-followed' : ''}`}
+      className={`evidence-lead-card evidence-lead-card--${visualType} evidence-lead-card--paper-${paperStyle} ${isFollowed ? 'is-followed' : ''} ${isAlreadyCollected ? 'is-already-collected' : ''}`}
       onClick={onFollow}
       disabled={disabled}
     >
@@ -54,7 +58,7 @@ function EvidenceLeadCard({
         <p className="lead-flavor">{teaser}</p>
       </div>
 
-      <span className="evidence-lead-card__cta">{isFollowed ? 'Complete' : 'Click to investigate'}</span>
+      <span className="evidence-lead-card__cta">{statusText}</span>
     </button>
   )
 }
@@ -63,6 +67,8 @@ interface InvestigationActionChooserProps {
   actions: LocationAction[]
   interviewedWitnessPokemonIds?: number[]
   chooseAction: (actionId: string, witnessPokemonId?: number) => void
+  collectedEvidenceIds?: string[]
+  collectedClueLabels?: string[]
   disabled?: boolean
   noActionsRemaining?: boolean
   followedActionId?: string | null
@@ -72,11 +78,15 @@ export function InvestigationActionChooser({
   actions,
   interviewedWitnessPokemonIds = [],
   chooseAction,
+  collectedEvidenceIds = [],
+  collectedClueLabels = [],
   disabled = false,
   noActionsRemaining = false,
   followedActionId = null,
 }: InvestigationActionChooserProps) {
   const interviewedWitnessIds = new Set(interviewedWitnessPokemonIds)
+  const collectedEvidenceIdSet = new Set(collectedEvidenceIds)
+  const collectedClueLabelSet = new Set(collectedClueLabels)
 
   return (
     <div className="investigation-action-chooser">
@@ -90,6 +100,10 @@ export function InvestigationActionChooser({
           const leadKind = presentation.kind
           const cluePreview = action.cluePreview
           const isFollowed = action.id === followedActionId
+          const isAlreadyCollected = Boolean(
+            (action.evidenceId && collectedEvidenceIdSet.has(action.evidenceId))
+            || collectedClueLabelSet.has(cluePreview.label),
+          )
           const witnessPokemon = leadKind === 'question'
             ? (action.witnessPokemonIds ?? [])
                 .filter((id) => !interviewedWitnessIds.has(id))
@@ -103,7 +117,7 @@ export function InvestigationActionChooser({
                 <button
                   key={action.id}
                   type="button"
-                  className={`lead-option lead-option--${leadKind} ${isFollowed ? 'is-followed' : ''}`}
+                  className={`lead-option lead-option--${leadKind} ${isFollowed ? 'is-followed' : ''} ${isAlreadyCollected ? 'is-already-collected' : ''}`}
                   disabled
                 >
                   <span className="lead-option__type">
@@ -126,9 +140,9 @@ export function InvestigationActionChooser({
                 <button
                   key={`${action.id}-${pokemon.id}`}
                   type="button"
-                  className={`lead-option lead-option--${leadKind} ${isFollowed ? 'is-followed' : ''}`}
+                  className={`lead-option lead-option--${leadKind} ${isFollowed ? 'is-followed' : ''} ${isAlreadyCollected ? 'is-already-collected' : ''}`}
                   onClick={() => chooseAction(action.id, pokemon.id)}
-                  disabled={disabled || isFollowed}
+                  disabled={disabled || isFollowed || isAlreadyCollected}
                 >
                   <span className="lead-option__type">
                     <span className="lead-option__icon" aria-hidden="true">{presentation.icon}</span>
@@ -147,7 +161,7 @@ export function InvestigationActionChooser({
                     </span>
                   </span>
                   <span className="lead-flavor">{fillWitnessPrompt(witnessPromptTemplate, pokemon.name, witnessRole)}</span>
-                  <span className="lead-option__cta">{isFollowed ? 'Complete' : 'Click to investigate'}</span>
+                  <span className="lead-option__cta">{isAlreadyCollected ? 'You already know this clue' : isFollowed ? 'Complete' : 'Click to investigate'}</span>
                 </button>
               )
             })
@@ -162,8 +176,9 @@ export function InvestigationActionChooser({
               teaser={presentation.teaser}
               clueLabel={cluePreview.label}
               onFollow={() => chooseAction(action.id)}
-              disabled={disabled || isFollowed}
+              disabled={disabled || isFollowed || isAlreadyCollected}
               isFollowed={isFollowed}
+              isAlreadyCollected={isAlreadyCollected}
             />
           )
         })}
