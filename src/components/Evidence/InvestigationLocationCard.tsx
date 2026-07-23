@@ -1,4 +1,5 @@
 import type { Location, LocationCardVariant } from '../../game/caseModel'
+import { getLocationIcon } from '../../game/locationIcons'
 
 interface InvestigationLocationCardProps {
   location: Location
@@ -11,14 +12,6 @@ interface InvestigationLocationCardProps {
   evidenceNumber: number
   style?: React.CSSProperties
 }
-
-const getObservation = (location: Location) => (
-  location.teaserText
-  ?? location.observationText
-  ?? location.actions[0]?.observationTextSmall
-  ?? location.actions[0]?.observationText
-  ?? 'Initial signs are waiting to be checked.'
-)
 
 const getStableFallbackTilt = (locationId: string) => {
   const hash = [...locationId].reduce((sum, char) => sum + char.charCodeAt(0), 0)
@@ -50,43 +43,9 @@ export function InvestigationLocationCard({
   const actionable = !isSearching && !(!isComplete && pointsLeft <= 0)
   const isActionAvailable = actionable && !isComplete
 
-  const observation = getObservation(location)
   const variantClassName = `investigation-location-card--${variant}`
   const paperToneClassName = `investigation-location-card--tone-${evidenceNumber % 3}`
-
-  const content = (() => {
-    switch (variant) {
-      case 'clipboard':
-        return (
-          <div className="location-document location-document--clipboard">
-            <strong className="location-document__label">Inspection</strong>
-            <h3 className="location-document__title">Location: {location.name}</h3>
-            <span className="location-document__checkbox" aria-hidden="true">{isComplete ? '☑ Inspected' : '☐ Not inspected'}</span>
-            <p className="location-document__observation">{observation}</p>
-          </div>
-        )
-      case 'map-fragment':
-        return (
-          <div className="location-document location-document--map-fragment">
-            <div className="location-document__map" aria-hidden="true">
-              <span className="location-document__route" />
-              <span className="location-document__marker" />
-            </div>
-            <strong className="location-document__label">Marked location</strong>
-            <h3 className="location-document__title">{location.name}</h3>
-            <p className="location-document__observation">{observation}</p>
-          </div>
-        )
-      case 'detective-note':
-      default:
-        return (
-          <div className="location-document location-document--detective-note">
-            <h3 className="location-document__title">{location.name}</h3>
-            <p className="location-document__observation">{observation}</p>
-          </div>
-        )
-    }
-  })()
+  const locationIcon = getLocationIcon(location.name, location.icon)
 
   return (
     <article
@@ -100,7 +59,18 @@ export function InvestigationLocationCard({
     >
       <span className="pin-location-dot" aria-hidden="true" />
       <span className="sr-only">{statusLabel}</span>
-      {content}
+      <div className="location-document location-document--compact">
+        {variant === 'map-fragment' ? (
+          <svg className="location-document__route-map" viewBox="0 0 120 80" aria-hidden="true" focusable="false">
+            <path d="M18 62 C34 54 34 34 51 31 S77 44 92 27" />
+            <circle cx="18" cy="62" r="4" />
+            <circle cx="92" cy="27" r="5" />
+          </svg>
+        ) : null}
+        <span className="location-document__icon" aria-hidden="true">{locationIcon}</span>
+        <h3 className="location-document__title">{location.name}</h3>
+        <span className="location-document__status" aria-hidden="true">{isComplete ? 'Done' : pointsLeft <= 0 ? 'Locked' : 'Open'}</span>
+      </div>
       <button
         type="button"
         className={`pin-location-button ${isComplete ? 'is-review' : ''}`}
