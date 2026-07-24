@@ -387,30 +387,32 @@ function App() {
       if (!location || location.investigated) return
       const action = location.actions.find((a) => a.id === actionId)
       if (!action) return
-      const rawAction = allCases
-        .find((c) => c.id === caseData.id)
-        ?.locations.find((l) => l.id === locationId)
-        ?.actions.find((a) => a.id === actionId)
-      setCaseData({
-        ...caseData,
-        locations: caseData.locations.map((l) =>
-          l.id === locationId
-            ? {
-                ...l,
-                investigated: true,
-                selectedActionId: actionId,
-                observationText: rawAction?.observationText,
-                evidenceId: rawAction?.evidenceId ?? undefined,
-                evidenceTitle: rawAction?.evidenceTitle ?? undefined,
-                evidenceText: rawAction?.evidenceText ?? undefined,
-                evidenceBadges: rawAction?.evidenceBadges ?? undefined,
-                witnessPokemonId,
-              }
-            : l,
-        ),
-      })
-      setInvestigationsRemaining(investigationsRemaining - 1)
-      setLastInvestigatedLocationId(locationId)
+      try {
+        const caseId = getTodayCaseId()
+        const data = await apiInvestigate(caseId, locationId, actionId, witnessPokemonId)
+        setCaseData({
+          ...caseData,
+          locations: caseData.locations.map((l) =>
+            l.id === data.result.locationId
+              ? {
+                  ...l,
+                  investigated: true,
+                  selectedActionId: data.result.actionId,
+                  observationText: data.result.observationText,
+                  evidenceId: data.result.evidenceId,
+                  evidenceTitle: data.result.evidenceTitle,
+                  evidenceText: data.result.evidenceText,
+                  evidenceBadges: data.result.evidenceBadges,
+                  witnessPokemonId: data.result.witnessPokemonId,
+                }
+              : l,
+          ),
+        })
+        setInvestigationsRemaining(investigationsRemaining - 1)
+        setLastInvestigatedLocationId(locationId)
+      } catch (err) {
+        console.error('Investigation failed:', err)
+      }
     }
   }
 

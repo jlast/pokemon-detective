@@ -729,7 +729,6 @@ const handleInvestigate = async (
   event: ApiGatewayEvent,
 ): Promise<ApiGatewayResult> => {
   const userInfo = await getUserInfo(event)
-  if (!userInfo.sub) return err(401, 'Authentication required')
 
   let body: { witnessPokemonId?: number } = {}
   try {
@@ -738,22 +737,6 @@ const handleInvestigate = async (
 
   const fullCase = await loadCase(caseId)
   if (!fullCase) return err(404, 'Case not found')
-
-  const userId = getDateUserId(userInfo.sub, caseId)
-  let progress = await getProgress(userId)
-
-  if (!progress) {
-    progress = createCaseProgress(userId, caseId, fullCase)
-    await createProgress(progress)
-  } else {
-    progress = await ensureProgressDefaults(userId, progress, fullCase)
-  }
-
-  if (progress.status !== 'playing') return err(400, 'Game is already over')
-  if (progress.investigationsRemaining <= 0) return err(400, 'No investigations remaining')
-  if (progress.investigatedLocations.some((l) => l.locationId === locationId)) {
-    return err(400, 'Location already investigated')
-  }
 
   const location = fullCase.locations.find((l) => l.id === locationId)
   if (!location) return err(404, 'Location not found')
@@ -774,9 +757,6 @@ const handleInvestigate = async (
     if (!(action.witnessPokemonIds ?? []).includes(witnessPokemonId)) {
       return err(400, 'Invalid witness Pokemon')
     }
-    if ((progress.interviewedWitnessPokemonIds ?? []).includes(witnessPokemonId)) {
-      return err(400, 'Witness Pokemon already interviewed')
-    }
   } else if (witnessPokemonId) {
     return err(400, 'Witness Pokemon only applies to witness leads')
   }
@@ -791,6 +771,35 @@ const handleInvestigate = async (
     evidenceText,
     evidenceBadges,
     witnessPokemonId,
+  }
+
+  if (!userInfo.sub) {
+    return ok({
+      result: record,
+      investigationsRemaining: fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS,
+      accusationsRemaining: MAX_ACCUSATIONS,
+      accusationHistory: [],
+      status: 'playing',
+    })
+  }
+
+  const userId = getDateUserId(userInfo.sub, caseId)
+  let progress = await getProgress(userId)
+
+  if (!progress) {
+    progress = createCaseProgress(userId, caseId, fullCase)
+    await createProgress(progress)
+  } else {
+    progress = await ensureProgressDefaults(userId, progress, fullCase)
+  }
+
+  if (progress.status !== 'playing') return err(400, 'Game is already over')
+  if (progress.investigationsRemaining <= 0) return err(400, 'No investigations remaining')
+  if (progress.investigatedLocations.some((l) => l.locationId === locationId)) {
+    return err(400, 'Location already investigated')
+  }
+  if (witnessPokemonId && (progress.interviewedWitnessPokemonIds ?? []).includes(witnessPokemonId)) {
+    return err(400, 'Witness Pokemon already interviewed')
   }
 
   const investigatedLocations = [...progress.investigatedLocations, record]
