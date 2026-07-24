@@ -5,16 +5,7 @@ const toTitle = (value: string) => value[0].toUpperCase() + value.slice(1)
 
 export type DetectiveProfileRow = { label: string; value: string; source?: string; badges?: EvidenceBadgeData[] }
 
-export type SceneMeasurementComparisonData = {
-  label: string
-  sceneEstimate: string
-  suspectValue: string
-  suspectClassification: string
-  result: EvidenceEvaluationResult
-}
-
 export type DetectiveProfileData = {
-  measurementComparisons: SceneMeasurementComparisonData[]
   investigativeTraits: DetectiveProfileRow[]
 }
 
@@ -300,40 +291,6 @@ export const getSuspectEvidenceEvaluations = (pokemon: Pokemon, evidenceItems: E
   }
 })
 
-const getMeasurementComparisonResult = (sceneEstimate: string, suspectClassification: string): EvidenceEvaluationResult => (
-  sceneEstimate === suspectClassification ? 'match' : 'conflict'
-)
-
-export const getSceneMeasurementComparisons = (pokemon: Pokemon, evidenceItems: Evidence[]): SceneMeasurementComparisonData[] => {
-  const heightEvidence = evidenceItems.find((evidence) => evidence.rule.axis === 'height')
-  const weightEvidence = evidenceItems.find((evidence) => evidence.rule.axis === 'weight')
-  const heightBucket = getHeightBucket(pokemon)
-  const weightBucket = getWeightBucket(pokemon)
-  const comparisons: SceneMeasurementComparisonData[] = []
-
-  if (heightEvidence?.rule.matchingValues[0]) {
-    comparisons.push({
-      label: 'Culprit Height',
-      sceneEstimate: formatRuleValue(heightEvidence.rule, heightEvidence.rule.matchingValues[0]),
-      suspectValue: `${pokemon.heightM} m`,
-      suspectClassification: formatHeightBucket(heightBucket),
-      result: getMeasurementComparisonResult(heightEvidence.rule.matchingValues[0], heightBucket),
-    })
-  }
-
-  if (weightEvidence?.rule.matchingValues[0]) {
-    comparisons.push({
-      label: 'Culprit Weight',
-      sceneEstimate: formatRuleValue(weightEvidence.rule, weightEvidence.rule.matchingValues[0]),
-      suspectValue: `${pokemon.weightKg} kg`,
-      suspectClassification: toTitle(weightBucket),
-      result: getMeasurementComparisonResult(weightEvidence.rule.matchingValues[0], weightBucket),
-    })
-  }
-
-  return comparisons
-}
-
 export const getPokemonById = (pokemonId: number): Pokemon => {
   const pokemon = pokemonData.find((entry) => entry.id === pokemonId)
 
@@ -348,39 +305,14 @@ export const getDetectiveProfile = (pokemonId: number): DetectiveProfileData => 
   const pokemon = getPokemonById(pokemonId)
 
   return {
-    measurementComparisons: [],
     investigativeTraits: buildInvestigativeProfile(pokemon),
   }
 }
 
-const getSpeedProfile = (pokemon: Pokemon) => {
-  if (pokemon.speed >= 85) return 'Fast'
-  if (pokemon.speed <= 45) return 'Slow'
-  return 'Moderate'
-}
-
-const getMovementProfile = (pokemon: Pokemon) => {
-  if (pokemon.weightKg <= 12) return 'Light-footed'
-  if (pokemon.weightKg >= 45) return 'Heavy-footed'
-  return 'Steady-footed'
-}
-
-const getForceProfile = (pokemon: Pokemon) => {
-  if (pokemon.attack >= 90) return 'High'
-  if (pokemon.attack <= 45) return 'Low'
-  return 'Moderate'
-}
-
-const getRangedProfile = (pokemon: Pokemon) => {
-  if (pokemon.specialAttack >= 90) return 'High'
-  if (pokemon.specialAttack <= 45) return 'Low'
-  return 'Moderate'
-}
-
 export const buildInvestigativeProfile = (pokemon: Pokemon): DetectiveProfileRow[] => [
-  { label: 'Typing', value: '', badges: pokemon.types.map((type) => ({ text: toTitle(type), type })) },
-  { label: 'Likely movement', value: getMovementProfile(pokemon), source: 'Weight class' },
-  { label: 'Physical force', value: getForceProfile(pokemon), source: 'Attack stat' },
-  { label: 'Ranged capability', value: getRangedProfile(pokemon), source: 'Special Attack stat' },
-  { label: 'Likely speed', value: getSpeedProfile(pokemon), source: 'Speed stat' },
+  { label: 'Height', value: `${pokemon.heightM} m · ${formatHeightBucket(getHeightBucket(pokemon))}` },
+  { label: 'Weight', value: `${pokemon.weightKg} kg · ${toTitle(getWeightBucket(pokemon))}` },
+  { label: 'Type', value: '', badges: pokemon.types.map((type) => ({ text: toTitle(type), type })) },
+  { label: 'Highest stat', value: statLabels[pickStatKey(pokemon, highestStatPriority, 'highest')] },
+  { label: 'Lowest stat', value: statLabels[pickStatKey(pokemon, lowestStatPriority, 'lowest')] },
 ]

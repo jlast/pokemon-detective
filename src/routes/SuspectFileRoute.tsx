@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { SelectedSuspectCaseFile } from '../components/Suspects/SelectedSuspectCaseFile'
-import type { Case, EvidenceNoteStatus, Suspect, SuspectNoteStatus } from '../game/caseModel'
+import type { Case, Suspect, SuspectNoteStatus } from '../game/caseModel'
 import { suspectPath, TODAY_SUSPECTS_PATH } from '../paths'
 
 interface SuspectFileRouteProps {
@@ -11,10 +11,6 @@ interface SuspectFileRouteProps {
   setSuspectNoteStatus: (suspectId: number, noteStatus: SuspectNoteStatus) => void
   openAccusation: (suspectId: number) => void
   attemptsLeft: number
-  evidenceNotes: Record<string, EvidenceNoteStatus>
-  evidenceFilter: 'all' | 'important' | 'revisit'
-  setEvidenceFilter: (filter: 'all' | 'important' | 'revisit') => void
-  setEvidenceNoteStatus: (evidenceId: string, status: EvidenceNoteStatus) => void
 }
 
 export function SuspectFileRoute({
@@ -25,10 +21,6 @@ export function SuspectFileRoute({
   setSuspectNoteStatus,
   openAccusation,
   attemptsLeft,
-  evidenceNotes,
-  evidenceFilter,
-  setEvidenceFilter,
-  setEvidenceNoteStatus,
 }: SuspectFileRouteProps) {
   const { id } = useParams()
   const suspectId = Number(id)
@@ -83,6 +75,7 @@ export function SuspectFileRoute({
       </nav>
 
       <div className="dossier-shell">
+        <span className="dossier-shell-tab">Suspect Dossier</span>
         <SelectedSuspectCaseFile
           selectedSuspect={selectedSuspect}
           currentCase={currentCase}
@@ -90,10 +83,6 @@ export function SuspectFileRoute({
           setSuspectNoteStatus={setSuspectNoteStatus}
           openAccusation={openAccusation}
           attemptsLeft={attemptsLeft}
-          evidenceNotes={evidenceNotes}
-          evidenceFilter={evidenceFilter}
-          setEvidenceFilter={setEvidenceFilter}
-          setEvidenceNoteStatus={setEvidenceNoteStatus}
         />
       </div>
     </section>

@@ -4,7 +4,6 @@ interface SuspectVerdictPanelProps {
   suspectName: string
   status: 'suspect' | 'cleared'
   onStatusChange: (status: SuspectNoteStatus) => void
-  onAccuse: () => void
   attemptsLeft: number
   disabled?: boolean
   isFalseLead?: boolean
@@ -14,7 +13,6 @@ export function SuspectVerdictPanel({
   suspectName,
   status,
   onStatusChange,
-  onAccuse,
   attemptsLeft,
   disabled = false,
   isFalseLead = false,
@@ -27,7 +25,7 @@ export function SuspectVerdictPanel({
       : 'Currently cleared'
   return (
     <section className="suspect-verdict-panel" aria-label={`Your theory about ${suspectName}`}>
-      <div className="suspect-verdict-label">Your Theory</div>
+      <div className="suspect-verdict-label">Current Theory</div>
 
       <div className="suspect-verdict-status-controls" aria-label="Set current assessment">
         <button
@@ -53,15 +51,8 @@ export function SuspectVerdictPanel({
         <strong>{isSuspect ? '⚠ ' : ''}{assessmentText}</strong>
       </div>
 
-      {isSuspect && !isFalseLead ? (
-        <button
-          type="button"
-          className="primary-button suspect-verdict-accuse-button"
-          onClick={onAccuse}
-          disabled={disabled || attemptsLeft <= 0}
-        >
-          Accuse {suspectName}
-        </button>
+      {isSuspect && !isFalseLead && attemptsLeft <= 0 ? (
+        <p className="suspect-verdict-no-attempts">No accusation attempts left.</p>
       ) : null}
     </section>
   )

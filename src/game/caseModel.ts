@@ -75,17 +75,10 @@ export interface EvidenceBadgeData {
 
 export type EvidenceEvaluationResult = 'match' | 'possible' | 'conflict' | 'unknown'
 
-export type EvidenceNoteStatus = 'important' | 'revisit' | 'ignored' | null
-
 export interface EvidenceObservation {
   title: string
   observation: string
   interpretation: string
-}
-
-export interface EvidencePlayerNote {
-  evidenceId: string
-  status: EvidenceNoteStatus
 }
 
 export interface LocationAction {

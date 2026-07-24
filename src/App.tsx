@@ -16,7 +16,7 @@ import { SuspectsRoute } from './routes/SuspectsRoute'
 import { getCurrentCase, investigate as apiInvestigate, accuse as apiAccuse, clearSuspect as apiClearSuspect } from './api'
 import { trackPageView } from './analytics'
 import { allCases } from './game/cases'
-import type { Case, EvidenceNoteStatus, Suspect, SuspectNoteStatus } from './game/caseModel'
+import type { Case, Suspect, SuspectNoteStatus } from './game/caseModel'
 import {
   TODAY_ACCUSE_PATH,
   TODAY_ENDING_PATH,
@@ -81,8 +81,6 @@ function App() {
   const [investigationsRemaining, setInvestigationsRemaining] = useState(0)
   const [accusationsRemaining, setAccusationsRemaining] = useState(MAX_ACCUSATIONS)
   const [accusationHistory, setAccusationHistory] = useState<number[]>([])
-  const [evidenceNotes, setEvidenceNotes] = useState<Record<string, EvidenceNoteStatus>>({})
-  const [evidenceFilter, setEvidenceFilter] = useState<'all' | 'important' | 'revisit'>('all')
 
   const [authed, setAuthed] = useState(() => isAuthenticated())
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() =>
@@ -251,15 +249,6 @@ function App() {
     apiClearSuspect(getTodayCaseId(), suspectId, noteStatus === 'ruled-out').catch((err) =>
       console.error('Failed to sync suspect status:', err),
     )
-  }
-
-  const setEvidenceNoteStatus = (evidenceId: string, status: EvidenceNoteStatus) => {
-    setEvidenceNotes((prev) => {
-      const next = { ...prev }
-      if (status) next[evidenceId] = status
-      else delete next[evidenceId]
-      return next
-    })
   }
 
   const inspectSuspect = (suspectId: number) => {
@@ -608,10 +597,6 @@ function App() {
                 setSuspectNoteStatus={setSuspectNoteStatus}
                 openAccusation={openAccusation}
                 attemptsLeft={attemptsLeft}
-                evidenceNotes={evidenceNotes}
-                evidenceFilter={evidenceFilter}
-                setEvidenceFilter={setEvidenceFilter}
-                setEvidenceNoteStatus={setEvidenceNoteStatus}
               />
             }
           />
@@ -624,10 +609,6 @@ function App() {
                   accusationTarget={accusationTarget}
                   closeAccusation={closeAccusation}
                   confirmAccusation={confirmAccusation}
-                  evidenceNotes={evidenceNotes}
-                  evidenceFilter={evidenceFilter}
-                  setEvidenceFilter={setEvidenceFilter}
-                  setEvidenceNoteStatus={setEvidenceNoteStatus}
                 />
               ) : currentCase.status === 'solved' ? (
                 <Navigate to={endingPath('solved')} replace />
