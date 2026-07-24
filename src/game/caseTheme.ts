@@ -20,6 +20,18 @@ const pickRandom = <T,>(items: T[]): T => {
   return item
 }
 
+const getIndefiniteArticle = (value: string): 'A' | 'An' => (
+  /^[aeiou]/i.test(value.trim()) ? 'An' : 'A'
+)
+
+const getCaseSceneName = (caseData: Case): string => caseData.locations[0]?.name ?? 'the scene'
+
+const getCaseThemeStory = (theme: CaseTheme, sceneName: string): string => (
+  theme.kind === 'stolen-item'
+    ? `${getIndefiniteArticle(theme.name)} ${theme.name} was stolen from ${sceneName}.`
+    : `${theme.name} has gone missing. They were last seen around ${sceneName}.`
+)
+
 export const createCaseTheme = (suspectPokemonIds: number[] = []): CaseTheme => {
   if (Math.random() < 0.5) {
     const item = pickRandom(themeItems)
@@ -47,9 +59,7 @@ export const applyCaseTheme = (caseData: Case, theme: CaseTheme): Case => ({
   ...caseData,
   theme,
   title: theme.kind === 'stolen-item' ? `The Stolen ${theme.name}` : `The Missing ${theme.name}`,
-  shortStory: theme.kind === 'stolen-item'
-    ? `A ${theme.name} was stolen from the scene.`
-    : `${theme.name} has gone missing.`,
+  shortStory: getCaseThemeStory(theme, getCaseSceneName(caseData)),
   crimeIcon: theme.kind === 'stolen-item' ? '🎒' : '❓',
 })
 
@@ -57,7 +67,5 @@ export const getCaseThemeNote = (caseData: Case): string => {
   const theme = caseData.theme
   if (!theme) return caseData.shortStory
 
-  return theme.kind === 'stolen-item'
-    ? `A ${theme.name} was stolen from the scene.`
-    : `${theme.name} has gone missing.`
+  return getCaseThemeStory(theme, getCaseSceneName(caseData))
 }
