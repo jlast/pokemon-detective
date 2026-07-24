@@ -51,7 +51,7 @@ export interface LocationActionPresentation {
   witnessPromptTemplates?: string[]
 }
 
-export type ClueAxis = 'height' | 'weight' | 'type' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'scene'
+export type ClueAxis = 'height' | 'weight' | 'type' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'typeAffectedness' | 'scene'
 
 export type CluePrecision = 'exact' | 'grouped' | 'none'
 

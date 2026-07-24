@@ -38,5 +38,10 @@
     "id": "lowest-stat-clue",
     "title": "Limitation Clue",
     "clueText": ""
+  },
+  {
+    "id": "type-affectedness-clue",
+    "title": "Reaction Clue",
+    "clueText": ""
   }
 ]

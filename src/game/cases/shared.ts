@@ -91,6 +91,9 @@ const cluePreviewByEvidenceId: Record<string, CluePreview> = {
   'lowest-stat-clue': {
     label: 'Stat clue',
   },
+  'type-affectedness-clue': {
+    label: 'Reaction clue',
+  },
 }
 
 const scenePreview = (label = 'Scene context'): CluePreview => ({
@@ -121,6 +124,14 @@ const presentationByActionId: Record<string, LocationActionPresentation> = {
     paperStyle: 'clipboard',
     displayLabel: 'Nearby tools',
     teaser: 'A small scrape sits beside the closest tools.',
+  },
+  'test-type-reaction': {
+    kind: 'inspect',
+    icon: '🧪',
+    visualType: 'object',
+    paperStyle: 'clipboard',
+    displayLabel: 'Type reaction',
+    teaser: 'A safe test could reveal how the culprit reacted to a type source.',
   },
   'measure-tracks': {
     kind: 'search',
@@ -311,6 +322,7 @@ const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Loc
     ev('search-scene-traces', 'height-clue', `Search ${template.area}`, `Look for dropped traces around ${template.area}.`, `Loose traces were scattered {movementWord} through ${template.area}.`),
     ev('check-scene-edge', 'ground-trace-clue', `Check around ${template.area}`, `Search the less disturbed parts of ${template.area}.`, `The quieter edge of ${template.area} showed {groundWord}.`),
     ev('check-nearby-tools', 'force-clue', `Check nearby tools`, `Look over the tools closest to ${template.area}.`, 'One nearby tool showed {forceTrace}.'),
+    ev('test-type-reaction', 'type-affectedness-clue', 'Test the residue reaction', 'Use a safe type sample on the residue.', 'The residue reacted like it came from someone {affectednessLabel}.'),
   ),
   location(`${caseId}-traces`, template.traceArea, '👣', `${template.traceArea} has marks leading away from the scene.`,
     ev('measure-tracks', 'weight-clue', 'Measure the marks', `Check the marks across ${template.traceArea}.`, `The marks run steadily across ${template.traceArea}.`,

@@ -5,7 +5,9 @@ import { getPokemonById } from './suspectCaseFile'
 type StatName = 'hp' | 'attack' | 'defense' | 'specialAttack' | 'specialDefense' | 'speed'
 type HeightBucket = 'short' | 'medium' | 'tall'
 type WeightBucket = 'light' | 'medium' | 'heavy'
-type EvidenceCategory = 'height' | 'weight' | 'typeResidue' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat'
+type EvidenceCategory = 'height' | 'weight' | 'typeResidue' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'typeAffectedness'
+type TypeAffectedness = 'weak' | 'strong'
+type TypeAffectednessCandidate = { affectedness: TypeAffectedness; attackType: PokemonType }
 type TypeClueSlot = 'primary' | 'secondary'
 type TypeClueSlots = Record<string, TypeClueSlot>
 type TypeClueGroups = Record<string, PokemonType[]>
@@ -50,6 +52,9 @@ type PokemonCaseProfile = {
   hasSecondaryType: boolean
   highestStat: StatName
   lowestStat: StatName
+  typeAffectedness: TypeAffectedness
+  affectednessType: PokemonType
+  affectednessValue: string
   values: Record<string, string>
 }
 
@@ -109,6 +114,13 @@ const evidenceTemplates: EvidenceTemplate[] = [
     titleTemplate: '{weakStatTitle}',
     clueTemplate: 'The route suggested {weakStatTrace}.',
     endTemplate: 'The culprit avoided trouble by showing {weakStatTrace}.',
+  },
+  {
+    id: 'type-affectedness-clue',
+    category: 'typeAffectedness',
+    titleTemplate: '{affectednessTitle}',
+    clueTemplate: 'The scene reaction suggested the culprit was {affectednessLabel}.',
+    endTemplate: 'The scene reaction suggested the culprit was {affectednessLabel}.',
   },
 ]
 
@@ -194,6 +206,27 @@ const typeValues: Record<PokemonType, Record<string, string>> = {
 
 const pokemonTypes = Object.keys(typeValues) as PokemonType[]
 
+const typeEffectiveness: Record<PokemonType, Partial<Record<PokemonType, number>>> = {
+  normal: { rock: 0.5, ghost: 0, steel: 0.5 },
+  fire: { fire: 0.5, water: 0.5, grass: 2, ice: 2, bug: 2, rock: 0.5, dragon: 0.5, steel: 2 },
+  water: { fire: 2, water: 0.5, grass: 0.5, ground: 2, rock: 2, dragon: 0.5 },
+  electric: { water: 2, electric: 0.5, grass: 0.5, ground: 0, flying: 2, dragon: 0.5 },
+  grass: { fire: 0.5, water: 2, grass: 0.5, poison: 0.5, ground: 2, flying: 0.5, bug: 0.5, rock: 2, dragon: 0.5, steel: 0.5 },
+  ice: { fire: 0.5, water: 0.5, grass: 2, ice: 0.5, ground: 2, flying: 2, dragon: 2, steel: 0.5 },
+  fighting: { normal: 2, ice: 2, poison: 0.5, flying: 0.5, psychic: 0.5, bug: 0.5, rock: 2, ghost: 0, dark: 2, steel: 2, fairy: 0.5 },
+  poison: { grass: 2, poison: 0.5, ground: 0.5, rock: 0.5, ghost: 0.5, steel: 0, fairy: 2 },
+  ground: { fire: 2, electric: 2, grass: 0.5, poison: 2, flying: 0, bug: 0.5, rock: 2, steel: 2 },
+  flying: { electric: 0.5, grass: 2, fighting: 2, bug: 2, rock: 0.5, steel: 0.5 },
+  psychic: { fighting: 2, poison: 2, psychic: 0.5, dark: 0, steel: 0.5 },
+  bug: { fire: 0.5, grass: 2, fighting: 0.5, poison: 0.5, flying: 0.5, psychic: 2, ghost: 0.5, dark: 2, steel: 0.5, fairy: 0.5 },
+  rock: { fire: 2, ice: 2, fighting: 0.5, ground: 0.5, flying: 2, bug: 2, steel: 0.5 },
+  ghost: { normal: 0, psychic: 2, ghost: 2, dark: 0.5 },
+  dragon: { dragon: 2, steel: 0.5, fairy: 0 },
+  dark: { fighting: 0.5, psychic: 2, ghost: 2, dark: 0.5, fairy: 0.5 },
+  steel: { fire: 0.5, water: 0.5, electric: 0.5, ice: 2, rock: 2, steel: 0.5, fairy: 2 },
+  fairy: { fire: 0.5, fighting: 2, poison: 0.5, dragon: 2, dark: 2, steel: 0.5 },
+}
+
 const heightValues: Record<HeightBucket, Record<string, string>> = {
   short: { heightTitle: 'Low Traces', heightPosition: 'low to the ground', heightRequirement: 'small' },
   medium: { heightTitle: 'Mid-Height Traces', heightPosition: 'around table height', heightRequirement: 'medium-sized' },
@@ -266,6 +299,31 @@ const getWeightBucket = (pokemon: Pokemon): WeightBucket => {
   return 'medium'
 }
 
+const getDefensiveMultiplier = (pokemon: Pokemon, attackType: PokemonType): number => (
+  pokemon.types.reduce((multiplier, defenseType) => multiplier * (typeEffectiveness[attackType][defenseType] ?? 1), 1)
+)
+
+const getTypeAffectednessValue = (affectedness: TypeAffectedness, attackType: PokemonType): string => `${affectedness}:${attackType}`
+
+const getPokemonAffectednessCandidates = (pokemon: Pokemon): TypeAffectednessCandidate[] => pokemonTypes.flatMap((attackType): TypeAffectednessCandidate[] => {
+  const multiplier = getDefensiveMultiplier(pokemon, attackType)
+  if (multiplier > 1) return [{ affectedness: 'weak', attackType }]
+  if (multiplier < 1) return [{ affectedness: 'strong', attackType }]
+  return []
+})
+
+const getTypeAffectedness = (pokemon: Pokemon): TypeAffectednessCandidate => {
+  const candidates = getPokemonAffectednessCandidates(pokemon)
+  return candidates.find((candidate) => candidate.affectedness === 'weak') ?? candidates[0] ?? { affectedness: 'weak' as const, attackType: 'normal' as const }
+}
+
+const getPokemonAffectednessRuleValue = (pokemon: Pokemon, attackType: PokemonType): string => {
+  const multiplier = getDefensiveMultiplier(pokemon, attackType)
+  if (multiplier > 1) return getTypeAffectednessValue('weak', attackType)
+  if (multiplier < 1) return getTypeAffectednessValue('strong', attackType)
+  return `neutral:${attackType}`
+}
+
 const getClueTypeSlot = (pokemon: Pokemon): TypeClueSlot => (
   pokemon.types[1] && Math.random() < 0.5 ? 'secondary' : 'primary'
 )
@@ -317,6 +375,8 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
   const profileLabel = getProfileLabel(hasSecondaryType, clueTypeSlot)
   const highestStat = pickPriorityStat(pokemon, strongestStatPriority, 'max')
   const lowestStat = pickPriorityStat(pokemon, weakestStatPriority, 'min')
+  const { affectedness, attackType: affectednessType } = getTypeAffectedness(pokemon)
+  const affectednessLabel = `${affectedness === 'weak' ? 'weak' : 'strong'} to ${formatLabel(affectednessType)}`
 
   return {
     height,
@@ -329,12 +389,18 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
     hasSecondaryType,
     highestStat,
     lowestStat,
+    typeAffectedness: affectedness,
+    affectednessType,
+    affectednessValue: getTypeAffectednessValue(affectedness, affectednessType),
     values: {
       ...heightValues[height],
       ...weightValues[weight],
       ...typeValues[typeForNarrative],
       ...strongStatValues[highestStat],
       ...weakStatValues[lowestStat],
+      affectednessTitle: `${formatLabel(affectednessType)} Reaction`,
+      affectednessLabel,
+      affectednessRequirement: affectednessLabel,
       profileLabel,
       traceProfileLabel: profileLabel,
       entryProfileLabel: profileLabel,
@@ -382,6 +448,8 @@ const getCategoryProfileLabel = (clue: EvidenceClue, profile: PokemonCaseProfile
       return `entry ${profileLabel}`
     case 'witness':
       return `witness ${profileLabel}`
+    case 'typeAffectedness':
+      return 'type reaction profile'
     default:
       return profileLabel
   }
@@ -405,10 +473,12 @@ const getClueRule = (clue: EvidenceClue, profile: PokemonCaseProfile): ClueRule 
       return { axis: 'highestStat', precision: 'exact', matchingValues: [profile.highestStat] }
     case 'lowestStat':
       return { axis: 'lowestStat', precision: 'exact', matchingValues: [profile.lowestStat] }
+    case 'typeAffectedness':
+      return { axis: 'typeAffectedness', precision: 'exact', matchingValues: [profile.affectednessValue] }
   }
 }
 
-const getClueRuleValue = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, clue: EvidenceClue): string => {
+const getClueRuleValue = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, clue: EvidenceClue, clueProfile?: PokemonCaseProfile): string => {
   const profile = getPokemonCaseProfile(pokemon, typeClueSlots, undefined, clue.evidenceId)
 
   switch (clue.category) {
@@ -425,6 +495,8 @@ const getClueRuleValue = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, clue: 
       return profile.highestStat
     case 'lowestStat':
       return profile.lowestStat
+    case 'typeAffectedness':
+      return getPokemonAffectednessRuleValue(pokemon, clueProfile?.affectednessType ?? profile.affectednessType)
   }
 }
 
@@ -453,6 +525,8 @@ const getEvidenceBadges = (clue: EvidenceClue, profile: PokemonCaseProfile): Evi
       return [{ text: `Strength: ${formatLabel(profile.highestStat)}` }]
     case 'lowestStat':
       return [{ text: `Weakness: ${formatLabel(profile.lowestStat)}` }]
+    case 'typeAffectedness':
+      return [{ text: `${profile.typeAffectedness === 'weak' ? 'Weak' : 'Strong'} to ${formatLabel(profile.affectednessType)}`, type: profile.affectednessType }]
   }
 }
 
@@ -466,7 +540,7 @@ const scorePokemonAgainstProfile = (pokemonId: number, culpritProfile: PokemonCa
 
   return clues.reduce((score, clue) => {
     const rule = getClueRule(clue, culpritProfile)
-    const value = getClueRuleValue(pokemon, culpritProfile.typeClueSlots, clue)
+    const value = getClueRuleValue(pokemon, culpritProfile.typeClueSlots, clue, culpritProfile)
     return rule.matchingValues.includes(value) ? score + 1 : score
   }, 0)
 }
@@ -490,6 +564,8 @@ const getCategoryConclusionFragment = (clue: EvidenceClue, profile: PokemonCaseP
       return `strong in ${profile.values.strongStatTrace}`
     case 'lowestStat':
       return `consistent with ${profile.values.weakStatTrace}`
+    case 'typeAffectedness':
+      return `${profile.values.affectednessRequirement} in type matchups`
   }
 }
 
@@ -509,6 +585,8 @@ const getCategoryDeductionText = (clue: EvidenceClue, profile: PokemonCaseProfil
       return `This suggested the culprit relied on ${profile.values.strongStatTrace}.`
     case 'lowestStat':
       return `This suggested the culprit showed ${profile.values.weakStatTrace}.`
+    case 'typeAffectedness':
+      return `This suggested the culprit was ${profile.values.affectednessRequirement}.`
   }
 }
 
@@ -627,7 +705,7 @@ const getMismatchReason = (suspectId: number, culpritProfile: PokemonCaseProfile
   const pokemon = getPokemonById(suspectId)
   const missingClue = clues.find((clue) => {
     const rule = getClueRule(clue, culpritProfile)
-    return !rule.matchingValues.includes(getClueRuleValue(pokemon, culpritProfile.typeClueSlots, clue))
+    return !rule.matchingValues.includes(getClueRuleValue(pokemon, culpritProfile.typeClueSlots, clue, culpritProfile))
   })
 
   switch (missingClue?.category) {
@@ -647,6 +725,8 @@ const getMismatchReason = (suspectId: number, culpritProfile: PokemonCaseProfile
       return `Did not fit the signs of ${culpritProfile.values.strongStatTrace}.`
     case 'lowestStat':
       return `Did not fit the signs of ${culpritProfile.values.weakStatTrace}.`
+    case 'typeAffectedness':
+      return `Did not fit the ${culpritProfile.values.affectednessRequirement} type reaction.`
     default:
       return 'The collected clues did not support this suspect strongly enough.'
   }
@@ -656,7 +736,7 @@ const getMismatchEvidenceLabel = (suspectId: number, culpritProfile: PokemonCase
   const pokemon = getPokemonById(suspectId)
   const missingClue = clues.find((clue) => {
     const rule = getClueRule(clue, culpritProfile)
-    return !rule.matchingValues.includes(getClueRuleValue(pokemon, culpritProfile.typeClueSlots, clue))
+    return !rule.matchingValues.includes(getClueRuleValue(pokemon, culpritProfile.typeClueSlots, clue, culpritProfile))
   })
 
   switch (missingClue?.category) {
@@ -676,6 +756,8 @@ const getMismatchEvidenceLabel = (suspectId: number, culpritProfile: PokemonCase
       return `Strength mismatch: needed ${formatLabel(culpritProfile.highestStat)}`
     case 'lowestStat':
       return `Weakness mismatch: needed ${formatLabel(culpritProfile.lowestStat)}`
+    case 'typeAffectedness':
+      return `Type reaction mismatch: needed ${culpritProfile.values.affectednessRequirement}`
     default:
       return 'Clue profile mismatch: did not match the collected evidence'
   }
