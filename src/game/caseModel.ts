@@ -199,8 +199,8 @@ export interface Case {
 export function getDiscoveredEvidence(caseData: Case): Evidence[] {
   const discovered: Evidence[] = []
   const seenEvidenceIds = new Set<string>()
-  const evidenceById = new Map(caseData.evidence.map((evidence) => [evidence.id, evidence]))
-  for (const location of caseData.locations) {
+  const evidenceById = new Map((caseData.evidence ?? []).map((evidence) => [evidence.id, evidence]))
+  for (const location of caseData.locations ?? []) {
     if (
       location.investigated &&
       location.selectedActionId &&
