@@ -1,5 +1,5 @@
-import { getDiscoveredEvidence, type Case, type Suspect, type SuspectNoteStatus } from '../../game/caseModel'
-import { getDetectiveProfile, getPokemonById, getSuspectEvidenceEvaluations } from '../../game/suspectCaseFile'
+import { getDiscoveredEvidence, type Case, type EvidenceNoteStatus, type Suspect, type SuspectNoteStatus } from '../../game/caseModel'
+import { getDetectiveProfile, getPokemonById, getSceneMeasurementComparisons, getSuspectEvidenceEvaluations } from '../../game/suspectCaseFile'
 import { DetectiveProfile } from './DetectiveProfile'
 import { MugShot } from './MugShot'
 import { SuspectEvidenceAssessment } from './SuspectEvidenceAssessment'
@@ -12,6 +12,10 @@ interface SelectedSuspectCaseFileProps {
   setSuspectNoteStatus: (suspectId: number, noteStatus: SuspectNoteStatus) => void
   openAccusation: (suspectId: number) => void
   attemptsLeft: number
+  evidenceNotes: Record<string, EvidenceNoteStatus>
+  evidenceFilter: 'all' | 'important' | 'revisit'
+  setEvidenceFilter: (filter: 'all' | 'important' | 'revisit') => void
+  setEvidenceNoteStatus: (evidenceId: string, status: EvidenceNoteStatus) => void
 }
 
 export function SelectedSuspectCaseFile({
@@ -21,6 +25,10 @@ export function SelectedSuspectCaseFile({
   setSuspectNoteStatus,
   openAccusation,
   attemptsLeft,
+  evidenceNotes,
+  evidenceFilter,
+  setEvidenceFilter,
+  setEvidenceNoteStatus,
 }: SelectedSuspectCaseFileProps) {
   if (!selectedSuspect) {
     return (
@@ -43,10 +51,14 @@ export function SelectedSuspectCaseFile({
   const statusText = isFalseLead ? 'False Lead' : selectedSuspect.noteStatus === 'ruled-out' ? 'Cleared' : 'Suspect'
   const statusClassName = isFalseLead ? 'is-false-lead' : selectedSuspect.noteStatus === 'ruled-out' ? 'is-cleared' : 'is-suspect'
   const suspectIndex = currentCase.suspects.findIndex((suspect) => suspect.pokemonId === selectedSuspect.pokemonId)
-  const caseFileNumber = String(suspectIndex + 1).padStart(2, '0')
+  const caseFileNumber = String(selectedSuspect.caseFileNumber ?? suspectIndex + 1).padStart(2, '0')
+  const caseNote = selectedSuspect.witnessNote ?? selectedSuspect.lastKnownDetail
   const discoveredEvidence = getDiscoveredEvidence(currentCase)
   const pokemon = getPokemonById(selectedSuspect.pokemonId)
-  const detectiveProfile = getDetectiveProfile(selectedSuspect.pokemonId)
+  const detectiveProfile = {
+    ...getDetectiveProfile(selectedSuspect.pokemonId),
+    measurementComparisons: getSceneMeasurementComparisons(pokemon, discoveredEvidence),
+  }
   const evidenceEvaluations = getSuspectEvidenceEvaluations(pokemon, discoveredEvidence)
 
   return (
@@ -68,6 +80,12 @@ export function SelectedSuspectCaseFile({
                 <span className="selected-suspect-status-label">Status</span>
                 <span className={`status-stamp ${statusClassName}`}>{statusText}</span>
                 </div>
+              {caseNote ? (
+                <aside className="suspect-case-note-slip">
+                  <strong>{selectedSuspect.witnessNote ? 'Witness note' : 'Last known sighting'}</strong>
+                  <p>{caseNote}</p>
+                </aside>
+              ) : null}
             </section>
 
             <SuspectVerdictPanel
@@ -84,6 +102,10 @@ export function SelectedSuspectCaseFile({
               evidenceItems={discoveredEvidence}
               pokemon={pokemon}
               evaluations={evidenceEvaluations}
+              evidenceNotes={evidenceNotes}
+              evidenceFilter={evidenceFilter}
+              onEvidenceFilterChange={setEvidenceFilter}
+              onEvidenceNoteChange={setEvidenceNoteStatus}
             />
 
             <DetectiveProfile profile={detectiveProfile} />
