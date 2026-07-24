@@ -328,7 +328,7 @@ const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Loc
     ev('check-lingering-scent', 'type-residue-clue', `Smell near ${template.lockedObject}`, 'Check for any lingering scent.', `A trace of {textureWord} clung near ${template.lockedObject}.`),
     ev('check-nearby-surface', 'lowest-stat-clue', `Check beside ${template.lockedObject}`, `Look along the nearby surface beside ${template.lockedObject}.`, `Whoever handled ${template.lockedObject} left signs of {weakStatTrace} nearby.`),
   ),
-  location(`${caseId}-witness`, template.witnessArea, '🗣️', `Someone near ${template.witnessArea} noticed something odd.`,
+  location(`${caseId}-witness`, 'Interview Witness', '🗣️', `Someone near ${template.witnessArea} noticed something odd.`,
     wit('question-primary-witness', 'witness-clue', `Question the ${template.witnessRole}`, `Ask what the ${template.witnessRole} remembers.`, `The ${template.witnessRole} is certain about that detail.`, template.witnessRole,
       [template.witnessRole],
       [
