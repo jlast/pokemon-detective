@@ -164,7 +164,7 @@ export function InvestigationLocationPage({
                 <Link to={TODAY_INVESTIGATION_PATH} className="primary-button suspect-file-back-button">
                   Continue Investigation →
                 </Link>
-                <Link to={TODAY_INVESTIGATION_PATH} className="secondary-button suspect-file-back-button">
+                <Link to={TODAY_SUSPECTS_PATH} className="secondary-button suspect-file-back-button">
                   Review Evidence
                 </Link>
               </>
