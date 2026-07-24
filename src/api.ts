@@ -1,4 +1,4 @@
-import { ensureValidSession, getToken } from './auth'
+import { ensureValidSession, getPlayerSessionId, getToken } from './auth'
 import type { Case, EvidenceBadgeData } from './game/caseModel'
 
 const BASE = import.meta.env.VITE_API_BASE ?? ''
@@ -38,7 +38,7 @@ export interface PokedexResponse {
 
 const authHeaders = async (): Promise<Record<string, string>> => {
   const token = await ensureValidSession() ? getToken() : null
-  return token ? { Authorization: `Bearer ${token}` } : {}
+  return token ? { Authorization: `Bearer ${token}` } : { 'X-Player-Session-Id': getPlayerSessionId() }
 }
 
 const enc = encodeURIComponent

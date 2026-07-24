@@ -239,20 +239,16 @@ function App() {
     const current = suspectNotes.get(suspectId)
     const newStatus = current?.noteStatus === 'ruled-out' ? 'suspect' : 'ruled-out'
     updateSuspectNote(suspectId, () => ({ noteStatus: newStatus }))
-    if (authed) {
-      apiClearSuspect(getTodayCaseId(), suspectId, newStatus === 'ruled-out').catch((err) =>
-        console.error('Failed to sync suspect status:', err),
-      )
-    }
+    apiClearSuspect(getTodayCaseId(), suspectId, newStatus === 'ruled-out').catch((err) =>
+      console.error('Failed to sync suspect status:', err),
+    )
   }
 
   const setSuspectNoteStatus = (suspectId: number, noteStatus: SuspectNoteStatus) => {
     updateSuspectNote(suspectId, () => ({ noteStatus }))
-    if (authed) {
-      apiClearSuspect(getTodayCaseId(), suspectId, noteStatus === 'ruled-out').catch((err) =>
-        console.error('Failed to sync suspect status:', err),
-      )
-    }
+    apiClearSuspect(getTodayCaseId(), suspectId, noteStatus === 'ruled-out').catch((err) =>
+      console.error('Failed to sync suspect status:', err),
+    )
   }
 
   const inspectSuspect = (suspectId: number) => {
@@ -303,22 +299,12 @@ function App() {
       let status: 'playing' | 'solved' | 'failed' = 'playing'
       try {
         const caseId = getTodayCaseId()
-        const data = await apiAccuse(caseId, accusationTarget.pokemonId, {
-          accusationHistory,
-          accusationsRemaining,
-        })
+        const data = await apiAccuse(caseId, accusationTarget.pokemonId)
         status = data.status
 
         setAccusationHistory(data.accusationHistory ?? [])
         setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
-        setCaseData({
-          ...caseData,
-          status: status === 'playing' ? 'active' : status,
-          ...(status !== 'playing' ? {
-            culpritPokemonId: data.case.culpritPokemonId,
-            solution: data.case.solution,
-          } : { solution: undefined }),
-        })
+        setCaseData(data.case)
       } catch (err) {
         console.error('Accusation failed:', err)
         return
@@ -408,7 +394,9 @@ function App() {
               : l,
           ),
         })
-        setInvestigationsRemaining(investigationsRemaining - 1)
+        setInvestigationsRemaining(data.investigationsRemaining)
+        setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
+        setAccusationHistory(data.accusationHistory ?? [])
         setLastInvestigatedLocationId(locationId)
       } catch (err) {
         console.error('Investigation failed:', err)

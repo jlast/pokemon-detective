@@ -11,6 +11,7 @@ const REFRESH_TOKEN_KEY = 'cognito-refresh-token'
 const PROFILE_KEY = 'cognito-user-profile'
 const OAUTH_STATE_KEY = 'oauth-state'
 const PKCE_VERIFIER_KEY = 'oauth-pkce-verifier'
+const PLAYER_SESSION_ID_KEY = 'pokemon-detective-player-session-id'
 const EXPIRY_BUFFER_MS = 5 * 60 * 1000
 
 export interface UserProfile {
@@ -74,6 +75,15 @@ const saveTokens = (tokens: TokenResponse): void => {
 
 export const getToken = (): string | null => {
   return localStorage.getItem(TOKEN_KEY)
+}
+
+export const getPlayerSessionId = (): string => {
+  const existing = localStorage.getItem(PLAYER_SESSION_ID_KEY)
+  if (existing) return existing
+
+  const sessionId = crypto.randomUUID?.() ?? createRandomString(36)
+  localStorage.setItem(PLAYER_SESSION_ID_KEY, sessionId)
+  return sessionId
 }
 
 export const getAccessToken = (): string | null => {

@@ -54,7 +54,7 @@ type LegacyLocationActionBadges = {
 const corsHeaders: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Player-Session-Id',
 }
 
 const ok = (body: unknown): ApiGatewayResult => ({
@@ -103,6 +103,21 @@ const getUserInfo = async (event: ApiGatewayEvent): Promise<UserInfo> => {
 }
 
 const getDateUserId = (sub: string, caseId: string): string => `${sub}:${caseId}`
+
+const getHeader = (event: ApiGatewayEvent, name: string): string | undefined => {
+  const lowerName = name.toLowerCase()
+  const match = Object.entries(event.headers ?? {}).find(([key]) => key.toLowerCase() === lowerName)
+  return match?.[1]
+}
+
+const getGameplaySub = (event: ApiGatewayEvent, userInfo: UserInfo): string => {
+  if (userInfo.sub) return userInfo.sub
+
+  const playerSessionId = getHeader(event, 'X-Player-Session-Id')?.trim()
+  if (!playerSessionId || !/^[a-zA-Z0-9._~-]{16,128}$/.test(playerSessionId)) return ''
+
+  return `anonymous:${playerSessionId}`
+}
 
 const shuffle = <T,>(items: T[]): T[] => {
   const copy = [...items]
@@ -681,8 +696,9 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
   if (!fullCase) return err(500, 'Failed to build case')
 
   const userInfo = await getUserInfo(event)
-  if (userInfo.sub) {
-    const userId = getDateUserId(userInfo.sub, caseId)
+  const gameplaySub = getGameplaySub(event, userInfo)
+  if (gameplaySub) {
+    const userId = getDateUserId(gameplaySub, caseId)
     let progress = await getProgress(userId)
     if (!progress) {
       progress = createCaseProgress(userId, caseId, fullCase)
@@ -773,7 +789,9 @@ const handleInvestigate = async (
     witnessPokemonId,
   }
 
-  if (!userInfo.sub) {
+  const gameplaySub = getGameplaySub(event, userInfo)
+
+  if (!gameplaySub) {
     return ok({
       result: record,
       investigationsRemaining: fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS,
@@ -783,7 +801,7 @@ const handleInvestigate = async (
     })
   }
 
-  const userId = getDateUserId(userInfo.sub, caseId)
+  const userId = getDateUserId(gameplaySub, caseId)
   let progress = await getProgress(userId)
 
   if (!progress) {
@@ -815,7 +833,7 @@ const handleInvestigate = async (
     ttl: getProgressTtl(),
   })
 
-  if (witnessPokemonId) {
+  if (userInfo.sub && witnessPokemonId) {
     await markPokedexSeen(userInfo.sub, [witnessPokemonId])
   }
 
@@ -850,7 +868,9 @@ const handleAccuse = async (
   const suspectId = Number(suspectIdStr)
   if (Number.isNaN(suspectId)) return err(400, 'Invalid suspect ID')
 
-  if (!userInfo.sub) {
+  const gameplaySub = getGameplaySub(event, userInfo)
+
+  if (!gameplaySub) {
     let body: { accusationHistory?: number[], accusationsRemaining?: number } = {}
     try {
       body = JSON.parse(event.body ?? '{}')
@@ -891,7 +911,7 @@ const handleAccuse = async (
     })
   }
 
-  const userId = getDateUserId(userInfo.sub, caseId)
+  const userId = getDateUserId(gameplaySub, caseId)
   let progress = await getProgress(userId)
 
   if (!progress) {
@@ -927,7 +947,7 @@ const handleAccuse = async (
     ttl: getProgressTtl(),
   })
 
-  if (status === 'solved' || status === 'failed') {
+  if (userInfo.sub && (status === 'solved' || status === 'failed')) {
     await updatePokedexForCompletedCase(userInfo.sub, fullCase, progress, status)
   }
 
@@ -953,7 +973,8 @@ const handleClearSuspect = async (
   event: ApiGatewayEvent,
 ): Promise<ApiGatewayResult> => {
   const userInfo = await getUserInfo(event)
-  if (!userInfo.sub) return err(401, 'Authentication required')
+  const gameplaySub = getGameplaySub(event, userInfo)
+  if (!gameplaySub) return err(401, 'Authentication required')
 
   const suspectId = Number(suspectIdStr)
   if (Number.isNaN(suspectId)) return err(400, 'Invalid suspect ID')
@@ -965,7 +986,7 @@ const handleClearSuspect = async (
 
   const cleared = body.cleared ?? true
 
-  const userId = getDateUserId(userInfo.sub, caseId)
+  const userId = getDateUserId(gameplaySub, caseId)
   let progress = await getProgress(userId)
   const fullCase = await loadCase(caseId)
   if (!fullCase) return err(404, 'Case not found')
