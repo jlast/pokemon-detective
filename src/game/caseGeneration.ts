@@ -1,5 +1,5 @@
 import { pokemonData, type Pokemon, type PokemonType } from '../data/pokemon'
-import type { CaseDifficulty, CaseEvidenceExplanation, ClearedSuspectExplanation, ClueRule, Evidence, EvidenceBadgeData, Location, LocationAction } from './caseModel'
+import type { CaseDifficulty, CaseEvidenceExplanation, ClearedSuspectExplanation, ClueRule, Evidence, EvidenceBadgeData, EvidenceObservation, Location, LocationAction } from './caseModel'
 import { getPokemonById } from './suspectCaseFile'
 
 type StatName = 'hp' | 'attack' | 'defense' | 'specialAttack' | 'specialDefense' | 'speed'
@@ -31,6 +31,7 @@ type GeneratedEvidence = {
   badges?: EvidenceBadgeData[]
   rule: ClueRule
   deductionText: string
+  observation: EvidenceObservation
 }
 
 type LineupSimilarity = 'mixed' | 'similar'
@@ -590,19 +591,82 @@ const getCategoryDeductionText = (clue: EvidenceClue, profile: PokemonCaseProfil
   }
 }
 
+const getEvidenceObservation = (clue: EvidenceClue, profile: PokemonCaseProfile, title: string): EvidenceObservation => {
+  const typeGroup = formatList(getTypeClueGroup(profile, clue.evidenceId))
+
+  switch (clue.category) {
+    case 'height':
+      return {
+        title,
+        observation: `Marks at the scene sat ${profile.values.heightPosition}.`,
+        interpretation: `That points to a ${profile.values.heightRequirement} culprit.`,
+      }
+    case 'weight':
+      return {
+        title,
+        observation: `Tracks along the route were ${profile.values.trackDepth}.`,
+        interpretation: `That points to a ${profile.values.weightRequirement} culprit.`,
+      }
+    case 'typeResidue':
+      return {
+        title,
+        observation: `${formatLabel(profile.clueType ?? profile.primaryType)}-like residue was found at the scene.`,
+        interpretation: `The residue is consistent with ${typeGroup} activity.`,
+      }
+    case 'groundTrace':
+      return {
+        title,
+        observation: `The ground showed ${profile.values.groundTrace}.`,
+        interpretation: `The trace profile is consistent with ${typeGroup} activity.`,
+      }
+    case 'force':
+      return {
+        title,
+        observation: `The entry point showed ${profile.values.forceTrace}.`,
+        interpretation: `The marks are consistent with ${typeGroup} activity.`,
+      }
+    case 'witness':
+      return {
+        title,
+        observation: `A witness described someone ${profile.values.witnessDetail}.`,
+        interpretation: `The report is consistent with ${typeGroup} activity.`,
+      }
+    case 'highestStat':
+      return {
+        title,
+        observation: `The scene showed ${profile.values.strongStatTrace}.`,
+        interpretation: `That points toward a suspect whose strongest stat is ${formatLabel(profile.highestStat)}.`,
+      }
+    case 'lowestStat':
+      return {
+        title,
+        observation: `The route showed ${profile.values.weakStatTrace}.`,
+        interpretation: `That points toward a suspect whose weakest stat is ${formatLabel(profile.lowestStat)}.`,
+      }
+    case 'typeAffectedness':
+      return {
+        title,
+        observation: `The residue reacted as if the culprit was ${profile.values.affectednessRequirement}.`,
+        interpretation: `The reaction matters because defensive type matchups can narrow the suspect list.`,
+      }
+  }
+}
+
 const buildEvidenceFromTemplate = (evidenceId: string, culprit: Pokemon, typeClueSlots: TypeClueSlots, typeClueGroups: TypeClueGroups): GeneratedEvidence => {
   const profile = getPokemonCaseProfile(culprit, typeClueSlots, typeClueGroups, evidenceId)
   const template = getEvidenceTemplate(evidenceId)
   const clue = { evidenceId, category: template.category }
   const badges = getEvidenceBadges(clue, profile)
   const rule = getClueRule(clue, profile)
+  const title = fillTemplate(template.titleTemplate, profile.values)
 
   return {
-    title: fillTemplate(template.titleTemplate, profile.values),
+    title,
     clueText: fillTemplate(template.clueTemplate, profile.values),
     badges,
     rule,
     deductionText: getCategoryDeductionText(clue, profile),
+    observation: getEvidenceObservation(clue, profile, title),
   }
 }
 
@@ -654,6 +718,7 @@ export const generateCaseEvidence = (
       clueText: override?.clueText ? fillNarrativeTemplate(override.clueText, profile) : generated.clueText,
       badges: generated.badges,
       rule: generated.rule,
+      observation: generated.observation,
     }
   })
 

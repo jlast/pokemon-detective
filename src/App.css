@@ -2383,6 +2383,7 @@
 .evidence-badge {
   display: inline-flex;
   align-items: center;
+  gap: 0.35rem;
   width: fit-content;
   min-height: 1.85rem;
   padding: 0.32rem 0.7rem;
@@ -2395,6 +2396,13 @@
   letter-spacing: 0.01em;
   line-height: 1;
   box-shadow: 0 5px 10px rgba(82, 66, 38, 0.08);
+}
+
+.evidence-badge-type-sprite {
+  width: 1rem;
+  height: 1rem;
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 
 .evidence-badge-list {
@@ -3575,6 +3583,264 @@
   align-content: start;
 }
 
+.suspect-verdict-panel {
+  position: relative;
+  display: grid;
+  gap: 0.8rem;
+  align-content: start;
+  padding: 3rem 1rem 1rem;
+  border: 2px solid #7b5639;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fff8e6 0%, #f2e2bd 100%);
+  box-shadow: 0 18px 26px rgba(76, 50, 27, 0.16);
+}
+
+.suspect-verdict-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  padding: 0.65rem 0.9rem;
+  border-radius: 13px 13px 0 0;
+  background: #5b3c25;
+  color: #fff3d5;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.suspect-verdict-status-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.suspect-verdict-toggle {
+  min-height: 2.35rem;
+  border: 2px solid rgba(87, 67, 42, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 251, 239, 0.82);
+  color: #59462e;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.suspect-verdict-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.suspect-verdict-toggle.is-suspect.is-selected {
+  border-color: #a33d34;
+  background: #c85a4b;
+  color: #fff7ed;
+}
+
+.suspect-verdict-toggle.is-cleared.is-selected {
+  border-color: #5f8050;
+  background: #7f9b68;
+  color: #f7ffe8;
+}
+
+.suspect-verdict-assessment {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 251, 239, 0.68);
+}
+
+.suspect-verdict-assessment span,
+.suspect-verdict-reasons > strong {
+  color: #6f604d;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.suspect-verdict-assessment strong {
+  color: #3f2c1b;
+}
+
+.suspect-verdict-reasons {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.suspect-verdict-reasons ul {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.suspect-verdict-reasons li {
+  color: #4c3b20;
+  line-height: 1.35;
+}
+
+.suspect-verdict-accuse-button {
+  width: 100%;
+  justify-content: center;
+}
+
+.suspect-evidence-assessment {
+  display: grid;
+  gap: 0.85rem;
+  align-content: start;
+}
+
+.suspect-evidence-assessment-group {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.suspect-evidence-assessment-group h3 {
+  margin: 0;
+  color: #5f503b;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.suspect-evidence-assessment-group.is-unknown {
+  opacity: 0.82;
+}
+
+.suspect-evidence-assessment-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.suspect-evidence-assessment-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.65rem;
+  align-items: start;
+  padding: 0.75rem;
+  border-radius: 14px;
+  border: 1px solid #d3c3a3;
+  background: rgba(255, 251, 239, 0.78);
+  box-shadow: 0 7px 14px rgba(81, 67, 41, 0.06);
+}
+
+.suspect-evidence-assessment-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 999px;
+  font-weight: 900;
+}
+
+.suspect-evidence-assessment-group.is-match .suspect-evidence-assessment-icon {
+  background: #dcebcf;
+  color: #476b38;
+}
+
+.suspect-evidence-assessment-group.is-conflict .suspect-evidence-assessment-icon {
+  background: #efd4ce;
+  color: #9f4b40;
+}
+
+.suspect-evidence-assessment-group.is-unknown .suspect-evidence-assessment-icon {
+  background: #e7dfcf;
+  color: #786a55;
+}
+
+.suspect-evidence-assessment-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.suspect-evidence-assessment-copy strong {
+  color: #3f2c1b;
+}
+
+.suspect-evidence-assessment-copy p,
+.suspect-evidence-assessment-empty {
+  margin: 0;
+  color: #6f604d;
+  line-height: 1.4;
+}
+
+.suspect-evidence-assessment-empty {
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 251, 239, 0.48);
+}
+
+.suspect-overview-investigations {
+  grid-column: 1 / -1;
+}
+
+.detective-profile {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.85rem;
+  grid-column: 1 / -1;
+}
+
+.detective-profile-card {
+  position: relative;
+  display: grid;
+  gap: 0.7rem;
+  align-content: start;
+  padding: 0.9rem 0.9rem 0.9rem 1rem;
+  border-radius: 14px;
+  border: 1px solid #cfc2a7;
+  background:
+    linear-gradient(90deg, rgba(84, 69, 47, 0.14) 0 0.32rem, transparent 0.32rem),
+    linear-gradient(180deg, #f7f1df 0%, #efe4c7 100%);
+}
+
+.detective-profile-card h3 {
+  margin: 0;
+  color: #4b3523;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.detective-profile-rows {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.detective-profile-row {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, 0.38fr) minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(137, 116, 80, 0.18);
+}
+
+.detective-profile-row:last-child {
+  border-bottom: 0;
+}
+
+.detective-profile-label {
+  color: #8a7458;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.detective-profile-value {
+  color: #3f2c1b;
+  font-size: 0.98rem;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
 .dossier-evidence-notes {
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
@@ -3707,6 +3973,11 @@
 .suspect-group-list {
   display: grid;
   gap: 0.8rem;
+}
+
+.suspect-overview-investigations .suspect-group-list {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: start;
 }
 
 .suspect-group-card {
@@ -4860,6 +5131,10 @@
     background: transparent;
     box-shadow: none;
     transform: translateY(0.28rem);
+  }
+
+  .detective-profile-rows {
+    grid-template-columns: 1fr;
   }
 
   .app-content,

@@ -9,7 +9,7 @@ const playSteps = [
   },
   {
     title: 'Compare suspect files',
-    body: 'Match evidence badges against each suspect file. Check appearance, Pokedex records, stats, and habitat notes, then mark Pokemon as suspect or cleared as your theory changes.',
+    body: 'Match evidence badges against each suspect file. Check appearance, Pokedex records, and stats, then mark Pokemon as suspect or cleared as your theory changes.',
   },
   {
     title: 'Make an accusation',

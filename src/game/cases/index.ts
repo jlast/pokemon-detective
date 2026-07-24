@@ -25,6 +25,17 @@ const getLineupOptions = (difficulty: CaseDifficulty): CaseLineupOptions => {
   }
 }
 
+const addSuspectCaseNotes = (suspects: ReturnType<typeof createSuspect>[], caseConfig: CaseConfig) => suspects.map((suspect, index) => ({
+  ...suspect,
+  caseFileNumber: index + 1,
+  witnessNote: index % 2 === 0
+    ? `Seen near ${caseConfig.locations[0]?.name ?? 'the scene'} shortly before the report.`
+    : undefined,
+  lastKnownDetail: index % 2 === 1
+    ? `Last noted around ${caseConfig.locations[1]?.name ?? 'a nearby route'} during the incident window.`
+    : undefined,
+}))
+
 const buildCase = (caseConfig: CaseConfig, difficulty = caseConfig.difficulty): Case => {
   const baseCase = createBaseCase(caseConfig)
   const generated = generateCaseLineup(baseCase.evidence, baseCase.locations, caseConfig.evidenceOverrides, getLineupOptions(difficulty))
@@ -36,9 +47,7 @@ const buildCase = (caseConfig: CaseConfig, difficulty = caseConfig.difficulty): 
     culpritPokemonId: generated.culpritPokemonId,
     typeClueSlots: generated.typeClueSlots,
     typeClueGroups: generated.typeClueGroups,
-    suspects: generated.suspectPokemonIds.map((id) => createSuspect(id)).map((suspect) => ({
-      ...suspect,
-    })),
+    suspects: addSuspectCaseNotes(generated.suspectPokemonIds.map((id) => createSuspect(id)), caseConfig),
     locations: generated.locations.map((locationItem) => ({
       ...locationItem,
       actions: locationItem.actions.map((action) => ({ ...action })),
@@ -102,7 +111,7 @@ export const rebuildFullCase = (
   const { generatedEvidence, typeClueSlots: resolvedTypeClueSlots, typeClueGroups: resolvedTypeClueGroups } = generateCaseEvidence(culprit, baseCase.evidence, config.evidenceOverrides, typeClueSlots, typeClueGroups)
   const generatedLocations = generateCaseLocations(culprit, overriddenLocations, config.evidenceOverrides, resolvedTypeClueSlots, resolvedTypeClueGroups)
 
-  const suspects = suspectPokemonIds.map((id) => createSuspect(id, suspectShinyMap[id]))
+  const suspects = addSuspectCaseNotes(suspectPokemonIds.map((id) => createSuspect(id, suspectShinyMap[id])), config)
 
   return applyCaseTheme({
     ...baseCase,

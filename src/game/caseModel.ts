@@ -13,6 +13,9 @@ export interface Suspect {
   name: string
   sprite: string
   isShiny: boolean
+  caseFileNumber?: number
+  lastKnownDetail?: string
+  witnessNote?: string
   manuallyRuledOut: boolean
   noteStatus: SuspectNoteStatus
 }
@@ -70,6 +73,21 @@ export interface EvidenceBadgeData {
   type?: string
 }
 
+export type EvidenceEvaluationResult = 'match' | 'possible' | 'conflict' | 'unknown'
+
+export type EvidenceNoteStatus = 'important' | 'revisit' | 'ignored' | null
+
+export interface EvidenceObservation {
+  title: string
+  observation: string
+  interpretation: string
+}
+
+export interface EvidencePlayerNote {
+  evidenceId: string
+  status: EvidenceNoteStatus
+}
+
 export interface LocationAction {
   id: string
   label: string
@@ -117,6 +135,7 @@ export interface Evidence {
   clueText: string
   badges?: EvidenceBadgeData[]
   rule: ClueRule
+  observation?: EvidenceObservation
 }
 
 export interface CaseEvidenceExplanation {
@@ -180,6 +199,7 @@ export interface Case {
 export function getDiscoveredEvidence(caseData: Case): Evidence[] {
   const discovered: Evidence[] = []
   const seenEvidenceIds = new Set<string>()
+  const evidenceById = new Map(caseData.evidence.map((evidence) => [evidence.id, evidence]))
   for (const location of caseData.locations) {
     if (
       location.investigated &&
@@ -189,12 +209,14 @@ export function getDiscoveredEvidence(caseData: Case): Evidence[] {
     ) {
       seenEvidenceIds.add(location.evidenceId)
       const action = location.actions.find((a) => a.id === location.selectedActionId)
+      const evidenceItem = evidenceById.get(location.evidenceId)
       discovered.push({
         id: location.evidenceId,
         title: action?.evidenceTitle ?? location.evidenceTitle ?? 'Unknown',
         clueText: action?.evidenceText ?? location.evidenceText ?? '',
         badges: action?.evidenceBadges ?? location.evidenceBadges,
         rule: action?.clueRule ?? { axis: 'scene', precision: 'none', matchingValues: [] },
+        observation: evidenceItem?.observation,
       })
     }
   }

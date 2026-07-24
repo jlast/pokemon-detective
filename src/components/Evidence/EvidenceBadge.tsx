@@ -17,6 +17,14 @@ export function EvidenceBadge({ text, type, fallback }: EvidenceBadgeProps) {
 
   return (
     <span className={`evidence-badge ${type ? `evidence-badge--type-${type}` : ''}`}>
+      {type ? (
+        <img
+          className="evidence-badge-type-sprite"
+          src={`/type-sprites/${type}.svg`}
+          alt=""
+          aria-hidden="true"
+        />
+      ) : null}
       {badgeText}
     </span>
   )

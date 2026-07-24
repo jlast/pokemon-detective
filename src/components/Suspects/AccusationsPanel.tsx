@@ -13,6 +13,10 @@ export function AccusationsPanel({
   accusationTarget,
   attemptsLeft,
 }: AccusationsPanelProps) {
+  const attemptWarning = attemptsLeft <= 1
+    ? 'A wrong accusation consumes your final attempt and ends the case.'
+    : 'A wrong accusation consumes one attempt.'
+
   return (
     <div
       className="overlay-shell"
@@ -30,11 +34,11 @@ export function AccusationsPanel({
 
         <div className="inspect-list">
           <div className="inspect-item">
-            <span>You can still change your mind.</span>
+            <span>A correct accusation ends the case.</span>
           </div>
           <div className="inspect-item">
             <span>
-              Wrong accusations cost one attempt. You have {attemptsLeft} left.
+              {attemptWarning} You have {attemptsLeft} {attemptsLeft === 1 ? 'attempt' : 'attempts'} left.
             </span>
           </div>
         </div>
@@ -52,7 +56,7 @@ export function AccusationsPanel({
             className="primary-button"
             onClick={confirmAccusation}
           >
-            Accuse
+            Accuse {accusationTarget.name}
           </button>
         </div>
       </section>
