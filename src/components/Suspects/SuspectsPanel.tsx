@@ -3,6 +3,7 @@ import { EvidenceBadgeList } from '../Evidence/EvidenceBadge'
 import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
 import { TODAY_INVESTIGATION_PATH } from '../../paths'
 import { SuspectCard } from './SuspectCard'
+import { getEvidenceChipContext } from './evidenceChipContext'
 
 interface SuspectsProps {
   currentCase: Case
@@ -32,20 +33,25 @@ export function SuspectsPanel({
 
         {discoveredEvidence.length > 0 ? (
           <div className="suspect-evidence-list suspect-evidence-board-list">
-            {discoveredEvidence.map((evidenceItem) => (
-              <article key={evidenceItem.id} className="suspect-evidence-tag evidence-note-card">
-                <span className="suspect-evidence-tag-icon" aria-hidden="true">
-                  📎
-                </span>
-                <div className="suspect-evidence-tag-copy">
-                  <strong>{evidenceItem.title}</strong>
-                  <EvidenceBadgeList
-                    badges={evidenceItem.badges}
-                    fallback={evidenceItem.clueText}
-                  />
-                </div>
-              </article>
-            ))}
+            {discoveredEvidence.map((evidenceItem) => {
+              const chipContext = getEvidenceChipContext(evidenceItem)
+
+              return (
+                <article key={evidenceItem.id} className="suspect-evidence-tag evidence-note-card">
+                  <span className="suspect-evidence-tag-icon" aria-hidden="true">
+                    📎
+                  </span>
+                  <div className="suspect-evidence-tag-copy">
+                    <strong>{evidenceItem.title}</strong>
+                    {chipContext && evidenceItem.badges?.length ? <span>{chipContext}</span> : null}
+                    <EvidenceBadgeList
+                      badges={evidenceItem.badges}
+                      fallback={evidenceItem.clueText}
+                    />
+                  </div>
+                </article>
+              )
+            })}
           </div>
         ) : (
           <div className="suspect-evidence-empty">

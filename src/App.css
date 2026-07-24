@@ -2337,7 +2337,7 @@
 
 .suspect-evidence-board-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
 }
 
@@ -5330,6 +5330,10 @@
     grid-template-columns: 1fr;
   }
 
+  .suspect-evidence-board-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .selected-suspect-overview-grid {
     grid-template-columns: minmax(240px, 0.85fr) minmax(360px, 1.15fr);
     grid-template-areas:
@@ -5369,6 +5373,10 @@
   }
 
   .detective-profile-rows {
+    grid-template-columns: 1fr;
+  }
+
+  .suspect-evidence-board-list {
     grid-template-columns: 1fr;
   }
 

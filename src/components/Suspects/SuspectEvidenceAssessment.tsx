@@ -1,6 +1,7 @@
 import type { Evidence } from '../../game/caseModel'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { EvidenceBadgeList } from '../Evidence/EvidenceBadge'
+import { getEvidenceChipContext } from './evidenceChipContext'
 
 interface SuspectEvidenceAssessmentProps {
   evidenceItems: Evidence[]
@@ -33,31 +34,6 @@ function DetectiveEvidenceCard({
   )
 }
 
-const getChipContext = (evidence: Evidence) => {
-  switch (evidence.rule.axis) {
-    case 'height':
-      return 'Height estimate'
-    case 'weight':
-      return 'Track estimate'
-    case 'type':
-      return 'Residue points to'
-    case 'groundTrace':
-      return 'Trace points to'
-    case 'force':
-      return 'Entry marks point to'
-    case 'witness':
-      return 'Witness account points to'
-    case 'highestStat':
-      return 'Strength clue'
-    case 'lowestStat':
-      return 'Limitation clue'
-    case 'typeAffectedness':
-      return 'Reaction points to'
-    case 'scene':
-      return undefined
-  }
-}
-
 export function SuspectEvidenceAssessment({ evidenceItems }: SuspectEvidenceAssessmentProps) {
   return (
     <section className="suspect-evidence-assessment" aria-label="Collected evidence">
@@ -71,7 +47,7 @@ export function SuspectEvidenceAssessment({ evidenceItems }: SuspectEvidenceAsse
                   key={evidence.id}
                   evidenceId={evidence.id}
                   title={evidence.title}
-                  chipContext={getChipContext(evidence)}
+                  chipContext={getEvidenceChipContext(evidence)}
                   supportingValues={evidence.badges}
                 />
               )
