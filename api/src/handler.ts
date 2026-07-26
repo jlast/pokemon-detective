@@ -4,6 +4,7 @@ import type { Case, CaseDifficulty, CaseStatus, LocationCardVariant, LocationAct
 import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, putCaseData } from './caseDataDb'
+import { validateGeneratedCase } from './validateGeneratedCase'
 import {
   getProgress,
   createProgress,
@@ -630,6 +631,7 @@ const generateAndStoreCase = async (caseId: string) => {
   const difficulty = pickRandomCaseDifficulty()
   const gameCase = createCaseById(config.id, difficulty)
   if (!gameCase) return null
+  validateGeneratedCase(gameCase)
 
   const actionEvidenceMap: Record<string, string> = {}
   for (const location of gameCase.locations) {

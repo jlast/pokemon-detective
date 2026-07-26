@@ -31,6 +31,7 @@ jobs:
       S3_BUCKET_NAME: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_S3_BUCKET_NAME || secrets.S3_BUCKET_NAME) || (secrets.PROD_S3_BUCKET_NAME || secrets.S3_BUCKET_NAME) }}
       CLOUDFRONT_DISTRIBUTION_ID: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_CLOUDFRONT_DISTRIBUTION_ID || secrets.CLOUDFRONT_DISTRIBUTION_ID) || (secrets.PROD_CLOUDFRONT_DISTRIBUTION_ID || secrets.CLOUDFRONT_DISTRIBUTION_ID) }}
       LAMBDA_FUNCTION_NAME: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_LAMBDA_FUNCTION_NAME || 'pokemon-detective-test-api') || (secrets.PROD_LAMBDA_FUNCTION_NAME || 'pokemon-detective-api') }}
+      CRON_LAMBDA_FUNCTION_NAME: ${{ (github.event_name == 'push' || inputs.environment == 'test') && (secrets.TEST_CRON_LAMBDA_FUNCTION_NAME || 'pokemon-detective-test-cron') || (secrets.PROD_CRON_LAMBDA_FUNCTION_NAME || 'pokemon-detective-cron') }}
     steps:
       - uses: actions/checkout@v4
 
@@ -56,12 +57,23 @@ jobs:
         working-directory: api
         run: npm run build:handler
 
-      - name: Package Lambda
+      - name: Build cron Lambda
+        working-directory: api
+        run: npm run build:cron
+
+      - name: Package handler Lambda
         working-directory: api
         run: |
           cp dist/handler.cjs dist/handler.js
           cd dist
           zip -r handler.zip handler.js
+
+      - name: Package cron Lambda
+        working-directory: api
+        run: |
+          cp dist/cron.cjs dist/cron.js
+          cd dist
+          zip -r cron.zip cron.js
 
       # ── AWS auth ──
       - uses: aws-actions/configure-aws-credentials@v5
@@ -92,6 +104,12 @@ jobs:
           aws lambda update-function-code \
             --function-name "$LAMBDA_FUNCTION_NAME" \
             --zip-file fileb://api/dist/handler.zip
+
+      - name: Deploy cron Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name "$CRON_LAMBDA_FUNCTION_NAME" \
+            --zip-file fileb://api/dist/cron.zip
 
       # ── Invalidate CloudFront cache ──
       - run: >

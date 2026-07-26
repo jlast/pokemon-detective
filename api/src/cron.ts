@@ -2,6 +2,7 @@ import { allCases, createCaseById, pickRandomCaseDifficulty } from '../../src/ga
 import { pokemonData } from '../../src/data/pokemon'
 import type { Case, LocationCardVariant } from '../../src/game/caseModel'
 import { putCaseData } from './caseDataDb'
+import { validateGeneratedCase } from './validateGeneratedCase'
 
 const getTodayUtc = (): string => {
   const now = new Date()
@@ -97,6 +98,7 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
     const difficulty = pickRandomCaseDifficulty()
     const gameCase = createCaseById(config.id, difficulty)
     if (!gameCase) throw new Error(`Failed to generate case for config: ${config.id}`)
+    validateGeneratedCase(gameCase)
 
     const actionEvidenceMap: Record<string, string> = {}
     for (const location of gameCase.locations) {
