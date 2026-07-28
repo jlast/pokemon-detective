@@ -234,6 +234,15 @@ resource "aws_route53_record" "reminder_ses_dkim" {
   records         = ["${aws_ses_domain_dkim.reminder.dkim_tokens[count.index]}.dkim.amazonses.com"]
 }
 
+resource "aws_route53_record" "reminder_dmarc" {
+  allow_overwrite = true
+  zone_id         = data.aws_route53_zone.site.zone_id
+  name            = "_dmarc.${var.reminder_email_domain}"
+  type            = "TXT"
+  ttl             = 600
+  records         = ["v=DMARC1; p=none"]
+}
+
 # ─── Feedback alerts ──────────────────────────────────────────────────────────
 
 resource "aws_sns_topic" "feedback_alerts" {
