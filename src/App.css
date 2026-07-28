@@ -120,39 +120,7 @@
 }
 
 .sidebar-profile__reminder {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
   margin-top: 16px;
-  padding: 10px;
-  border: 1px dashed rgba(31, 48, 80, 0.22);
-  border-radius: 14px;
-  background: rgba(255, 248, 223, 0.6);
-  color: #203250;
-  cursor: pointer;
-}
-
-.sidebar-profile__reminder input {
-  width: 16px;
-  height: 16px;
-  margin-top: 2px;
-  accent-color: #203250;
-}
-
-.sidebar-profile__reminder span {
-  display: grid;
-  gap: 2px;
-}
-
-.sidebar-profile__reminder strong {
-  font-size: 13px;
-  line-height: 1.25;
-}
-
-.sidebar-profile__reminder small {
-  color: #67738a;
-  font-size: 12px;
-  font-weight: 700;
 }
 
 .sidebar-profile__reminder-error {
@@ -160,6 +128,121 @@
   color: #8b2d2d;
   font-size: 12px;
   font-weight: 800;
+}
+
+.reminder-settings-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(127, 92, 48, 0.16);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(255, 248, 223, 0.92), rgba(247, 226, 178, 0.48)),
+    var(--paper-bg);
+  box-shadow: 0 8px 18px rgba(47, 35, 21, 0.07);
+  color: #203250;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.reminder-settings-card:hover {
+  border-color: rgba(127, 92, 48, 0.28);
+  box-shadow: 0 10px 22px rgba(47, 35, 21, 0.1);
+}
+
+.reminder-settings-card__icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(244, 211, 94, 0.42);
+  color: #5e451f;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.reminder-settings-card__copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.reminder-settings-card__copy strong {
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.reminder-settings-card__copy small {
+  color: #67738a;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.reminder-settings-card__control {
+  position: relative;
+  width: 40px;
+  height: 24px;
+  flex: 0 0 auto;
+}
+
+.reminder-settings-card__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.reminder-settings-card__input:disabled {
+  cursor: wait;
+}
+
+.reminder-settings-card__switch {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: #b4becd;
+  box-shadow: inset 0 1px 3px rgba(31, 48, 80, 0.18);
+  pointer-events: none;
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.reminder-settings-card__switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fffdf7;
+  box-shadow: 0 2px 5px rgba(31, 48, 80, 0.22);
+  transition: transform 160ms ease;
+}
+
+.reminder-settings-card__input:checked + .reminder-settings-card__switch {
+  background: #203250;
+  box-shadow: inset 0 1px 3px rgba(31, 48, 80, 0.28);
+}
+
+.reminder-settings-card__input:checked + .reminder-settings-card__switch::after {
+  transform: translateX(16px);
+}
+
+.reminder-settings-card__input:focus-visible + .reminder-settings-card__switch {
+  outline: 2px solid #a9c94b;
+  outline-offset: 3px;
 }
 
 .sidebar-profile__logout {
@@ -993,18 +1076,7 @@
 }
 
 .mobile-main-menu-reminder {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  color: var(--text-main);
-  font-size: 0.84rem;
-  cursor: pointer;
-}
-
-.mobile-main-menu-reminder input {
-  width: 16px;
-  height: 16px;
-  accent-color: #203250;
+  width: 100%;
 }
 
 .mobile-main-menu-reminder-error {

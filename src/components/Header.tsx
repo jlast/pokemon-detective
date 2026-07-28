@@ -152,14 +152,22 @@ export function Header({
               </button>
             </div>
             {authed ? (
-              <label className="mobile-main-menu-reminder">
-                <input
-                  type="checkbox"
-                  checked={dailyReminderEmails}
-                  disabled={reminderDisabled}
-                  onChange={(event) => onToggleDailyReminderEmails(event.currentTarget.checked)}
-                />
-                <span>Daily reminder emails</span>
+              <label className="reminder-settings-card reminder-settings-card--mobile mobile-main-menu-reminder">
+                <span className="reminder-settings-card__icon" aria-hidden="true">🔔</span>
+                <span className="reminder-settings-card__copy">
+                  <strong>Daily reminder</strong>
+                  <small>Get an email when a new daily case is available.</small>
+                </span>
+                <span className="reminder-settings-card__control">
+                  <input
+                    className="reminder-settings-card__input"
+                    type="checkbox"
+                    checked={dailyReminderEmails}
+                    disabled={reminderDisabled}
+                    onChange={(event) => onToggleDailyReminderEmails(event.currentTarget.checked)}
+                  />
+                  <span className="reminder-settings-card__switch" aria-hidden="true" />
+                </span>
               </label>
             ) : null}
             {reminderStatus === 'error' ? (

@@ -56,16 +56,21 @@ export function SidebarProfile({
         </div>
       </div>
 
-      <label className="sidebar-profile__reminder">
-        <input
-          type="checkbox"
-          checked={dailyReminderEmails}
-          disabled={reminderDisabled}
-          onChange={(event) => onToggleDailyReminderEmails(event.currentTarget.checked)}
-        />
-        <span>
-          <strong>Daily reminder emails</strong>
-          <small>New puzzle is ready</small>
+      <label className="reminder-settings-card sidebar-profile__reminder">
+        <span className="reminder-settings-card__icon" aria-hidden="true">🔔</span>
+        <span className="reminder-settings-card__copy">
+          <strong>Daily reminder</strong>
+          <small>Get an email when a new daily case is available.</small>
+        </span>
+        <span className="reminder-settings-card__control">
+          <input
+            className="reminder-settings-card__input"
+            type="checkbox"
+            checked={dailyReminderEmails}
+            disabled={reminderDisabled}
+            onChange={(event) => onToggleDailyReminderEmails(event.currentTarget.checked)}
+          />
+          <span className="reminder-settings-card__switch" aria-hidden="true" />
         </span>
       </label>
 
