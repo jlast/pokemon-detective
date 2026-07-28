@@ -3844,6 +3844,10 @@
   font-weight: 800;
 }
 
+.suspect-mobile-action-strip {
+  display: none;
+}
+
 .suspect-evidence-assessment {
   display: grid;
   gap: 0.85rem;
@@ -5190,7 +5194,7 @@
   }
 
   .location-leads {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
   .overview-meta-grid {
@@ -5397,6 +5401,15 @@
     transform: translateY(0.28rem);
   }
 
+  .overlay-shell {
+    align-items: center;
+    justify-items: center;
+  }
+
+  .crime-scene-sheet {
+    width: min(560px, calc(100% - 1.5rem));
+  }
+
   .detective-profile-rows {
     grid-template-columns: 1fr;
   }
@@ -5410,6 +5423,7 @@
     grid-template-areas:
       "left"
       "evidence";
+    padding-top: 1rem;
   }
 
   .suspect-file-adjacent-nav {
@@ -5424,16 +5438,53 @@
   }
 
   .suspect-file-page {
-    padding-bottom: 0;
+    padding-bottom: 4.25rem;
+  }
+
+  .selected-suspect-casefile {
+    overflow: visible;
+  }
+
+  .suspect-mobile-action-strip {
+    position: fixed;
+    right: calc(env(safe-area-inset-right) + 0.65rem);
+    bottom: calc(env(safe-area-inset-bottom) + .65rem);
+    left: calc(env(safe-area-inset-left) + 0.65rem);
+    z-index: 29;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem;
+    width: auto;
+    margin: 0;
+    padding: 0.35rem;
+    border: 1px solid rgba(200, 185, 158, 0.78);
+    border-radius: 999px;
+    background: rgba(248, 241, 223, 0.94);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 18px rgba(54, 43, 28, 0.12);
+  }
+
+  .suspect-mobile-action-strip .suspect-verdict-toggle,
+  .suspect-mobile-action-strip .suspect-verdict-accuse-button {
+    width: 100%;
+    min-height: 2.2rem;
+    padding: 0.35rem 0.45rem;
+    font-size: 0.82rem;
+  }
+
+  .suspect-mobile-action-strip .suspect-verdict-accuse-button {
+    grid-column: 2;
+    width: 100%;
+    border-radius: 999px;
+    justify-self: end;
   }
 
   .suspect-dossier-footer {
-    grid-template-columns: 1fr;
-    justify-items: start;
+    display: none;
   }
 
-  .suspect-dossier-footer .suspect-verdict-accuse-button {
-    width: 100%;
+  .suspect-verdict-status-controls {
+    display: none;
   }
 
   .suspect-file-arrow-link {
