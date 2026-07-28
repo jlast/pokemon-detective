@@ -440,17 +440,42 @@
 .pokedex-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0;
 }
 
-.pokedex-stats span {
+.pokedex-stats button {
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 0;
   padding: 0.45rem 0.75rem;
   background: #eef4d9;
   color: var(--text-main);
+  cursor: pointer;
+  font: inherit;
   font-size: 0.82rem;
   font-weight: 800;
+}
+
+.pokedex-stats button + button {
+  margin-left: -1px;
+}
+
+.pokedex-stats button:first-child {
+  border-radius: 999px 0 0 999px;
+}
+
+.pokedex-stats button:last-child {
+  border-radius: 0 999px 999px 0;
+}
+
+.pokedex-stats button:hover,
+.pokedex-stats button.is-active {
+  background: #a9c94b;
+  box-shadow: 0 6px 16px rgba(88, 108, 27, 0.18);
+}
+
+.pokedex-stats button:focus-visible {
+  outline: 3px solid rgba(169, 201, 75, 0.45);
+  outline-offset: 2px;
 }
 
 .pokedex-search {

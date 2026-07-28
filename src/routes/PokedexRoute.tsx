@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { getPokedex, type PokedexResponse } from '../api'
 import { getShinySpriteUrl, pokemonData } from '../data/pokemon'
 
+type PokedexFilter = 'seen' | 'unlocked' | 'shiny'
+
 interface PokedexRouteProps {
   authed: boolean
   onLogin: () => void
@@ -17,6 +19,7 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
   const [loading, setLoading] = useState(authed)
   const [error, setError] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [activeFilter, setActiveFilter] = useState<PokedexFilter | null>('seen')
 
   useEffect(() => {
     if (!authed) {
@@ -75,10 +78,21 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
     seenShinyIds.has(pokemon.id) ||
     unlockedShinyIds.has(pokemon.id)
   ))
+  const statFilteredPokemon = activeFilter === 'seen'
+    ? registeredPokemon.filter((pokemon) => seenIds.has(pokemon.id))
+    : activeFilter === 'unlocked'
+      ? registeredPokemon.filter((pokemon) => unlockedIds.has(pokemon.id))
+      : activeFilter === 'shiny'
+        ? registeredPokemon.filter((pokemon) => seenShinyIds.has(pokemon.id) || unlockedShinyIds.has(pokemon.id))
+        : registeredPokemon
   const normalizedSearchTerm = searchTerm.trim().toLowerCase()
   const filteredPokemon = normalizedSearchTerm
-    ? registeredPokemon.filter((pokemon) => pokemon.name.toLowerCase().includes(normalizedSearchTerm))
-    : registeredPokemon
+    ? statFilteredPokemon.filter((pokemon) => pokemon.name.toLowerCase().includes(normalizedSearchTerm))
+    : statFilteredPokemon
+
+  const toggleFilter = (filter: PokedexFilter) => {
+    setActiveFilter((currentFilter) => currentFilter === filter ? null : filter)
+  }
 
   return (
     <div className="main-layout-single">
@@ -91,10 +105,31 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
               Failed cases mark Pokemon as seen. Solved cases unlock their full records.
             </p>
           </div>
-          <div className="pokedex-stats" aria-label="Pokedex progress">
-            <span>{seenCount} seen</span>
-            <span>{unlockedCount} unlocked</span>
-            <span>{shinyCount} shiny</span>
+          <div className="pokedex-stats" aria-label="Pokedex filters">
+            <button
+              type="button"
+              className={activeFilter === 'seen' ? 'is-active' : undefined}
+              aria-pressed={activeFilter === 'seen'}
+              onClick={() => toggleFilter('seen')}
+            >
+              {seenCount} seen
+            </button>
+            <button
+              type="button"
+              className={activeFilter === 'unlocked' ? 'is-active' : undefined}
+              aria-pressed={activeFilter === 'unlocked'}
+              onClick={() => toggleFilter('unlocked')}
+            >
+              {unlockedCount} unlocked
+            </button>
+            <button
+              type="button"
+              className={activeFilter === 'shiny' ? 'is-active' : undefined}
+              aria-pressed={activeFilter === 'shiny'}
+              onClick={() => toggleFilter('shiny')}
+            >
+              {shinyCount} shiny
+            </button>
           </div>
         </div>
 
@@ -116,7 +151,7 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
         ) : registeredPokemon.length === 0 ? (
           <p className="placeholder-page">No Pokemon registered yet. Complete a case to add Pokemon to your Pokedex.</p>
         ) : filteredPokemon.length === 0 ? (
-          <p className="placeholder-page">No Pokemon match your search.</p>
+          <p className="placeholder-page">{normalizedSearchTerm ? 'No Pokemon match your search.' : 'No Pokemon match this filter.'}</p>
         ) : (
           <div className="pokedex-grid">
             {filteredPokemon.map((pokemon) => {
