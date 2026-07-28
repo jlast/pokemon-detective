@@ -14,7 +14,18 @@ import { PokedexRoute } from './routes/PokedexRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
 import { getCurrentCase, investigate as apiInvestigate, accuse as apiAccuse, clearSuspect as apiClearSuspect } from './api'
-import { trackPageView } from './analytics'
+import {
+  trackCaseCompleted,
+  trackCaseFailed,
+  trackCaseStarted,
+  trackInvestigation,
+  trackEvent,
+  trackPageView,
+  trackReferralSource,
+  trackReminderConversion,
+  trackReturningUser,
+  trackStreak,
+} from './analytics'
 import { allCases } from './game/cases'
 import type { Case, Suspect, SuspectNoteStatus } from './game/caseModel'
 import {
@@ -144,6 +155,9 @@ function App() {
   }, [accusationHistory, currentCase?.culpritPokemonId])
 
   const attemptsLeft = accusationsRemaining
+  const investigationsUsed = currentCase
+    ? (currentCase.maxInvestigations ?? 6) - investigationsRemaining
+    : 0
 
   const culpritSuspect: Suspect | null = useMemo(() => {
     if (!currentCase || currentCase.culpritPokemonId == null) return null
@@ -228,10 +242,24 @@ function App() {
   }, [location.pathname, location.search])
 
   useEffect(() => {
+    trackReferralSource()
+    trackReminderConversion()
+    trackReturningUser()
+  }, [])
+
+  useEffect(() => {
     loadCase()
   }, [loadCase])
 
   const startInvestigation = () => {
+    if (currentCase) {
+      trackCaseStarted({
+        caseId: getTodayCaseId(),
+        authed,
+        investigationsRemaining,
+        accusationsRemaining,
+      })
+    }
     navigate(TODAY_INVESTIGATION_PATH)
   }
 
@@ -283,10 +311,35 @@ function App() {
           noteStatus: 'ruled-out',
         }))
 
+        trackEvent('accusation_submitted', {
+          case_id: caseId,
+          authenticated: authed,
+          suspect_id: accusationTarget.pokemonId,
+          accusation_correct: data.status === 'solved',
+          accusations_remaining: data.accusationsRemaining ?? MAX_ACCUSATIONS,
+        })
+
         if (data.status === 'solved') {
+          trackCaseCompleted({
+            caseId,
+            authed,
+            suspectId: accusationTarget.pokemonId,
+            investigationsUsed,
+            accusationsRemaining: data.accusationsRemaining ?? MAX_ACCUSATIONS,
+            wrongAccusationCount: (data.accusationHistory ?? []).filter((pokemonId) => pokemonId !== caseData.culpritPokemonId).length,
+          })
+          trackStreak(caseId, 'solved')
           resetTransientUi()
           navigate(endingPath('solved'))
         } else if (data.status === 'failed') {
+          trackCaseFailed({
+            caseId,
+            authed,
+            suspectId: accusationTarget.pokemonId,
+            investigationsUsed,
+            wrongAccusationCount: (data.accusationHistory ?? []).length,
+          })
+          trackStreak(caseId, 'failed')
           resetTransientUi()
           navigate(endingPath('failed'))
         } else {
@@ -296,14 +349,18 @@ function App() {
         console.error('Accusation failed:', err)
       }
     } else {
+      const caseId = getTodayCaseId()
+      let accusationHistoryAfterSubmit: number[] = []
+      let accusationsRemainingAfterSubmit = MAX_ACCUSATIONS
       let status: 'playing' | 'solved' | 'failed' = 'playing'
       try {
-        const caseId = getTodayCaseId()
         const data = await apiAccuse(caseId, accusationTarget.pokemonId)
         status = data.status
+        accusationHistoryAfterSubmit = data.accusationHistory ?? []
+        accusationsRemainingAfterSubmit = data.accusationsRemaining ?? MAX_ACCUSATIONS
 
-        setAccusationHistory(data.accusationHistory ?? [])
-        setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
+        setAccusationHistory(accusationHistoryAfterSubmit)
+        setAccusationsRemaining(accusationsRemainingAfterSubmit)
         setCaseData(data.case)
       } catch (err) {
         console.error('Accusation failed:', err)
@@ -316,10 +373,35 @@ function App() {
         noteStatus: 'ruled-out',
       }))
 
+      trackEvent('accusation_submitted', {
+        case_id: caseId,
+        authenticated: authed,
+        suspect_id: accusationTarget.pokemonId,
+        accusation_correct: status === 'solved',
+        accusations_remaining: accusationsRemainingAfterSubmit,
+      })
+
       if (status === 'solved') {
+        trackCaseCompleted({
+          caseId,
+          authed,
+          suspectId: accusationTarget.pokemonId,
+          investigationsUsed,
+          accusationsRemaining: accusationsRemainingAfterSubmit,
+          wrongAccusationCount: accusationHistoryAfterSubmit.filter((pokemonId) => pokemonId !== caseData.culpritPokemonId).length,
+        })
+        trackStreak(caseId, 'solved')
         resetTransientUi()
         navigate(endingPath('solved'))
       } else if (status === 'failed') {
+        trackCaseFailed({
+          caseId,
+          authed,
+          suspectId: accusationTarget.pokemonId,
+          investigationsUsed,
+          wrongAccusationCount: accusationHistoryAfterSubmit.length,
+        })
+        trackStreak(caseId, 'failed')
         resetTransientUi()
         navigate(endingPath('failed'))
       } else {
@@ -364,6 +446,15 @@ function App() {
         setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
         setAccusationHistory(data.accusationHistory ?? [])
         setLastInvestigatedLocationId(locationId)
+        trackInvestigation({
+          caseId,
+          authed,
+          locationId,
+          actionId,
+          witnessPokemonId,
+          investigationsRemaining: data.investigationsRemaining,
+          investigationsUsed: (caseData.maxInvestigations ?? 6) - data.investigationsRemaining,
+        })
       } catch (err) {
         console.error('Investigation failed:', err)
       }
@@ -398,6 +489,15 @@ function App() {
         setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
         setAccusationHistory(data.accusationHistory ?? [])
         setLastInvestigatedLocationId(locationId)
+        trackInvestigation({
+          caseId,
+          authed,
+          locationId,
+          actionId,
+          witnessPokemonId,
+          investigationsRemaining: data.investigationsRemaining,
+          investigationsUsed: (caseData.maxInvestigations ?? 6) - data.investigationsRemaining,
+        })
       } catch (err) {
         console.error('Investigation failed:', err)
       }
