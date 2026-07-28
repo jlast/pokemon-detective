@@ -39,6 +39,18 @@ variable "feedback_alert_email" {
   default     = ""
 }
 
+variable "deploy_user_name" {
+  description = "Optional IAM user name that receives the custom deploy/Terraform inline policy. Leave empty to skip."
+  type        = string
+  default     = ""
+}
+
+variable "deploy_user_policy_file" {
+  description = "Policy JSON file in this Terraform directory to attach to deploy_user_name. Leave empty to skip."
+  type        = string
+  default     = ""
+}
+
 variable "handler_zip_path" {
   description = "Path to the Lambda handler deployment zip (relative to terraform directory)"
   type        = string

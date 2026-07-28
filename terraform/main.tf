@@ -187,6 +187,16 @@ resource "aws_sns_topic_subscription" "feedback_alert_email" {
   endpoint  = var.feedback_alert_email
 }
 
+# ─── Deploy user policy ───────────────────────────────────────────────────────
+
+resource "aws_iam_user_policy" "deploy_user" {
+  count = var.deploy_user_name == "" || var.deploy_user_policy_file == "" ? 0 : 1
+
+  name   = "${var.project_name}-deploy-user"
+  user   = var.deploy_user_name
+  policy = file("${path.module}/${var.deploy_user_policy_file}")
+}
+
 # ─── Lambda IAM ───────────────────────────────────────────────────────────────
 
 resource "aws_iam_role" "lambda" {
