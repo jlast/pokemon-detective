@@ -173,6 +173,20 @@ resource "aws_dynamodb_table" "feedback" {
   tags = var.tags
 }
 
+# ─── Feedback alerts ──────────────────────────────────────────────────────────
+
+resource "aws_sns_topic" "feedback_alerts" {
+  name = "${var.project_name}-feedback-alerts"
+  tags = var.tags
+}
+
+resource "aws_sns_topic_subscription" "feedback_alert_email" {
+  count     = var.feedback_alert_email == "" ? 0 : 1
+  topic_arn = aws_sns_topic.feedback_alerts.arn
+  protocol  = "email"
+  endpoint  = var.feedback_alert_email
+}
+
 # ─── Lambda IAM ───────────────────────────────────────────────────────────────
 
 resource "aws_iam_role" "lambda" {
@@ -251,6 +265,22 @@ resource "aws_iam_role_policy" "lambda_logs" {
   })
 }
 
+resource "aws_iam_role_policy" "lambda_sns" {
+  name = "${var.project_name}-api-sns"
+  role = aws_iam_role.lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "sns:Publish",
+      ]
+      Resource = aws_sns_topic.feedback_alerts.arn
+    }]
+  })
+}
+
 # ─── Lambda function ──────────────────────────────────────────────────────────
 
 resource "aws_lambda_function" "api" {
@@ -265,12 +295,13 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      CASE_DATA_TABLE       = aws_dynamodb_table.case_data.name
-      PLAYER_PROGRESS_TABLE = aws_dynamodb_table.player_progress.name
-      POKEDEX_TABLE         = aws_dynamodb_table.pokedex.name
-      FEEDBACK_TABLE        = aws_dynamodb_table.feedback.name
-      USER_POOL_ID          = aws_cognito_user_pool.main.id
-      REGION                = var.region
+      CASE_DATA_TABLE          = aws_dynamodb_table.case_data.name
+      PLAYER_PROGRESS_TABLE    = aws_dynamodb_table.player_progress.name
+      POKEDEX_TABLE            = aws_dynamodb_table.pokedex.name
+      FEEDBACK_TABLE           = aws_dynamodb_table.feedback.name
+      FEEDBACK_ALERT_TOPIC_ARN = aws_sns_topic.feedback_alerts.arn
+      USER_POOL_ID             = aws_cognito_user_pool.main.id
+      REGION                   = var.region
     }
   }
 

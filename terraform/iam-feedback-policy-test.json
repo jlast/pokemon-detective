@@ -1,0 +1,30 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReplacePreviousManagedPoliciesTest",
+      "Effect": "Allow",
+      "Action": [
+        "acm:*",
+        "apigateway:*",
+        "cloudfront:*",
+        "cognito-identity:*",
+        "cognito-idp:*",
+        "cognito-sync:*",
+        "dynamodb:*",
+        "events:*",
+        "iam:*",
+        "lambda:*",
+        "logs:*",
+        "pipes:*",
+        "route53:*",
+        "s3:*",
+        "s3-object-lambda:*",
+        "scheduler:*",
+        "schemas:*",
+        "sns:*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

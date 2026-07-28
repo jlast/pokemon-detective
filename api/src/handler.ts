@@ -4,6 +4,7 @@ import type { Case, CaseDifficulty, CaseStatus, LocationCardVariant, LocationAct
 import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, putCaseData } from './caseDataDb'
+import { publishFeedbackCommentAlert } from './feedbackAlert'
 import { putCaseFeedback } from './feedbackDb'
 import { validateGeneratedCase } from './validateGeneratedCase'
 import {
@@ -1060,7 +1061,7 @@ const handleSubmitFeedback = async (
   const comment = typeof body.comment === 'string' ? body.comment.trim() : ''
   if (comment.length > FEEDBACK_COMMENT_MAX_LENGTH) return err(400, 'Comment is too long')
 
-  await putCaseFeedback({
+  const feedbackRecord = {
     feedbackId: `${caseId}:${gameplaySub}`,
     caseId,
     userId: gameplaySub,
@@ -1069,7 +1070,17 @@ const handleSubmitFeedback = async (
     comment: comment || undefined,
     createdAt: new Date().toISOString(),
     ttl: getProgressTtl(),
-  })
+  }
+
+  await putCaseFeedback(feedbackRecord)
+
+  if (feedbackRecord.comment) {
+    try {
+      await publishFeedbackCommentAlert(feedbackRecord)
+    } catch (error) {
+      console.error('Failed to publish feedback comment alert:', error)
+    }
+  }
 
   return ok({ submitted: true })
 }

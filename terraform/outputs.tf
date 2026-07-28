@@ -48,6 +48,11 @@ output "feedback_table_name" {
   value       = aws_dynamodb_table.feedback.name
 }
 
+output "feedback_alert_topic_arn" {
+  description = "SNS topic ARN for feedback comment alerts"
+  value       = aws_sns_topic.feedback_alerts.arn
+}
+
 output "cognito_user_pool_id" {
   description = "Cognito User Pool ID"
   value       = aws_cognito_user_pool.main.id

@@ -33,6 +33,12 @@ variable "feedback_table_name" {
   default     = "CaseFeedback"
 }
 
+variable "feedback_alert_email" {
+  description = "Email address subscribed to feedback comment alerts. Set this to the AWS account root email if desired. Leave empty to disable email alerts."
+  type        = string
+  default     = ""
+}
+
 variable "handler_zip_path" {
   description = "Path to the Lambda handler deployment zip (relative to terraform directory)"
   type        = string
