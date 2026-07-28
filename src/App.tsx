@@ -724,6 +724,7 @@ function App() {
             element={
               <EndingRoute
                 currentCase={currentCase}
+                caseId={getTodayCaseId()}
                 culpritSuspect={culpritSuspect}
                 attemptsLeft={attemptsLeft}
                 wrongAccusationCount={wrongAccusationIds.length}

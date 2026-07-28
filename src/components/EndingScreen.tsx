@@ -24,6 +24,7 @@ const ratingOptions = [1, 2, 3, 4, 5]
 
 interface EndingScreenProps {
   currentCase: Case
+  caseId: string
   culpritSuspect: Suspect | null
   attemptsLeft: number
   wrongAccusationCount: number
@@ -31,6 +32,7 @@ interface EndingScreenProps {
 
 export function EndingScreen({
   currentCase,
+  caseId,
   culpritSuspect,
   attemptsLeft,
   wrongAccusationCount,
@@ -118,7 +120,7 @@ export function EndingScreen({
 
     setFeedbackStatus('saving')
     try {
-      await submitCaseFeedback(currentCase.id, {
+      await submitCaseFeedback(caseId, {
         enjoymentRating,
         comment: comment.trim() || undefined,
       })
