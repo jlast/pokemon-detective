@@ -43,6 +43,16 @@ output "pokedex_table_name" {
   value       = aws_dynamodb_table.pokedex.name
 }
 
+output "reminder_subscriptions_table_name" {
+  description = "Name of the ReminderSubscriptions DynamoDB table"
+  value       = aws_dynamodb_table.reminder_subscriptions.name
+}
+
+output "reminder_email_from" {
+  description = "From address used for daily reminder emails"
+  value       = var.reminder_email_from
+}
+
 output "feedback_table_name" {
   description = "Name of the CaseFeedback DynamoDB table"
   value       = aws_dynamodb_table.feedback.name

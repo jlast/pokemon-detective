@@ -28,6 +28,7 @@ resource "terraform_data" "workspace_environment_guard" {
         && var.case_data_table_name == "CaseDataTest"
         && var.player_progress_table_name == "PlayerProgressTest"
         && var.pokedex_table_name == "PokedexTest"
+        && var.reminder_subscriptions_table_name == "ReminderSubscriptionsTest"
         && var.feedback_table_name == "CaseFeedbackTest"
       )
       error_message = "The test workspace must be applied with test variables. Use: terraform apply -var-file=test.tfvars"
@@ -173,6 +174,19 @@ resource "aws_dynamodb_table" "pokedex" {
   tags = var.tags
 }
 
+resource "aws_dynamodb_table" "reminder_subscriptions" {
+  name         = var.reminder_subscriptions_table_name
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "userId"
+
+  attribute {
+    name = "userId"
+    type = "S"
+  }
+
+  tags = var.tags
+}
+
 resource "aws_dynamodb_table" "feedback" {
   name         = var.feedback_table_name
   billing_mode = "PAY_PER_REQUEST"
@@ -189,6 +203,35 @@ resource "aws_dynamodb_table" "feedback" {
   }
 
   tags = var.tags
+}
+
+# ─── Reminder email identity ──────────────────────────────────────────────────
+
+resource "aws_ses_domain_identity" "reminder" {
+  domain = var.reminder_email_domain
+}
+
+resource "aws_route53_record" "reminder_ses_verification" {
+  allow_overwrite = true
+  zone_id         = data.aws_route53_zone.site.zone_id
+  name            = "_amazonses.${var.reminder_email_domain}"
+  type            = "TXT"
+  ttl             = 600
+  records         = [aws_ses_domain_identity.reminder.verification_token]
+}
+
+resource "aws_ses_domain_dkim" "reminder" {
+  domain = aws_ses_domain_identity.reminder.domain
+}
+
+resource "aws_route53_record" "reminder_ses_dkim" {
+  count           = 3
+  allow_overwrite = true
+  zone_id         = data.aws_route53_zone.site.zone_id
+  name            = "${aws_ses_domain_dkim.reminder.dkim_tokens[count.index]}._domainkey.${var.reminder_email_domain}"
+  type            = "CNAME"
+  ttl             = 600
+  records         = ["${aws_ses_domain_dkim.reminder.dkim_tokens[count.index]}.dkim.amazonses.com"]
 }
 
 # ─── Feedback alerts ──────────────────────────────────────────────────────────
@@ -267,6 +310,14 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
       {
         Effect = "Allow"
         Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+        ]
+        Resource = aws_dynamodb_table.reminder_subscriptions.arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
           "dynamodb:PutItem",
         ]
         Resource = aws_dynamodb_table.feedback.arn
@@ -323,13 +374,14 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      CASE_DATA_TABLE          = aws_dynamodb_table.case_data.name
-      PLAYER_PROGRESS_TABLE    = aws_dynamodb_table.player_progress.name
-      POKEDEX_TABLE            = aws_dynamodb_table.pokedex.name
-      FEEDBACK_TABLE           = aws_dynamodb_table.feedback.name
-      FEEDBACK_ALERT_TOPIC_ARN = aws_sns_topic.feedback_alerts.arn
-      USER_POOL_ID             = aws_cognito_user_pool.main.id
-      REGION                   = var.region
+      CASE_DATA_TABLE              = aws_dynamodb_table.case_data.name
+      PLAYER_PROGRESS_TABLE        = aws_dynamodb_table.player_progress.name
+      POKEDEX_TABLE                = aws_dynamodb_table.pokedex.name
+      REMINDER_SUBSCRIPTIONS_TABLE = aws_dynamodb_table.reminder_subscriptions.name
+      FEEDBACK_TABLE               = aws_dynamodb_table.feedback.name
+      FEEDBACK_ALERT_TOPIC_ARN     = aws_sns_topic.feedback_alerts.arn
+      USER_POOL_ID                 = aws_cognito_user_pool.main.id
+      REGION                       = var.region
     }
   }
 
@@ -367,12 +419,46 @@ resource "aws_iam_role_policy" "cron_dynamodb" {
 
   policy = jsonencode({
     Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:PutItem",
+        ]
+        Resource = aws_dynamodb_table.case_data.arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+        ]
+        Resource = aws_dynamodb_table.player_progress.arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:Scan",
+          "dynamodb:UpdateItem",
+        ]
+        Resource = aws_dynamodb_table.reminder_subscriptions.arn
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "cron_ses" {
+  name = "${var.project_name}-cron-ses"
+  role = aws_iam_role.cron.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
     Statement = [{
       Effect = "Allow"
       Action = [
-        "dynamodb:PutItem",
+        "ses:SendEmail",
+        "ses:SendRawEmail",
       ]
-      Resource = aws_dynamodb_table.case_data.arn
+      Resource = aws_ses_domain_identity.reminder.arn
     }]
   })
 }
@@ -407,7 +493,11 @@ resource "aws_lambda_function" "cron" {
 
   environment {
     variables = {
-      CASE_DATA_TABLE = aws_dynamodb_table.case_data.name
+      CASE_DATA_TABLE              = aws_dynamodb_table.case_data.name
+      PLAYER_PROGRESS_TABLE        = aws_dynamodb_table.player_progress.name
+      REMINDER_SUBSCRIPTIONS_TABLE = aws_dynamodb_table.reminder_subscriptions.name
+      REMINDER_EMAIL_FROM          = var.reminder_email_from
+      APP_URL                      = var.app_url
     }
   }
 

@@ -1,8 +1,15 @@
+import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2'
 import { allCases, createCaseById, pickRandomCaseDifficulty } from '../../src/game/cases/index'
 import { pokemonData } from '../../src/data/pokemon'
 import type { Case, LocationCardVariant } from '../../src/game/caseModel'
 import { putCaseData } from './caseDataDb'
+import { getProgress } from './playerDb'
+import { listDailyReminderSubscriptions, markReminderSent, type ReminderSubscriptionRecord } from './reminderSubscriptionDb'
 import { validateGeneratedCase } from './validateGeneratedCase'
+
+const ses = new SESv2Client({})
+const REMINDER_EMAIL_FROM = process.env.REMINDER_EMAIL_FROM ?? ''
+const APP_URL = process.env.APP_URL ?? 'https://pokemysterygame.com'
 
 const getTodayUtc = (): string => {
   const now = new Date()
@@ -75,6 +82,69 @@ const createLocationCardTiltMap = (locations: Case['locations']): Record<string,
   }, {})
 )
 
+const getDateUserId = (sub: string, caseId: string): string => `${sub}:${caseId}`
+
+const hasCompletedToday = async (userId: string, caseId: string): Promise<boolean> => {
+  const progress = await getProgress(getDateUserId(userId, caseId))
+  return progress?.status === 'solved' || progress?.status === 'failed'
+}
+
+const sendReminderEmail = async (subscription: ReminderSubscriptionRecord, caseId: string): Promise<void> => {
+  await ses.send(new SendEmailCommand({
+    FromEmailAddress: REMINDER_EMAIL_FROM,
+    Destination: { ToAddresses: [subscription.email] },
+    Content: {
+      Simple: {
+        Subject: { Data: 'New puzzle is ready' },
+        Body: {
+          Text: {
+            Data: `A new Pokemon mystery puzzle is ready. Start today's case: ${APP_URL}/today\n\nYou are receiving this because daily reminder emails are enabled in your detective profile.`,
+          },
+          Html: {
+            Data: `<p>A new Pokemon mystery puzzle is ready.</p><p><a href="${APP_URL}/today">Start today's case</a></p><p>You are receiving this because daily reminder emails are enabled in your detective profile.</p>`,
+          },
+        },
+      },
+    },
+  }))
+
+  await markReminderSent(subscription.userId, caseId)
+}
+
+const sendDailyReminders = async (caseId: string): Promise<{ sent: number; skipped: number; failed: number }> => {
+  const subscriptions = await listDailyReminderSubscriptions()
+  if (!REMINDER_EMAIL_FROM) {
+    console.warn('Skipping reminder emails because REMINDER_EMAIL_FROM is not configured')
+    return { sent: 0, skipped: subscriptions.length, failed: 0 }
+  }
+
+  let sent = 0
+  let skipped = 0
+  let failed = 0
+
+  for (const subscription of subscriptions) {
+    try {
+      if (!subscription.email || subscription.lastReminderCaseId === caseId) {
+        skipped += 1
+        continue
+      }
+
+      if (await hasCompletedToday(subscription.userId, caseId)) {
+        skipped += 1
+        continue
+      }
+
+      await sendReminderEmail(subscription, caseId)
+      sent += 1
+    } catch (error) {
+      failed += 1
+      console.error(`Failed to send reminder for user ${subscription.userId}:`, error)
+    }
+  }
+
+  return { sent, skipped, failed }
+}
+
 interface CloudWatchEvent {
   version?: string
   id?: string
@@ -145,8 +215,11 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
     })
 
+    const reminders = await sendDailyReminders(caseId)
+
     console.log(`Generated daily case ${caseId} using config "${config.id}" at ${gameCase.difficulty} difficulty`)
-    return { statusCode: 200, body: JSON.stringify({ caseId, configId: config.id, difficulty: gameCase.difficulty }) }
+    console.log(`Daily reminders for ${caseId}: ${reminders.sent} sent, ${reminders.skipped} skipped, ${reminders.failed} failed`)
+    return { statusCode: 200, body: JSON.stringify({ caseId, configId: config.id, difficulty: gameCase.difficulty, reminders }) }
   } catch (error) {
     console.error('Cron handler error:', error)
     return { statusCode: 500, body: JSON.stringify({ error: 'Failed to generate daily case' }) }

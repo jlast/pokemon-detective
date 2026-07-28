@@ -27,6 +27,24 @@ variable "pokedex_table_name" {
   default     = "Pokedex"
 }
 
+variable "reminder_subscriptions_table_name" {
+  description = "DynamoDB table name for daily reminder email subscriptions"
+  type        = string
+  default     = "ReminderSubscriptions"
+}
+
+variable "reminder_email_domain" {
+  description = "SES domain identity used to send daily reminder emails"
+  type        = string
+  default     = "pokemysterygame.com"
+}
+
+variable "reminder_email_from" {
+  description = "From address for daily reminder emails"
+  type        = string
+  default     = "noreply@pokemysterygame.com"
+}
+
 variable "feedback_table_name" {
   description = "DynamoDB table name for case feedback records"
   type        = string

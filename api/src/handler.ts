@@ -6,6 +6,7 @@ import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, putCaseData } from './caseDataDb'
 import { publishFeedbackCommentAlert } from './feedbackAlert'
 import { putCaseFeedback } from './feedbackDb'
+import { getReminderSubscription, putReminderSubscription } from './reminderSubscriptionDb'
 import { validateGeneratedCase } from './validateGeneratedCase'
 import {
   getProgress,
@@ -743,6 +744,40 @@ const handleGetPokedex = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   })
 }
 
+const handleGetReminderPreferences = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
+  const userInfo = await getUserInfo(event)
+  if (!userInfo.sub) return err(401, 'Authentication required')
+
+  const subscription = await getReminderSubscription(userInfo.sub)
+  return ok({ dailyReminderEmails: subscription?.dailyReminderEmails ?? false })
+}
+
+const handleUpdateReminderPreferences = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
+  const userInfo = await getUserInfo(event)
+  if (!userInfo.sub) return err(401, 'Authentication required')
+  if (!userInfo.email) return err(400, 'Email address required')
+
+  let body: { dailyReminderEmails?: unknown } = {}
+  try {
+    body = JSON.parse(event.body ?? '{}')
+  } catch {}
+
+  if (typeof body.dailyReminderEmails !== 'boolean') {
+    return err(400, 'dailyReminderEmails must be a boolean')
+  }
+
+  const existing = await getReminderSubscription(userInfo.sub)
+  await putReminderSubscription({
+    userId: userInfo.sub,
+    email: userInfo.email,
+    dailyReminderEmails: body.dailyReminderEmails,
+    updatedAt: new Date().toISOString(),
+    lastReminderCaseId: existing?.lastReminderCaseId,
+  })
+
+  return ok({ dailyReminderEmails: body.dailyReminderEmails })
+}
+
 const handleInvestigate = async (
   caseId: string,
   locationId: string,
@@ -1103,6 +1138,14 @@ export const handler = async (
 
     if (method === 'GET' && path === '/api/pokedex') {
       return await handleGetPokedex(event)
+    }
+
+    if (method === 'GET' && path === '/api/reminder-preferences') {
+      return await handleGetReminderPreferences(event)
+    }
+
+    if (method === 'POST' && path === '/api/reminder-preferences') {
+      return await handleUpdateReminderPreferences(event)
     }
 
     const apiCasesMatch = path.match(/^\/api\/cases\/([^/]+)$/)
