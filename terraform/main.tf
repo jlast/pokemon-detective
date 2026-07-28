@@ -17,6 +17,24 @@ provider "aws" {
   region = "us-east-1"
 }
 
+resource "terraform_data" "workspace_environment_guard" {
+  input = terraform.workspace
+
+  lifecycle {
+    precondition {
+      condition = terraform.workspace != "test" || (
+        var.project_name == "pokemon-detective-test"
+        && var.api_stage_name == "test"
+        && var.case_data_table_name == "CaseDataTest"
+        && var.player_progress_table_name == "PlayerProgressTest"
+        && var.pokedex_table_name == "PokedexTest"
+        && var.feedback_table_name == "CaseFeedbackTest"
+      )
+      error_message = "The test workspace must be applied with test variables. Use: terraform apply -var-file=test.tfvars"
+    }
+  }
+}
+
 # ─── S3 + CloudFront for static site ─────────────────────────────────────────
 
 data "aws_route53_zone" "site" {
@@ -440,6 +458,10 @@ resource "aws_cognito_user_pool" "main" {
     mutable             = true
   }
 
+  lifecycle {
+    ignore_changes = [schema]
+  }
+
   admin_create_user_config {
     allow_admin_create_user_only = false
   }
@@ -497,6 +519,10 @@ resource "aws_cognito_identity_provider" "google" {
     oidc_issuer                   = "https://accounts.google.com"
     token_request_method          = "POST"
     token_url                     = "https://oauth2.googleapis.com/token"
+  }
+
+  lifecycle {
+    ignore_changes = [provider_details["token_url"]]
   }
 }
 
