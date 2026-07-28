@@ -458,7 +458,12 @@ resource "aws_iam_role_policy" "cron_ses" {
         "ses:SendEmail",
         "ses:SendRawEmail",
       ]
-      Resource = aws_ses_domain_identity.reminder.arn
+      Resource = "*"
+      Condition = {
+        StringEquals = {
+          "ses:FromAddress" = var.reminder_email_from
+        }
+      }
     }]
   })
 }

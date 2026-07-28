@@ -10,6 +10,7 @@ import { validateGeneratedCase } from './validateGeneratedCase'
 const ses = new SESv2Client({})
 const REMINDER_EMAIL_FROM = process.env.REMINDER_EMAIL_FROM ?? ''
 const APP_URL = process.env.APP_URL ?? 'https://pokemysterygame.com'
+const REMINDER_EMAIL_FROM_NAME = 'PokeMystery'
 
 const getTodayUtc = (): string => {
   const now = new Date()
@@ -90,18 +91,68 @@ const hasCompletedToday = async (userId: string, caseId: string): Promise<boolea
 }
 
 const sendReminderEmail = async (subscription: ReminderSubscriptionRecord, caseId: string): Promise<void> => {
+  const todayCaseUrl = `${APP_URL}/today`
+  const fromAddress = `${REMINDER_EMAIL_FROM_NAME} <${REMINDER_EMAIL_FROM}>`
+
   await ses.send(new SendEmailCommand({
-    FromEmailAddress: REMINDER_EMAIL_FROM,
+    FromEmailAddress: fromAddress,
     Destination: { ToAddresses: [subscription.email] },
     Content: {
       Simple: {
         Subject: { Data: 'New puzzle is ready' },
         Body: {
           Text: {
-            Data: `A new Pokemon mystery puzzle is ready. Start today's case: ${APP_URL}/today\n\nYou are receiving this because daily reminder emails are enabled in your detective profile.`,
+            Data: [
+              'A new PokeMystery case is ready.',
+              '',
+              'Your detective desk has a fresh daily puzzle waiting. Follow the clues, question the witnesses, and make your accusation.',
+              '',
+              `Start today's case: ${todayCaseUrl}`,
+              '',
+              'You are receiving this because daily reminder emails are enabled in your detective profile.',
+            ].join('\n'),
           },
           Html: {
-            Data: `<p>A new Pokemon mystery puzzle is ready.</p><p><a href="${APP_URL}/today">Start today's case</a></p><p>You are receiving this because daily reminder emails are enabled in your detective profile.</p>`,
+            Data: `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>New puzzle is ready</title>
+  </head>
+  <body style="margin:0;background:#f3ead6;color:#203250;font-family:Georgia,'Times New Roman',serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f3ead6;padding:28px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#fff8df;border:1px solid #d8c39c;border-radius:22px;box-shadow:0 16px 36px rgba(47,35,21,0.14);overflow:hidden;">
+            <tr>
+              <td style="background:#203250;color:#fffdf7;padding:22px 24px;">
+                <div style="font-family:Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#f4d35e;">PokeMystery</div>
+                <h1 style="margin:8px 0 0;font-size:28px;line-height:1.1;font-weight:900;">New daily case ready</h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:26px 24px 8px;">
+                <div style="display:inline-block;background:#f4d35e;color:#203250;border:1px solid #b69134;border-radius:999px;padding:7px 12px;font-family:Arial,sans-serif;font-size:12px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;">Detective alert</div>
+                <p style="margin:18px 0 0;font-size:18px;line-height:1.55;">Your detective desk has a fresh daily puzzle waiting. Follow the clues, question the witnesses, and make your accusation.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:20px 24px 28px;">
+                <a href="${todayCaseUrl}" style="display:inline-block;background:#203250;color:#fffdf7;text-decoration:none;border-radius:14px;padding:14px 20px;font-family:Arial,sans-serif;font-size:15px;font-weight:900;box-shadow:0 8px 16px rgba(31,50,80,0.18);">Start today's case</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="border-top:1px solid #e3d2ad;padding:16px 24px 22px;color:#67738a;font-family:Arial,sans-serif;font-size:12px;line-height:1.5;">
+                You are receiving this because daily reminder emails are enabled in your detective profile.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`,
           },
         },
       },
