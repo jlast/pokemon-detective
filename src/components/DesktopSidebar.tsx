@@ -6,11 +6,14 @@ interface DesktopSidebarProps {
   authed: boolean
   userProfile: UserProfile | null
   caseStreak?: number
+  dailyReminderEmails: boolean
+  reminderStatus: 'idle' | 'loading' | 'saving' | 'error'
   onSelectCase: () => void
   onSelectPokedex: () => void
   onSelectHowToPlay: () => void
   onLogin: () => void
   onLogout: () => void
+  onToggleDailyReminderEmails: (enabled: boolean) => void
 }
 
 export function DesktopSidebar({
@@ -18,11 +21,14 @@ export function DesktopSidebar({
   authed,
   userProfile,
   caseStreak,
+  dailyReminderEmails,
+  reminderStatus,
   onSelectCase,
   onSelectPokedex,
   onSelectHowToPlay,
   onLogin,
   onLogout,
+  onToggleDailyReminderEmails,
 }: DesktopSidebarProps) {
   return (
     <aside className="desktop-sidebar notebook-card" aria-label="Primary navigation">
@@ -77,6 +83,9 @@ export function DesktopSidebar({
           <SidebarProfile
             name={userProfile.name ?? userProfile.email ?? 'Detective'}
             streak={caseStreak}
+            dailyReminderEmails={dailyReminderEmails}
+            reminderStatus={reminderStatus}
+            onToggleDailyReminderEmails={onToggleDailyReminderEmails}
             onLogout={onLogout}
           />
         ) : (

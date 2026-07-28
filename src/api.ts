@@ -41,6 +41,10 @@ export interface CaseFeedbackPayload {
   comment?: string
 }
 
+export interface ReminderPreferencesResponse {
+  dailyReminderEmails: boolean
+}
+
 const authHeaders = async (): Promise<Record<string, string>> => {
   const token = await ensureValidSession() ? getToken() : null
   return token ? { Authorization: `Bearer ${token}` } : { 'X-Player-Session-Id': getPlayerSessionId() }
@@ -56,6 +60,27 @@ export const getCurrentCase = async (): Promise<SessionResponse> => {
 
 export const getPokedex = async (): Promise<PokedexResponse> => {
   const res = await fetch(`${BASE}/api/pokedex`, { headers: await authHeaders() })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
+export const getReminderPreferences = async (): Promise<ReminderPreferencesResponse> => {
+  const res = await fetch(`${BASE}/api/reminder-preferences`, { headers: await authHeaders() })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
+export const updateReminderPreferences = async (
+  dailyReminderEmails: boolean,
+): Promise<ReminderPreferencesResponse> => {
+  const res = await fetch(
+    `${BASE}/api/reminder-preferences`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...await authHeaders() },
+      body: JSON.stringify({ dailyReminderEmails }),
+    },
+  )
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }

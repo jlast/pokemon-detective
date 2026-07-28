@@ -1,12 +1,23 @@
 interface SidebarProfileProps {
   name: string
   streak?: number
+  dailyReminderEmails: boolean
+  reminderStatus: 'idle' | 'loading' | 'saving' | 'error'
+  onToggleDailyReminderEmails: (enabled: boolean) => void
   onLogout: () => void
 }
 
-export function SidebarProfile({ name, streak, onLogout }: SidebarProfileProps) {
+export function SidebarProfile({
+  name,
+  streak,
+  dailyReminderEmails,
+  reminderStatus,
+  onToggleDailyReminderEmails,
+  onLogout,
+}: SidebarProfileProps) {
   const showStreak = streak != null && streak > 0
   const streakLabel = streak === 1 ? '1 day streak' : `${streak} day streak`
+  const reminderDisabled = reminderStatus === 'loading' || reminderStatus === 'saving'
 
   return (
     <div className="sidebar-profile">
@@ -44,6 +55,23 @@ export function SidebarProfile({ name, streak, onLogout }: SidebarProfileProps) 
           ) : null}
         </div>
       </div>
+
+      <label className="sidebar-profile__reminder">
+        <input
+          type="checkbox"
+          checked={dailyReminderEmails}
+          disabled={reminderDisabled}
+          onChange={(event) => onToggleDailyReminderEmails(event.currentTarget.checked)}
+        />
+        <span>
+          <strong>Daily reminder emails</strong>
+          <small>New puzzle is ready</small>
+        </span>
+      </label>
+
+      {reminderStatus === 'error' ? (
+        <p className="sidebar-profile__reminder-error" role="status">Could not save reminder setting.</p>
+      ) : null}
 
       <button
         type="button"

@@ -7,6 +7,8 @@ interface HeaderProps {
   activeCasePage: 'overview' | 'investigation' | 'suspects' | ''
   authed: boolean
   userProfile: UserProfile | null
+  dailyReminderEmails: boolean
+  reminderStatus: 'idle' | 'loading' | 'saving' | 'error'
   isMenuOpen: boolean
   onToggleMenu: () => void
   onSelectCase: () => void
@@ -16,6 +18,7 @@ interface HeaderProps {
   onSelectHowToPlay: () => void
   onLogin: () => void
   onLogout: () => void
+  onToggleDailyReminderEmails: (enabled: boolean) => void
 }
 
 export function Header({
@@ -24,6 +27,8 @@ export function Header({
   activeCasePage,
   authed,
   userProfile,
+  dailyReminderEmails,
+  reminderStatus,
   isMenuOpen,
   onToggleMenu,
   onSelectCase,
@@ -33,8 +38,10 @@ export function Header({
   onSelectHowToPlay,
   onLogin,
   onLogout,
+  onToggleDailyReminderEmails,
 }: HeaderProps) {
   const menuButtonLabel = isMenuOpen ? 'Close main navigation' : 'Open main navigation'
+  const reminderDisabled = reminderStatus === 'loading' || reminderStatus === 'saving'
 
   return (
     <header className="app-header notebook-card">
@@ -138,10 +145,26 @@ export function Header({
           </div>
 
           <div className="mobile-main-menu-account">
-            <span>{authed ? userProfile?.name ?? userProfile?.email ?? 'Detective' : 'Guest detective'}</span>
-            <button type="button" className="mobile-main-menu-auth" onClick={authed ? onLogout : onLogin}>
-              {authed ? 'Logout' : 'Login'}
-            </button>
+            <div className="mobile-main-menu-account-topline">
+              <span>{authed ? userProfile?.name ?? userProfile?.email ?? 'Detective' : 'Guest detective'}</span>
+              <button type="button" className="mobile-main-menu-auth" onClick={authed ? onLogout : onLogin}>
+                {authed ? 'Logout' : 'Login'}
+              </button>
+            </div>
+            {authed ? (
+              <label className="mobile-main-menu-reminder">
+                <input
+                  type="checkbox"
+                  checked={dailyReminderEmails}
+                  disabled={reminderDisabled}
+                  onChange={(event) => onToggleDailyReminderEmails(event.currentTarget.checked)}
+                />
+                <span>Daily reminder emails</span>
+              </label>
+            ) : null}
+            {reminderStatus === 'error' ? (
+              <small className="mobile-main-menu-reminder-error" role="status">Could not save reminder setting.</small>
+            ) : null}
           </div>
         </nav>
       </div>

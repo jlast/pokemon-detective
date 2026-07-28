@@ -13,7 +13,14 @@ import { HowToPlayRoute } from './routes/HowToPlayRoute'
 import { PokedexRoute } from './routes/PokedexRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
-import { getCurrentCase, investigate as apiInvestigate, accuse as apiAccuse, clearSuspect as apiClearSuspect } from './api'
+import {
+  getCurrentCase,
+  getReminderPreferences,
+  updateReminderPreferences,
+  investigate as apiInvestigate,
+  accuse as apiAccuse,
+  clearSuspect as apiClearSuspect,
+} from './api'
 import {
   trackCaseCompleted,
   trackCaseFailed,
@@ -97,6 +104,8 @@ function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() =>
     authed ? getUserProfile() : null,
   )
+  const [dailyReminderEmails, setDailyReminderEmails] = useState(false)
+  const [reminderStatus, setReminderStatus] = useState<'idle' | 'loading' | 'saving' | 'error'>('idle')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleLogin = useCallback(() => {
@@ -105,6 +114,24 @@ function App() {
 
   const handleLogout = useCallback(() => {
     authLogout()
+    setDailyReminderEmails(false)
+    setReminderStatus('idle')
+  }, [])
+
+  const handleToggleDailyReminderEmails = useCallback((enabled: boolean) => {
+    setDailyReminderEmails(enabled)
+    setReminderStatus('saving')
+
+    updateReminderPreferences(enabled)
+      .then((preferences) => {
+        setDailyReminderEmails(preferences.dailyReminderEmails)
+        setReminderStatus('idle')
+      })
+      .catch((err) => {
+        console.error('Failed to save reminder preferences:', err)
+        setDailyReminderEmails(!enabled)
+        setReminderStatus('error')
+      })
   }, [])
 
   const navigateAndCloseMenu = useCallback((path: string) => {
@@ -232,6 +259,25 @@ function App() {
       setUserProfile(ok ? getUserProfile() : null)
     })()
   }, [currentRoute])
+
+  useEffect(() => {
+    if (!authed) {
+      setDailyReminderEmails(false)
+      setReminderStatus('idle')
+      return
+    }
+
+    setReminderStatus('loading')
+    getReminderPreferences()
+      .then((preferences) => {
+        setDailyReminderEmails(preferences.dailyReminderEmails)
+        setReminderStatus('idle')
+      })
+      .catch((err) => {
+        console.error('Failed to load reminder preferences:', err)
+        setReminderStatus('error')
+      })
+  }, [authed])
 
   useEffect(() => {
     setIsMobileMenuOpen(false)
@@ -547,11 +593,14 @@ function App() {
           activeSection=""
           authed={authed}
           userProfile={userProfile}
+          dailyReminderEmails={dailyReminderEmails}
+          reminderStatus={reminderStatus}
           onSelectCase={() => {}}
           onSelectPokedex={() => {}}
           onSelectHowToPlay={() => {}}
           onLogin={handleLogin}
           onLogout={handleLogout}
+          onToggleDailyReminderEmails={handleToggleDailyReminderEmails}
         />
         <div className="app-content">
           <header className="app-header notebook-card loading-case-header" aria-hidden="true">
@@ -613,13 +662,16 @@ function App() {
     <main className="app-shell">
       <DesktopSidebar
         activeSection={activeSidebarSection}
-          authed={authed}
-          userProfile={userProfile}
-          onSelectCase={() => navigate(TODAY_PATH)}
-          onSelectPokedex={() => navigate('/pokedex')}
-          onSelectHowToPlay={() => navigate('/how-to-play')}
+        authed={authed}
+        userProfile={userProfile}
+        dailyReminderEmails={dailyReminderEmails}
+        reminderStatus={reminderStatus}
+        onSelectCase={() => navigate(TODAY_PATH)}
+        onSelectPokedex={() => navigate('/pokedex')}
+        onSelectHowToPlay={() => navigate('/how-to-play')}
         onLogin={handleLogin}
         onLogout={handleLogout}
+        onToggleDailyReminderEmails={handleToggleDailyReminderEmails}
       />
 
       <div className="app-content">
@@ -629,6 +681,8 @@ function App() {
           activeCasePage={activeCasePage}
           authed={authed}
           userProfile={userProfile}
+          dailyReminderEmails={dailyReminderEmails}
+          reminderStatus={reminderStatus}
           isMenuOpen={isMobileMenuOpen}
           onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
           onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
@@ -641,6 +695,7 @@ function App() {
             setIsMobileMenuOpen(false)
             handleLogout()
           }}
+          onToggleDailyReminderEmails={handleToggleDailyReminderEmails}
         />
 
         {shouldRedirectFromInvalidCompletedEnding ? (

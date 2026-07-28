@@ -119,6 +119,49 @@
   font-weight: 700;
 }
 
+.sidebar-profile__reminder {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 10px;
+  border: 1px dashed rgba(31, 48, 80, 0.22);
+  border-radius: 14px;
+  background: rgba(255, 248, 223, 0.6);
+  color: #203250;
+  cursor: pointer;
+}
+
+.sidebar-profile__reminder input {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: #203250;
+}
+
+.sidebar-profile__reminder span {
+  display: grid;
+  gap: 2px;
+}
+
+.sidebar-profile__reminder strong {
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.sidebar-profile__reminder small {
+  color: #67738a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sidebar-profile__reminder-error {
+  margin: 8px 0 0;
+  color: #8b2d2d;
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .sidebar-profile__logout {
   margin-top: 14px;
   padding: 8px 0;
@@ -930,9 +973,7 @@
 }
 
 .mobile-main-menu-account {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
   gap: 0.75rem;
   margin-left: 1.65rem;
   padding: 0.8rem;
@@ -942,6 +983,34 @@
   color: var(--muted);
   font-size: 0.88rem;
   font-weight: 800;
+}
+
+.mobile-main-menu-account-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.mobile-main-menu-reminder {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--text-main);
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.mobile-main-menu-reminder input {
+  width: 16px;
+  height: 16px;
+  accent-color: #203250;
+}
+
+.mobile-main-menu-reminder-error {
+  color: #8b2d2d;
+  font-size: 0.78rem;
+  font-weight: 900;
 }
 
 .mobile-main-menu-auth {
