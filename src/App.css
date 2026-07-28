@@ -3069,6 +3069,131 @@
   line-height: 1.2;
 }
 
+.case-feedback-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid #d5c6a7;
+  border-radius: 18px;
+  background: rgba(255, 251, 239, 0.84);
+}
+
+.victory-screen .case-feedback-card {
+  background: rgba(244, 249, 235, 0.82);
+  border-color: rgba(117, 151, 96, 0.34);
+}
+
+.failed-case-screen .case-feedback-card {
+  background: rgba(250, 240, 218, 0.8);
+  border-color: rgba(194, 133, 47, 0.3);
+}
+
+.case-feedback-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.case-feedback-heading h3,
+.case-feedback-heading .eyebrow,
+.case-feedback-thanks {
+  margin: 0;
+}
+
+.feedback-submitted-pill {
+  flex: 0 0 auto;
+  border: 1px solid rgba(117, 151, 96, 0.36);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  background: rgba(238, 248, 226, 0.9);
+  color: #4f7540;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.case-feedback-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.feedback-rating-field,
+.case-feedback-comment {
+  display: grid;
+  gap: 0.45rem;
+  color: #756b58;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.feedback-rating-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.feedback-rating-button {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  min-height: 2.6rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 0;
+  background: transparent;
+  color: #b9aa91;
+  font: inherit;
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: transform 140ms ease, color 140ms ease;
+}
+
+.feedback-rating-button:hover {
+  transform: translateY(-1px);
+}
+
+.feedback-rating-button.is-selected {
+  color: #e2a916;
+}
+
+.case-feedback-comment textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid #d5c6a7;
+  border-radius: 14px;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.76);
+  color: var(--text-main);
+  font: inherit;
+}
+
+.case-feedback-comment textarea:focus-visible,
+.feedback-rating-button:focus-visible {
+  outline: 3px solid rgba(252, 209, 79, 0.5);
+  outline-offset: 2px;
+}
+
+.case-feedback-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.feedback-error {
+  color: var(--danger);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.case-feedback-thanks {
+  color: #4f7540;
+  font-weight: 800;
+}
+
 .evidence-result-list,
 .cleared-suspect-list,
 .result-more-list {

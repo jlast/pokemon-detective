@@ -36,6 +36,11 @@ export interface PokedexResponse {
   unlockedShinyPokemonIds: number[]
 }
 
+export interface CaseFeedbackPayload {
+  enjoymentRating: number
+  comment?: string
+}
+
 const authHeaders = async (): Promise<Record<string, string>> => {
   const token = await ensureValidSession() ? getToken() : null
   return token ? { Authorization: `Bearer ${token}` } : { 'X-Player-Session-Id': getPlayerSessionId() }
@@ -97,6 +102,22 @@ export const accuse = async (
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...await authHeaders() },
       body: progress ? JSON.stringify(progress) : undefined,
+    },
+  )
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
+export const submitCaseFeedback = async (
+  caseId: string,
+  payload: CaseFeedbackPayload,
+): Promise<{ submitted: true }> => {
+  const res = await fetch(
+    `${BASE}/api/cases/${enc(caseId)}/feedback`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...await authHeaders() },
+      body: JSON.stringify(payload),
     },
   )
   if (!res.ok) throw new Error(`API error: ${res.status}`)

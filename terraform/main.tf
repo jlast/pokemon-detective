@@ -155,6 +155,24 @@ resource "aws_dynamodb_table" "pokedex" {
   tags = var.tags
 }
 
+resource "aws_dynamodb_table" "feedback" {
+  name         = var.feedback_table_name
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "feedbackId"
+
+  attribute {
+    name = "feedbackId"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
+
+  tags = var.tags
+}
+
 # ─── Lambda IAM ───────────────────────────────────────────────────────────────
 
 resource "aws_iam_role" "lambda" {
@@ -204,6 +222,13 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
         ]
         Resource = aws_dynamodb_table.pokedex.arn
       },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:PutItem",
+        ]
+        Resource = aws_dynamodb_table.feedback.arn
+      },
     ]
   })
 }
@@ -243,6 +268,7 @@ resource "aws_lambda_function" "api" {
       CASE_DATA_TABLE       = aws_dynamodb_table.case_data.name
       PLAYER_PROGRESS_TABLE = aws_dynamodb_table.player_progress.name
       POKEDEX_TABLE         = aws_dynamodb_table.pokedex.name
+      FEEDBACK_TABLE        = aws_dynamodb_table.feedback.name
       USER_POOL_ID          = aws_cognito_user_pool.main.id
       REGION                = var.region
     }

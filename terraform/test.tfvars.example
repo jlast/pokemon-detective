@@ -12,6 +12,7 @@ cognito_domain             = "pokemon-detective-test"
 case_data_table_name       = "CaseDataTest"
 player_progress_table_name = "PlayerProgressTest"
 pokedex_table_name         = "PokedexTest"
+feedback_table_name        = "CaseFeedbackTest"
 google_client_id           = "your-google-client-id.apps.googleusercontent.com"
 google_client_secret       = "your-google-client-secret"
 

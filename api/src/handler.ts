@@ -4,6 +4,7 @@ import type { Case, CaseDifficulty, CaseStatus, LocationCardVariant, LocationAct
 import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, putCaseData } from './caseDataDb'
+import { putCaseFeedback } from './feedbackDb'
 import { validateGeneratedCase } from './validateGeneratedCase'
 import {
   getProgress,
@@ -28,6 +29,7 @@ const DEFAULT_INVESTIGATIONS = 6
 const SHINY_ODDS = 0.01
 const WITNESS_OPTION_COUNT = 1
 const LOCATION_CARD_VARIANTS: LocationCardVariant[] = ['detective-note', 'clipboard', 'map-fragment']
+const FEEDBACK_COMMENT_MAX_LENGTH = 1000
 
 interface ApiGatewayEvent {
   path: string
@@ -1018,6 +1020,60 @@ const handleClearSuspect = async (
   })
 }
 
+const isRating = (value: unknown): value is number => (
+  typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 5
+)
+
+const handleSubmitFeedback = async (
+  caseId: string,
+  event: ApiGatewayEvent,
+): Promise<ApiGatewayResult> => {
+  const userInfo = await getUserInfo(event)
+  const gameplaySub = getGameplaySub(event, userInfo)
+  if (!gameplaySub) return err(401, 'Authentication required')
+
+  const fullCase = await loadCase(caseId)
+  if (!fullCase) return err(404, 'Case not found')
+
+  const userId = getDateUserId(gameplaySub, caseId)
+  let progress = await getProgress(userId)
+  if (!progress) return err(400, 'Case is not complete')
+  progress = await ensureProgressDefaults(userId, progress, fullCase)
+
+  if (progress.status !== 'solved' && progress.status !== 'failed') {
+    return err(400, 'Case is not complete')
+  }
+
+  let body: {
+    enjoymentRating?: unknown
+    comment?: unknown
+  } = {}
+  try {
+    body = JSON.parse(event.body ?? '{}')
+  } catch {
+    return err(400, 'Invalid JSON')
+  }
+
+  if (!isRating(body.enjoymentRating)) return err(400, 'Invalid enjoyment rating')
+  if (body.comment !== undefined && typeof body.comment !== 'string') return err(400, 'Invalid comment')
+
+  const comment = typeof body.comment === 'string' ? body.comment.trim() : ''
+  if (comment.length > FEEDBACK_COMMENT_MAX_LENGTH) return err(400, 'Comment is too long')
+
+  await putCaseFeedback({
+    feedbackId: `${caseId}:${gameplaySub}`,
+    caseId,
+    userId: gameplaySub,
+    status: progress.status,
+    enjoymentRating: body.enjoymentRating,
+    comment: comment || undefined,
+    createdAt: new Date().toISOString(),
+    ttl: getProgressTtl(),
+  })
+
+  return ok({ submitted: true })
+}
+
 export const handler = async (
   event: ApiGatewayEvent,
   _context: unknown,
@@ -1056,6 +1112,11 @@ export const handler = async (
     const clearMatch = path.match(/^\/api\/cases\/([^/]+)\/suspects\/(\d+)\/clear$/)
     if (method === 'POST' && clearMatch) {
       return await handleClearSuspect(clearMatch[1], clearMatch[2], event)
+    }
+
+    const feedbackMatch = path.match(/^\/api\/cases\/([^/]+)\/feedback$/)
+    if (method === 'POST' && feedbackMatch) {
+      return await handleSubmitFeedback(feedbackMatch[1], event)
     }
 
     return err(404, 'Not found')

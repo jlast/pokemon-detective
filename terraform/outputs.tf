@@ -43,6 +43,11 @@ output "pokedex_table_name" {
   value       = aws_dynamodb_table.pokedex.name
 }
 
+output "feedback_table_name" {
+  description = "Name of the CaseFeedback DynamoDB table"
+  value       = aws_dynamodb_table.feedback.name
+}
+
 output "cognito_user_pool_id" {
   description = "Cognito User Pool ID"
   value       = aws_cognito_user_pool.main.id

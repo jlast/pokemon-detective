@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
+import { submitCaseFeedback } from '../api'
 import { getDiscoveredEvidence, type Case, type Suspect } from '../game/caseModel'
 import { getEvidenceIcon } from '../game/evidenceMeta'
 import { MugShot } from './Suspects/MugShot'
@@ -19,6 +20,8 @@ const formatCountdown = (milliseconds: number) => {
   return [hours, minutes, seconds].map((value) => String(value).padStart(2, '0')).join(':')
 }
 
+const ratingOptions = [1, 2, 3, 4, 5]
+
 interface EndingScreenProps {
   currentCase: Case
   culpritSuspect: Suspect | null
@@ -33,6 +36,9 @@ export function EndingScreen({
   wrongAccusationCount,
 }: EndingScreenProps) {
   const [timeUntilNextCase, setTimeUntilNextCase] = useState(getMsUntilNextUtcDay)
+  const [enjoymentRating, setEnjoymentRating] = useState<number | null>(null)
+  const [comment, setComment] = useState('')
+  const [feedbackStatus, setFeedbackStatus] = useState<'idle' | 'saving' | 'submitted' | 'error'>('idle')
   const isSolved = currentCase.status === 'solved'
   const isFailed = currentCase.status === 'failed'
   const solution = currentCase.solution
@@ -47,6 +53,7 @@ export function EndingScreen({
   const nonCulpritSuspects = currentCase.suspects.filter(
     (suspect) => suspect.pokemonId !== currentCase.culpritPokemonId,
   )
+  const canSubmitFeedback = enjoymentRating !== null && feedbackStatus !== 'saving'
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -85,6 +92,42 @@ export function EndingScreen({
     )
   }
 
+  const renderStarRating = () => (
+    <div className="feedback-rating-field">
+      <div className="feedback-rating-buttons" role="radiogroup" aria-label="Enjoyed this case?">
+        {ratingOptions.map((rating) => (
+          <button
+            key={rating}
+            type="button"
+            className={`feedback-rating-button ${enjoymentRating !== null && enjoymentRating >= rating ? 'is-selected' : ''}`}
+            role="radio"
+            aria-checked={enjoymentRating === rating}
+            aria-label={`${rating} star${rating === 1 ? '' : 's'}`}
+            onClick={() => setEnjoymentRating(rating)}
+          >
+            ★
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+
+  const handleFeedbackSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!canSubmitFeedback || enjoymentRating === null) return
+
+    setFeedbackStatus('saving')
+    try {
+      await submitCaseFeedback(currentCase.id, {
+        enjoymentRating,
+        comment: comment.trim() || undefined,
+      })
+      setFeedbackStatus('submitted')
+    } catch {
+      setFeedbackStatus('error')
+    }
+  }
+
   return (
     <section className={`notebook-card ending-screen solved-case-screen ${isSolved ? 'victory-screen' : 'failed-case-screen'}`}>
       <section className="case-closed-hero culprit-reveal-card">
@@ -114,6 +157,46 @@ export function EndingScreen({
           </span>
           <span className="next-case-timer__hint">Daily at 00:00 UTC</span>
         </span>
+      </section>
+
+      <section className="case-feedback-card" aria-labelledby="case-feedback-title">
+        <div className="case-feedback-heading">
+          <div>
+            <p className="eyebrow">Quick feedback</p>
+            <h3 id="case-feedback-title">Enjoyed this case?</h3>
+          </div>
+          {feedbackStatus === 'submitted' ? <span className="feedback-submitted-pill">Submitted</span> : null}
+        </div>
+
+        {feedbackStatus === 'submitted' ? (
+          <p className="case-feedback-thanks">Thanks. Your notes help tune future cases.</p>
+        ) : (
+          <form className="case-feedback-form" onSubmit={handleFeedbackSubmit}>
+            {renderStarRating()}
+
+            {enjoymentRating !== null ? (
+              <label className="case-feedback-comment">
+                <span>Optional comment</span>
+                <textarea
+                  value={comment}
+                  maxLength={1000}
+                  rows={3}
+                  placeholder="Anything confusing, too easy, too hard, or broken?"
+                  onChange={(event) => setComment(event.target.value)}
+                />
+              </label>
+            ) : null}
+
+            <div className="case-feedback-actions">
+              <button className="primary-button" type="submit" disabled={!canSubmitFeedback}>
+                {feedbackStatus === 'saving' ? 'Sending...' : 'Send feedback'}
+              </button>
+              {feedbackStatus === 'error' ? (
+                <span className="feedback-error" role="status">Could not send feedback. Try again?</span>
+              ) : null}
+            </div>
+          </form>
+        )}
       </section>
 
       <div className="ending-details-grid">

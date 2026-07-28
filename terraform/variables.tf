@@ -27,6 +27,12 @@ variable "pokedex_table_name" {
   default     = "Pokedex"
 }
 
+variable "feedback_table_name" {
+  description = "DynamoDB table name for case feedback records"
+  type        = string
+  default     = "CaseFeedback"
+}
+
 variable "handler_zip_path" {
   description = "Path to the Lambda handler deployment zip (relative to terraform directory)"
   type        = string
