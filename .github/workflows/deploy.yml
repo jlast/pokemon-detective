@@ -41,6 +41,14 @@ jobs:
           cache: npm
 
       # ── Build client ──
+      - name: Validate auth config
+        run: |
+          if [ -z "$VITE_COGNITO_CLIENT_ID" ]; then
+            echo "VITE_COGNITO_CLIENT_ID is required for $DEPLOY_ENV deploys." >&2
+            echo "Set TEST_VITE_COGNITO_CLIENT_ID for test or PROD_VITE_COGNITO_CLIENT_ID for prod." >&2
+            exit 1
+          fi
+
       - run: npm ci
       - run: npm run build
         env:
