@@ -3288,26 +3288,30 @@
   position: absolute;
   top: 0.8rem;
   right: 0.8rem;
-  width: 2.75rem;
-  min-height: 2.75rem;
-  border: 1px solid rgba(21, 101, 192, 0.38);
-  border-radius: 999px;
+  width: 2.85rem;
+  min-height: 2.85rem;
+  border: 1px solid rgba(47, 63, 92, 0.28);
+  border-radius: 14px;
   display: inline-grid;
   place-items: center;
   padding: 0;
-  background: #1976d2;
-  color: #fff;
-  box-shadow: 0 8px 18px rgba(25, 118, 210, 0.28);
+  background:
+    linear-gradient(135deg, rgba(231, 242, 255, 0.96), rgba(179, 216, 249, 0.92));
+  color: #1f5f9f;
+  box-shadow: 0 8px 18px rgba(31, 48, 80, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.76);
   cursor: pointer;
   transition:
     transform 140ms ease,
     box-shadow 140ms ease,
+    border-color 140ms ease,
     background-color 140ms ease;
 }
 
 .case-share-button:hover {
-  background: #1565c0;
-  box-shadow: 0 10px 22px rgba(25, 118, 210, 0.34);
+  border-color: rgba(31, 95, 159, 0.48);
+  background:
+    linear-gradient(135deg, rgba(241, 248, 255, 0.98), rgba(157, 205, 246, 0.95));
+  box-shadow: 0 10px 22px rgba(31, 48, 80, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.82);
   transform: translateY(-1px);
 }
 

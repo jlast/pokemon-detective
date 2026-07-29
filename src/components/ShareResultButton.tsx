@@ -88,7 +88,6 @@ export function ShareResultButton({
     try {
       if (navigator.share) {
         await navigator.share({
-          title: 'Pokémon Detective',
           text: nativeText,
         })
         trackEvent('share_result_native_opened', shareAnalyticsParams)
