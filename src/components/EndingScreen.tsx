@@ -1,10 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { submitCaseFeedback } from '../api'
-import { getDiscoveredEvidence, type Case, type Suspect } from '../game/caseModel'
+import { submitCaseFeedback, type CaseStatsResponse } from '../api'
+import type { Case, Suspect } from '../game/caseModel'
 import { getEvidenceIcon } from '../game/evidenceMeta'
 import { MugShot } from './Suspects/MugShot'
-
-const maxAccusations = 3
 
 const getMsUntilNextUtcDay = () => {
   const now = new Date()
@@ -26,32 +24,35 @@ interface EndingScreenProps {
   currentCase: Case
   caseId: string
   culpritSuspect: Suspect | null
-  attemptsLeft: number
-  wrongAccusationCount: number
+  caseStats: CaseStatsResponse | null
+  caseStreak: number
+}
+
+const formatSolveRate = (caseStats: CaseStatsResponse | null) => (
+  caseStats?.solveRate == null ? '--' : `${Math.round(caseStats.solveRate * 100)}%`
+)
+
+const formatAverageGuesses = (caseStats: CaseStatsResponse | null) => {
+  if (caseStats?.averageGuesses == null) return '--'
+  return caseStats.averageGuesses.toFixed(1).replace(/\.0$/, '')
 }
 
 export function EndingScreen({
   currentCase,
   caseId,
   culpritSuspect,
-  attemptsLeft,
-  wrongAccusationCount,
+  caseStats,
+  caseStreak,
 }: EndingScreenProps) {
   const [timeUntilNextCase, setTimeUntilNextCase] = useState(getMsUntilNextUtcDay)
   const [enjoymentRating, setEnjoymentRating] = useState<number | null>(null)
   const [comment, setComment] = useState('')
   const [feedbackStatus, setFeedbackStatus] = useState<'idle' | 'saving' | 'submitted' | 'error'>('idle')
   const isSolved = currentCase.status === 'solved'
-  const isFailed = currentCase.status === 'failed'
   const solution = currentCase.solution
   const culpritName = culpritSuspect?.name ?? 'The culprit'
   const solutionEvidenceItems = solution?.evidenceExplanation ?? []
   const clearedSuspects = solution?.clearedSuspects ?? []
-  const discoveredEvidenceCount = getDiscoveredEvidence(currentCase).length
-  const displayedAttemptsLeft = isFailed ? 0 : attemptsLeft ?? Math.max(maxAccusations - wrongAccusationCount, 0)
-  const displayedWrongGuesses = isFailed
-    ? Math.max(wrongAccusationCount, maxAccusations - displayedAttemptsLeft)
-    : wrongAccusationCount
   const nonCulpritSuspects = currentCase.suspects.filter(
     (suspect) => suspect.pokemonId !== currentCase.culpritPokemonId,
   )
@@ -149,9 +150,12 @@ export function EndingScreen({
       </section>
 
       <section className="case-result-stats" aria-label="Case summary">
-        <span className="case-result-stat"><strong>Evidence found</strong> <span>{discoveredEvidenceCount}/{currentCase.locations.length}</span></span>
-        <span className="case-result-stat"><strong>Wrong guesses</strong> <span>{displayedWrongGuesses}</span></span>
-        <span className="case-result-stat"><strong>Attempts left</strong> <span>{displayedAttemptsLeft}</span></span>
+        <span className="case-result-stat"><strong>Solve rate</strong> <span>{formatSolveRate(caseStats)}</span></span>
+        <span className="case-result-stat"><strong>Avg guesses</strong> <span>{formatAverageGuesses(caseStats)}</span></span>
+        <span className="case-result-stat">
+          <strong>Streak</strong>
+          <span>{caseStreak > 1 ? <span aria-hidden="true">🔥 </span> : null}{caseStreak}</span>
+        </span>
         <span className="case-result-stat next-case-timer" title="Daily at 00:00 UTC" aria-label="Next case refreshes daily at 00:00 UTC">
           <strong>Next case</strong>
           <span className="next-case-timer__time" aria-live="polite">

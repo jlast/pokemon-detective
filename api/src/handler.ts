@@ -3,7 +3,7 @@ import { allCases, createCaseById, pickRandomCaseDifficulty, rebuildFullCase } f
 import type { Case, CaseDifficulty, CaseStatus, LocationCardVariant, LocationAction } from '../../src/game/caseModel'
 import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
-import { getCaseData, putCaseData } from './caseDataDb'
+import { getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseStats } from './caseDataDb'
 import { publishFeedbackCommentAlert } from './feedbackAlert'
 import { putCaseFeedback } from './feedbackDb'
 import { getReminderSubscription, putReminderSubscription } from './reminderSubscriptionDb'
@@ -81,6 +81,11 @@ interface UserInfo {
   picture?: string
 }
 
+interface CaseStatsResponse extends CaseStats {
+  solveRate: number | null
+  averageGuesses: number | null
+}
+
 const extractToken = (authHeader: string | undefined): string | null => {
   if (!authHeader) return null
   const parts = authHeader.split(' ')
@@ -123,6 +128,12 @@ const getGameplaySub = (event: ApiGatewayEvent, userInfo: UserInfo): string => {
 
   return `anonymous:${playerSessionId}`
 }
+
+const buildCaseStatsResponse = (stats: CaseStats): CaseStatsResponse => ({
+  ...stats,
+  solveRate: stats.completedCount > 0 ? stats.solvedCount / stats.completedCount : null,
+  averageGuesses: stats.completedCount > 0 ? stats.totalGuessCount / stats.completedCount : null,
+})
 
 const shuffle = <T,>(items: T[]): T[] => {
   const copy = [...items]
@@ -688,6 +699,7 @@ const generateAndStoreCase = async (caseId: string) => {
 const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
   const result = await getTodayCaseData()
   const caseId = getTodayUtc()
+  const caseStats = buildCaseStatsResponse(getCaseStats(result?.record ?? null))
 
   let fullCase: Case | null = null
 
@@ -719,6 +731,7 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
       accusationsRemaining: progress.accusationsRemaining,
       accusationHistory: progress.accusationHistory,
       status: progress.status,
+      caseStats,
     })
   }
 
@@ -728,6 +741,7 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
     accusationsRemaining: MAX_ACCUSATIONS,
     accusationHistory: [],
     status: 'playing',
+    caseStats,
   })
 }
 
@@ -948,6 +962,7 @@ const handleAccuse = async (
       accusationsRemaining: progress.accusationsRemaining,
       accusationHistory: progress.accusationHistory,
       status: progress.status,
+      caseStats: buildCaseStatsResponse(getCaseStats(record)),
     })
   }
 
@@ -987,6 +1002,12 @@ const handleAccuse = async (
     ttl: getProgressTtl(),
   })
 
+  let caseStats = buildCaseStatsResponse(getCaseStats(record))
+  if (status === 'solved' || status === 'failed') {
+    const guessCount = status === 'solved' ? accusationHistory.length : MAX_ACCUSATIONS
+    caseStats = buildCaseStatsResponse(await recordCaseCompletion(caseId, status, guessCount))
+  }
+
   if (userInfo.sub && (status === 'solved' || status === 'failed')) {
     await updatePokedexForCompletedCase(userInfo.sub, fullCase, progress, status)
   }
@@ -1004,6 +1025,7 @@ const handleAccuse = async (
     accusationsRemaining: progress.accusationsRemaining,
     accusationHistory: progress.accusationHistory,
     status: progress.status,
+    caseStats,
   })
 }
 

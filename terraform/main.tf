@@ -296,6 +296,7 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
         Action = [
           "dynamodb:GetItem",
           "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
         ]
         Resource = aws_dynamodb_table.case_data.arn
       },

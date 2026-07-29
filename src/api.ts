@@ -9,6 +9,15 @@ export interface SessionResponse {
   accusationsRemaining: number
   accusationHistory: number[]
   status: 'playing' | 'solved' | 'failed'
+  caseStats?: CaseStatsResponse
+}
+
+export interface CaseStatsResponse {
+  completedCount: number
+  solvedCount: number
+  totalGuessCount: number
+  solveRate: number | null
+  averageGuesses: number | null
 }
 
 export interface InvestigationResponse {

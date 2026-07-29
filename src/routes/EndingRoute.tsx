@@ -1,29 +1,30 @@
 import { EndingScreen } from '../components/EndingScreen'
+import type { CaseStatsResponse } from '../api'
 import type { Case, Suspect } from '../game/caseModel'
 
 interface EndingRouteProps {
   currentCase: Case
   caseId: string
   culpritSuspect: Suspect | null
-  attemptsLeft: number
-  wrongAccusationCount: number
+  caseStats: CaseStatsResponse | null
+  caseStreak: number
 }
 
 export function EndingRoute({
   currentCase,
   caseId,
   culpritSuspect,
-  attemptsLeft,
-  wrongAccusationCount,
+  caseStats,
+  caseStreak,
 }: EndingRouteProps) {
   return (
     <div className="">
       <EndingScreen
         caseId={caseId}
         culpritSuspect={culpritSuspect}
-        attemptsLeft={attemptsLeft}
-        wrongAccusationCount={wrongAccusationCount}
         currentCase={currentCase}
+        caseStats={caseStats}
+        caseStreak={caseStreak}
       />
     </div>
   )

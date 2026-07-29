@@ -2,6 +2,7 @@ const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID ?? ''
 const ATTRIBUTION_KEY = 'pokemon-detective-attribution'
 const VISIT_HISTORY_KEY = 'pokemon-detective-visit-history'
 const COMPLETED_CASE_DATES_KEY = 'pokemon-detective-completed-case-dates'
+const CASE_OUTCOMES_KEY = 'pokemon-detective-case-outcomes'
 const STARTED_CASE_IDS_KEY = 'pokemon-detective-started-case-ids'
 const REMINDER_CONVERSION_DATES_KEY = 'pokemon-detective-reminder-conversion-dates'
 
@@ -148,24 +149,31 @@ const getCompletedCaseDates = (): string[] => {
   return Array.isArray(dates) ? dates : []
 }
 
+const getCaseOutcomes = (): Record<string, 'solved' | 'failed'> => {
+  if (typeof window === 'undefined') return {}
+  const outcomes = safeParse<Record<string, 'solved' | 'failed'>>(localStorage.getItem(CASE_OUTCOMES_KEY))
+  return outcomes && typeof outcomes === 'object' ? outcomes : {}
+}
+
 const getStringList = (key: string): string[] => {
   if (typeof window === 'undefined') return []
   const values = safeParse<string[]>(localStorage.getItem(key))
   return Array.isArray(values) ? values : []
 }
 
-const calculateStreak = (dates: string[]): number => {
-  const completedDates = new Set(dates)
+const calculateSolvedStreak = (outcomes: Record<string, 'solved' | 'failed'>): number => {
   const current = new Date(`${getUtcDate()}T00:00:00.000Z`)
   let streak = 0
 
-  while (completedDates.has(current.toISOString().slice(0, 10))) {
+  while (outcomes[current.toISOString().slice(0, 10)] === 'solved') {
     streak += 1
     current.setUTCDate(current.getUTCDate() - 1)
   }
 
   return streak
 }
+
+export const getSolvedCaseStreak = (): number => calculateSolvedStreak(getCaseOutcomes())
 
 const initializeGoogleAnalytics = () => {
   if (!GA_MEASUREMENT_ID || initialized || typeof window === 'undefined') return
@@ -303,17 +311,22 @@ export const trackCaseFailed = (params: GameplayEventParams) => {
   })
 }
 
-export const trackStreak = (caseId: string, status: 'solved' | 'failed') => {
-  if (typeof window === 'undefined') return
+export const trackStreak = (caseId: string, status: 'solved' | 'failed'): number => {
+  if (typeof window === 'undefined') return 0
 
   const caseDate = caseId || getUtcDate()
   const dates = getCompletedCaseDates()
   const nextDates = dates.includes(caseDate) ? dates : [...dates, caseDate].sort()
   localStorage.setItem(COMPLETED_CASE_DATES_KEY, JSON.stringify(nextDates))
+  const outcomes = { ...getCaseOutcomes(), [caseDate]: status }
+  localStorage.setItem(CASE_OUTCOMES_KEY, JSON.stringify(outcomes))
+  const solvedStreak = calculateSolvedStreak(outcomes)
 
   trackEvent('streak_updated', {
     case_id: caseId,
     case_status: status,
-    streak_days: calculateStreak(nextDates),
+    streak_days: solvedStreak,
   })
+
+  return solvedStreak
 }

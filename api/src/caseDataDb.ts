@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import type { CaseDifficulty, CaseTheme, EvidenceBadgeData } from '../../src/game/caseModel'
 import type { PokemonType } from '../../src/data/pokemon'
 
@@ -29,7 +29,16 @@ export interface CaseDataRecord {
     evidenceExplanation: { locationId: string; evidenceTitle: string; clueText: string; badges?: EvidenceBadgeData[]; deductionText: string }[]
     clearedSuspects: { pokemonId: number; reason: string; evidenceLabel?: string }[]
   }
+  completedCount?: number
+  solvedCount?: number
+  totalGuessCount?: number
   ttl: number
+}
+
+export interface CaseStats {
+  completedCount: number
+  solvedCount: number
+  totalGuessCount: number
 }
 
 const TABLE = process.env.CASE_DATA_TABLE ?? 'CaseData'
@@ -41,4 +50,30 @@ export const getCaseData = async (caseId: string): Promise<CaseDataRecord | null
 
 export const putCaseData = async (record: CaseDataRecord): Promise<void> => {
   await doc.send(new PutCommand({ TableName: TABLE, Item: record }))
+}
+
+export const getCaseStats = (record: CaseDataRecord | null): CaseStats => ({
+  completedCount: record?.completedCount ?? 0,
+  solvedCount: record?.solvedCount ?? 0,
+  totalGuessCount: record?.totalGuessCount ?? 0,
+})
+
+export const recordCaseCompletion = async (
+  caseId: string,
+  status: 'solved' | 'failed',
+  guessCount: number,
+): Promise<CaseStats> => {
+  const result = await doc.send(new UpdateCommand({
+    TableName: TABLE,
+    Key: { caseId },
+    UpdateExpression: 'ADD completedCount :one, solvedCount :solvedIncrement, totalGuessCount :guessCount',
+    ExpressionAttributeValues: {
+      ':one': 1,
+      ':solvedIncrement': status === 'solved' ? 1 : 0,
+      ':guessCount': guessCount,
+    },
+    ReturnValues: 'ALL_NEW',
+  }))
+
+  return getCaseStats((result.Attributes as CaseDataRecord) ?? null)
 }

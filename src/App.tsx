@@ -20,6 +20,7 @@ import {
   investigate as apiInvestigate,
   accuse as apiAccuse,
   clearSuspect as apiClearSuspect,
+  type CaseStatsResponse,
 } from './api'
 import {
   trackCaseCompleted,
@@ -32,6 +33,7 @@ import {
   trackReminderConversion,
   trackReturningUser,
   trackStreak,
+  getSolvedCaseStreak,
 } from './analytics'
 import { allCases } from './game/cases'
 import type { Case, Suspect, SuspectNoteStatus } from './game/caseModel'
@@ -99,6 +101,8 @@ function App() {
   const [investigationsRemaining, setInvestigationsRemaining] = useState(0)
   const [accusationsRemaining, setAccusationsRemaining] = useState(MAX_ACCUSATIONS)
   const [accusationHistory, setAccusationHistory] = useState<number[]>([])
+  const [caseStats, setCaseStats] = useState<CaseStatsResponse | null>(null)
+  const [caseStreak, setCaseStreak] = useState(getSolvedCaseStreak)
 
   const [authed, setAuthed] = useState(() => isAuthenticated())
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() =>
@@ -228,6 +232,7 @@ function App() {
       setInvestigationsRemaining(data.investigationsRemaining)
       setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
       setAccusationHistory(data.accusationHistory ?? [])
+      setCaseStats(data.caseStats ?? null)
     } catch (err) {
       console.error('Failed to load daily case:', err)
     } finally {
@@ -350,6 +355,7 @@ function App() {
         setCaseData(data.case)
         setAccusationHistory(data.accusationHistory ?? [])
         setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
+        setCaseStats(data.caseStats ?? null)
         setAccusationTargetId(null)
 
         updateSuspectNote(accusationTarget.pokemonId, (prev) => ({
@@ -374,7 +380,7 @@ function App() {
             accusationsRemaining: data.accusationsRemaining ?? MAX_ACCUSATIONS,
             wrongAccusationCount: (data.accusationHistory ?? []).filter((pokemonId) => pokemonId !== caseData.culpritPokemonId).length,
           })
-          trackStreak(caseId, 'solved')
+          setCaseStreak(trackStreak(caseId, 'solved'))
           resetTransientUi()
           navigate(endingPath('solved'))
         } else if (data.status === 'failed') {
@@ -385,7 +391,7 @@ function App() {
             investigationsUsed,
             wrongAccusationCount: (data.accusationHistory ?? []).length,
           })
-          trackStreak(caseId, 'failed')
+          setCaseStreak(trackStreak(caseId, 'failed'))
           resetTransientUi()
           navigate(endingPath('failed'))
         } else {
@@ -408,6 +414,7 @@ function App() {
         setAccusationHistory(accusationHistoryAfterSubmit)
         setAccusationsRemaining(accusationsRemainingAfterSubmit)
         setCaseData(data.case)
+        setCaseStats(data.caseStats ?? null)
       } catch (err) {
         console.error('Accusation failed:', err)
         return
@@ -436,7 +443,7 @@ function App() {
           accusationsRemaining: accusationsRemainingAfterSubmit,
           wrongAccusationCount: accusationHistoryAfterSubmit.filter((pokemonId) => pokemonId !== caseData.culpritPokemonId).length,
         })
-        trackStreak(caseId, 'solved')
+        setCaseStreak(trackStreak(caseId, 'solved'))
         resetTransientUi()
         navigate(endingPath('solved'))
       } else if (status === 'failed') {
@@ -447,7 +454,7 @@ function App() {
           investigationsUsed,
           wrongAccusationCount: accusationHistoryAfterSubmit.length,
         })
-        trackStreak(caseId, 'failed')
+        setCaseStreak(trackStreak(caseId, 'failed'))
         resetTransientUi()
         navigate(endingPath('failed'))
       } else {
@@ -664,6 +671,7 @@ function App() {
         activeSection={activeSidebarSection}
         authed={authed}
         userProfile={userProfile}
+        caseStreak={caseStreak}
         dailyReminderEmails={dailyReminderEmails}
         reminderStatus={reminderStatus}
         onSelectCase={() => navigate(TODAY_PATH)}
@@ -781,8 +789,8 @@ function App() {
                 currentCase={currentCase}
                 caseId={getTodayCaseId()}
                 culpritSuspect={culpritSuspect}
-                attemptsLeft={attemptsLeft}
-                wrongAccusationCount={wrongAccusationIds.length}
+                caseStats={caseStats}
+                caseStreak={caseStreak}
               />
             }
           />
