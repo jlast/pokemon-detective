@@ -3154,8 +3154,7 @@
 
 .case-result-stats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
+  gap: 0.7rem;
   padding: 0.75rem 0.9rem;
   border-radius: 16px;
   background: rgba(255, 251, 239, 0.82);
@@ -3172,24 +3171,79 @@
   border-color: rgba(194, 133, 47, 0.3);
 }
 
+.case-result-stat-group {
+  min-width: 0;
+  display: grid;
+  gap: 0.48rem;
+}
+
+.case-result-stat-group--personal {
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(117, 107, 88, 0.22);
+}
+
+.case-result-stat-group-label {
+  margin: 0;
+  color: #756b58;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.case-result-stat-items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
 .case-result-stat {
   min-width: 0;
   display: grid;
   gap: 0.2rem;
 }
 
-.case-result-stat strong {
+.case-result-stat--progress {
+  gap: 0.25rem;
+}
+
+.case-result-stat > span {
   color: #756b58;
   font-size: 0.72rem;
   font-weight: 600;
   line-height: 1.2;
 }
 
-.case-result-stat span {
+.case-result-stat > strong {
   color: #2f3f5c;
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.1;
+}
+
+.case-result-stat small {
+  color: #756b58;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.case-result-progress {
+  position: relative;
+  height: 0.65rem;
+  overflow: hidden;
+  border: 1px solid rgba(117, 107, 88, 0.32);
+  border-radius: 999px;
+  background: #f4ead6;
+  box-shadow: inset 0 1px 2px rgba(47, 35, 21, 0.1);
+}
+
+.case-result-progress__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: #a9c94b;
 }
 
 .next-case-timer {
@@ -5549,11 +5603,14 @@
   }
 
   .case-result-stats {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
   }
 
-  .next-case-timer {
+  .case-result-stat-group--personal {
+    padding-top: 0;
     padding-left: 1rem;
+    border-top: 0;
     border-left: 1px solid rgba(117, 107, 88, 0.28);
   }
 

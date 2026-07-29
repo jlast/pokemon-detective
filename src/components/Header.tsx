@@ -7,6 +7,7 @@ interface HeaderProps {
   activeCasePage: 'overview' | 'investigation' | 'suspects' | ''
   authed: boolean
   userProfile: UserProfile | null
+  showDailyReminderOptIn: boolean
   dailyReminderEmails: boolean
   reminderStatus: 'idle' | 'loading' | 'saving' | 'error'
   isMenuOpen: boolean
@@ -27,6 +28,7 @@ export function Header({
   activeCasePage,
   authed,
   userProfile,
+  showDailyReminderOptIn,
   dailyReminderEmails,
   reminderStatus,
   isMenuOpen,
@@ -151,7 +153,7 @@ export function Header({
                 {authed ? 'Logout' : 'Login'}
               </button>
             </div>
-            {authed ? (
+            {authed && showDailyReminderOptIn ? (
               <label className="reminder-settings-card reminder-settings-card--mobile mobile-main-menu-reminder">
                 <span className="reminder-settings-card__icon" aria-hidden="true">🔔</span>
                 <span className="reminder-settings-card__copy">
@@ -170,7 +172,7 @@ export function Header({
                 </span>
               </label>
             ) : null}
-            {reminderStatus === 'error' ? (
+            {showDailyReminderOptIn && reminderStatus === 'error' ? (
               <small className="mobile-main-menu-reminder-error" role="status">Could not save reminder setting.</small>
             ) : null}
           </div>

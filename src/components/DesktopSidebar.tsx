@@ -6,6 +6,7 @@ interface DesktopSidebarProps {
   authed: boolean
   userProfile: UserProfile | null
   caseStreak?: number
+  showDailyReminderOptIn: boolean
   dailyReminderEmails: boolean
   reminderStatus: 'idle' | 'loading' | 'saving' | 'error'
   onSelectCase: () => void
@@ -21,6 +22,7 @@ export function DesktopSidebar({
   authed,
   userProfile,
   caseStreak,
+  showDailyReminderOptIn,
   dailyReminderEmails,
   reminderStatus,
   onSelectCase,
@@ -83,6 +85,7 @@ export function DesktopSidebar({
           <SidebarProfile
             name={userProfile.name ?? userProfile.email ?? 'Detective'}
             streak={caseStreak}
+            showDailyReminderOptIn={showDailyReminderOptIn}
             dailyReminderEmails={dailyReminderEmails}
             reminderStatus={reminderStatus}
             onToggleDailyReminderEmails={onToggleDailyReminderEmails}

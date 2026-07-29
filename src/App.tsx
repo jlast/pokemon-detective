@@ -60,6 +60,7 @@ import {
 
 const getTodayCaseId = () => new Date().toISOString().slice(0, 10)
 const MAX_ACCUSATIONS = 3
+const ENABLE_DAILY_REMINDER_OPT_IN = false
 
 const applyCurrentCaseAssets = (caseData: Case): Case => {
   const currentConfig = allCases.find((caseConfig) => caseConfig.id === caseData.id)
@@ -123,6 +124,8 @@ function App() {
   }, [])
 
   const handleToggleDailyReminderEmails = useCallback((enabled: boolean) => {
+    if (!ENABLE_DAILY_REMINDER_OPT_IN) return
+
     setDailyReminderEmails(enabled)
     setReminderStatus('saving')
 
@@ -271,6 +274,8 @@ function App() {
       setReminderStatus('idle')
       return
     }
+
+    if (!ENABLE_DAILY_REMINDER_OPT_IN) return
 
     setReminderStatus('loading')
     getReminderPreferences()
@@ -600,6 +605,7 @@ function App() {
           activeSection=""
           authed={authed}
           userProfile={userProfile}
+          showDailyReminderOptIn={ENABLE_DAILY_REMINDER_OPT_IN}
           dailyReminderEmails={dailyReminderEmails}
           reminderStatus={reminderStatus}
           onSelectCase={() => {}}
@@ -672,6 +678,7 @@ function App() {
         authed={authed}
         userProfile={userProfile}
         caseStreak={caseStreak}
+        showDailyReminderOptIn={ENABLE_DAILY_REMINDER_OPT_IN}
         dailyReminderEmails={dailyReminderEmails}
         reminderStatus={reminderStatus}
         onSelectCase={() => navigate(TODAY_PATH)}
@@ -689,6 +696,7 @@ function App() {
           activeCasePage={activeCasePage}
           authed={authed}
           userProfile={userProfile}
+          showDailyReminderOptIn={ENABLE_DAILY_REMINDER_OPT_IN}
           dailyReminderEmails={dailyReminderEmails}
           reminderStatus={reminderStatus}
           isMenuOpen={isMobileMenuOpen}

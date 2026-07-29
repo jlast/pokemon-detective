@@ -37,6 +37,10 @@ const formatAverageGuesses = (caseStats: CaseStatsResponse | null) => {
   return caseStats.averageGuesses.toFixed(1).replace(/\.0$/, '')
 }
 
+const getSolveRatePercent = (caseStats: CaseStatsResponse | null) => (
+  caseStats?.solveRate == null ? null : Math.round(caseStats.solveRate * 100)
+)
+
 export function EndingScreen({
   currentCase,
   caseId,
@@ -53,6 +57,7 @@ export function EndingScreen({
   const culpritName = culpritSuspect?.name ?? 'The culprit'
   const solutionEvidenceItems = solution?.evidenceExplanation ?? []
   const clearedSuspects = solution?.clearedSuspects ?? []
+  const solveRatePercent = getSolveRatePercent(caseStats)
   const nonCulpritSuspects = currentCase.suspects.filter(
     (suspect) => suspect.pokemonId !== currentCase.culpritPokemonId,
   )
@@ -150,19 +155,45 @@ export function EndingScreen({
       </section>
 
       <section className="case-result-stats" aria-label="Case summary">
-        <span className="case-result-stat"><strong>Solve rate</strong> <span>{formatSolveRate(caseStats)}</span></span>
-        <span className="case-result-stat"><strong>Avg guesses</strong> <span>{formatAverageGuesses(caseStats)}</span></span>
-        <span className="case-result-stat">
-          <strong>Streak</strong>
-          <span>{caseStreak > 1 ? <span aria-hidden="true">🔥 </span> : null}{caseStreak}</span>
-        </span>
-        <span className="case-result-stat next-case-timer" title="Daily at 00:00 UTC" aria-label="Next case refreshes daily at 00:00 UTC">
-          <strong>Next case</strong>
-          <span className="next-case-timer__time" aria-live="polite">
-            {timeUntilNextCase > 0 ? formatCountdown(timeUntilNextCase) : 'Available now'}
-          </span>
-          <span className="next-case-timer__hint">Daily at 00:00 UTC</span>
-        </span>
+        <section className="case-result-stat-group" aria-labelledby="community-results-label">
+          <p id="community-results-label" className="case-result-stat-group-label">Community results</p>
+          <div className="case-result-stat-items">
+            <div className="case-result-stat case-result-stat--progress">
+              <span>Players solved</span>
+              <div
+                className="case-result-progress"
+                role="progressbar"
+                aria-label="Players solved"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={solveRatePercent ?? 0}
+              >
+                <span className="case-result-progress__fill" style={{ width: `${solveRatePercent ?? 0}%` }}></span>
+              </div>
+              <small>{formatSolveRate(caseStats)}</small>
+            </div>
+            <div className="case-result-stat">
+              <span>Average guesses</span>
+              <strong>{formatAverageGuesses(caseStats)}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section className="case-result-stat-group case-result-stat-group--personal" aria-labelledby="your-progress-label">
+          <p id="your-progress-label" className="case-result-stat-group-label">Your progress</p>
+          <div className="case-result-stat-items">
+            <div className="case-result-stat">
+              <span>Current streak</span>
+              <strong>{caseStreak > 0 ? <span aria-hidden="true">🔥 </span> : null}{caseStreak}</strong>
+            </div>
+            <div className="case-result-stat next-case-timer" title="Daily at 00:00 UTC" aria-label="Next case refreshes daily at 00:00 UTC">
+              <span>Next case</span>
+              <strong className="next-case-timer__time" aria-live="polite">
+                {timeUntilNextCase > 0 ? formatCountdown(timeUntilNextCase) : 'Available now'}
+              </strong>
+            </div>
+          </div>
+        </section>
       </section>
 
       <section className="case-feedback-card" aria-labelledby="case-feedback-title">
