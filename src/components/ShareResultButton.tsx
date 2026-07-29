@@ -8,18 +8,16 @@ const getShareUrl = () => {
   return `${window.location.origin}/today`
 }
 
-const buildShareText = ({
+const buildShareLines = ({
   caseId,
   isSolved,
   playerGuessCount,
   caseStreak,
-  shareUrl,
 }: {
   caseId: string
   isSolved: boolean
   playerGuessCount?: number
   caseStreak: number
-  shareUrl: string
 }) => {
   const lines = [`Pokémon Detective #${caseId}`]
 
@@ -35,12 +33,7 @@ const buildShareText = ({
     lines.push(`Streak: ${caseStreak}`)
   }
 
-  return [
-    ...lines,
-    '',
-    'Can you solve today\'s case?',
-    shareUrl,
-  ].join('\n')
+  return [...lines, '', 'Can you solve today\'s case?']
 }
 
 interface ShareResultButtonProps {
@@ -56,7 +49,7 @@ export function ShareResultButton({
   playerGuessCount,
   caseStreak,
 }: ShareResultButtonProps) {
-  const [shareStatus, setShareStatus] = useState<'idle' | 'sharing' | 'shared' | 'copied' | 'error'>('idle')
+  const [shareStatus, setShareStatus] = useState<'idle' | 'sharing' | 'copied' | 'error'>('idle')
   const shareAnalyticsParams = {
     case_id: caseId,
     case_status: isSolved ? 'solved' : 'failed',
@@ -71,32 +64,39 @@ export function ShareResultButton({
     setShareStatus('copied')
   }
 
-  const getShareText = () => {
+  const getSharePayload = () => {
     const shareUrl = getShareUrl()
-    return buildShareText({
+    const lines = buildShareLines({
       caseId,
       isSolved,
       playerGuessCount,
       caseStreak,
-      shareUrl,
     })
+
+    return {
+      nativeText: [...lines, shareUrl].join('\n'),
+      clipboardText: [...lines, shareUrl].join('\n'),
+    }
   }
 
   const handleShareResult = async () => {
-    const shareText = getShareText()
+    const { nativeText, clipboardText } = getSharePayload()
 
     trackEvent('share_result_clicked', shareAnalyticsParams)
     setShareStatus('sharing')
 
     try {
       if (navigator.share) {
-        await navigator.share({ text: shareText })
+        await navigator.share({
+          title: 'Pokémon Detective',
+          text: nativeText,
+        })
         trackEvent('share_result_native_opened', shareAnalyticsParams)
-        setShareStatus('shared')
+        setShareStatus('idle')
         return
       }
 
-      await copyShareText(shareText)
+      await copyShareText(clipboardText)
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') {
         setShareStatus('idle')
@@ -104,7 +104,7 @@ export function ShareResultButton({
       }
 
       try {
-        await copyShareText(shareText)
+        await copyShareText(clipboardText)
       } catch {
         setShareStatus('error')
       }
@@ -128,7 +128,6 @@ export function ShareResultButton({
       </button>
 
       {shareStatus === 'copied' ? <span className="case-share-status" role="status">Copied result!</span> : null}
-      {shareStatus === 'shared' ? <span className="case-share-status" role="status">Shared result!</span> : null}
       {shareStatus === 'error' ? <span className="case-share-status case-share-status--error" role="status">Could not share. Try again?</span> : null}
     </>
   )
