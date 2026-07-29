@@ -3022,6 +3022,7 @@
 }
 
 .culprit-reveal-card {
+  position: relative;
   padding: clamp(1rem, 2.4vw, 1.55rem);
   border-radius: 22px;
   background: rgba(255, 251, 239, 0.82);
@@ -3281,6 +3282,55 @@
 .failed-case-screen .case-feedback-card {
   background: rgba(250, 240, 218, 0.8);
   border-color: rgba(194, 133, 47, 0.3);
+}
+
+.case-share-button {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  width: 2.75rem;
+  min-height: 2.75rem;
+  border: 1px solid rgba(21, 101, 192, 0.38);
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  background: #1976d2;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(25, 118, 210, 0.28);
+  cursor: pointer;
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    background-color 140ms ease;
+}
+
+.case-share-button:hover {
+  background: #1565c0;
+  box-shadow: 0 10px 22px rgba(25, 118, 210, 0.34);
+  transform: translateY(-1px);
+}
+
+.case-share-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+  transform: none;
+}
+
+.case-share-button svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: currentColor;
+}
+
+.case-share-status {
+  color: #4f7540;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.case-share-status--error {
+  color: var(--danger);
 }
 
 .case-feedback-heading {

@@ -8,6 +8,7 @@ interface EndingRouteProps {
   culpritSuspect: Suspect | null
   caseStats: CaseStatsResponse | null
   caseStreak: number
+  playerGuessCount: number
 }
 
 export function EndingRoute({
@@ -16,6 +17,7 @@ export function EndingRoute({
   culpritSuspect,
   caseStats,
   caseStreak,
+  playerGuessCount,
 }: EndingRouteProps) {
   return (
     <div className="">
@@ -25,6 +27,7 @@ export function EndingRoute({
         currentCase={currentCase}
         caseStats={caseStats}
         caseStreak={caseStreak}
+        playerGuessCount={playerGuessCount}
       />
     </div>
   )

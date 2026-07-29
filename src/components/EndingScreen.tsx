@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { submitCaseFeedback, type CaseStatsResponse } from '../api'
 import type { Case, Suspect } from '../game/caseModel'
 import { getEvidenceIcon } from '../game/evidenceMeta'
+import { ShareResultButton } from './ShareResultButton'
 import { MugShot } from './Suspects/MugShot'
 
 const getMsUntilNextUtcDay = () => {
@@ -26,19 +27,36 @@ interface EndingScreenProps {
   culpritSuspect: Suspect | null
   caseStats: CaseStatsResponse | null
   caseStreak: number
+  playerGuessCount?: number
 }
 
-const formatSolveRate = (caseStats: CaseStatsResponse | null) => (
-  caseStats?.solveRate == null ? '--' : `${Math.round(caseStats.solveRate * 100)}%`
+const getDisplayCaseStats = (
+  caseStats: CaseStatsResponse | null,
+  isSolved: boolean,
+  playerGuessCount?: number,
+): CaseStatsResponse => {
+  if (caseStats && caseStats.completedCount > 0) return caseStats
+
+  return {
+    completedCount: 1,
+    solvedCount: isSolved ? 1 : 0,
+    totalGuessCount: playerGuessCount ?? 0,
+    solveRate: isSolved ? 1 : 0,
+    averageGuesses: playerGuessCount ?? null,
+  }
+}
+
+const formatSolveRate = (caseStats: CaseStatsResponse) => (
+  `${Math.round((caseStats.solveRate ?? 0) * 100)}%`
 )
 
-const formatAverageGuesses = (caseStats: CaseStatsResponse | null) => {
-  if (caseStats?.averageGuesses == null) return '--'
+const formatAverageGuesses = (caseStats: CaseStatsResponse) => {
+  if (caseStats.averageGuesses == null) return '--'
   return caseStats.averageGuesses.toFixed(1).replace(/\.0$/, '')
 }
 
-const getSolveRatePercent = (caseStats: CaseStatsResponse | null) => (
-  caseStats?.solveRate == null ? null : Math.round(caseStats.solveRate * 100)
+const getSolveRatePercent = (caseStats: CaseStatsResponse) => (
+  Math.round((caseStats.solveRate ?? 0) * 100)
 )
 
 export function EndingScreen({
@@ -47,17 +65,19 @@ export function EndingScreen({
   culpritSuspect,
   caseStats,
   caseStreak,
+  playerGuessCount,
 }: EndingScreenProps) {
   const [timeUntilNextCase, setTimeUntilNextCase] = useState(getMsUntilNextUtcDay)
   const [enjoymentRating, setEnjoymentRating] = useState<number | null>(null)
   const [comment, setComment] = useState('')
   const [feedbackStatus, setFeedbackStatus] = useState<'idle' | 'saving' | 'submitted' | 'error'>('idle')
   const isSolved = currentCase.status === 'solved'
+  const displayCaseStats = getDisplayCaseStats(caseStats, isSolved, playerGuessCount)
   const solution = currentCase.solution
   const culpritName = culpritSuspect?.name ?? 'The culprit'
   const solutionEvidenceItems = solution?.evidenceExplanation ?? []
   const clearedSuspects = solution?.clearedSuspects ?? []
-  const solveRatePercent = getSolveRatePercent(caseStats)
+  const solveRatePercent = getSolveRatePercent(displayCaseStats)
   const nonCulpritSuspects = currentCase.suspects.filter(
     (suspect) => suspect.pokemonId !== currentCase.culpritPokemonId,
   )
@@ -139,6 +159,13 @@ export function EndingScreen({
   return (
     <section className={`notebook-card ending-screen solved-case-screen ${isSolved ? 'victory-screen' : 'failed-case-screen'}`}>
       <section className="case-closed-hero culprit-reveal-card">
+        <ShareResultButton
+          caseId={caseId}
+          isSolved={isSolved}
+          playerGuessCount={playerGuessCount}
+          caseStreak={caseStreak}
+        />
+
         <div className="ending-hero-copy">
           <h2>{isSolved ? 'Case solved' : 'Investigation failed'}</h2>
           <strong className="ending-culprit-name">{culpritName}</strong>
@@ -166,15 +193,15 @@ export function EndingScreen({
                 aria-label="Players solved"
                 aria-valuemin={0}
                 aria-valuemax={100}
-                aria-valuenow={solveRatePercent ?? 0}
+                aria-valuenow={solveRatePercent}
               >
-                <span className="case-result-progress__fill" style={{ width: `${solveRatePercent ?? 0}%` }}></span>
+                <span className="case-result-progress__fill" style={{ width: `${solveRatePercent}%` }}></span>
               </div>
-              <small>{formatSolveRate(caseStats)}</small>
+              <small>{formatSolveRate(displayCaseStats)}</small>
             </div>
             <div className="case-result-stat">
               <span>Average guesses</span>
-              <strong>{formatAverageGuesses(caseStats)}</strong>
+              <strong>{formatAverageGuesses(displayCaseStats)}</strong>
             </div>
           </div>
         </section>

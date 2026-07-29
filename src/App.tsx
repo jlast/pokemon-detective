@@ -799,6 +799,7 @@ function App() {
                 culpritSuspect={culpritSuspect}
                 caseStats={caseStats}
                 caseStreak={caseStreak}
+                playerGuessCount={accusationHistory.length || (completedCaseStatus === 'failed' ? MAX_ACCUSATIONS : 1)}
               />
             }
           />
