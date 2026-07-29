@@ -3286,19 +3286,19 @@
 
 .case-share-button {
   position: absolute;
-  top: 0.8rem;
-  right: 0.8rem;
-  width: 2.85rem;
-  min-height: 2.85rem;
-  border: 1px solid rgba(47, 63, 92, 0.28);
-  border-radius: 14px;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 2.55rem;
+  min-height: 2.55rem;
+  border: 1px solid rgba(127, 92, 48, 0.26);
+  border-radius: 999px;
   display: inline-grid;
   place-items: center;
   padding: 0;
   background:
-    linear-gradient(135deg, rgba(231, 242, 255, 0.96), rgba(179, 216, 249, 0.92));
-  color: #1f5f9f;
-  box-shadow: 0 8px 18px rgba(31, 48, 80, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.76);
+    linear-gradient(135deg, rgba(255, 251, 239, 0.96), rgba(244, 236, 221, 0.92));
+  color: #2f3f5c;
+  box-shadow: 0 6px 14px rgba(81, 67, 41, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.72);
   cursor: pointer;
   transition:
     transform 140ms ease,
@@ -3308,10 +3308,10 @@
 }
 
 .case-share-button:hover {
-  border-color: rgba(31, 95, 159, 0.48);
+  border-color: rgba(127, 92, 48, 0.42);
   background:
-    linear-gradient(135deg, rgba(241, 248, 255, 0.98), rgba(157, 205, 246, 0.95));
-  box-shadow: 0 10px 22px rgba(31, 48, 80, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    linear-gradient(135deg, rgba(255, 248, 223, 0.98), rgba(239, 227, 202, 0.95));
+  box-shadow: 0 8px 16px rgba(81, 67, 41, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.78);
   transform: translateY(-1px);
 }
 
@@ -3322,8 +3322,8 @@
 }
 
 .case-share-button svg {
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 1.08rem;
+  height: 1.08rem;
   fill: currentColor;
 }
 
