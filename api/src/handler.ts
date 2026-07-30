@@ -1188,12 +1188,10 @@ const handleSubmitFeedback = async (
 
   await putCaseFeedback(feedbackRecord)
 
-  if (feedbackRecord.comment) {
-    try {
-      await publishFeedbackCommentAlert(feedbackRecord)
-    } catch (error) {
-      console.error('Failed to publish feedback comment alert:', error)
-    }
+  try {
+    await publishFeedbackCommentAlert(feedbackRecord)
+  } catch (error) {
+    console.error('Failed to publish feedback alert:', error)
   }
 
   return ok({ submitted: true })
