@@ -33,7 +33,6 @@ import {
   trackReminderConversion,
   trackReturningUser,
   trackStreak,
-  getSolvedCaseStreak,
 } from './analytics'
 import { allCases } from './game/cases'
 import type { Case, Suspect, SuspectNoteStatus } from './game/caseModel'
@@ -103,7 +102,7 @@ function App() {
   const [accusationsRemaining, setAccusationsRemaining] = useState(MAX_ACCUSATIONS)
   const [accusationHistory, setAccusationHistory] = useState<number[]>([])
   const [caseStats, setCaseStats] = useState<CaseStatsResponse | null>(null)
-  const [caseStreak, setCaseStreak] = useState(getSolvedCaseStreak)
+  const [caseStreak, setCaseStreak] = useState(0)
 
   const [authed, setAuthed] = useState(() => isAuthenticated())
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() =>
@@ -236,6 +235,7 @@ function App() {
       setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
       setAccusationHistory(data.accusationHistory ?? [])
       setCaseStats(data.caseStats ?? null)
+      setCaseStreak(data.caseStreak ?? 0)
     } catch (err) {
       console.error('Failed to load daily case:', err)
     } finally {
@@ -385,7 +385,7 @@ function App() {
             accusationsRemaining: data.accusationsRemaining ?? MAX_ACCUSATIONS,
             wrongAccusationCount: (data.accusationHistory ?? []).filter((pokemonId) => pokemonId !== caseData.culpritPokemonId).length,
           })
-          setCaseStreak(trackStreak(caseId, 'solved'))
+          setCaseStreak(trackStreak(caseId, 'solved', data.caseStreak ?? 0))
           resetTransientUi()
           navigate(endingPath('solved'))
         } else if (data.status === 'failed') {
@@ -396,7 +396,7 @@ function App() {
             investigationsUsed,
             wrongAccusationCount: (data.accusationHistory ?? []).length,
           })
-          setCaseStreak(trackStreak(caseId, 'failed'))
+          setCaseStreak(trackStreak(caseId, 'failed', data.caseStreak ?? 0))
           resetTransientUi()
           navigate(endingPath('failed'))
         } else {
@@ -409,12 +409,14 @@ function App() {
       const caseId = getTodayCaseId()
       let accusationHistoryAfterSubmit: number[] = []
       let accusationsRemainingAfterSubmit = MAX_ACCUSATIONS
+      let caseStreakAfterSubmit = 0
       let status: 'playing' | 'solved' | 'failed' = 'playing'
       try {
         const data = await apiAccuse(caseId, accusationTarget.pokemonId)
         status = data.status
         accusationHistoryAfterSubmit = data.accusationHistory ?? []
         accusationsRemainingAfterSubmit = data.accusationsRemaining ?? MAX_ACCUSATIONS
+        caseStreakAfterSubmit = data.caseStreak ?? 0
 
         setAccusationHistory(accusationHistoryAfterSubmit)
         setAccusationsRemaining(accusationsRemainingAfterSubmit)
@@ -448,7 +450,7 @@ function App() {
           accusationsRemaining: accusationsRemainingAfterSubmit,
           wrongAccusationCount: accusationHistoryAfterSubmit.filter((pokemonId) => pokemonId !== caseData.culpritPokemonId).length,
         })
-        setCaseStreak(trackStreak(caseId, 'solved'))
+        setCaseStreak(trackStreak(caseId, 'solved', caseStreakAfterSubmit))
         resetTransientUi()
         navigate(endingPath('solved'))
       } else if (status === 'failed') {
@@ -459,7 +461,7 @@ function App() {
           investigationsUsed,
           wrongAccusationCount: accusationHistoryAfterSubmit.length,
         })
-        setCaseStreak(trackStreak(caseId, 'failed'))
+        setCaseStreak(trackStreak(caseId, 'failed', caseStreakAfterSubmit))
         resetTransientUi()
         navigate(endingPath('failed'))
       } else {

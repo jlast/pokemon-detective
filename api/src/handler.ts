@@ -86,6 +86,18 @@ interface CaseStatsResponse extends CaseStats {
   averageGuesses: number | null
 }
 
+const calculateSolvedStreak = (outcomes: Record<string, 'solved' | 'failed'>): number => {
+  const current = new Date(`${getTodayUtc()}T00:00:00.000Z`)
+  let streak = 0
+
+  while (outcomes[current.toISOString().slice(0, 10)] === 'solved') {
+    streak += 1
+    current.setUTCDate(current.getUTCDate() - 1)
+  }
+
+  return streak
+}
+
 const extractToken = (authHeader: string | undefined): string | null => {
   if (!authHeader) return null
   const parts = authHeader.split(' ')
@@ -332,15 +344,22 @@ const getOrCreatePokedex = async (sub: string): Promise<PokedexRecord> => {
     unlockedPokemonIds: [],
     seenShinyPokemonIds: [],
     unlockedShinyPokemonIds: [],
+    caseOutcomes: {},
+    currentStreak: 0,
   }
 }
 
+const getPokedexStreak = (pokedex: PokedexRecord): number => (
+  calculateSolvedStreak(pokedex.caseOutcomes ?? {})
+)
+
 const updatePokedexForCompletedCase = async (
   sub: string,
+  caseId: string,
   fullCase: Case,
   progress: PlayerProgressRecord,
   status: 'solved' | 'failed',
-): Promise<void> => {
+): Promise<PokedexRecord> => {
   const suspectPokemonIds = fullCase.suspects.map((suspect) => suspect.pokemonId)
   const witnessPokemonIds = progress.interviewedWitnessPokemonIds ?? []
   const shinyPokemonIds = fullCase.suspects
@@ -355,14 +374,21 @@ const updatePokedexForCompletedCase = async (
   const unlockedShinyPokemonIds = status === 'solved'
     ? mergeUniqueIds(pokedex.unlockedShinyPokemonIds ?? [], shinyPokemonIds)
     : pokedex.unlockedShinyPokemonIds ?? []
+  const caseOutcomes = { ...pokedex.caseOutcomes, [caseId]: status }
+  const currentStreak = calculateSolvedStreak(caseOutcomes)
 
-  await putPokedexRecord({
+  const nextPokedex = {
     userId: pokedex.userId,
     seenPokemonIds,
     unlockedPokemonIds,
     seenShinyPokemonIds,
     unlockedShinyPokemonIds,
-  })
+    caseOutcomes,
+    currentStreak,
+  }
+
+  await putPokedexRecord(nextPokedex)
+  return nextPokedex
 }
 
 const markPokedexSeen = async (sub: string, pokemonIds: number[]): Promise<void> => {
@@ -374,6 +400,8 @@ const markPokedexSeen = async (sub: string, pokemonIds: number[]): Promise<void>
     unlockedPokemonIds: pokedex.unlockedPokemonIds ?? [],
     seenShinyPokemonIds: pokedex.seenShinyPokemonIds ?? [],
     unlockedShinyPokemonIds: pokedex.unlockedShinyPokemonIds ?? [],
+    caseOutcomes: pokedex.caseOutcomes ?? {},
+    currentStreak: getPokedexStreak(pokedex),
   })
 }
 
@@ -735,6 +763,7 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
   if (!fullCase) return err(500, 'Failed to build case')
 
   const userInfo = await getUserInfo(event)
+  const caseStreak = userInfo.sub ? getPokedexStreak(await getOrCreatePokedex(userInfo.sub)) : 0
   const gameplaySub = getGameplaySub(event, userInfo)
   if (gameplaySub) {
     const userId = getDateUserId(gameplaySub, caseId)
@@ -753,6 +782,7 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
       accusationHistory: progress.accusationHistory,
       status: progress.status,
       caseStats,
+      caseStreak,
     })
   }
 
@@ -763,6 +793,7 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
     accusationHistory: [],
     status: 'playing',
     caseStats,
+    caseStreak,
   })
 }
 
@@ -776,6 +807,7 @@ const handleGetPokedex = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
     unlockedPokemonIds: pokedex.unlockedPokemonIds ?? [],
     seenShinyPokemonIds: pokedex.seenShinyPokemonIds ?? [],
     unlockedShinyPokemonIds: pokedex.unlockedShinyPokemonIds ?? [],
+    caseStreak: getPokedexStreak(pokedex),
   })
 }
 
@@ -934,6 +966,7 @@ const handleAccuse = async (
   event: ApiGatewayEvent,
 ): Promise<ApiGatewayResult> => {
   const userInfo = await getUserInfo(event)
+  let caseStreak = userInfo.sub ? getPokedexStreak(await getOrCreatePokedex(userInfo.sub)) : 0
 
   const record = await getCaseData(caseId)
   if (!record) return err(404, 'Case not found')
@@ -984,6 +1017,7 @@ const handleAccuse = async (
       accusationHistory: progress.accusationHistory,
       status: progress.status,
       caseStats: buildCaseStatsResponse(getCaseStats(record)),
+      caseStreak: 0,
     })
   }
 
@@ -1030,7 +1064,8 @@ const handleAccuse = async (
   }
 
   if (userInfo.sub && (status === 'solved' || status === 'failed')) {
-    await updatePokedexForCompletedCase(userInfo.sub, fullCase, progress, status)
+    const pokedex = await updatePokedexForCompletedCase(userInfo.sub, caseId, fullCase, progress, status)
+    caseStreak = getPokedexStreak(pokedex)
   }
 
   progress = {
@@ -1047,6 +1082,7 @@ const handleAccuse = async (
     accusationHistory: progress.accusationHistory,
     status: progress.status,
     caseStats,
+    caseStreak,
   })
 }
 

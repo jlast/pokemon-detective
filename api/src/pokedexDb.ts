@@ -10,6 +10,8 @@ export interface PokedexRecord {
   unlockedPokemonIds: number[]
   seenShinyPokemonIds?: number[]
   unlockedShinyPokemonIds?: number[]
+  caseOutcomes?: Record<string, 'solved' | 'failed'>
+  currentStreak?: number
 }
 
 const TABLE = process.env.POKEDEX_TABLE ?? 'Pokedex'

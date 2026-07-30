@@ -10,6 +10,7 @@ export interface SessionResponse {
   accusationHistory: number[]
   status: 'playing' | 'solved' | 'failed'
   caseStats?: CaseStatsResponse
+  caseStreak?: number
 }
 
 export interface CaseStatsResponse {
@@ -43,6 +44,7 @@ export interface PokedexResponse {
   unlockedPokemonIds: number[]
   seenShinyPokemonIds: number[]
   unlockedShinyPokemonIds: number[]
+  caseStreak?: number
 }
 
 export interface CaseFeedbackPayload {
