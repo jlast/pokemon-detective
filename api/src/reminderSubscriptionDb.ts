@@ -51,7 +51,7 @@ export const listUnfinishedCaseReminderSubscriptions = async (): Promise<Reminde
   do {
     const result = await doc.send(new ScanCommand({
       TableName: TABLE,
-      FilterExpression: '#unfinishedCaseReminderEmails = :enabled',
+      FilterExpression: '#unfinishedCaseReminderEmails = :enabled OR attribute_not_exists(#unfinishedCaseReminderEmails)',
       ExpressionAttributeNames: { '#unfinishedCaseReminderEmails': 'unfinishedCaseReminderEmails' },
       ExpressionAttributeValues: { ':enabled': true },
       ExclusiveStartKey,

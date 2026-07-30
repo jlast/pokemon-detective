@@ -816,9 +816,23 @@ const handleGetReminderPreferences = async (event: ApiGatewayEvent): Promise<Api
   if (!userInfo.sub) return err(401, 'Authentication required')
 
   const subscription = await getReminderSubscription(userInfo.sub)
+  const unfinishedCaseReminderEmails = subscription?.unfinishedCaseReminderEmails ?? true
+
+  if (userInfo.email && (!subscription || subscription.unfinishedCaseReminderEmails == null)) {
+    await putReminderSubscription({
+      userId: userInfo.sub,
+      email: userInfo.email,
+      dailyReminderEmails: subscription?.dailyReminderEmails ?? false,
+      unfinishedCaseReminderEmails,
+      updatedAt: new Date().toISOString(),
+      lastReminderCaseId: subscription?.lastReminderCaseId,
+      lastUnfinishedCaseReminderCaseId: subscription?.lastUnfinishedCaseReminderCaseId,
+    })
+  }
+
   return ok({
     dailyReminderEmails: subscription?.dailyReminderEmails ?? false,
-    unfinishedCaseReminderEmails: subscription?.unfinishedCaseReminderEmails ?? true,
+    unfinishedCaseReminderEmails,
   })
 }
 
