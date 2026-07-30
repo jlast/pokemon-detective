@@ -68,7 +68,7 @@ import {
 
 const getTodayCaseId = () => new Date().toISOString().slice(0, 10)
 const MAX_ACCUSATIONS = 3
-const ENABLE_DAILY_REMINDER_OPT_IN = false
+const ENABLE_DAILY_REMINDER_OPT_IN = true
 
 type RouteTitleContext = {
   pathname: string
