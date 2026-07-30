@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { submitCaseFeedback, type CaseStatsResponse } from '../api'
-import type { Case, Suspect } from '../game/caseModel'
-import { getEvidenceIcon } from '../game/evidenceMeta'
+import { getSolutionClueBadgeGroups, type Case, type Suspect } from '../game/caseModel'
+import { EvidenceBadgeList } from './Evidence/EvidenceBadge'
 import { ShareResultButton } from './ShareResultButton'
 import { MugShot } from './Suspects/MugShot'
 
@@ -75,7 +75,15 @@ export function EndingScreen({
   const displayCaseStats = getDisplayCaseStats(caseStats, isSolved, playerGuessCount)
   const solution = currentCase.solution
   const culpritName = culpritSuspect?.name ?? 'The culprit'
-  const solutionEvidenceItems = solution?.evidenceExplanation ?? []
+  const solutionClueBadgeGroups = getSolutionClueBadgeGroups(solution)
+  const discoveredEvidenceIds = new Set(currentCase.locations.flatMap((location) => (
+    location.investigated && location.evidenceId ? [location.evidenceId] : []
+  )))
+  const sortedSolutionClueBadgeGroups = [...solutionClueBadgeGroups].sort((left, right) => {
+    const leftDiscovered = left.evidenceId ? discoveredEvidenceIds.has(left.evidenceId) : false
+    const rightDiscovered = right.evidenceId ? discoveredEvidenceIds.has(right.evidenceId) : false
+    return Number(rightDiscovered) - Number(leftDiscovered)
+  })
   const clearedSuspects = solution?.clearedSuspects ?? []
   const solveRatePercent = getSolveRatePercent(displayCaseStats)
   const nonCulpritSuspects = currentCase.suspects.filter(
@@ -90,21 +98,6 @@ export function EndingScreen({
 
     return () => window.clearInterval(timer)
   }, [])
-
-  const renderEvidenceRow = (item: (typeof solutionEvidenceItems)[number]) => {
-    const location = currentCase.locations.find((entry) => entry.id === item.locationId)
-    const evidenceIcon = getEvidenceIcon(location?.evidenceId, item.evidenceTitle)
-
-    return (
-      <div key={`${item.locationId}-${item.evidenceTitle}`} className="evidence-result-row">
-        <span className="evidence-result-icon" aria-hidden="true">{evidenceIcon}</span>
-        <span className="evidence-result-copy">
-          <strong>{item.evidenceTitle}</strong>
-          <span>{item.clueText}</span>
-        </span>
-      </div>
-    )
-  }
 
   const renderSuspectRow = (suspect: Suspect) => {
     const explanation = clearedSuspects.find((item) => item.pokemonId === suspect.pokemonId)
@@ -265,9 +258,21 @@ export function EndingScreen({
 
       <div className="ending-details-grid">
         <section className="inspect-item compact-result-panel evidence-used-panel">
-          <strong>Solution clues</strong>
-          <div className="evidence-result-list">
-            {solutionEvidenceItems.map(renderEvidenceRow)}
+          <strong>Case clues</strong>
+          <div className="case-clue-list">
+            {sortedSolutionClueBadgeGroups.map((group) => {
+              const discovered = group.evidenceId ? discoveredEvidenceIds.has(group.evidenceId) : false
+
+              return (
+              <div key={group.evidenceId ?? group.hintType} className={`solution-clue-badge-group ${discovered ? 'is-discovered' : 'is-undiscovered'}`}>
+                <span className="solution-clue-badge-group__label">
+                  <span className="solution-clue-badge-group__status" aria-hidden="true">{discovered ? '✓' : '×'}</span>
+                  {group.hintType}
+                </span>
+                <EvidenceBadgeList badges={group.badges} />
+              </div>
+              )
+            })}
           </div>
         </section>
 

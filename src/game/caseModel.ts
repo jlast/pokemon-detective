@@ -71,6 +71,8 @@ export interface CluePreview {
 export interface EvidenceBadgeData {
   text: string
   type?: string
+  hintType?: string
+  evidenceId?: string
 }
 
 export type EvidenceEvaluationResult = 'match' | 'possible' | 'conflict' | 'unknown'
@@ -163,6 +165,7 @@ export type CaseTheme =
 export interface CaseSolution {
   culpritRevealText: string
   detectiveConclusion: string
+  clueBadges?: EvidenceBadgeData[]
   evidenceExplanation: CaseEvidenceExplanation[]
   clearedSuspects: ClearedSuspectExplanation[]
 }
@@ -214,4 +217,170 @@ export function getDiscoveredEvidence(caseData: Case): Evidence[] {
     }
   }
   return discovered
+}
+
+const getBadgeKey = (badge: EvidenceBadgeData): string => `${badge.evidenceId ?? inferClueHintType(badge)}:${badge.type ?? ''}:${badge.text}`
+
+export const getClueHintType = (axis: ClueAxis): string | undefined => {
+  switch (axis) {
+    case 'height':
+      return 'Height estimate'
+    case 'weight':
+      return 'Track estimate'
+    case 'type':
+      return 'Residue points to'
+    case 'groundTrace':
+      return 'Trace points to'
+    case 'force':
+      return 'Entry marks point to'
+    case 'witness':
+      return 'Witness account points to'
+    case 'highestStat':
+      return 'Stat clue'
+    case 'lowestStat':
+      return 'Weakness clue'
+    case 'typeAffectedness':
+      return 'Reaction points to'
+    case 'scene':
+      return undefined
+  }
+}
+
+export const getSolutionClueHintType = (axis: ClueAxis): string | undefined => {
+  switch (axis) {
+    case 'height':
+      return 'Height'
+    case 'weight':
+      return 'Tracks'
+    case 'type':
+      return 'Residue'
+    case 'groundTrace':
+      return 'Trace'
+    case 'force':
+      return 'Entry marks'
+    case 'witness':
+      return 'Witness'
+    case 'highestStat':
+      return 'Stat'
+    case 'lowestStat':
+      return 'Stat'
+    case 'typeAffectedness':
+      return 'Reaction'
+    case 'scene':
+      return undefined
+  }
+}
+
+const getSolutionClueHintTypeFromEvidenceId = (evidenceId: string | undefined): string | undefined => {
+  switch (evidenceId) {
+    case 'height-clue':
+      return 'Height'
+    case 'weight-clue':
+      return 'Tracks'
+    case 'type-residue-clue':
+      return 'Residue'
+    case 'ground-trace-clue':
+      return 'Trace'
+    case 'force-clue':
+      return 'Entry marks'
+    case 'witness-clue':
+      return 'Witness'
+    case 'highest-stat-clue':
+      return 'Stat'
+    case 'lowest-stat-clue':
+      return 'Stat'
+    case 'type-affectedness-clue':
+      return 'Reaction'
+    default:
+      return undefined
+  }
+}
+
+const normalizeSolutionHintType = (hintType: string): string => {
+  switch (hintType) {
+    case 'Height estimate':
+    case 'Height clue':
+      return 'Height'
+    case 'Track estimate':
+    case 'Track clue':
+      return 'Tracks'
+    case 'Residue points to':
+    case 'Residue clue':
+    case 'Type clue':
+      return 'Residue'
+    case 'Trace points to':
+    case 'Trace clue':
+      return 'Trace'
+    case 'Entry marks point to':
+    case 'Entry mark clue':
+      return 'Entry marks'
+    case 'Witness account points to':
+    case 'Witness clue':
+      return 'Witness'
+    case 'Strength clue':
+    case 'Stat clue':
+      return 'Stat'
+    case 'Limitation clue':
+    case 'Weakness clue':
+      return 'Stat'
+    case 'Reaction points to':
+    case 'Reaction clue':
+      return 'Reaction'
+    default:
+      return hintType
+  }
+}
+
+const inferClueHintType = (badge: EvidenceBadgeData): string => {
+  const evidenceHintType = getSolutionClueHintTypeFromEvidenceId(badge.evidenceId)
+  if (evidenceHintType) return evidenceHintType
+  if (badge.hintType) return normalizeSolutionHintType(badge.hintType)
+  if (badge.text.startsWith('Height:')) return 'Height'
+  if (badge.text.startsWith('Weight:')) return 'Tracks'
+  if (badge.text.startsWith('Strength:')) return 'Stat'
+  if (badge.text.startsWith('Weakness:')) return 'Stat'
+  if (badge.text.startsWith('Weak to') || badge.text.startsWith('Strong to')) return 'Reaction'
+  return badge.type ? 'Residue' : 'Solution'
+}
+
+export function getSolutionClueBadges(solution?: CaseSolution | null): EvidenceBadgeData[] {
+  const badges = solution?.clueBadges?.length
+    ? solution.clueBadges
+    : solution?.evidenceExplanation.flatMap((item) => item.badges ?? []) ?? []
+  const seen = new Set<string>()
+
+  return badges.filter((badge) => {
+    const key = getBadgeKey(badge)
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+export function getSolutionClueBadgesFromEvidence(evidence: Evidence[]): EvidenceBadgeData[] {
+  const seen = new Set<string>()
+  const badges = evidence.flatMap((item) => {
+    const hintType = getSolutionClueHintType(item.rule.axis)
+    return item.badges?.map((badge) => ({ ...badge, hintType, evidenceId: item.id })) ?? []
+  })
+
+  return badges.filter((badge) => {
+    const key = getBadgeKey(badge)
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+export function getSolutionClueBadgeGroups(solution?: CaseSolution | null): { evidenceId?: string; hintType: string; badges: EvidenceBadgeData[] }[] {
+  const groups = new Map<string, { evidenceId?: string; hintType: string; badges: EvidenceBadgeData[] }>()
+
+  for (const badge of getSolutionClueBadges(solution)) {
+    const hintType = inferClueHintType(badge)
+    const key = badge.evidenceId ?? hintType
+    const group = groups.get(key) ?? { evidenceId: badge.evidenceId, hintType, badges: [] }
+    groups.set(key, { ...group, badges: [...group.badges, badge] })
+  }
+
+  return [...groups.values()]
 }

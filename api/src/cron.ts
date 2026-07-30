@@ -260,6 +260,7 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       solution: {
         culpritRevealText: gameCase.solution?.culpritRevealText ?? '',
         detectiveConclusion: gameCase.solution?.detectiveConclusion ?? '',
+        clueBadges: gameCase.solution?.clueBadges ?? [],
         evidenceExplanation: gameCase.solution?.evidenceExplanation ?? [],
         clearedSuspects: gameCase.solution?.clearedSuspects ?? [],
       },

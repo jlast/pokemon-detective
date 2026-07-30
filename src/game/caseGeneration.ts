@@ -1,5 +1,5 @@
 import { pokemonData, type Pokemon, type PokemonType } from '../data/pokemon'
-import type { CaseDifficulty, CaseEvidenceExplanation, ClearedSuspectExplanation, ClueRule, Evidence, EvidenceBadgeData, EvidenceObservation, Location, LocationAction } from './caseModel'
+import { getSolutionClueBadgesFromEvidence, type CaseDifficulty, type CaseEvidenceExplanation, type ClearedSuspectExplanation, type ClueRule, type Evidence, type EvidenceBadgeData, type EvidenceObservation, type Location, type LocationAction } from './caseModel'
 import { getPokemonById } from './suspectCaseFile'
 
 type StatName = 'hp' | 'attack' | 'defense' | 'specialAttack' | 'specialDefense' | 'speed'
@@ -854,7 +854,7 @@ const buildSolution = (
   const culpritProfile = getPokemonCaseProfile(culprit, typeClueSlots, typeClueGroups)
   const evidenceById = new Map(evidence.map((item) => [item.id, item]))
 
-  const evidenceExplanation: CaseEvidenceExplanation[] = locations
+  const solutionEvidenceItems: CaseEvidenceExplanation[] = locations
     .flatMap((location) => {
       const primaryAction = location.actions.find(
         (action) => action.evidenceId && (action.outcomeType === 'evidence' || action.outcomeType === 'witness')
@@ -872,6 +872,7 @@ const buildSolution = (
         deductionText: generatedEvidenceById.get(evidenceId)?.deductionText ?? getCategoryDeductionText({ evidenceId, category: getEvidenceTemplate(evidenceId).category }, culpritProfile),
       }]
     })
+  const evidenceExplanation: CaseEvidenceExplanation[] = solutionEvidenceItems.map(({ badges: _badges, ...item }) => item)
 
   const clearedSuspects: ClearedSuspectExplanation[] = suspectIds
     .filter((suspectId) => suspectId !== culpritId)
@@ -884,6 +885,7 @@ const buildSolution = (
   return {
     culpritRevealText: `${culprit.name} was behind the case.`,
     detectiveConclusion: `The culprit had to be ${joinFragments(relevantClues.map((clue) => getCategoryConclusionFragment(clue, culpritProfile)))}. ${culprit.name} best fit the collected evidence.`,
+    clueBadges: getSolutionClueBadgesFromEvidence(evidence),
     evidenceExplanation,
     clearedSuspects,
   }

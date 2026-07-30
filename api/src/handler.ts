@@ -1,6 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { allCases, createCaseById, pickRandomCaseDifficulty, rebuildFullCase } from '../../src/game/cases/index'
-import type { Case, CaseDifficulty, CaseStatus, LocationCardVariant, LocationAction } from '../../src/game/caseModel'
+import { getSolutionClueBadgesFromEvidence, type Case, type CaseDifficulty, type CaseSolution, type CaseStatus, type LocationCardVariant, type LocationAction } from '../../src/game/caseModel'
 import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseStats } from './caseDataDb'
@@ -194,6 +194,19 @@ const getWitnessActionIds = (fullCase: Case): string[] => (
       .filter((action) => action.outcomeType === 'witness')
       .map((action) => action.id)
   ))
+)
+
+const normalizeCaseSolution = (fullCase: Case): CaseSolution | undefined => {
+  if (!fullCase.solution) return undefined
+
+  return {
+    ...fullCase.solution,
+    clueBadges: getSolutionClueBadgesFromEvidence(fullCase.evidence),
+  }
+}
+
+const areSolutionsEqual = (left: CaseSolution | undefined, right: CaseSolution | undefined): boolean => (
+  JSON.stringify(left) === JSON.stringify(right)
 )
 
 const flattenWitnessPokemonIdMap = (witnessPokemonIdMap: Record<string, number[]>): number[] => (
@@ -595,7 +608,7 @@ const loadCase = async (caseId: string) => {
   const storedTypeClueSlots = getStoredTypeClueSlots(record)
   const storedTypeClueGroups = getStoredTypeClueGroups(record)
   const storedDifficulty = getStoredDifficulty(record)
-  const fullCase = rebuildFullCase(
+  let fullCase = rebuildFullCase(
     record.configId,
     record.culpritPokemonId,
     record.suspectPokemonIds,
@@ -609,6 +622,12 @@ const loadCase = async (caseId: string) => {
     record.theme,
     storedDifficulty,
   )
+  const normalizedSolution = normalizeCaseSolution(fullCase)
+  const solutionChanged = !areSolutionsEqual(record.solution, normalizedSolution)
+  fullCase = {
+    ...fullCase,
+    solution: normalizedSolution,
+  }
   const witnessActionIds = getWitnessActionIds(fullCase)
   const requiredWitnessPokemonCount = witnessActionIds.length * WITNESS_OPTION_COUNT
   const witnessPokemonIds = hasCompleteWitnessPokemonIds(record.witnessPokemonIds, requiredWitnessPokemonCount, record.suspectPokemonIds)
@@ -633,8 +652,9 @@ const loadCase = async (caseId: string) => {
     || !record.typeClueGroups
     || !record.theme
     || !record.difficulty
+    || solutionChanged
   ) {
-    await putCaseData({ ...record, difficulty: fullCase.difficulty, typeClueSlots: fullCase.typeClueSlots, typeClueGroups: fullCase.typeClueGroups, theme: fullCase.theme, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
+    await putCaseData({ ...record, difficulty: fullCase.difficulty, typeClueSlots: fullCase.typeClueSlots, typeClueGroups: fullCase.typeClueGroups, theme: fullCase.theme, solution: normalizedSolution ?? record.solution, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
   }
 
   return applyLocationCardVariants(assignWitnessPokemonToActions(fullCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
@@ -687,6 +707,7 @@ const generateAndStoreCase = async (caseId: string) => {
     solution: {
       culpritRevealText: gameCase.solution?.culpritRevealText ?? '',
       detectiveConclusion: gameCase.solution?.detectiveConclusion ?? '',
+      clueBadges: gameCase.solution?.clueBadges ?? [],
       evidenceExplanation: gameCase.solution?.evidenceExplanation ?? [],
       clearedSuspects: gameCase.solution?.clearedSuspects ?? [],
     },

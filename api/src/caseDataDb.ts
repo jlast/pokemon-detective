@@ -26,6 +26,7 @@ export interface CaseDataRecord {
   solution: {
     culpritRevealText: string
     detectiveConclusion: string
+    clueBadges?: EvidenceBadgeData[]
     evidenceExplanation: { locationId: string; evidenceTitle: string; clueText: string; badges?: EvidenceBadgeData[]; deductionText: string }[]
     clearedSuspects: { pokemonId: number; reason: string; evidenceLabel?: string }[]
   }

@@ -3445,9 +3445,42 @@
 
 .evidence-result-list,
 .cleared-suspect-list,
-.result-more-list {
+.result-more-list,
+.case-clue-list {
   display: grid;
   gap: 0.45rem;
+}
+
+.solution-clue-badge-group {
+  display: grid;
+  align-items: start;
+  gap: 0.4rem;
+  min-height: 2.35rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 12px;
+  background: rgba(255, 251, 239, 0.86);
+  border: 1px solid rgba(215, 201, 171, 0.8);
+  box-shadow: 0 6px 14px rgba(81, 67, 41, 0.08);
+}
+
+.solution-clue-badge-group__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 900;
+  color: #263d5d;
+}
+
+.solution-clue-badge-group.is-undiscovered {
+  opacity: 0.76;
+}
+
+.solution-clue-badge-group__status {
+  color: #4f7540;
+}
+
+.solution-clue-badge-group.is-undiscovered .solution-clue-badge-group__status {
+  color: #9b3f3f;
 }
 
 .evidence-result-row,

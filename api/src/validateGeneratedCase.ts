@@ -1,4 +1,4 @@
-import type { Case } from '../../src/game/caseModel'
+import { getSolutionClueBadges, type Case } from '../../src/game/caseModel'
 
 export const validateGeneratedCase = (gameCase: Case): void => {
   const evidenceIds = new Set(gameCase.evidence.map((evidence) => evidence.id))
@@ -15,5 +15,9 @@ export const validateGeneratedCase = (gameCase: Case): void => {
 
   if (invalidActions.length > 0) {
     throw new Error(`Generated case ${gameCase.id} has invalid evidence actions: ${invalidActions.join('; ')}`)
+  }
+
+  if (!getSolutionClueBadges(gameCase.solution).length) {
+    throw new Error(`Generated case ${gameCase.id} has no solution clue badges`)
   }
 }
