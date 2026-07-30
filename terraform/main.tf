@@ -538,6 +538,26 @@ resource "aws_lambda_permission" "cron_events" {
   source_arn    = aws_cloudwatch_event_rule.daily_case.arn
 }
 
+resource "aws_cloudwatch_event_rule" "unfinished_case_reminder" {
+  name                = "${var.project_name}-unfinished-case-reminder"
+  description         = "Trigger unfinished-case reminder emails 8 hours before daily case rollover"
+  schedule_expression = "cron(0 16 * * ? *)"
+}
+
+resource "aws_cloudwatch_event_target" "unfinished_case_reminder" {
+  rule  = aws_cloudwatch_event_rule.unfinished_case_reminder.name
+  arn   = aws_lambda_function.cron.arn
+  input = jsonencode({ detail = { reminderType = "unfinished-case" } })
+}
+
+resource "aws_lambda_permission" "unfinished_case_reminder_events" {
+  statement_id  = "AllowUnfinishedCaseReminderEventsInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.cron.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.unfinished_case_reminder.arn
+}
+
 # ─── Cognito User Pool ────────────────────────────────────────────────────────
 
 resource "aws_cognito_user_pool" "main" {

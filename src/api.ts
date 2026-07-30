@@ -54,6 +54,7 @@ export interface CaseFeedbackPayload {
 
 export interface ReminderPreferencesResponse {
   dailyReminderEmails: boolean
+  unfinishedCaseReminderEmails: boolean
 }
 
 const authHeaders = async (): Promise<Record<string, string>> => {
@@ -82,14 +83,14 @@ export const getReminderPreferences = async (): Promise<ReminderPreferencesRespo
 }
 
 export const updateReminderPreferences = async (
-  dailyReminderEmails: boolean,
+  preferences: ReminderPreferencesResponse,
 ): Promise<ReminderPreferencesResponse> => {
   const res = await fetch(
     `${BASE}/api/reminder-preferences`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...await authHeaders() },
-      body: JSON.stringify({ dailyReminderEmails }),
+      body: JSON.stringify(preferences),
     },
   )
   if (!res.ok) throw new Error(`API error: ${res.status}`)

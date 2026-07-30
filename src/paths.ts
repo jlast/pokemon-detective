@@ -3,6 +3,7 @@ export const CALLBACK_PATH = '/callback'
 export const LOGIN_PATH = '/login'
 export const POKEDEX_PATH = '/pokedex'
 export const HOW_TO_PLAY_PATH = '/how-to-play'
+export const SETTINGS_PATH = '/settings'
 
 export const TODAY_PATH = '/today'
 export const TODAY_INVESTIGATION_PATH = `${TODAY_PATH}/investigation`

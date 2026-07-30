@@ -816,7 +816,10 @@ const handleGetReminderPreferences = async (event: ApiGatewayEvent): Promise<Api
   if (!userInfo.sub) return err(401, 'Authentication required')
 
   const subscription = await getReminderSubscription(userInfo.sub)
-  return ok({ dailyReminderEmails: subscription?.dailyReminderEmails ?? false })
+  return ok({
+    dailyReminderEmails: subscription?.dailyReminderEmails ?? false,
+    unfinishedCaseReminderEmails: subscription?.unfinishedCaseReminderEmails ?? true,
+  })
 }
 
 const handleUpdateReminderPreferences = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
@@ -824,7 +827,7 @@ const handleUpdateReminderPreferences = async (event: ApiGatewayEvent): Promise<
   if (!userInfo.sub) return err(401, 'Authentication required')
   if (!userInfo.email) return err(400, 'Email address required')
 
-  let body: { dailyReminderEmails?: unknown } = {}
+  let body: { dailyReminderEmails?: unknown; unfinishedCaseReminderEmails?: unknown } = {}
   try {
     body = JSON.parse(event.body ?? '{}')
   } catch {}
@@ -833,16 +836,25 @@ const handleUpdateReminderPreferences = async (event: ApiGatewayEvent): Promise<
     return err(400, 'dailyReminderEmails must be a boolean')
   }
 
+  if (typeof body.unfinishedCaseReminderEmails !== 'boolean') {
+    return err(400, 'unfinishedCaseReminderEmails must be a boolean')
+  }
+
   const existing = await getReminderSubscription(userInfo.sub)
   await putReminderSubscription({
     userId: userInfo.sub,
     email: userInfo.email,
     dailyReminderEmails: body.dailyReminderEmails,
+    unfinishedCaseReminderEmails: body.unfinishedCaseReminderEmails,
     updatedAt: new Date().toISOString(),
     lastReminderCaseId: existing?.lastReminderCaseId,
+    lastUnfinishedCaseReminderCaseId: existing?.lastUnfinishedCaseReminderCaseId,
   })
 
-  return ok({ dailyReminderEmails: body.dailyReminderEmails })
+  return ok({
+    dailyReminderEmails: body.dailyReminderEmails,
+    unfinishedCaseReminderEmails: body.unfinishedCaseReminderEmails,
+  })
 }
 
 const handleInvestigate = async (

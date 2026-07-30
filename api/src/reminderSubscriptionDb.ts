@@ -8,8 +8,10 @@ export interface ReminderSubscriptionRecord {
   userId: string
   email: string
   dailyReminderEmails: boolean
+  unfinishedCaseReminderEmails?: boolean
   updatedAt: string
   lastReminderCaseId?: string
+  lastUnfinishedCaseReminderCaseId?: string
 }
 
 const TABLE = process.env.REMINDER_SUBSCRIPTIONS_TABLE ?? 'ReminderSubscriptions'
@@ -42,12 +44,41 @@ export const listDailyReminderSubscriptions = async (): Promise<ReminderSubscrip
   return records
 }
 
+export const listUnfinishedCaseReminderSubscriptions = async (): Promise<ReminderSubscriptionRecord[]> => {
+  const records: ReminderSubscriptionRecord[] = []
+  let ExclusiveStartKey: Record<string, unknown> | undefined
+
+  do {
+    const result = await doc.send(new ScanCommand({
+      TableName: TABLE,
+      FilterExpression: '#unfinishedCaseReminderEmails = :enabled',
+      ExpressionAttributeNames: { '#unfinishedCaseReminderEmails': 'unfinishedCaseReminderEmails' },
+      ExpressionAttributeValues: { ':enabled': true },
+      ExclusiveStartKey,
+    }))
+    records.push(...(result.Items as ReminderSubscriptionRecord[] ?? []))
+    ExclusiveStartKey = result.LastEvaluatedKey
+  } while (ExclusiveStartKey)
+
+  return records
+}
+
 export const markReminderSent = async (userId: string, caseId: string): Promise<void> => {
   await doc.send(new UpdateCommand({
     TableName: TABLE,
     Key: { userId },
     UpdateExpression: 'SET #lastReminderCaseId = :caseId',
     ExpressionAttributeNames: { '#lastReminderCaseId': 'lastReminderCaseId' },
+    ExpressionAttributeValues: { ':caseId': caseId },
+  }))
+}
+
+export const markUnfinishedCaseReminderSent = async (userId: string, caseId: string): Promise<void> => {
+  await doc.send(new UpdateCommand({
+    TableName: TABLE,
+    Key: { userId },
+    UpdateExpression: 'SET #lastUnfinishedCaseReminderCaseId = :caseId',
+    ExpressionAttributeNames: { '#lastUnfinishedCaseReminderCaseId': 'lastUnfinishedCaseReminderCaseId' },
     ExpressionAttributeValues: { ':caseId': caseId },
   }))
 }

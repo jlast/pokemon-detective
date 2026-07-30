@@ -4,46 +4,33 @@ import type { UserProfile } from '../auth'
 interface HeaderProps {
   currentCase: Case
   activeSection: string
-  activeCasePage: 'overview' | 'investigation' | 'suspects' | ''
   authed: boolean
   userProfile: UserProfile | null
-  showDailyReminderOptIn: boolean
-  dailyReminderEmails: boolean
-  reminderStatus: 'idle' | 'loading' | 'saving' | 'error'
   isMenuOpen: boolean
   onToggleMenu: () => void
   onSelectCase: () => void
-  onSelectInvestigation: () => void
-  onSelectSuspects: () => void
   onSelectPokedex: () => void
   onSelectHowToPlay: () => void
+  onSelectSettings: () => void
   onLogin: () => void
   onLogout: () => void
-  onToggleDailyReminderEmails: (enabled: boolean) => void
 }
 
 export function Header({
   currentCase,
   activeSection,
-  activeCasePage,
   authed,
   userProfile,
-  showDailyReminderOptIn,
-  dailyReminderEmails,
-  reminderStatus,
   isMenuOpen,
   onToggleMenu,
   onSelectCase,
-  onSelectInvestigation,
-  onSelectSuspects,
   onSelectPokedex,
   onSelectHowToPlay,
+  onSelectSettings,
   onLogin,
   onLogout,
-  onToggleDailyReminderEmails,
 }: HeaderProps) {
   const menuButtonLabel = isMenuOpen ? 'Close main navigation' : 'Open main navigation'
-  const reminderDisabled = reminderStatus === 'loading' || reminderStatus === 'saving'
 
   return (
     <header className="app-header notebook-card">
@@ -99,29 +86,6 @@ export function Header({
                 <small>Open the active investigation</small>
               </span>
             </button>
-            <div className="mobile-main-submenu" aria-label="Case pages">
-              <button
-                type="button"
-                className={`mobile-main-submenu-item ${activeCasePage === 'overview' ? 'is-active' : ''}`}
-                onClick={onSelectCase}
-              >
-                Case overview
-              </button>
-              <button
-                type="button"
-                className={`mobile-main-submenu-item ${activeCasePage === 'investigation' ? 'is-active' : ''}`}
-                onClick={onSelectInvestigation}
-              >
-                Investigation board
-              </button>
-              <button
-                type="button"
-                className={`mobile-main-submenu-item ${activeCasePage === 'suspects' ? 'is-active' : ''}`}
-                onClick={onSelectSuspects}
-              >
-                Suspects lineup
-              </button>
-            </div>
             <button
               type="button"
               className={`mobile-main-menu-item ${activeSection === 'pokedex' ? 'is-active' : ''}`}
@@ -148,33 +112,22 @@ export function Header({
 
           <div className="mobile-main-menu-account">
             <div className="mobile-main-menu-account-topline">
-              <span>{authed ? userProfile?.name ?? userProfile?.email ?? 'Detective' : 'Guest detective'}</span>
+              <span className="mobile-main-menu-account-avatar" aria-hidden="true">D</span>
+              <span className="mobile-main-menu-account-copy">
+                <strong>{authed ? userProfile?.name ?? userProfile?.email ?? 'Detective' : 'Guest detective'}</strong>
+                <small>{authed ? 'Detective' : 'Login to save progress'}</small>
+              </span>
+            </div>
+            <div className="mobile-main-menu-account-actions">
+              {authed ? (
+                <button type="button" className="mobile-main-menu-profile-link" onClick={onSelectSettings}>
+                  Settings
+                </button>
+              ) : null}
               <button type="button" className="mobile-main-menu-auth" onClick={authed ? onLogout : onLogin}>
                 {authed ? 'Logout' : 'Login'}
               </button>
             </div>
-            {authed && showDailyReminderOptIn ? (
-              <label className="reminder-settings-card reminder-settings-card--mobile mobile-main-menu-reminder">
-                <span className="reminder-settings-card__icon" aria-hidden="true">🔔</span>
-                <span className="reminder-settings-card__copy">
-                  <strong>Daily reminder</strong>
-                  <small>Get an email when a new daily case is available.</small>
-                </span>
-                <span className="reminder-settings-card__control">
-                  <input
-                    className="reminder-settings-card__input"
-                    type="checkbox"
-                    checked={dailyReminderEmails}
-                    disabled={reminderDisabled}
-                    onChange={(event) => onToggleDailyReminderEmails(event.currentTarget.checked)}
-                  />
-                  <span className="reminder-settings-card__switch" aria-hidden="true" />
-                </span>
-              </label>
-            ) : null}
-            {showDailyReminderOptIn && reminderStatus === 'error' ? (
-              <small className="mobile-main-menu-reminder-error" role="status">Could not save reminder setting.</small>
-            ) : null}
           </div>
         </nav>
       </div>

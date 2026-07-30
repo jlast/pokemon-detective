@@ -11,6 +11,7 @@ import { EndingRoute } from './routes/EndingRoute'
 import { InvestigationLocationRoute } from './routes/InvestigationLocationRoute'
 import { HowToPlayRoute } from './routes/HowToPlayRoute'
 import { PokedexRoute } from './routes/PokedexRoute'
+import { SettingsRoute } from './routes/SettingsRoute'
 import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
 import {
@@ -21,6 +22,7 @@ import {
   accuse as apiAccuse,
   clearSuspect as apiClearSuspect,
   type CaseStatsResponse,
+  type ReminderPreferencesResponse,
 } from './api'
 import {
   trackCaseCompleted,
@@ -42,6 +44,7 @@ import {
   LOGIN_PATH,
   POKEDEX_PATH,
   ROOT_PATH,
+  SETTINGS_PATH,
   TODAY_ACCUSE_PATH,
   TODAY_ACCUSE_ROUTE,
   TODAY_ENDING_PATH,
@@ -69,6 +72,10 @@ import {
 const getTodayCaseId = () => new Date().toISOString().slice(0, 10)
 const MAX_ACCUSATIONS = 3
 const ENABLE_DAILY_REMINDER_OPT_IN = true
+const DEFAULT_REMINDER_PREFERENCES: ReminderPreferencesResponse = {
+  dailyReminderEmails: false,
+  unfinishedCaseReminderEmails: true,
+}
 
 type RouteTitleContext = {
   pathname: string
@@ -82,8 +89,6 @@ type RouteConfig = {
   title: RouteTitle
   outlet: ReactNode
 }
-
-const caseFilePaths = new Set<string>([ROOT_PATH, TODAY_PATH])
 
 const caseFileTitle = ({ currentCase }: RouteTitleContext): string => (
   currentCase ? `Case Overview` : 'Loading Case File'
@@ -175,7 +180,7 @@ function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() =>
     authed ? getUserProfile() : null,
   )
-  const [dailyReminderEmails, setDailyReminderEmails] = useState(false)
+  const [reminderPreferences, setReminderPreferences] = useState<ReminderPreferencesResponse>(DEFAULT_REMINDER_PREFERENCES)
   const [reminderStatus, setReminderStatus] = useState<'idle' | 'loading' | 'saving' | 'error'>('idle')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -185,27 +190,28 @@ function App() {
 
   const handleLogout = useCallback(() => {
     authLogout()
-    setDailyReminderEmails(false)
+    setReminderPreferences(DEFAULT_REMINDER_PREFERENCES)
     setReminderStatus('idle')
   }, [])
 
-  const handleToggleDailyReminderEmails = useCallback((enabled: boolean) => {
+  const handleUpdateReminderPreferences = useCallback((preferences: ReminderPreferencesResponse) => {
     if (!ENABLE_DAILY_REMINDER_OPT_IN) return
 
-    setDailyReminderEmails(enabled)
+    const previousPreferences = reminderPreferences
+    setReminderPreferences(preferences)
     setReminderStatus('saving')
 
-    updateReminderPreferences(enabled)
+    updateReminderPreferences(preferences)
       .then((preferences) => {
-        setDailyReminderEmails(preferences.dailyReminderEmails)
+        setReminderPreferences(preferences)
         setReminderStatus('idle')
       })
       .catch((err) => {
         console.error('Failed to save reminder preferences:', err)
-        setDailyReminderEmails(!enabled)
+        setReminderPreferences(previousPreferences)
         setReminderStatus('error')
       })
-  }, [])
+  }, [reminderPreferences])
 
   const navigateAndCloseMenu = useCallback((path: string) => {
     setIsMobileMenuOpen(false)
@@ -274,15 +280,11 @@ function App() {
   const currentRoute = location.pathname
   const activeSidebarSection = currentRoute === ROOT_PATH || currentRoute.startsWith(TODAY_PATH)
     ? 'case'
-    : currentRoute.startsWith(POKEDEX_PATH) ? 'pokedex' : currentRoute.startsWith(HOW_TO_PLAY_PATH) ? 'how-to-play' : ''
-  const activeCasePage: 'overview' | 'investigation' | 'suspects' | '' = currentRoute.startsWith(TODAY_INVESTIGATION_PATH)
-    ? 'investigation'
-    : currentRoute.startsWith(TODAY_SUSPECTS_PATH) || currentRoute.startsWith(TODAY_ACCUSE_PATH)
-      ? 'suspects'
-      : caseFilePaths.has(currentRoute)
-        ? 'overview'
-        : ''
-
+    : currentRoute.startsWith(POKEDEX_PATH)
+      ? 'pokedex'
+      : currentRoute.startsWith(HOW_TO_PLAY_PATH)
+        ? 'how-to-play'
+        : currentRoute.startsWith(SETTINGS_PATH) ? 'settings' : ''
   const clearScreenState = () => {
     setSelectedLocationId(null)
     setAccusationTargetId(null)
@@ -337,7 +339,7 @@ function App() {
 
   useEffect(() => {
     if (!authed) {
-      setDailyReminderEmails(false)
+      setReminderPreferences(DEFAULT_REMINDER_PREFERENCES)
       setReminderStatus('idle')
       return
     }
@@ -347,7 +349,7 @@ function App() {
     setReminderStatus('loading')
     getReminderPreferences()
       .then((preferences) => {
-        setDailyReminderEmails(preferences.dailyReminderEmails)
+        setReminderPreferences(preferences)
         setReminderStatus('idle')
       })
       .catch((err) => {
@@ -800,6 +802,19 @@ function App() {
       title: 'Pokedex',
       outlet: <PokedexRoute authed={authed} onLogin={handleLogin} />,
     },
+    settings: {
+      url: SETTINGS_PATH,
+      title: 'Settings',
+      outlet: (
+        <SettingsRoute
+          authed={authed}
+          reminderPreferences={reminderPreferences}
+          reminderStatus={reminderStatus}
+          onLogin={handleLogin}
+          onUpdateReminderPreferences={handleUpdateReminderPreferences}
+        />
+      ),
+    },
     howToPlay: {
       url: HOW_TO_PLAY_PATH,
       title: 'How to play',
@@ -825,15 +840,12 @@ function App() {
           activeSection=""
           authed={authed}
           userProfile={userProfile}
-          showDailyReminderOptIn={ENABLE_DAILY_REMINDER_OPT_IN}
-          dailyReminderEmails={dailyReminderEmails}
-          reminderStatus={reminderStatus}
           onSelectCase={() => {}}
           onSelectPokedex={() => {}}
           onSelectHowToPlay={() => {}}
+          onSelectSettings={() => {}}
           onLogin={handleLogin}
           onLogout={handleLogout}
-          onToggleDailyReminderEmails={handleToggleDailyReminderEmails}
         />
         <div className="app-content">
           <header className="app-header notebook-card loading-case-header" aria-hidden="true">
@@ -868,40 +880,31 @@ function App() {
         authed={authed}
         userProfile={userProfile}
         caseStreak={caseStreak}
-        showDailyReminderOptIn={ENABLE_DAILY_REMINDER_OPT_IN}
-        dailyReminderEmails={dailyReminderEmails}
-        reminderStatus={reminderStatus}
         onSelectCase={() => navigate(TODAY_PATH)}
         onSelectPokedex={() => navigate(POKEDEX_PATH)}
         onSelectHowToPlay={() => navigate(HOW_TO_PLAY_PATH)}
+        onSelectSettings={() => navigate(SETTINGS_PATH)}
         onLogin={handleLogin}
         onLogout={handleLogout}
-        onToggleDailyReminderEmails={handleToggleDailyReminderEmails}
       />
 
       <div className="app-content">
-        <Header
-          currentCase={currentCase}
-          activeSection={activeSidebarSection}
-          activeCasePage={activeCasePage}
-          authed={authed}
-          userProfile={userProfile}
-          showDailyReminderOptIn={ENABLE_DAILY_REMINDER_OPT_IN}
-          dailyReminderEmails={dailyReminderEmails}
-          reminderStatus={reminderStatus}
-          isMenuOpen={isMobileMenuOpen}
-          onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
-          onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
-          onSelectInvestigation={() => navigateAndCloseMenu(TODAY_INVESTIGATION_PATH)}
-          onSelectSuspects={() => navigateAndCloseMenu(TODAY_SUSPECTS_PATH)}
-          onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}
+          <Header
+            currentCase={currentCase}
+            activeSection={activeSidebarSection}
+            authed={authed}
+            userProfile={userProfile}
+            isMenuOpen={isMobileMenuOpen}
+            onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
+            onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
+            onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}
           onSelectHowToPlay={() => navigateAndCloseMenu(HOW_TO_PLAY_PATH)}
+          onSelectSettings={() => navigateAndCloseMenu(SETTINGS_PATH)}
           onLogin={() => navigateAndCloseMenu(LOGIN_PATH)}
           onLogout={() => {
             setIsMobileMenuOpen(false)
             handleLogout()
           }}
-          onToggleDailyReminderEmails={handleToggleDailyReminderEmails}
         />
 
         {shouldRedirectFromInvalidCompletedEnding ? (

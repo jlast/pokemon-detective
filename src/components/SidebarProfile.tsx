@@ -1,25 +1,18 @@
 interface SidebarProfileProps {
   name: string
   streak?: number
-  showDailyReminderOptIn: boolean
-  dailyReminderEmails: boolean
-  reminderStatus: 'idle' | 'loading' | 'saving' | 'error'
-  onToggleDailyReminderEmails: (enabled: boolean) => void
+  onOpenSettings: () => void
   onLogout: () => void
 }
 
 export function SidebarProfile({
   name,
   streak,
-  showDailyReminderOptIn,
-  dailyReminderEmails,
-  reminderStatus,
-  onToggleDailyReminderEmails,
+  onOpenSettings,
   onLogout,
 }: SidebarProfileProps) {
   const showStreak = streak != null && streak > 0
   const streakLabel = streak === 1 ? '1 day streak' : `${streak} day streak`
-  const reminderDisabled = reminderStatus === 'loading' || reminderStatus === 'saving'
 
   return (
     <div className="sidebar-profile">
@@ -58,37 +51,19 @@ export function SidebarProfile({
         </div>
       </div>
 
-      {showDailyReminderOptIn ? (
-        <label className="reminder-settings-card sidebar-profile__reminder">
-          <span className="reminder-settings-card__icon" aria-hidden="true">🔔</span>
-          <span className="reminder-settings-card__copy">
-            <strong>Daily reminder</strong>
-            <small>Get an email when a new daily case is available.</small>
-          </span>
-          <span className="reminder-settings-card__control">
-            <input
-              className="reminder-settings-card__input"
-              type="checkbox"
-              checked={dailyReminderEmails}
-              disabled={reminderDisabled}
-              onChange={(event) => onToggleDailyReminderEmails(event.currentTarget.checked)}
-            />
-            <span className="reminder-settings-card__switch" aria-hidden="true" />
-          </span>
-        </label>
-      ) : null}
+      <div className="sidebar-profile__actions">
+        <button type="button" className="sidebar-profile__settings" onClick={onOpenSettings}>
+          Settings
+        </button>
 
-      {showDailyReminderOptIn && reminderStatus === 'error' ? (
-        <p className="sidebar-profile__reminder-error" role="status">Could not save reminder setting.</p>
-      ) : null}
-
-      <button
-        type="button"
-        className="sidebar-profile__logout"
-        onClick={onLogout}
-      >
-        Logout
-      </button>
+        <button
+          type="button"
+          className="sidebar-profile__logout"
+          onClick={onLogout}
+        >
+          Logout
+        </button>
+      </div>
     </div>
   )
 }
