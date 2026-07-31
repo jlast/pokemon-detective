@@ -976,7 +976,7 @@ function App() {
           </header>
           <div className="main-layout-single">
             <section className="notebook-card loading-puzzle-card" aria-busy="true">
-              <p className="placeholder-page">Loading today's puzzle...</p>
+              <p className="placeholder-page">{isArchivedCase ? 'Loading archived puzzle...' : "Loading today's puzzle..."}</p>
             </section>
           </div>
           <AppFooter />
