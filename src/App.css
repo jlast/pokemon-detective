@@ -1394,7 +1394,7 @@
 
 .history-card {
   display: grid;
-  grid-template-columns: minmax(8.5rem, 0.85fr) minmax(0, 2fr) auto;
+  grid-template-columns: minmax(8.5rem, 0.8fr) minmax(0, 2fr) minmax(8rem, auto);
   gap: 0.9rem;
   align-items: center;
   border: 1px solid var(--border);
@@ -1464,13 +1464,15 @@
 }
 
 .history-card__meta {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(5.5rem, auto) minmax(7.25rem, auto);
   justify-content: end;
   gap: 0.4rem;
 }
 
 .history-card__meta span {
+  width: fit-content;
+  justify-self: center;
   border: 1px dashed rgba(127, 92, 48, 0.32);
   border-radius: 999px;
   padding: 0.35rem 0.55rem;
@@ -1505,6 +1507,8 @@
 }
 
 .history-card__play {
+  width: fit-content;
+  justify-self: center;
   border: 1px solid rgba(31, 48, 80, 0.16);
   border-radius: 999px;
   padding: 0.38rem 0.7rem;
@@ -1517,8 +1521,21 @@
   box-shadow: 0 6px 12px rgba(31, 48, 80, 0.14);
 }
 
+.history-card__play--case {
+  background: #203250;
+  color: #fffdf7;
+}
+
+.history-card__play--debrief {
+  border-color: rgba(74, 93, 128, 0.2);
+  background: #e7edf5;
+  color: #203250;
+  box-shadow: 0 6px 12px rgba(31, 48, 80, 0.08);
+}
+
 .history-card__play:hover {
   background: #2b3f64;
+  color: #fffdf7;
 }
 
 .history-card__play:focus-visible {
@@ -7334,7 +7351,13 @@
   }
 
   .history-card__meta {
+    grid-template-columns: minmax(5.5rem, auto) minmax(7.25rem, auto);
     justify-content: start;
+  }
+
+  .history-card__meta span,
+  .history-card__play {
+    justify-self: center;
   }
 
   .login-page {

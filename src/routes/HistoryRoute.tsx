@@ -131,7 +131,7 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
                   <span className={`history-difficulty ${getDifficultyClassName(item.difficulty)}`}>{formatDifficulty(item.difficulty)}</span>
                   <button
                     type="button"
-                    className="history-card__play"
+                    className={`history-card__play ${item.status === 'playing' ? 'history-card__play--case' : 'history-card__play--debrief'}`}
                     onClick={() => navigate(`${TODAY_PATH}?case=${encodeURIComponent(item.caseId)}`)}
                   >
                     {getCaseActionLabel(item.status)}
