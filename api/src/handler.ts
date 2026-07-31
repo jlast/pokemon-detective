@@ -109,6 +109,8 @@ interface AdminProgressAccusation {
 
 interface AdminProgressPlayer {
   userId: string
+  email?: string
+  lastActivityAt: string | null
   playerKind: 'authenticated' | 'anonymous'
   status: 'playing' | 'solved' | 'failed'
   succeeded: boolean
@@ -167,6 +169,8 @@ const getUserInfo = async (event: ApiGatewayEvent): Promise<UserInfo> => {
 }
 
 const getDateUserId = (sub: string, caseId: string): string => `${sub}:${caseId}`
+
+const stripDateFromUserId = (userId: string): string => userId.replace(/:\d{4}-\d{2}-\d{2}$/, '')
 
 const getHeader = (event: ApiGatewayEvent, name: string): string | undefined => {
   const lowerName = name.toLowerCase()
@@ -374,6 +378,23 @@ const stripActionOutcome = (action: LocationAction & LegacyLocationActionBadges)
 
 const getProgressTtl = (): number => Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400
 
+const getActivityTimestamp = (): string => new Date().toISOString()
+
+const getProgressActivityTimestamp = (progress: PlayerProgressRecord): string | null => {
+  if (progress.lastActivityAt) return progress.lastActivityAt
+  if (typeof progress.ttl !== 'number') return null
+
+  return new Date((progress.ttl - SESSION_TTL_DAYS * 86400) * 1000).toISOString()
+}
+
+const getPlayerMetadataUpdates = (
+  userInfo: UserInfo,
+  lastActivityAt: string,
+): Partial<Pick<PlayerProgressRecord, 'email' | 'lastActivityAt'>> => ({
+  ...(userInfo.email ? { email: userInfo.email } : {}),
+  lastActivityAt,
+})
+
 const mergeUniqueIds = (current: number[], next: number[]): number[] => (
   [...new Set([...current, ...next])].sort((a, b) => a - b)
 )
@@ -499,9 +520,11 @@ const createCaseProgress = (
   caseId: string,
   fullCase: Case,
   investigationsRemaining = fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS,
+  metadata: Partial<Pick<PlayerProgressRecord, 'email' | 'lastActivityAt'>> = {},
 ): PlayerProgressRecord => ({
   userId,
   caseId,
+  ...metadata,
   status: 'playing',
   investigationsRemaining,
   accusationsRemaining: MAX_ACCUSATIONS,
@@ -824,7 +847,7 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
     const userId = getDateUserId(gameplaySub, caseId)
     let progress = await getProgress(userId)
     if (!progress) {
-      progress = createCaseProgress(userId, caseId, fullCase)
+      progress = createCaseProgress(userId, caseId, fullCase, undefined, getPlayerMetadataUpdates(userInfo, getActivityTimestamp()))
       await createProgress(progress)
     } else {
       progress = await ensureProgressDefaults(userId, progress, fullCase)
@@ -899,6 +922,8 @@ const buildAdminProgressPlayer = (fullCase: Case, progress: PlayerProgressRecord
 
   return {
     userId: progress.userId,
+    email: progress.email,
+    lastActivityAt: getProgressActivityTimestamp(progress),
     playerKind: progress.userId.startsWith('anonymous:') ? 'anonymous' : 'authenticated',
     status: progress.status,
     succeeded: progress.status === 'solved',
@@ -941,7 +966,11 @@ const handleGetAdminCaseProgress = async (
   const progressRecords = await queryProgressByCaseId(caseId)
   const players = progressRecords
     .filter((progress) => progress.status !== 'playing' || (progress.investigatedLocations?.length ?? 0) > 0)
-    .sort((left, right) => left.userId.localeCompare(right.userId))
+    .sort((left, right) => {
+      const rightActivity = getProgressActivityTimestamp(right) ?? ''
+      const leftActivity = getProgressActivityTimestamp(left) ?? ''
+      return rightActivity.localeCompare(leftActivity) || stripDateFromUserId(left.userId).localeCompare(stripDateFromUserId(right.userId))
+    })
     .map((progress) => buildAdminProgressPlayer(fullCase, progress))
 
   return ok({
@@ -1092,9 +1121,10 @@ const handleInvestigate = async (
 
   const userId = getDateUserId(gameplaySub, caseId)
   let progress = await getProgress(userId)
+  const activityAt = getActivityTimestamp()
 
   if (!progress) {
-    progress = createCaseProgress(userId, caseId, fullCase)
+    progress = createCaseProgress(userId, caseId, fullCase, undefined, getPlayerMetadataUpdates(userInfo, activityAt))
     await createProgress(progress)
   } else {
     progress = await ensureProgressDefaults(userId, progress, fullCase)
@@ -1119,6 +1149,7 @@ const handleInvestigate = async (
     investigatedLocations,
     interviewedWitnessPokemonIds,
     investigationsRemaining,
+    ...getPlayerMetadataUpdates(userInfo, activityAt),
     ttl: getProgressTtl(),
   })
 
@@ -1131,6 +1162,7 @@ const handleInvestigate = async (
     investigatedLocations,
     interviewedWitnessPokemonIds,
     investigationsRemaining,
+    ...getPlayerMetadataUpdates(userInfo, activityAt),
   }
 
   return ok({
@@ -1205,9 +1237,10 @@ const handleAccuse = async (
 
   const userId = getDateUserId(gameplaySub, caseId)
   let progress = await getProgress(userId)
+  const activityAt = getActivityTimestamp()
 
   if (!progress) {
-    progress = createCaseProgress(userId, caseId, fullCase, 0)
+    progress = createCaseProgress(userId, caseId, fullCase, 0, getPlayerMetadataUpdates(userInfo, activityAt))
     await createProgress(progress)
   } else {
     progress = await ensureProgressDefaults(userId, progress, fullCase)
@@ -1236,6 +1269,7 @@ const handleAccuse = async (
     accusationHistory,
     accusationsRemaining,
     status,
+    ...getPlayerMetadataUpdates(userInfo, activityAt),
     ttl: getProgressTtl(),
   })
 
@@ -1255,6 +1289,7 @@ const handleAccuse = async (
     accusationHistory,
     accusationsRemaining,
     status,
+    ...getPlayerMetadataUpdates(userInfo, activityAt),
   }
 
   return ok({
@@ -1289,11 +1324,12 @@ const handleClearSuspect = async (
 
   const userId = getDateUserId(gameplaySub, caseId)
   let progress = await getProgress(userId)
+  const activityAt = getActivityTimestamp()
   const fullCase = await loadCase(caseId)
   if (!fullCase) return err(404, 'Case not found')
 
   if (!progress) {
-    progress = createCaseProgress(userId, caseId, fullCase)
+    progress = createCaseProgress(userId, caseId, fullCase, undefined, getPlayerMetadataUpdates(userInfo, activityAt))
     await createProgress(progress)
   } else {
     progress = await ensureProgressDefaults(userId, progress, fullCase)
@@ -1304,9 +1340,13 @@ const handleClearSuspect = async (
     ? clearedSuspectIds.includes(suspectId) ? clearedSuspectIds : [...clearedSuspectIds, suspectId]
     : clearedSuspectIds.filter((id) => id !== suspectId)
 
-  await updateProgress(userId, { clearedSuspectIds: updated, ttl: getProgressTtl() })
+  await updateProgress(userId, {
+    clearedSuspectIds: updated,
+    ...getPlayerMetadataUpdates(userInfo, activityAt),
+    ttl: getProgressTtl(),
+  })
 
-  progress = { ...progress, clearedSuspectIds: updated }
+  progress = { ...progress, clearedSuspectIds: updated, ...getPlayerMetadataUpdates(userInfo, activityAt) }
 
   return ok({
     case: buildResponseCase(fullCase, progress),

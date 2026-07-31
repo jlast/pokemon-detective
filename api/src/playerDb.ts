@@ -24,6 +24,8 @@ export interface InvestigatedLocationRecord {
 export interface PlayerProgressRecord {
   userId: string
   caseId: string
+  email?: string
+  lastActivityAt?: string
   status: 'playing' | 'solved' | 'failed'
   investigationsRemaining: number
   accusationsRemaining: number

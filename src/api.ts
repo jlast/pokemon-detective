@@ -94,6 +94,8 @@ export interface AdminProgressAccusation {
 
 export interface AdminProgressPlayer {
   userId: string
+  email?: string
+  lastActivityAt: string | null
   playerKind: 'authenticated' | 'anonymous'
   status: 'playing' | 'solved' | 'failed'
   succeeded: boolean

@@ -16,8 +16,20 @@ interface AdminRouteProps {
 }
 
 const formatPlayerId = (player: AdminProgressPlayer): string => {
-  if (player.playerKind === 'anonymous') return player.userId.replace(/^anonymous:/, 'Anonymous ')
-  return player.userId
+  if (player.email) return player.email
+
+  const userIdWithoutDate = player.userId.replace(/:\d{4}-\d{2}-\d{2}$/, '')
+  if (player.playerKind === 'anonymous') return userIdWithoutDate.replace(/^anonymous:/, 'Anonymous ')
+  return userIdWithoutDate
+}
+
+const formatActivityTimestamp = (timestamp: string | null): string => {
+  if (!timestamp) return 'No timestamp'
+
+  return new Date(timestamp).toLocaleString(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  })
 }
 
 const getResultLabel = (player: AdminProgressPlayer): string => {
@@ -143,7 +155,8 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
                       <span className={`admin-player-card__status admin-player-card__status--${player.status}`}>
                         {getResultLabel(player)}
                       </span>
-                      <span>{player.investigationsUsed} investigations</span>
+                      <span>{formatActivityTimestamp(player.lastActivityAt)} -</span>
+                      <span>{player.investigationsUsed} investigations -</span>
                       <span>{player.accusationHistory.length} accusations</span>
                     </summary>
 
