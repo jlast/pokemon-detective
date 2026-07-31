@@ -37,6 +37,7 @@ const FEEDBACK_COMMENT_MAX_LENGTH = 1000
 const GENERAL_FEEDBACK_MESSAGE_MAX_LENGTH = 2000
 const GENERAL_FEEDBACK_CONTACT_MAX_LENGTH = 250
 const GENERAL_FEEDBACK_CONTEXT_MAX_LENGTH = 500
+const HISTORY_ARCHIVE_DAYS = 30
 
 interface ApiGatewayEvent {
   path: string
@@ -363,6 +364,15 @@ const createWitnessPokemonIdMap = (fullCase: Case, witnessPokemonIds: number[]):
 const getTodayUtc = (): string => {
   const now = new Date()
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`
+}
+
+const getPastCaseIds = (days: number): string[] => {
+  const current = new Date(`${getTodayUtc()}T00:00:00.000Z`)
+  return Array.from({ length: days }, (_, index) => {
+    const date = new Date(current)
+    date.setUTCDate(current.getUTCDate() - index - 1)
+    return date.toISOString().slice(0, 10)
+  })
 }
 
 const stripActionOutcome = (action: LocationAction & LegacyLocationActionBadges): LocationAction => {
@@ -1074,36 +1084,31 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   const pokedex = await getOrCreatePokedex(userInfo.sub)
   const caseHistory = pokedex.caseHistory ?? {}
   const caseOutcomes = pokedex.caseOutcomes ?? {}
-  const todayCaseId = getTodayUtc()
-  const caseIds = [...new Set([...Object.keys(caseOutcomes), ...Object.keys(caseHistory)])]
-    .filter((caseId) => caseId !== todayCaseId)
+  const caseIds = getPastCaseIds(HISTORY_ARCHIVE_DAYS)
   const items = (await Promise.all(caseIds.map(async (caseId): Promise<CaseHistoryItem | null> => {
+    const fullCase = await loadCase(caseId)
+    if (!fullCase) return null
+
+    const progress = await getProgress(getDateUserId(userInfo.sub, caseId))
     const stored = caseHistory[caseId]
+    const storedOutcome = caseOutcomes[caseId]
+    const status = progress?.status ?? stored?.status ?? storedOutcome ?? 'playing'
+    const completed = status === 'solved' || status === 'failed'
+    const guessCount = progress
+      ? progress.status === 'failed' ? MAX_ACCUSATIONS : progress.accusationHistory.length
+      : stored?.guessCount ?? (storedOutcome === 'failed' ? MAX_ACCUSATIONS : storedOutcome === 'solved' ? 1 : undefined)
+
     if (stored) {
       return {
         caseId,
-        status: stored.status,
-        caseTitle: stored.caseTitle,
-        difficulty: stored.difficulty,
-        culpritPokemonId: stored.status === 'playing' ? undefined : stored.culpritPokemonId,
-        culpritPokemonName: stored.status === 'playing' ? undefined : getPokemonName(stored.culpritPokemonId),
-        guessCount: stored.guessCount,
-        startedAt: stored.startedAt,
-        completedAt: stored.completedAt,
-      }
-    }
-
-    const status = caseOutcomes[caseId]
-    if (!status) return null
-
-    const fullCase = await loadCase(caseId)
-    if (!fullCase) {
-      return {
-        caseId,
         status,
-        caseTitle: 'Daily puzzle',
-        guessCount: status === 'failed' ? MAX_ACCUSATIONS : 1,
-        completedAt: `${caseId}T00:00:00.000Z`,
+        caseTitle: stored.caseTitle || fullCase.title,
+        difficulty: stored.difficulty ?? fullCase.difficulty,
+        culpritPokemonId: completed ? fullCase.culpritPokemonId : undefined,
+        culpritPokemonName: completed ? getPokemonName(fullCase.culpritPokemonId) : undefined,
+        guessCount,
+        startedAt: stored.startedAt,
+        completedAt: completed ? stored.completedAt ?? `${caseId}T00:00:00.000Z` : undefined,
       }
     }
 
@@ -1112,10 +1117,11 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
       status,
       caseTitle: fullCase.title,
       difficulty: fullCase.difficulty,
-      culpritPokemonId: fullCase.culpritPokemonId,
-      culpritPokemonName: getPokemonName(fullCase.culpritPokemonId),
-      guessCount: status === 'failed' ? MAX_ACCUSATIONS : 1,
-      completedAt: `${caseId}T00:00:00.000Z`,
+      culpritPokemonId: completed ? fullCase.culpritPokemonId : undefined,
+      culpritPokemonName: completed ? getPokemonName(fullCase.culpritPokemonId) : undefined,
+      guessCount,
+      startedAt: progress ? getProgressActivityTimestamp(progress) ?? undefined : undefined,
+      completedAt: completed ? `${caseId}T00:00:00.000Z` : undefined,
     }
   })))
     .filter((item): item is CaseHistoryItem => item !== null)
