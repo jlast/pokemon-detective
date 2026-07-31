@@ -1471,6 +1471,28 @@
   font-weight: 850;
 }
 
+.history-card__play {
+  border: 1px solid rgba(31, 48, 80, 0.16);
+  border-radius: 999px;
+  padding: 0.38rem 0.7rem;
+  background: #203250;
+  color: #fffdf7;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(31, 48, 80, 0.14);
+}
+
+.history-card__play:hover {
+  background: #2b3f64;
+}
+
+.history-card__play:focus-visible {
+  outline: 2px solid #a9c94b;
+  outline-offset: 3px;
+}
+
 .main-layout {
   display: grid;
   gap: 1rem;

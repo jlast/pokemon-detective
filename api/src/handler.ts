@@ -27,6 +27,7 @@ const jwksUrl = new URL(
 const jwks = createRemoteJWKSet(jwksUrl)
 
 const SESSION_TTL_DAYS = 7
+const CASE_DATA_TTL_DAYS = 366
 const MAX_ACCUSATIONS = 3
 const DEFAULT_INVESTIGATIONS = 6
 const SHINY_ODDS = 0.01
@@ -136,6 +137,7 @@ interface CaseHistoryItem {
   culpritPokemonName?: string
   guessCount: number
   completedAt: string
+  canReplay: boolean
 }
 
 const calculateSolvedStreak = (outcomes: Record<string, 'solved' | 'failed'>): number => {
@@ -397,6 +399,7 @@ const stripActionOutcome = (action: LocationAction & LegacyLocationActionBadges)
 }
 
 const getProgressTtl = (): number => Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400
+const getCaseDataTtl = (): number => Math.floor(Date.now() / 1000) + CASE_DATA_TTL_DAYS * 86400
 
 const getActivityTimestamp = (): string => new Date().toISOString()
 
@@ -797,7 +800,7 @@ const loadCase = async (caseId: string) => {
     || !record.difficulty
     || solutionChanged
   ) {
-    await putCaseData({ ...record, difficulty: fullCase.difficulty, typeClueSlots: fullCase.typeClueSlots, typeClueGroups: fullCase.typeClueGroups, theme: fullCase.theme, solution: normalizedSolution ?? record.solution, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap })
+    await putCaseData({ ...record, difficulty: fullCase.difficulty, typeClueSlots: fullCase.typeClueSlots, typeClueGroups: fullCase.typeClueGroups, theme: fullCase.theme, solution: normalizedSolution ?? record.solution, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap, ttl: getCaseDataTtl() })
   }
 
   return applyLocationCardVariants(assignWitnessPokemonToActions(fullCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
@@ -854,7 +857,7 @@ const generateAndStoreCase = async (caseId: string) => {
       evidenceExplanation: gameCase.solution?.evidenceExplanation ?? [],
       clearedSuspects: gameCase.solution?.clearedSuspects ?? [],
     },
-    ttl: getProgressTtl(),
+    ttl: getCaseDataTtl(),
   })
 
   return applyLocationCardVariants(assignWitnessPokemonToActions(gameCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
@@ -1049,6 +1052,7 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   const caseIds = [...new Set([...Object.keys(caseOutcomes), ...Object.keys(caseHistory)])]
   const items = (await Promise.all(caseIds.map(async (caseId): Promise<CaseHistoryItem | null> => {
     const stored = caseHistory[caseId]
+    const fullCase = await loadCase(caseId)
     if (stored) {
       return {
         caseId,
@@ -1059,13 +1063,13 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
         culpritPokemonName: getPokemonName(stored.culpritPokemonId),
         guessCount: stored.guessCount,
         completedAt: stored.completedAt,
+        canReplay: fullCase !== null,
       }
     }
 
     const status = caseOutcomes[caseId]
     if (!status) return null
 
-    const fullCase = await loadCase(caseId)
     if (!fullCase) {
       return {
         caseId,
@@ -1073,6 +1077,7 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
         caseTitle: 'Daily puzzle',
         guessCount: status === 'failed' ? MAX_ACCUSATIONS : 1,
         completedAt: `${caseId}T00:00:00.000Z`,
+        canReplay: false,
       }
     }
 
@@ -1085,6 +1090,7 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
       culpritPokemonName: getPokemonName(fullCase.culpritPokemonId),
       guessCount: status === 'failed' ? MAX_ACCUSATIONS : 1,
       completedAt: `${caseId}T00:00:00.000Z`,
+      canReplay: true,
     }
   })))
     .filter((item): item is CaseHistoryItem => item !== null)

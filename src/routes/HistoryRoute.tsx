@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getPuzzleHistory, type PuzzleHistoryResponse } from '../api'
+import { TODAY_PATH } from '../paths'
 
 interface HistoryRouteProps {
   authed: boolean
@@ -23,7 +25,10 @@ const formatDifficulty = (difficulty: string | undefined): string => (
   difficulty ? difficulty[0].toUpperCase() + difficulty.slice(1) : 'Unknown'
 )
 
+const createReplayId = (): string => `${Date.now().toString(36)}.${Math.random().toString(36).slice(2)}`.padEnd(16, '0')
+
 export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
+  const navigate = useNavigate()
   const [history, setHistory] = useState<PuzzleHistoryResponse>(emptyHistory)
   const [loading, setLoading] = useState(authed)
   const [error, setError] = useState(false)
@@ -121,6 +126,17 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
                 <div className="history-card__meta" aria-label={`${item.caseTitle} details`}>
                   <span>{formatDifficulty(item.difficulty)}</span>
                   <span>{item.guessCount} {item.guessCount === 1 ? 'guess' : 'guesses'}</span>
+                  {item.canReplay ? (
+                    <button
+                      type="button"
+                      className="history-card__play"
+                      onClick={() => navigate(`${TODAY_PATH}?case=${encodeURIComponent(item.caseId)}&replay=${encodeURIComponent(createReplayId())}`)}
+                    >
+                      Replay puzzle
+                    </button>
+                  ) : (
+                    <span>Replay unavailable</span>
+                  )}
                 </div>
               </article>
             ))}

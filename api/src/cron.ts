@@ -23,7 +23,7 @@ const getTodayUtc = (): string => {
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`
 }
 
-const SESSION_TTL_DAYS = 7
+const CASE_DATA_TTL_DAYS = 366
 const WITNESS_OPTION_COUNT = 1
 const LOCATION_CARD_VARIANTS: LocationCardVariant[] = ['detective-note', 'clipboard', 'map-fragment']
 
@@ -390,7 +390,7 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
         evidenceExplanation: gameCase.solution?.evidenceExplanation ?? [],
         clearedSuspects: gameCase.solution?.clearedSuspects ?? [],
       },
-      ttl: Math.floor(Date.now() / 1000) + SESSION_TTL_DAYS * 86400,
+      ttl: Math.floor(Date.now() / 1000) + CASE_DATA_TTL_DAYS * 86400,
     })
 
     const reminders = await sendDailyReminders(caseId)
