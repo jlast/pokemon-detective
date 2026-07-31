@@ -198,13 +198,6 @@ const AppFooter = () => (
     >
       <img src="/reddit-user.ico" alt="" aria-hidden="true" />
     </a>
-    <Link
-      className="app-footer-link app-footer-link--feedback"
-      to={FEEDBACK_PATH}
-      aria-label="Submit a bug report or feature idea"
-    >
-      <span aria-hidden="true">?</span>
-    </Link>
   </footer>
 )
 
