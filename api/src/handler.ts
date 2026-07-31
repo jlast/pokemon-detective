@@ -965,6 +965,12 @@ const getCaseConfigTitle = (configId: string): string => (
   allCases.find((caseConfig) => caseConfig.id === configId)?.title ?? 'Daily puzzle'
 )
 
+const getCaseRecordTitle = (record: CaseDataRecord): string => {
+  if (record.theme?.kind === 'stolen-item') return `The Stolen ${record.theme.name}`
+  if (record.theme?.kind === 'missing-pokemon') return `The Missing ${record.theme.name}`
+  return getCaseConfigTitle(record.configId)
+}
+
 const resolveAdminEvidenceBadges = (
   record: InvestigatedLocationRecord,
   action: LocationAction | undefined,
@@ -1108,7 +1114,7 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
     return {
       caseId: record.caseId,
       status,
-      caseTitle: stored?.caseTitle || getCaseConfigTitle(record.configId),
+      caseTitle: stored?.caseTitle || getCaseRecordTitle(record),
       difficulty: stored?.difficulty ?? record.difficulty,
       ...(resolved ? {
         culpritPokemonId: record.culpritPokemonId,
