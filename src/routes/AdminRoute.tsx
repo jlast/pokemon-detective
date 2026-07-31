@@ -5,6 +5,8 @@ import {
   type AdminCaseProgressResponse,
   type AdminProgressPlayer,
 } from '../api'
+import { EvidenceBadgeList } from '../components/Evidence/EvidenceBadge'
+import { getClueBadgeGroupsFromBadges } from '../game/caseModel'
 
 const getTodayUtc = () => new Date().toISOString().slice(0, 10)
 
@@ -23,6 +25,12 @@ const getResultLabel = (player: AdminProgressPlayer): string => {
   if (player.failed) return 'Failed'
   return 'Playing'
 }
+
+const getPlayerClueBadgeGroups = (player: AdminProgressPlayer) => (
+  getClueBadgeGroupsFromBadges(player.investigatedLocations.flatMap((investigation) => (
+    investigation.evidenceBadges ?? []
+  )))
+)
 
 export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
   const [caseId, setCaseId] = useState(getTodayUtc)
@@ -121,7 +129,7 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
 
             <div className="admin-page__case-note">
               <strong>{progress.caseTitle}</strong>
-              <span>Culprit: {progress.culpritPokemonName} #{progress.culpritPokemonId}</span>
+              <span>Culprit: {progress.culpritPokemonName}</span>
             </div>
 
             {progress.players.length === 0 ? (
@@ -142,26 +150,15 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
                     <div className="admin-player-card__details">
                       <section>
                         <h3>Evidence Gathered</h3>
-                        {player.investigatedLocations.length === 0 ? (
-                          <p className="subtle-text">No investigations recorded.</p>
+                        {getPlayerClueBadgeGroups(player).length === 0 ? (
+                          <p className="subtle-text">No clue badges recorded.</p>
                         ) : (
-                          <div className="admin-detail-list">
-                            {player.investigatedLocations.map((investigation) => (
-                              <article key={`${investigation.locationId}:${investigation.actionId}`} className="admin-detail-card">
-                                <strong>{investigation.evidenceTitle ?? investigation.actionLabel}</strong>
-                                <span>{investigation.locationName} / {investigation.actionLabel}</span>
-                                <p>{investigation.evidenceText ?? investigation.observationText}</p>
-                                {investigation.witnessPokemonName ? (
-                                  <small>Witness: {investigation.witnessPokemonName} #{investigation.witnessPokemonId}</small>
-                                ) : null}
-                                {investigation.evidenceBadges?.length ? (
-                                  <div className="admin-badge-list">
-                                    {investigation.evidenceBadges.map((badge) => (
-                                      <span key={`${investigation.locationId}:${investigation.actionId}:${badge.text}`}>{badge.text}</span>
-                                    ))}
-                                  </div>
-                                ) : null}
-                              </article>
+                          <div className="case-clue-list admin-case-clue-list">
+                            {getPlayerClueBadgeGroups(player).map((group) => (
+                              <div key={group.evidenceId ?? group.hintType} className="solution-clue-badge-group is-discovered">
+                                <span className="solution-clue-badge-group__label">{group.hintType}</span>
+                                <EvidenceBadgeList badges={group.badges} />
+                              </div>
                             ))}
                           </div>
                         )}
@@ -178,7 +175,7 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
                                 key={`${player.userId}:${accusation.pokemonId}`}
                                 className={accusation.correct ? 'is-correct' : undefined}
                               >
-                                {accusation.pokemonName} #{accusation.pokemonId}{accusation.correct ? ' correct' : ' wrong'}
+                                {accusation.pokemonName}{accusation.correct ? ' correct' : ' wrong'}
                               </span>
                             ))}
                           </div>

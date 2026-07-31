@@ -192,6 +192,12 @@ export interface Case {
   status: CaseStatus
 }
 
+export interface ClueBadgeGroup {
+  evidenceId?: string
+  hintType: string
+  badges: EvidenceBadgeData[]
+}
+
 export function getDiscoveredEvidence(caseData: Case): Evidence[] {
   const discovered: Evidence[] = []
   const seenEvidenceIds = new Set<string>()
@@ -372,10 +378,10 @@ export function getSolutionClueBadgesFromEvidence(evidence: Evidence[]): Evidenc
   })
 }
 
-export function getSolutionClueBadgeGroups(solution?: CaseSolution | null): { evidenceId?: string; hintType: string; badges: EvidenceBadgeData[] }[] {
-  const groups = new Map<string, { evidenceId?: string; hintType: string; badges: EvidenceBadgeData[] }>()
+export function getClueBadgeGroupsFromBadges(badges: EvidenceBadgeData[]): ClueBadgeGroup[] {
+  const groups = new Map<string, ClueBadgeGroup>()
 
-  for (const badge of getSolutionClueBadges(solution)) {
+  for (const badge of badges) {
     const hintType = inferClueHintType(badge)
     const key = badge.evidenceId ?? hintType
     const group = groups.get(key) ?? { evidenceId: badge.evidenceId, hintType, badges: [] }
@@ -383,4 +389,8 @@ export function getSolutionClueBadgeGroups(solution?: CaseSolution | null): { ev
   }
 
   return [...groups.values()]
+}
+
+export function getSolutionClueBadgeGroups(solution?: CaseSolution | null): ClueBadgeGroup[] {
+  return getClueBadgeGroupsFromBadges(getSolutionClueBadges(solution))
 }

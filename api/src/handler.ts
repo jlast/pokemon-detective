@@ -1,6 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { allCases, createCaseById, pickRandomCaseDifficulty, rebuildFullCase } from '../../src/game/cases/index'
-import { getSolutionClueBadgesFromEvidence, type Case, type CaseDifficulty, type CaseSolution, type CaseStatus, type EvidenceBadgeData, type LocationCardVariant, type LocationAction } from '../../src/game/caseModel'
+import { getSolutionClueBadgesFromEvidence, getSolutionClueHintType, type Case, type CaseDifficulty, type CaseSolution, type CaseStatus, type EvidenceBadgeData, type LocationCardVariant, type LocationAction } from '../../src/game/caseModel'
 import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseStats } from './caseDataDb'
@@ -853,6 +853,21 @@ const getPokemonName = (pokemonId: number): string => (
   pokemonData.find((pokemon) => pokemon.id === pokemonId)?.name ?? `Pokemon #${pokemonId}`
 )
 
+const resolveAdminEvidenceBadges = (
+  record: InvestigatedLocationRecord,
+  action: LocationAction | undefined,
+): EvidenceBadgeData[] | undefined => {
+  const badges = resolveEvidenceBadges(record, action)
+  if (!badges?.length) return undefined
+
+  const hintType = action?.clueRule ? getSolutionClueHintType(action.clueRule.axis) : undefined
+  return badges.map((badge) => ({
+    ...badge,
+    evidenceId: badge.evidenceId ?? record.evidenceId,
+    hintType: badge.hintType ?? hintType,
+  }))
+}
+
 const buildAdminProgressPlayer = (fullCase: Case, progress: PlayerProgressRecord): AdminProgressPlayer => {
   const investigationsUsed = (fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS) - progress.investigationsRemaining
   const investigatedLocations = progress.investigatedLocations.map((record) => {
@@ -868,7 +883,7 @@ const buildAdminProgressPlayer = (fullCase: Case, progress: PlayerProgressRecord
       evidenceId: record.evidenceId,
       evidenceTitle: resolveEvidenceTitle(record, action),
       evidenceText: resolveEvidenceText(record, action),
-      evidenceBadges: resolveEvidenceBadges(record, action),
+      evidenceBadges: resolveAdminEvidenceBadges(record, action),
       witnessPokemonId: record.witnessPokemonId,
       witnessPokemonName: record.witnessPokemonId ? getPokemonName(record.witnessPokemonId) : undefined,
     }
@@ -922,6 +937,7 @@ const handleGetAdminCaseProgress = async (
 
   const progressRecords = await queryProgressByCaseId(caseId)
   const players = progressRecords
+    .filter((progress) => progress.status !== 'playing' || (progress.investigatedLocations?.length ?? 0) > 0)
     .sort((left, right) => left.userId.localeCompare(right.userId))
     .map((progress) => buildAdminProgressPlayer(fullCase, progress))
 
