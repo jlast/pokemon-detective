@@ -5,6 +5,7 @@ const client = new DynamoDBClient({})
 const doc = DynamoDBDocumentClient.from(client, { marshallOptions: { removeUndefinedValues: true } })
 
 export interface CaseFeedbackRecord {
+  feedbackKind?: 'case'
   feedbackId: string
   caseId: string
   userId: string
@@ -15,8 +16,25 @@ export interface CaseFeedbackRecord {
   ttl: number
 }
 
+export interface GeneralFeedbackRecord {
+  feedbackKind: 'general'
+  feedbackId: string
+  userId: string
+  feedbackType: 'bug' | 'feature'
+  message: string
+  contact?: string
+  pageUrl?: string
+  userAgent?: string
+  createdAt: string
+  ttl: number
+}
+
 const TABLE = process.env.FEEDBACK_TABLE ?? 'CaseFeedback'
 
 export const putCaseFeedback = async (record: CaseFeedbackRecord): Promise<void> => {
+  await doc.send(new PutCommand({ TableName: TABLE, Item: record }))
+}
+
+export const putGeneralFeedback = async (record: GeneralFeedbackRecord): Promise<void> => {
   await doc.send(new PutCommand({ TableName: TABLE, Item: record }))
 }

@@ -4,8 +4,8 @@ import { getSolutionClueBadgesFromEvidence, getSolutionClueHintType, type Case, 
 import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseStats } from './caseDataDb'
-import { publishFeedbackCommentAlert } from './feedbackAlert'
-import { putCaseFeedback } from './feedbackDb'
+import { publishFeedbackCommentAlert, publishGeneralFeedbackAlert } from './feedbackAlert'
+import { putCaseFeedback, putGeneralFeedback } from './feedbackDb'
 import { getReminderSubscription, putReminderSubscription } from './reminderSubscriptionDb'
 import { validateGeneratedCase } from './validateGeneratedCase'
 import {
@@ -33,6 +33,9 @@ const SHINY_ODDS = 0.01
 const WITNESS_OPTION_COUNT = 1
 const LOCATION_CARD_VARIANTS: LocationCardVariant[] = ['detective-note', 'clipboard', 'map-fragment']
 const FEEDBACK_COMMENT_MAX_LENGTH = 1000
+const GENERAL_FEEDBACK_MESSAGE_MAX_LENGTH = 2000
+const GENERAL_FEEDBACK_CONTACT_MAX_LENGTH = 250
+const GENERAL_FEEDBACK_CONTEXT_MAX_LENGTH = 500
 
 interface ApiGatewayEvent {
   path: string
@@ -1318,6 +1321,77 @@ const isRating = (value: unknown): value is number => (
   typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 5
 )
 
+const isGeneralFeedbackType = (value: unknown): value is 'bug' | 'feature' => (
+  value === 'bug' || value === 'feature'
+)
+
+const trimOptionalString = (value: unknown, maxLength: number): string | undefined | null => {
+  if (value === undefined) return undefined
+  if (typeof value !== 'string') return null
+
+  const trimmed = value.trim()
+  if (trimmed.length > maxLength) return null
+  return trimmed || undefined
+}
+
+const handleSubmitGeneralFeedback = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
+  const userInfo = await getUserInfo(event)
+  const gameplaySub = getGameplaySub(event, userInfo)
+  if (!gameplaySub) return err(401, 'Authentication required')
+
+  let body: {
+    feedbackType?: unknown
+    message?: unknown
+    contact?: unknown
+    pageUrl?: unknown
+    userAgent?: unknown
+  } = {}
+  try {
+    body = JSON.parse(event.body ?? '{}')
+  } catch {
+    return err(400, 'Invalid JSON')
+  }
+
+  if (!isGeneralFeedbackType(body.feedbackType)) return err(400, 'Invalid feedback type')
+  if (typeof body.message !== 'string') return err(400, 'Message is required')
+
+  const message = body.message.trim()
+  if (!message) return err(400, 'Message is required')
+  if (message.length > GENERAL_FEEDBACK_MESSAGE_MAX_LENGTH) return err(400, 'Message is too long')
+
+  const contact = trimOptionalString(body.contact, GENERAL_FEEDBACK_CONTACT_MAX_LENGTH)
+  if (contact === null) return err(400, 'Invalid contact')
+
+  const pageUrl = trimOptionalString(body.pageUrl, GENERAL_FEEDBACK_CONTEXT_MAX_LENGTH)
+  if (pageUrl === null) return err(400, 'Invalid page URL')
+
+  const userAgent = trimOptionalString(body.userAgent, GENERAL_FEEDBACK_CONTEXT_MAX_LENGTH)
+  if (userAgent === null) return err(400, 'Invalid user agent')
+
+  const feedbackRecord = {
+    feedbackKind: 'general' as const,
+    feedbackId: `general:${Date.now()}:${Math.random().toString(36).slice(2)}`,
+    userId: gameplaySub,
+    feedbackType: body.feedbackType,
+    message,
+    contact,
+    pageUrl,
+    userAgent,
+    createdAt: new Date().toISOString(),
+    ttl: getProgressTtl(),
+  }
+
+  await putGeneralFeedback(feedbackRecord)
+
+  try {
+    await publishGeneralFeedbackAlert(feedbackRecord)
+  } catch (error) {
+    console.error('Failed to publish general feedback alert:', error)
+  }
+
+  return ok({ submitted: true })
+}
+
 const handleSubmitFeedback = async (
   caseId: string,
   event: ApiGatewayEvent,
@@ -1411,6 +1485,10 @@ export const handler = async (
 
     if (method === 'POST' && path === '/api/reminder-preferences') {
       return await handleUpdateReminderPreferences(event)
+    }
+
+    if (method === 'POST' && path === '/api/feedback') {
+      return await handleSubmitGeneralFeedback(event)
     }
 
     const apiCasesMatch = path.match(/^\/api\/cases\/([^/]+)$/)

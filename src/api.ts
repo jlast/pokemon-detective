@@ -53,6 +53,14 @@ export interface CaseFeedbackPayload {
   comment?: string
 }
 
+export interface GeneralFeedbackPayload {
+  feedbackType: 'bug' | 'feature'
+  message: string
+  contact?: string
+  pageUrl?: string
+  userAgent?: string
+}
+
 export interface ReminderPreferencesResponse {
   dailyReminderEmails: boolean
   unfinishedCaseReminderEmails: boolean
@@ -217,6 +225,21 @@ export const submitCaseFeedback = async (
 ): Promise<{ submitted: true }> => {
   const res = await fetch(
     `${BASE}/api/cases/${enc(caseId)}/feedback`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...await authHeaders() },
+      body: JSON.stringify(payload),
+    },
+  )
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
+export const submitGeneralFeedback = async (
+  payload: GeneralFeedbackPayload,
+): Promise<{ submitted: true }> => {
+  const res = await fetch(
+    `${BASE}/api/feedback`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...await authHeaders() },

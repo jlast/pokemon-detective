@@ -10,6 +10,7 @@ interface DesktopSidebarProps {
   onSelectCase: () => void
   onSelectPokedex: () => void
   onSelectHowToPlay: () => void
+  onSelectFeedback: () => void
   onSelectSettings: () => void
   onSelectAdmin: () => void
   onLogin: () => void
@@ -25,6 +26,7 @@ export function DesktopSidebar({
   onSelectCase,
   onSelectPokedex,
   onSelectHowToPlay,
+  onSelectFeedback,
   onSelectSettings,
   onSelectAdmin,
   onLogin,
@@ -75,6 +77,14 @@ export function DesktopSidebar({
           onClick={onSelectHowToPlay}
         >
           How to play
+        </button>
+
+        <button
+          type="button"
+          className={`sidebar-nav-button ${activeSection === 'feedback' ? 'is-active' : ''}`}
+          onClick={onSelectFeedback}
+        >
+          Bugs & ideas
         </button>
 
         {isAdmin ? (

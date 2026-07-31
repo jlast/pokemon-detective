@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import './App.css'
 import { DesktopSidebar } from './components/DesktopSidebar'
 import { Header } from './components/Header'
@@ -10,6 +10,7 @@ import { CaseOverviewRoute } from './routes/CaseOverviewRoute'
 import { CaseRoute } from './routes/CaseRoute'
 import { EndingRoute } from './routes/EndingRoute'
 import { InvestigationLocationRoute } from './routes/InvestigationLocationRoute'
+import { FeedbackRoute } from './routes/FeedbackRoute'
 import { HowToPlayRoute } from './routes/HowToPlayRoute'
 import { PokedexRoute } from './routes/PokedexRoute'
 import { SettingsRoute } from './routes/SettingsRoute'
@@ -42,6 +43,7 @@ import { allCases } from './game/cases'
 import type { Case, Suspect, SuspectNoteStatus } from './game/caseModel'
 import {
   CALLBACK_PATH,
+  FEEDBACK_PATH,
   HOW_TO_PLAY_PATH,
   LOGIN_PATH,
   POKEDEX_PATH,
@@ -196,6 +198,13 @@ const AppFooter = () => (
     >
       <img src="/reddit-user.ico" alt="" aria-hidden="true" />
     </a>
+    <Link
+      className="app-footer-link app-footer-link--feedback"
+      to={FEEDBACK_PATH}
+      aria-label="Submit a bug report or feature idea"
+    >
+      <span aria-hidden="true">?</span>
+    </Link>
   </footer>
 )
 
@@ -317,13 +326,15 @@ function App() {
   const currentRoute = location.pathname
   const activeSidebarSection = currentRoute === ROOT_PATH || currentRoute.startsWith(TODAY_PATH)
     ? 'case'
-    : currentRoute.startsWith(POKEDEX_PATH)
+        : currentRoute.startsWith(POKEDEX_PATH)
       ? 'pokedex'
         : currentRoute.startsWith(HOW_TO_PLAY_PATH)
           ? 'how-to-play'
-          : currentRoute.startsWith(SETTINGS_PATH)
-            ? 'settings'
-            : currentRoute.startsWith(ADMIN_PATH) ? 'admin' : ''
+          : currentRoute.startsWith(FEEDBACK_PATH)
+            ? 'feedback'
+            : currentRoute.startsWith(SETTINGS_PATH)
+              ? 'settings'
+              : currentRoute.startsWith(ADMIN_PATH) ? 'admin' : ''
   const clearScreenState = () => {
     setSelectedLocationId(null)
     setAccusationTargetId(null)
@@ -875,6 +886,11 @@ function App() {
         />
       ),
     },
+    feedback: {
+      url: FEEDBACK_PATH,
+      title: 'Bugs & Ideas',
+      outlet: <FeedbackRoute />,
+    },
     admin: {
       url: ADMIN_PATH,
       title: 'Admin',
@@ -909,6 +925,7 @@ function App() {
           onSelectCase={() => {}}
           onSelectPokedex={() => {}}
           onSelectHowToPlay={() => {}}
+          onSelectFeedback={() => {}}
           onSelectSettings={() => {}}
           onSelectAdmin={() => {}}
           onLogin={handleLogin}
@@ -952,6 +969,7 @@ function App() {
         onSelectCase={() => navigate(TODAY_PATH)}
         onSelectPokedex={() => navigate(POKEDEX_PATH)}
         onSelectHowToPlay={() => navigate(HOW_TO_PLAY_PATH)}
+        onSelectFeedback={() => navigate(FEEDBACK_PATH)}
         onSelectSettings={() => navigate(SETTINGS_PATH)}
         onSelectAdmin={() => navigate(ADMIN_PATH)}
         onLogin={handleLogin}
@@ -970,6 +988,7 @@ function App() {
             onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
             onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}
           onSelectHowToPlay={() => navigateAndCloseMenu(HOW_TO_PLAY_PATH)}
+          onSelectFeedback={() => navigateAndCloseMenu(FEEDBACK_PATH)}
           onSelectSettings={() => navigateAndCloseMenu(SETTINGS_PATH)}
           onSelectAdmin={() => navigateAndCloseMenu(ADMIN_PATH)}
           onLogin={() => navigateAndCloseMenu(LOGIN_PATH)}

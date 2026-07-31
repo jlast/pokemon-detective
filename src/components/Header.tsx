@@ -12,6 +12,7 @@ interface HeaderProps {
   onSelectCase: () => void
   onSelectPokedex: () => void
   onSelectHowToPlay: () => void
+  onSelectFeedback: () => void
   onSelectSettings: () => void
   onSelectAdmin: () => void
   onLogin: () => void
@@ -29,6 +30,7 @@ export function Header({
   onSelectCase,
   onSelectPokedex,
   onSelectHowToPlay,
+  onSelectFeedback,
   onSelectSettings,
   onSelectAdmin,
   onLogin,
@@ -110,6 +112,17 @@ export function Header({
               <span>
                 <strong>How to play</strong>
                 <small>Rules, clues, accusations</small>
+              </span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-main-menu-item ${activeSection === 'feedback' ? 'is-active' : ''}`}
+              onClick={onSelectFeedback}
+            >
+              <span className="mobile-main-menu-icon mobile-main-menu-icon--feedback" aria-hidden="true" />
+              <span>
+                <strong>Bugs & ideas</strong>
+                <small>Submit reports or suggestions</small>
               </span>
             </button>
             {isAdmin ? (
