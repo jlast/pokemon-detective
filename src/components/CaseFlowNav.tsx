@@ -15,6 +15,7 @@ interface CaseFlowNavProps {
 export function CaseFlowNav({ currentCase }: CaseFlowNavProps) {
   const location = useLocation()
   const navigate = useNavigate()
+  const withSearch = (path: string) => `${path}${location.search}`
   const hasLocationsToResearch = currentCase.locations.some((caseLocation) => !caseLocation.investigated)
   const notificationTab = hasLocationsToResearch ? 'evidence' : currentCase.status === 'active' ? 'suspects' : ''
 
@@ -33,7 +34,7 @@ export function CaseFlowNav({ currentCase }: CaseFlowNavProps) {
             type="button"
             className={`case-flow-tab${isActive ? ' is-active' : ''}${notificationTab === tab.id ? ' has-notification' : ''}`}
             aria-current={isActive ? 'page' : undefined}
-            onClick={() => navigate(tab.path)}
+            onClick={() => navigate(withSearch(tab.path))}
           >
             <span className={`case-flow-tab-icon ${tab.iconClass}`} aria-hidden="true" />
             {notificationTab === tab.id ? <span className="case-flow-tab-notification" aria-hidden="true" /> : null}

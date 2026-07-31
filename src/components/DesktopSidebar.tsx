@@ -9,6 +9,7 @@ interface DesktopSidebarProps {
   caseStreak?: number
   onSelectCase: () => void
   onSelectPokedex: () => void
+  onSelectHistory: () => void
   onSelectHowToPlay: () => void
   onSelectFeedback: () => void
   onSelectSettings: () => void
@@ -25,6 +26,7 @@ export function DesktopSidebar({
   caseStreak,
   onSelectCase,
   onSelectPokedex,
+  onSelectHistory,
   onSelectHowToPlay,
   onSelectFeedback,
   onSelectSettings,
@@ -55,6 +57,8 @@ export function DesktopSidebar({
       </div>
 
       <div className="desktop-sidebar-section">
+        <p className="sidebar-nav-section-label">Today</p>
+
         <button
           type="button"
           className={`sidebar-nav-button ${activeSection === 'case' ? 'is-active' : ''}`}
@@ -62,6 +66,8 @@ export function DesktopSidebar({
         >
           Today's case
         </button>
+
+        <p className="sidebar-nav-section-label">Collection</p>
 
         <button
           type="button"
@@ -73,18 +79,20 @@ export function DesktopSidebar({
 
         <button
           type="button"
+          className={`sidebar-nav-button ${activeSection === 'history' ? 'is-active' : ''}`}
+          onClick={onSelectHistory}
+        >
+          Archived puzzles
+        </button>
+
+        <p className="sidebar-nav-section-label">Support</p>
+
+        <button
+          type="button"
           className={`sidebar-nav-button ${activeSection === 'how-to-play' ? 'is-active' : ''}`}
           onClick={onSelectHowToPlay}
         >
           How to play
-        </button>
-
-        <button
-          type="button"
-          className={`sidebar-nav-button ${activeSection === 'feedback' ? 'is-active' : ''}`}
-          onClick={onSelectFeedback}
-        >
-          Bugs & ideas
         </button>
 
         {isAdmin ? (
@@ -104,16 +112,26 @@ export function DesktopSidebar({
             name={userProfile.name ?? userProfile.email ?? 'Detective'}
             streak={caseStreak}
             onOpenSettings={onSelectSettings}
+            onReportBug={onSelectFeedback}
             onLogout={onLogout}
           />
         ) : (
-          <button
-            type="button"
-            className="sidebar-nav-button"
-            onClick={onLogin}
-          >
-            Login
-          </button>
+          <div className="sidebar-guest-actions">
+            <button
+              type="button"
+              className="sidebar-guest-action sidebar-guest-action--primary"
+              onClick={onLogin}
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              className="sidebar-guest-action"
+              onClick={onSelectFeedback}
+            >
+              Report Bug
+            </button>
+          </div>
         )}
       </div>
     </aside>

@@ -11,6 +11,7 @@ import { CaseRoute } from './routes/CaseRoute'
 import { EndingRoute } from './routes/EndingRoute'
 import { InvestigationLocationRoute } from './routes/InvestigationLocationRoute'
 import { FeedbackRoute } from './routes/FeedbackRoute'
+import { HistoryRoute } from './routes/HistoryRoute'
 import { HowToPlayRoute } from './routes/HowToPlayRoute'
 import { PokedexRoute } from './routes/PokedexRoute'
 import { SettingsRoute } from './routes/SettingsRoute'
@@ -18,6 +19,7 @@ import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
 import {
   getCurrentCase,
+  getCase,
   getAdminSession,
   getReminderPreferences,
   updateReminderPreferences,
@@ -44,6 +46,7 @@ import type { Case, Suspect, SuspectNoteStatus } from './game/caseModel'
 import {
   CALLBACK_PATH,
   FEEDBACK_PATH,
+  HISTORY_PATH,
   HOW_TO_PLAY_PATH,
   LOGIN_PATH,
   POKEDEX_PATH,
@@ -75,6 +78,7 @@ import {
 } from './auth'
 
 const getTodayCaseId = () => new Date().toISOString().slice(0, 10)
+const CASE_ID_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 const MAX_ACCUSATIONS = 3
 const ENABLE_DAILY_REMINDER_OPT_IN = true
 const DEFAULT_REMINDER_PREFERENCES: ReminderPreferencesResponse = {
@@ -215,6 +219,15 @@ const AppFooter = () => (
 function App() {
   const location = useLocation()
   const navigate = useNavigate()
+  const todayCaseId = getTodayCaseId()
+  const activeCaseId = useMemo(() => {
+    const requestedCaseId = new URLSearchParams(location.search).get('case')?.trim() ?? ''
+    return CASE_ID_PATTERN.test(requestedCaseId) ? requestedCaseId : todayCaseId
+  }, [location.search, todayCaseId])
+  const isArchivedCase = activeCaseId !== todayCaseId
+  const withActiveCase = useCallback((path: string) => (
+    isArchivedCase && path.startsWith(TODAY_PATH) ? `${path}?case=${encodeURIComponent(activeCaseId)}` : path
+  ), [activeCaseId, isArchivedCase])
 
   const [caseData, setCaseData] = useState<Case | null>(null)
   const [loading, setLoading] = useState(true)
@@ -332,13 +345,15 @@ function App() {
     ? 'case'
         : currentRoute.startsWith(POKEDEX_PATH)
       ? 'pokedex'
-        : currentRoute.startsWith(HOW_TO_PLAY_PATH)
-          ? 'how-to-play'
-          : currentRoute.startsWith(FEEDBACK_PATH)
-            ? 'feedback'
-            : currentRoute.startsWith(SETTINGS_PATH)
-              ? 'settings'
-              : currentRoute.startsWith(ADMIN_PATH) ? 'admin' : ''
+        : currentRoute.startsWith(HISTORY_PATH)
+          ? 'history'
+          : currentRoute.startsWith(HOW_TO_PLAY_PATH)
+            ? 'how-to-play'
+            : currentRoute.startsWith(FEEDBACK_PATH)
+              ? 'feedback'
+              : currentRoute.startsWith(SETTINGS_PATH)
+                ? 'settings'
+                : currentRoute.startsWith(ADMIN_PATH) ? 'admin' : ''
   const clearScreenState = () => {
     setSelectedLocationId(null)
     setAccusationTargetId(null)
@@ -352,7 +367,7 @@ function App() {
   const loadCase = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await getCurrentCase()
+      const data = isArchivedCase ? await getCase(activeCaseId) : await getCurrentCase()
       setCaseData(applyCurrentCaseAssets(data.case))
       setInvestigationsRemaining(data.investigationsRemaining)
       setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
@@ -364,7 +379,7 @@ function App() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [activeCaseId, isArchivedCase])
 
   useEffect(() => {
     if (currentRoute === '/callback') {
@@ -454,44 +469,44 @@ function App() {
   const startInvestigation = () => {
     if (currentCase) {
       trackCaseStarted({
-        caseId: getTodayCaseId(),
+        caseId: activeCaseId,
         authed,
         investigationsRemaining,
         accusationsRemaining,
       })
     }
-    navigate(TODAY_INVESTIGATION_PATH)
+    navigate(withActiveCase(TODAY_INVESTIGATION_PATH))
   }
 
   const toggleRuledOut = (suspectId: number) => {
     const current = suspectNotes.get(suspectId)
     const newStatus = current?.noteStatus === 'ruled-out' ? 'suspect' : 'ruled-out'
     updateSuspectNote(suspectId, () => ({ noteStatus: newStatus }))
-    apiClearSuspect(getTodayCaseId(), suspectId, newStatus === 'ruled-out').catch((err) =>
+    apiClearSuspect(activeCaseId, suspectId, newStatus === 'ruled-out').catch((err) =>
       console.error('Failed to sync suspect status:', err),
     )
   }
 
   const setSuspectNoteStatus = (suspectId: number, noteStatus: SuspectNoteStatus) => {
     updateSuspectNote(suspectId, () => ({ noteStatus }))
-    apiClearSuspect(getTodayCaseId(), suspectId, noteStatus === 'ruled-out').catch((err) =>
+    apiClearSuspect(activeCaseId, suspectId, noteStatus === 'ruled-out').catch((err) =>
       console.error('Failed to sync suspect status:', err),
     )
   }
 
   const inspectSuspect = (suspectId: number) => {
-    navigate(suspectPath(suspectId))
+    navigate(withActiveCase(suspectPath(suspectId)))
   }
 
   const openAccusation = (suspectId: number) => {
     setAccusationTargetId(suspectId)
-    navigate(accusationPath(suspectId))
+    navigate(withActiveCase(accusationPath(suspectId)))
   }
 
   const closeAccusation = () => {
     const suspectId = accusationTargetId
     setAccusationTargetId(null)
-    navigate(suspectId ? suspectPath(suspectId) : TODAY_SUSPECTS_PATH)
+    navigate(withActiveCase(suspectId ? suspectPath(suspectId) : TODAY_SUSPECTS_PATH))
   }
 
   const confirmAccusation = async () => {
@@ -499,7 +514,7 @@ function App() {
 
     if (authed) {
       try {
-        const caseId = getTodayCaseId()
+        const caseId = activeCaseId
         const data = await apiAccuse(caseId, accusationTarget.pokemonId)
         setCaseData(data.case)
         setAccusationHistory(data.accusationHistory ?? [])
@@ -531,7 +546,7 @@ function App() {
           })
           setCaseStreak(trackStreak(caseId, 'solved', data.caseStreak ?? 0))
           resetTransientUi()
-          navigate(endingPath('solved'))
+          navigate(withActiveCase(endingPath('solved')))
         } else if (data.status === 'failed') {
           trackCaseFailed({
             caseId,
@@ -542,15 +557,15 @@ function App() {
           })
           setCaseStreak(trackStreak(caseId, 'failed', data.caseStreak ?? 0))
           resetTransientUi()
-          navigate(endingPath('failed'))
+          navigate(withActiveCase(endingPath('failed')))
         } else {
-          navigate(suspectPath(accusationTarget.pokemonId))
+          navigate(withActiveCase(suspectPath(accusationTarget.pokemonId)))
         }
       } catch (err) {
         console.error('Accusation failed:', err)
       }
     } else {
-      const caseId = getTodayCaseId()
+      const caseId = activeCaseId
       let accusationHistoryAfterSubmit: number[] = []
       let accusationsRemainingAfterSubmit = MAX_ACCUSATIONS
       let caseStreakAfterSubmit = 0
@@ -596,7 +611,7 @@ function App() {
         })
         setCaseStreak(trackStreak(caseId, 'solved', caseStreakAfterSubmit))
         resetTransientUi()
-        navigate(endingPath('solved'))
+        navigate(withActiveCase(endingPath('solved')))
       } else if (status === 'failed') {
         trackCaseFailed({
           caseId,
@@ -607,16 +622,16 @@ function App() {
         })
         setCaseStreak(trackStreak(caseId, 'failed', caseStreakAfterSubmit))
         resetTransientUi()
-        navigate(endingPath('failed'))
+        navigate(withActiveCase(endingPath('failed')))
       } else {
-        navigate(suspectPath(accusationTarget.pokemonId))
+        navigate(withActiveCase(suspectPath(accusationTarget.pokemonId)))
       }
     }
   }
 
   const openLocation = (locationId: string) => {
     setSelectedLocationId(locationId)
-    navigate(investigationLocationPath(locationId))
+    navigate(withActiveCase(investigationLocationPath(locationId)))
   }
 
   const investigateLocation = async (locationId: string, actionId: string, witnessPokemonId?: number) => {
@@ -624,7 +639,7 @@ function App() {
 
     if (authed) {
       try {
-        const caseId = getTodayCaseId()
+        const caseId = activeCaseId
         const data = await apiInvestigate(caseId, locationId, actionId, witnessPokemonId)
         setCaseData((prev) => prev
           ? {
@@ -669,7 +684,7 @@ function App() {
       const action = location.actions.find((a) => a.id === actionId)
       if (!action) return
       try {
-        const caseId = getTodayCaseId()
+        const caseId = activeCaseId
         const data = await apiInvestigate(caseId, locationId, actionId, witnessPokemonId)
         setCaseData({
           ...caseData,
@@ -845,11 +860,11 @@ function App() {
             confirmAccusation={confirmAccusation}
           />
         ) : currentCase.status === 'solved' ? (
-          <Navigate to={endingPath('solved')} replace />
+          <Navigate to={withActiveCase(endingPath('solved'))} replace />
         ) : currentCase.status === 'failed' ? (
-          <Navigate to={endingPath('failed')} replace />
+          <Navigate to={withActiveCase(endingPath('failed'))} replace />
         ) : (
-          <Navigate to={TODAY_SUSPECTS_PATH} replace />
+          <Navigate to={withActiveCase(TODAY_SUSPECTS_PATH)} replace />
         )
       ) : null,
     },
@@ -859,7 +874,7 @@ function App() {
       outlet: currentCase ? (
         <EndingRoute
           currentCase={currentCase}
-          caseId={getTodayCaseId()}
+          caseId={activeCaseId}
           culpritSuspect={culpritSuspect}
           caseStats={caseStats}
           caseStreak={caseStreak}
@@ -876,6 +891,11 @@ function App() {
       url: POKEDEX_PATH,
       title: 'Pokedex',
       outlet: <PokedexRoute authed={authed} onLogin={handleLogin} />,
+    },
+    history: {
+      url: HISTORY_PATH,
+      title: 'Puzzle History',
+      outlet: <HistoryRoute authed={authed} onLogin={handleLogin} />,
     },
     settings: {
       url: SETTINGS_PATH,
@@ -928,6 +948,7 @@ function App() {
           isAdmin={isAdmin}
           onSelectCase={() => {}}
           onSelectPokedex={() => {}}
+          onSelectHistory={() => {}}
           onSelectHowToPlay={() => {}}
           onSelectFeedback={() => {}}
           onSelectSettings={() => {}}
@@ -972,6 +993,7 @@ function App() {
         caseStreak={caseStreak}
         onSelectCase={() => navigate(TODAY_PATH)}
         onSelectPokedex={() => navigate(POKEDEX_PATH)}
+        onSelectHistory={() => navigate(HISTORY_PATH)}
         onSelectHowToPlay={() => navigate(HOW_TO_PLAY_PATH)}
         onSelectFeedback={() => navigate(FEEDBACK_PATH)}
         onSelectSettings={() => navigate(SETTINGS_PATH)}
@@ -991,6 +1013,7 @@ function App() {
             onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
             onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
             onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}
+            onSelectHistory={() => navigateAndCloseMenu(HISTORY_PATH)}
           onSelectHowToPlay={() => navigateAndCloseMenu(HOW_TO_PLAY_PATH)}
           onSelectFeedback={() => navigateAndCloseMenu(FEEDBACK_PATH)}
           onSelectSettings={() => navigateAndCloseMenu(SETTINGS_PATH)}
@@ -1003,9 +1026,9 @@ function App() {
         />
 
         {shouldRedirectFromInvalidCompletedEnding ? (
-          <Navigate to={completedCaseStatus ? endingPath(completedCaseStatus) : TODAY_PATH} replace />
+          <Navigate to={completedCaseStatus ? withActiveCase(endingPath(completedCaseStatus)) : withActiveCase(TODAY_PATH)} replace />
         ) : shouldRedirectToCompletedCase ? (
-          <Navigate to={endingPath(completedCaseStatus)} replace />
+          <Navigate to={withActiveCase(endingPath(completedCaseStatus))} replace />
         ) : <Routes>
           {appRoutes.map((route) => (
             <Route key={route.url} path={route.url} element={route.outlet} />

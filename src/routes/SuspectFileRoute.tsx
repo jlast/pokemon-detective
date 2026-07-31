@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { SelectedSuspectCaseFile } from '../components/Suspects/SelectedSuspectCaseFile'
 import type { Case, Suspect, SuspectNoteStatus } from '../game/caseModel'
 import { suspectPath, TODAY_SUSPECTS_PATH } from '../paths'
@@ -23,6 +23,8 @@ export function SuspectFileRoute({
   attemptsLeft,
 }: SuspectFileRouteProps) {
   const { id } = useParams()
+  const routeLocation = useLocation()
+  const withSearch = (path: string) => `${path}${routeLocation.search}`
   const suspectId = Number(id)
   const selectedSuspect =
     selectedSuspectOverride ??
@@ -39,13 +41,13 @@ export function SuspectFileRoute({
   if (!selectedSuspect) {
     return (
       <section className="suspect-file-page notebook-card">
-        <Link to={backLinkTo} className="subtle-link suspect-file-back-link">
+        <Link to={withSearch(backLinkTo)} className="subtle-link suspect-file-back-link">
           ← Back to Suspects Lineup
         </Link>
         <div className="inspect-item">
           <strong>Suspect not found</strong>
           <p className="overview-section-hook">This suspect file could not be opened.</p>
-          <Link to={backLinkTo} className="secondary-button suspect-file-back-button">
+          <Link to={withSearch(backLinkTo)} className="secondary-button suspect-file-back-button">
             Back to Suspects Lineup
           </Link>
         </div>
@@ -55,19 +57,19 @@ export function SuspectFileRoute({
 
   return (
     <section className="suspect-file-page">
-      <Link to={backLinkTo} className="subtle-link suspect-file-back-link">
+      <Link to={withSearch(backLinkTo)} className="subtle-link suspect-file-back-link">
         ← Back to Suspects Lineup
       </Link>
 
       <nav className="suspect-file-adjacent-nav" aria-label="Adjacent suspects">
         {previousSuspect ? (
-          <Link to={suspectPath(previousSuspect.pokemonId)} className="suspect-file-arrow-link suspect-file-arrow-link-left">
+          <Link to={withSearch(suspectPath(previousSuspect.pokemonId))} className="suspect-file-arrow-link suspect-file-arrow-link-left">
             <span aria-hidden="true">←</span>
             <span>Previous suspect</span>
           </Link>
         ) : <span />}
         {nextSuspect ? (
-          <Link to={suspectPath(nextSuspect.pokemonId)} className="suspect-file-arrow-link suspect-file-arrow-link-right">
+          <Link to={withSearch(suspectPath(nextSuspect.pokemonId))} className="suspect-file-arrow-link suspect-file-arrow-link-right">
             <span>Next suspect</span>
             <span aria-hidden="true">→</span>
           </Link>

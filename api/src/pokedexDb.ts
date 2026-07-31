@@ -1,5 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb'
+import type { CaseDifficulty } from '../../src/game/caseModel'
 
 const client = new DynamoDBClient({})
 const doc = DynamoDBDocumentClient.from(client, { marshallOptions: { removeUndefinedValues: true } })
@@ -11,6 +12,14 @@ export interface PokedexRecord {
   seenShinyPokemonIds?: number[]
   unlockedShinyPokemonIds?: number[]
   caseOutcomes?: Record<string, 'solved' | 'failed'>
+  caseHistory?: Record<string, {
+    status: 'solved' | 'failed'
+    caseTitle: string
+    difficulty?: CaseDifficulty
+    culpritPokemonId: number
+    guessCount: number
+    completedAt: string
+  }>
   currentStreak?: number
 }
 

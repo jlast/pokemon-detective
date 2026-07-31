@@ -11,6 +11,7 @@ interface HeaderProps {
   onToggleMenu: () => void
   onSelectCase: () => void
   onSelectPokedex: () => void
+  onSelectHistory: () => void
   onSelectHowToPlay: () => void
   onSelectFeedback: () => void
   onSelectSettings: () => void
@@ -29,6 +30,7 @@ export function Header({
   onToggleMenu,
   onSelectCase,
   onSelectPokedex,
+  onSelectHistory,
   onSelectHowToPlay,
   onSelectFeedback,
   onSelectSettings,
@@ -81,6 +83,7 @@ export function Header({
           </div>
 
           <div className="mobile-main-menu-list">
+            <p className="mobile-main-menu-section-label">Today</p>
             <button
               type="button"
               className={`mobile-main-menu-item ${activeSection === 'case' ? 'is-active' : ''}`}
@@ -92,6 +95,7 @@ export function Header({
                 <small>Open the active investigation</small>
               </span>
             </button>
+            <p className="mobile-main-menu-section-label">Collection</p>
             <button
               type="button"
               className={`mobile-main-menu-item ${activeSection === 'pokedex' ? 'is-active' : ''}`}
@@ -105,6 +109,18 @@ export function Header({
             </button>
             <button
               type="button"
+              className={`mobile-main-menu-item ${activeSection === 'history' ? 'is-active' : ''}`}
+              onClick={onSelectHistory}
+            >
+              <span className="mobile-main-menu-icon mobile-main-menu-icon--history" aria-hidden="true" />
+              <span>
+                <strong>Archived puzzles</strong>
+                <small>Review completed cases</small>
+              </span>
+            </button>
+            <p className="mobile-main-menu-section-label">Support</p>
+            <button
+              type="button"
               className={`mobile-main-menu-item ${activeSection === 'how-to-play' ? 'is-active' : ''}`}
               onClick={onSelectHowToPlay}
             >
@@ -112,17 +128,6 @@ export function Header({
               <span>
                 <strong>How to play</strong>
                 <small>Rules, clues, accusations</small>
-              </span>
-            </button>
-            <button
-              type="button"
-              className={`mobile-main-menu-item ${activeSection === 'feedback' ? 'is-active' : ''}`}
-              onClick={onSelectFeedback}
-            >
-              <span className="mobile-main-menu-icon mobile-main-menu-icon--feedback" aria-hidden="true" />
-              <span>
-                <strong>Bugs & ideas</strong>
-                <small>Submit reports or suggestions</small>
               </span>
             </button>
             {isAdmin ? (
@@ -150,13 +155,23 @@ export function Header({
             </div>
             <div className="mobile-main-menu-account-actions">
               {authed ? (
-                <button type="button" className="mobile-main-menu-profile-link" onClick={onSelectSettings}>
-                  Settings
-                </button>
+                <>
+                  <button type="button" className="mobile-main-menu-profile-link" onClick={onSelectSettings}>
+                    Settings
+                  </button>
+                  <button type="button" className="mobile-main-menu-profile-link" onClick={onSelectFeedback}>
+                    Report Bug
+                  </button>
+                </>
               ) : null}
-              <button type="button" className="mobile-main-menu-auth" onClick={authed ? onLogout : onLogin}>
+              <button type="button" className={`mobile-main-menu-auth ${authed ? '' : 'mobile-main-menu-auth--primary'}`} onClick={authed ? onLogout : onLogin}>
                 {authed ? 'Logout' : 'Login'}
               </button>
+              {!authed ? (
+                <button type="button" className="mobile-main-menu-auth" onClick={onSelectFeedback}>
+                  Report Bug
+                </button>
+              ) : null}
             </div>
           </div>
         </nav>

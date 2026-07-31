@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import type { Location } from '../../game/caseModel'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { getLocationIcon } from '../../game/locationIcons'
@@ -40,13 +40,16 @@ export function InvestigationLocationPage({
   collectedClueLabels = [],
   chooseAction,
 }: InvestigationLocationPageProps) {
+  const routeLocation = useLocation()
+  const withSearch = (path: string) => `${path}${routeLocation.search}`
+
   if (!location) {
     return (
       <section className="notebook-card active-investigation-panel">
         <div className="inspect-item">
           <strong>Location not found</strong>
           <p className="overview-section-hook">This investigation lead could not be opened.</p>
-          <Link to={TODAY_INVESTIGATION_PATH} className="secondary-button suspect-file-back-button">
+          <Link to={withSearch(TODAY_INVESTIGATION_PATH)} className="secondary-button suspect-file-back-button">
             Back to Investigation Board
           </Link>
         </div>
@@ -147,24 +150,24 @@ export function InvestigationLocationPage({
 
           <div className="result-actions">
             {!hasEvidence ? (
-              <Link to={TODAY_INVESTIGATION_PATH} className="primary-button suspect-file-back-button">
+              <Link to={withSearch(TODAY_INVESTIGATION_PATH)} className="primary-button suspect-file-back-button">
                 Continue Investigation →
               </Link>
             ) : allLocationsInvestigated ? (
               <>
-                <Link to={TODAY_SUSPECTS_PATH} className="primary-button suspect-file-back-button">
+                <Link to={withSearch(TODAY_SUSPECTS_PATH)} className="primary-button suspect-file-back-button">
                   Review Suspects →
                 </Link>
-                <Link to={TODAY_INVESTIGATION_PATH} className="secondary-button suspect-file-back-button">
+                <Link to={withSearch(TODAY_INVESTIGATION_PATH)} className="secondary-button suspect-file-back-button">
                   Back to Investigation Board
                 </Link>
               </>
             ) : (
               <>
-                <Link to={TODAY_INVESTIGATION_PATH} className="primary-button suspect-file-back-button">
+                <Link to={withSearch(TODAY_INVESTIGATION_PATH)} className="primary-button suspect-file-back-button">
                   Continue Investigation →
                 </Link>
-                <Link to={TODAY_SUSPECTS_PATH} className="secondary-button suspect-file-back-button">
+                <Link to={withSearch(TODAY_SUSPECTS_PATH)} className="secondary-button suspect-file-back-button">
                   Review Evidence
                 </Link>
               </>

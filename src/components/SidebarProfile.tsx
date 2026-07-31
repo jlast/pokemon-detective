@@ -2,6 +2,7 @@ interface SidebarProfileProps {
   name: string
   streak?: number
   onOpenSettings: () => void
+  onReportBug: () => void
   onLogout: () => void
 }
 
@@ -9,6 +10,7 @@ export function SidebarProfile({
   name,
   streak,
   onOpenSettings,
+  onReportBug,
   onLogout,
 }: SidebarProfileProps) {
   const showStreak = streak != null && streak > 0
@@ -54,6 +56,10 @@ export function SidebarProfile({
       <div className="sidebar-profile__actions">
         <button type="button" className="sidebar-profile__settings" onClick={onOpenSettings}>
           Settings
+        </button>
+
+        <button type="button" className="sidebar-profile__secondary-action" onClick={onReportBug}>
+          Report Bug
         </button>
 
         <button

@@ -48,6 +48,24 @@ export interface PokedexResponse {
   caseStreak?: number
 }
 
+export interface PuzzleHistoryItem {
+  caseId: string
+  status: 'solved' | 'failed'
+  caseTitle: string
+  difficulty?: string
+  culpritPokemonId?: number
+  culpritPokemonName?: string
+  guessCount: number
+  completedAt: string
+}
+
+export interface PuzzleHistoryResponse {
+  items: PuzzleHistoryItem[]
+  solvedCount: number
+  failedCount: number
+  currentStreak: number
+}
+
 export interface CaseFeedbackPayload {
   enjoymentRating: number
   comment?: string
@@ -134,8 +152,20 @@ export const getCurrentCase = async (): Promise<SessionResponse> => {
   return res.json()
 }
 
+export const getCase = async (caseId: string): Promise<SessionResponse> => {
+  const res = await fetch(`${BASE}/api/cases/${enc(caseId)}`, { headers: await authHeaders() })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
 export const getPokedex = async (): Promise<PokedexResponse> => {
   const res = await fetch(`${BASE}/api/pokedex`, { headers: await authHeaders() })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
+export const getPuzzleHistory = async (): Promise<PuzzleHistoryResponse> => {
+  const res = await fetch(`${BASE}/api/history`, { headers: await authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }

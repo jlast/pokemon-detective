@@ -1,0 +1,132 @@
+import { useEffect, useState } from 'react'
+import { getPuzzleHistory, type PuzzleHistoryResponse } from '../api'
+
+interface HistoryRouteProps {
+  authed: boolean
+  onLogin: () => void
+}
+
+const emptyHistory: PuzzleHistoryResponse = {
+  items: [],
+  solvedCount: 0,
+  failedCount: 0,
+  currentStreak: 0,
+}
+
+const formatCaseDate = (caseId: string): string => {
+  const date = new Date(`${caseId}T00:00:00.000Z`)
+  if (Number.isNaN(date.getTime())) return caseId
+  return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(date)
+}
+
+const formatDifficulty = (difficulty: string | undefined): string => (
+  difficulty ? difficulty[0].toUpperCase() + difficulty.slice(1) : 'Unknown'
+)
+
+export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
+  const [history, setHistory] = useState<PuzzleHistoryResponse>(emptyHistory)
+  const [loading, setLoading] = useState(authed)
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    if (!authed) {
+      setLoading(false)
+      return
+    }
+
+    let cancelled = false
+    setLoading(true)
+    setError(false)
+
+    void getPuzzleHistory()
+      .then((data) => {
+        if (!cancelled) setHistory(data)
+      })
+      .catch((err) => {
+        console.error('Failed to load puzzle history:', err)
+        if (!cancelled) setError(true)
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [authed])
+
+  if (!authed) {
+    return (
+      <div className="main-layout-single">
+        <section className="notebook-card history-page history-empty-state">
+          <p className="eyebrow">Case archive</p>
+          <h2>Login to save puzzle history</h2>
+          <p className="subtle-text">
+            Completed cases are linked to your detective profile so you can review your solve record later.
+          </p>
+          <button type="button" className="primary-button" onClick={onLogin}>
+            Login
+          </button>
+        </section>
+      </div>
+    )
+  }
+
+  const totalCount = history.solvedCount + history.failedCount
+  const solveRate = totalCount > 0 ? Math.round((history.solvedCount / totalCount) * 100) : null
+
+  return (
+    <div className="main-layout-single">
+      <section className="notebook-card history-page">
+        <div className="history-header">
+          <div>
+            <p className="eyebrow">Case archive</p>
+            <h2>Puzzle history</h2>
+            <p className="subtle-text">
+              Review completed daily puzzles saved to your detective profile.
+            </p>
+          </div>
+          <div className="history-stats" aria-label="Puzzle history stats">
+            <span><strong>{history.solvedCount}</strong> solved</span>
+            <span><strong>{history.failedCount}</strong> failed</span>
+            <span><strong>{history.currentStreak}</strong> streak</span>
+            <span><strong>{solveRate ?? '-'}</strong>{solveRate === null ? '' : '%'} solve rate</span>
+          </div>
+        </div>
+
+        {loading ? (
+          <p className="placeholder-page">Loading case archive...</p>
+        ) : error ? (
+          <p className="placeholder-page">Could not load your puzzle history right now.</p>
+        ) : history.items.length === 0 ? (
+          <p className="placeholder-page">No completed cases yet. Finish today's puzzle to start your archive.</p>
+        ) : (
+          <div className="history-list">
+            {history.items.map((item) => (
+              <article key={item.caseId} className={`history-card history-card--${item.status}`}>
+                <div className="history-card__date">
+                  <span>{formatCaseDate(item.caseId)}</span>
+                  <strong>{item.status === 'solved' ? 'Solved' : 'Failed'}</strong>
+                </div>
+                <div className="history-card__body">
+                  <h3>{item.caseTitle}</h3>
+                  {item.culpritPokemonId && item.culpritPokemonName ? (
+                    <p>
+                      Culprit: <strong>{item.culpritPokemonName}</strong> #{String(item.culpritPokemonId).padStart(3, '0')}
+                    </p>
+                  ) : (
+                    <p>Legacy record saved before detailed history was available.</p>
+                  )}
+                </div>
+                <div className="history-card__meta" aria-label={`${item.caseTitle} details`}>
+                  <span>{formatDifficulty(item.difficulty)}</span>
+                  <span>{item.guessCount} {item.guessCount === 1 ? 'guess' : 'guesses'}</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  )
+}

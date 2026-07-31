@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { InvestigationLocationPage } from '../components/Evidence/InvestigationLocationPage'
 import type { Case } from '../game/caseModel'
 import { TODAY_INVESTIGATION_PATH } from '../paths'
@@ -54,6 +54,8 @@ export function InvestigationLocationRoute({
   }
 
   const navigate = useNavigate()
+  const routeLocation = useLocation()
+  const investigationPath = `${TODAY_INVESTIGATION_PATH}${routeLocation.search}`
 
   return (
     <InvestigationRouteFrame
@@ -62,7 +64,7 @@ export function InvestigationLocationRoute({
       openLocation={openLocation}
       showCaseFlowNav={false}
     >
-      <div className="detail-back-link" onClick={() => navigate(TODAY_INVESTIGATION_PATH)}>← Back to Investigation Board</div>
+      <div className="detail-back-link" onClick={() => navigate(investigationPath)}>← Back to Investigation Board</div>
       <InvestigationLocationPage
         location={selectedLocation}
         pointsLeft={pointsLeft}

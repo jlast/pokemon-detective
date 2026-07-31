@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { EvidenceBadgeList } from '../Evidence/EvidenceBadge'
 import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
 import { TODAY_INVESTIGATION_PATH } from '../../paths'
@@ -16,6 +16,7 @@ export function SuspectsPanel({
   wrongAccusationIds,
   inspectSuspect,
 }: SuspectsProps) {
+  const routeLocation = useLocation()
   const discoveredEvidence = getDiscoveredEvidence(currentCase)
 
   return (
@@ -56,7 +57,7 @@ export function SuspectsPanel({
         ) : (
           <div className="suspect-evidence-empty">
             <p className="overview-section-hook">Start at the locations board to collect your first clue.</p>
-            <Link to={TODAY_INVESTIGATION_PATH} className="primary-button suspect-evidence-cta">
+            <Link to={`${TODAY_INVESTIGATION_PATH}${routeLocation.search}`} className="primary-button suspect-evidence-cta">
               Investigate locations
             </Link>
           </div>
