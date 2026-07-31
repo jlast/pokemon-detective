@@ -72,6 +72,15 @@
   color: #4d6488;
 }
 
+.app-footer-link--discord {
+  color: #5865f2;
+}
+
+.app-footer-link--discord svg {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
 .desktop-sidebar {
   display: none;
 }

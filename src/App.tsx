@@ -198,6 +198,17 @@ const AppFooter = () => (
     >
       <img src="/reddit-user.ico" alt="" aria-hidden="true" />
     </a>
+    <a
+      className="app-footer-link app-footer-link--discord"
+      href="https://discord.gg/8kWEYHy6d6"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Join the PokéMystery Discord"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M20.3 4.4A17.4 17.4 0 0 0 16 3.1a12 12 0 0 0-.6 1.2 16.2 16.2 0 0 0-4.8 0c-.2-.4-.4-.8-.6-1.2a17 17 0 0 0-4.3 1.3C3 8.4 2.3 12.3 2.7 16.1a17.2 17.2 0 0 0 5.2 2.6c.4-.6.8-1.2 1.1-1.8-.6-.2-1.1-.5-1.6-.8l.4-.3a12.3 12.3 0 0 0 10.4 0l.4.3c-.5.3-1 .6-1.6.8.3.6.7 1.2 1.1 1.8a17 17 0 0 0 5.2-2.6c.5-4.4-.7-8.3-3-11.7ZM9.6 13.8c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm4.8 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z" />
+      </svg>
+    </a>
   </footer>
 )
 
