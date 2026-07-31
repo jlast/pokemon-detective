@@ -916,11 +916,11 @@ const handleGetCase = async (event: ApiGatewayEvent, requestedCaseId = getTodayU
       progress = await ensureProgressDefaults(userId, progress, fullCase)
     }
 
-    if (userInfo.sub && !isToday) {
+    if (userInfo.sub) {
       try {
         await markCaseHistoryStarted(userInfo.sub, caseId, fullCase)
       } catch (error) {
-        console.error('Failed to mark archived case history started:', error)
+        console.error('Failed to mark case history started:', error)
       }
     }
 
