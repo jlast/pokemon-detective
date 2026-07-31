@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import { BatchGetCommand, DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import type { CaseDifficulty, CaseTheme, EvidenceBadgeData } from '../../src/game/caseModel'
 import type { PokemonType } from '../../src/data/pokemon'
 
@@ -47,6 +47,26 @@ const TABLE = process.env.CASE_DATA_TABLE ?? 'CaseData'
 export const getCaseData = async (caseId: string): Promise<CaseDataRecord | null> => {
   const result = await doc.send(new GetCommand({ TableName: TABLE, Key: { caseId } }))
   return (result.Item as CaseDataRecord) ?? null
+}
+
+export const batchGetCaseData = async (caseIds: string[]): Promise<CaseDataRecord[]> => {
+  if (caseIds.length === 0) return []
+
+  const records: CaseDataRecord[] = []
+  let keys = caseIds.map((caseId) => ({ caseId }))
+
+  do {
+    const result = await doc.send(new BatchGetCommand({
+      RequestItems: {
+        [TABLE]: { Keys: keys },
+      },
+    }))
+
+    records.push(...(result.Responses?.[TABLE] as CaseDataRecord[] | undefined ?? []))
+    keys = (result.UnprocessedKeys?.[TABLE]?.Keys as { caseId: string }[] | undefined) ?? []
+  } while (keys.length > 0)
+
+  return records
 }
 
 export const putCaseData = async (record: CaseDataRecord): Promise<void> => {

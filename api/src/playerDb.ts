@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import { BatchGetCommand, DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import type { EvidenceBadgeData } from '../../src/game/caseModel'
 
 const client = new DynamoDBClient({})
@@ -43,6 +43,26 @@ const CASE_ID_INDEX = 'caseId-index'
 export const getProgress = async (userId: string): Promise<PlayerProgressRecord | null> => {
   const result = await doc.send(new GetCommand({ TableName: TABLE, Key: { userId } }))
   return (result.Item as PlayerProgressRecord) ?? null
+}
+
+export const batchGetProgress = async (userIds: string[]): Promise<PlayerProgressRecord[]> => {
+  if (userIds.length === 0) return []
+
+  const records: PlayerProgressRecord[] = []
+  let keys = userIds.map((userId) => ({ userId }))
+
+  do {
+    const result = await doc.send(new BatchGetCommand({
+      RequestItems: {
+        [TABLE]: { Keys: keys },
+      },
+    }))
+
+    records.push(...(result.Responses?.[TABLE] as PlayerProgressRecord[] | undefined ?? []))
+    keys = (result.UnprocessedKeys?.[TABLE]?.Keys as { userId: string }[] | undefined) ?? []
+  } while (keys.length > 0)
+
+  return records
 }
 
 export const createProgress = async (record: PlayerProgressRecord): Promise<void> => {

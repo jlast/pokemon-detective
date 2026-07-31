@@ -3,13 +3,14 @@ import { allCases, createCaseById, pickRandomCaseDifficulty, rebuildFullCase } f
 import { getSolutionClueBadgesFromEvidence, getSolutionClueHintType, type Case, type CaseDifficulty, type CaseSolution, type CaseStatus, type EvidenceBadgeData, type LocationCardVariant, type LocationAction } from '../../src/game/caseModel'
 import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
-import { getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseStats } from './caseDataDb'
+import { batchGetCaseData, getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseDataRecord, type CaseStats } from './caseDataDb'
 import { publishFeedbackCommentAlert, publishGeneralFeedbackAlert } from './feedbackAlert'
 import { putCaseFeedback, putGeneralFeedback } from './feedbackDb'
 import { getReminderSubscription, putReminderSubscription } from './reminderSubscriptionDb'
 import { validateGeneratedCase } from './validateGeneratedCase'
 import {
   getProgress,
+  batchGetProgress,
   createProgress,
   queryProgressByCaseId,
   updateProgress,
@@ -960,6 +961,10 @@ const getPokemonName = (pokemonId: number): string => (
   pokemonData.find((pokemon) => pokemon.id === pokemonId)?.name ?? `Pokemon #${pokemonId}`
 )
 
+const getCaseConfigTitle = (configId: string): string => (
+  allCases.find((caseConfig) => caseConfig.id === configId)?.title ?? 'Daily puzzle'
+)
+
 const resolveAdminEvidenceBadges = (
   record: InvestigatedLocationRecord,
   action: LocationAction | undefined,
@@ -1085,13 +1090,14 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   const caseHistory = pokedex.caseHistory ?? {}
   const caseOutcomes = pokedex.caseOutcomes ?? {}
   const caseIds = getPastCaseIds(HISTORY_ARCHIVE_DAYS)
-  const items = (await Promise.all(caseIds.map(async (caseId): Promise<CaseHistoryItem | null> => {
-    const fullCase = await loadCase(caseId)
-    if (!fullCase) return null
-
-    const progress = await getProgress(getDateUserId(userInfo.sub, caseId))
-    const stored = caseHistory[caseId]
-    const storedOutcome = caseOutcomes[caseId]
+  const caseRecords = await batchGetCaseData(caseIds)
+  const caseRecordMap = new Map(caseRecords.map((record) => [record.caseId, record]))
+  const progressRecords = await batchGetProgress(caseRecords.map((record) => getDateUserId(userInfo.sub, record.caseId)))
+  const progressMap = new Map(progressRecords.map((progress) => [progress.caseId, progress]))
+  const buildItem = (record: CaseDataRecord): CaseHistoryItem => {
+    const progress = progressMap.get(record.caseId)
+    const stored = caseHistory[record.caseId]
+    const storedOutcome = caseOutcomes[record.caseId]
     const status = progress?.status ?? stored?.status ?? storedOutcome ?? 'playing'
     const completed = status === 'solved' || status === 'failed'
     const resolved = status === 'solved'
@@ -1099,37 +1105,24 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
       ? progress.status === 'failed' ? MAX_ACCUSATIONS : progress.accusationHistory.length
       : stored?.guessCount ?? (storedOutcome === 'failed' ? MAX_ACCUSATIONS : storedOutcome === 'solved' ? 1 : undefined)
 
-    if (stored) {
-      return {
-        caseId,
-        status,
-        caseTitle: stored.caseTitle || fullCase.title,
-        difficulty: stored.difficulty ?? fullCase.difficulty,
-        ...(resolved ? {
-          culpritPokemonId: fullCase.culpritPokemonId,
-          culpritPokemonName: getPokemonName(fullCase.culpritPokemonId),
-        } : {}),
-        guessCount,
-        startedAt: stored.startedAt,
-        completedAt: completed ? stored.completedAt ?? `${caseId}T00:00:00.000Z` : undefined,
-      }
-    }
-
     return {
-      caseId,
+      caseId: record.caseId,
       status,
-      caseTitle: fullCase.title,
-      difficulty: fullCase.difficulty,
+      caseTitle: stored?.caseTitle || getCaseConfigTitle(record.configId),
+      difficulty: stored?.difficulty ?? record.difficulty,
       ...(resolved ? {
-        culpritPokemonId: fullCase.culpritPokemonId,
-        culpritPokemonName: getPokemonName(fullCase.culpritPokemonId),
+        culpritPokemonId: record.culpritPokemonId,
+        culpritPokemonName: getPokemonName(record.culpritPokemonId),
       } : {}),
       guessCount,
-      startedAt: progress ? getProgressActivityTimestamp(progress) ?? undefined : undefined,
-      completedAt: completed ? `${caseId}T00:00:00.000Z` : undefined,
+      startedAt: stored?.startedAt ?? (progress ? getProgressActivityTimestamp(progress) ?? undefined : undefined),
+      completedAt: completed ? stored?.completedAt ?? `${record.caseId}T00:00:00.000Z` : undefined,
     }
-  })))
-    .filter((item): item is CaseHistoryItem => item !== null)
+  }
+  const items = caseIds
+    .map((caseId) => caseRecordMap.get(caseId))
+    .filter((record): record is CaseDataRecord => record !== undefined)
+    .map(buildItem)
     .sort((left, right) => right.caseId.localeCompare(left.caseId))
 
   return ok({
