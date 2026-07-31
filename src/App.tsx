@@ -164,6 +164,38 @@ const applyCurrentCaseAssets = (caseData: Case): Case => {
   }
 }
 
+const AppFooter = () => (
+  <footer className="app-footer" aria-label="PokéMystery links">
+    <a
+      className="app-footer-link app-footer-link--coffee"
+      href="https://buymeacoffee.com/pokemystery"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Support PokéMystery on Buy Me a Coffee"
+    >
+      <img src="/bmc-logo-yellow.png" alt="" aria-hidden="true" />
+    </a>
+    <a
+      className="app-footer-link app-footer-link--reddit"
+      href="https://www.reddit.com/r/PokeMysteryGame/"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Visit the PokéMystery subreddit"
+    >
+      <img src="/reddit.png" alt="" aria-hidden="true" />
+    </a>
+    <a
+      className="app-footer-link app-footer-link--profile"
+      href="https://www.reddit.com/user/Poke-Mystery/"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Visit Poke-Mystery on Reddit"
+    >
+      <img src="/reddit-user.ico" alt="" aria-hidden="true" />
+    </a>
+  </footer>
+)
+
 function App() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -868,6 +900,7 @@ function App() {
               <p className="placeholder-page">Loading today's puzzle...</p>
             </section>
           </div>
+          <AppFooter />
         </div>
       </main>
     )
@@ -916,6 +949,7 @@ function App() {
             <Route key={route.url} path={route.url} element={route.outlet} />
           ))}
         </Routes>}
+        <AppFooter />
       </div>
     </main>
   )
