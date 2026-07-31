@@ -1409,6 +1409,10 @@
   border-left-color: #c7664a;
 }
 
+.history-card--playing {
+  border-left-color: #d8a833;
+}
+
 .history-card__date,
 .history-card__body,
 .history-card__meta {
@@ -1441,6 +1445,11 @@
 .history-card--failed .history-card__date strong {
   background: #f5dfd6;
   color: #8a3b27;
+}
+
+.history-card--playing .history-card__date strong {
+  background: #fff0bd;
+  color: #745719;
 }
 
 .history-card__body h3 {

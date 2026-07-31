@@ -130,13 +130,14 @@ interface CaseStatsResponse extends CaseStats {
 
 interface CaseHistoryItem {
   caseId: string
-  status: 'solved' | 'failed'
+  status: 'playing' | 'solved' | 'failed'
   caseTitle: string
   difficulty?: CaseDifficulty
   culpritPokemonId?: number
   culpritPokemonName?: string
-  guessCount: number
-  completedAt: string
+  guessCount?: number
+  startedAt?: string
+  completedAt?: string
 }
 
 const calculateSolvedStreak = (outcomes: Record<string, 'solved' | 'failed'>): number => {
@@ -466,6 +467,7 @@ const updatePokedexForCompletedCase = async (
     ? mergeUniqueIds(pokedex.unlockedShinyPokemonIds ?? [], shinyPokemonIds)
     : pokedex.unlockedShinyPokemonIds ?? []
   const caseOutcomes = { ...pokedex.caseOutcomes, [caseId]: status }
+  const existingHistory = pokedex.caseHistory?.[caseId]
   const caseHistory = {
     ...pokedex.caseHistory,
     [caseId]: {
@@ -474,6 +476,7 @@ const updatePokedexForCompletedCase = async (
       difficulty: fullCase.difficulty,
       culpritPokemonId: fullCase.culpritPokemonId,
       guessCount,
+      startedAt: existingHistory?.startedAt,
       completedAt: new Date().toISOString(),
     },
   }
@@ -505,6 +508,31 @@ const markPokedexSeen = async (sub: string, pokemonIds: number[]): Promise<void>
     unlockedShinyPokemonIds: pokedex.unlockedShinyPokemonIds ?? [],
     caseOutcomes: pokedex.caseOutcomes ?? {},
     caseHistory: pokedex.caseHistory ?? {},
+    currentStreak: getPokedexStreak(pokedex),
+  })
+}
+
+const markCaseHistoryStarted = async (sub: string, caseId: string, fullCase: Case): Promise<void> => {
+  const pokedex = await getOrCreatePokedex(sub)
+  if (pokedex.caseHistory?.[caseId]) return
+
+  await putPokedexRecord({
+    userId: pokedex.userId,
+    seenPokemonIds: pokedex.seenPokemonIds ?? [],
+    unlockedPokemonIds: pokedex.unlockedPokemonIds ?? [],
+    seenShinyPokemonIds: pokedex.seenShinyPokemonIds ?? [],
+    unlockedShinyPokemonIds: pokedex.unlockedShinyPokemonIds ?? [],
+    caseOutcomes: pokedex.caseOutcomes ?? {},
+    caseHistory: {
+      ...pokedex.caseHistory,
+      [caseId]: {
+        status: 'playing',
+        caseTitle: fullCase.title,
+        difficulty: fullCase.difficulty,
+        culpritPokemonId: fullCase.culpritPokemonId,
+        startedAt: new Date().toISOString(),
+      },
+    },
     currentStreak: getPokedexStreak(pokedex),
   })
 }
@@ -889,6 +917,10 @@ const handleGetCase = async (event: ApiGatewayEvent, requestedCaseId = getTodayU
       progress = await ensureProgressDefaults(userId, progress, fullCase)
     }
 
+    if (userInfo.sub) {
+      await markCaseHistoryStarted(userInfo.sub, caseId, fullCase)
+    }
+
     return ok({
       case: buildResponseCase(fullCase, progress),
       investigationsRemaining: progress.investigationsRemaining,
@@ -1050,9 +1082,10 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
         status: stored.status,
         caseTitle: stored.caseTitle,
         difficulty: stored.difficulty,
-        culpritPokemonId: stored.culpritPokemonId,
-        culpritPokemonName: getPokemonName(stored.culpritPokemonId),
+        culpritPokemonId: stored.status === 'playing' ? undefined : stored.culpritPokemonId,
+        culpritPokemonName: stored.status === 'playing' ? undefined : getPokemonName(stored.culpritPokemonId),
         guessCount: stored.guessCount,
+        startedAt: stored.startedAt,
         completedAt: stored.completedAt,
       }
     }
@@ -1089,6 +1122,7 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
     items,
     solvedCount: items.filter((item) => item.status === 'solved').length,
     failedCount: items.filter((item) => item.status === 'failed').length,
+    unsolvedCount: items.filter((item) => item.status === 'playing').length,
     currentStreak: getPokedexStreak(pokedex),
   })
 }

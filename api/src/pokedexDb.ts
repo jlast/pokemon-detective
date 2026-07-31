@@ -13,12 +13,13 @@ export interface PokedexRecord {
   unlockedShinyPokemonIds?: number[]
   caseOutcomes?: Record<string, 'solved' | 'failed'>
   caseHistory?: Record<string, {
-    status: 'solved' | 'failed'
+    status: 'playing' | 'solved' | 'failed'
     caseTitle: string
     difficulty?: CaseDifficulty
     culpritPokemonId: number
-    guessCount: number
-    completedAt: string
+    guessCount?: number
+    startedAt?: string
+    completedAt?: string
   }>
   currentStreak?: number
 }

@@ -12,6 +12,7 @@ const emptyHistory: PuzzleHistoryResponse = {
   items: [],
   solvedCount: 0,
   failedCount: 0,
+  unsolvedCount: 0,
   currentStreak: 0,
 }
 
@@ -24,6 +25,11 @@ const formatCaseDate = (caseId: string): string => {
 const formatDifficulty = (difficulty: string | undefined): string => (
   difficulty ? difficulty[0].toUpperCase() + difficulty.slice(1) : 'Unknown'
 )
+
+const getStatusLabel = (status: 'playing' | 'solved' | 'failed') => {
+  if (status === 'playing') return 'Unsolved'
+  return status === 'solved' ? 'Solved' : 'Failed'
+}
 
 export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
   const navigate = useNavigate()
@@ -75,9 +81,6 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
     )
   }
 
-  const totalCount = history.solvedCount + history.failedCount
-  const solveRate = totalCount > 0 ? Math.round((history.solvedCount / totalCount) * 100) : null
-
   return (
     <div className="main-layout-single">
       <section className="notebook-card history-page">
@@ -86,14 +89,14 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
             <p className="eyebrow">Case archive</p>
             <h2>Puzzle history</h2>
             <p className="subtle-text">
-              Review completed daily puzzles saved to your detective profile.
+              Review previous daily puzzles saved to your detective profile.
             </p>
           </div>
           <div className="history-stats" aria-label="Puzzle history stats">
             <span><strong>{history.solvedCount}</strong> solved</span>
             <span><strong>{history.failedCount}</strong> failed</span>
+            <span><strong>{history.unsolvedCount}</strong> unsolved</span>
             <span><strong>{history.currentStreak}</strong> streak</span>
-            <span><strong>{solveRate ?? '-'}</strong>{solveRate === null ? '' : '%'} solve rate</span>
           </div>
         </div>
 
@@ -102,14 +105,14 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
         ) : error ? (
           <p className="placeholder-page">Could not load your puzzle history right now.</p>
         ) : history.items.length === 0 ? (
-          <p className="placeholder-page">No completed cases yet. Finish today's puzzle to start your archive.</p>
+          <p className="placeholder-page">No archived cases yet. Open today's puzzle to start your archive.</p>
         ) : (
           <div className="history-list">
             {history.items.map((item) => (
               <article key={item.caseId} className={`history-card history-card--${item.status}`}>
                 <div className="history-card__date">
                   <span>{formatCaseDate(item.caseId)}</span>
-                  <strong>{item.status === 'solved' ? 'Solved' : 'Failed'}</strong>
+                  <strong>{getStatusLabel(item.status)}</strong>
                 </div>
                 <div className="history-card__body">
                   <h3>{item.caseTitle}</h3>
@@ -118,12 +121,12 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
                       Culprit: <strong>{item.culpritPokemonName}</strong>
                     </p>
                   ) : (
-                    <p>Legacy record saved before detailed history was available.</p>
+                    <p>{item.status === 'playing' ? 'Case opened but not solved yet.' : 'Legacy record saved before detailed history was available.'}</p>
                   )}
                 </div>
                 <div className="history-card__meta" aria-label={`${item.caseTitle} details`}>
                   <span>{formatDifficulty(item.difficulty)}</span>
-                  <span>{item.guessCount} {item.guessCount === 1 ? 'guess' : 'guesses'}</span>
+                  <span>{item.guessCount == null ? 'No guesses yet' : `${item.guessCount} ${item.guessCount === 1 ? 'guess' : 'guesses'}`}</span>
                   <button
                     type="button"
                     className="history-card__play"

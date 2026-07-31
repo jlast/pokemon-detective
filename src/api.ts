@@ -50,19 +50,21 @@ export interface PokedexResponse {
 
 export interface PuzzleHistoryItem {
   caseId: string
-  status: 'solved' | 'failed'
+  status: 'playing' | 'solved' | 'failed'
   caseTitle: string
   difficulty?: string
   culpritPokemonId?: number
   culpritPokemonName?: string
-  guessCount: number
-  completedAt: string
+  guessCount?: number
+  startedAt?: string
+  completedAt?: string
 }
 
 export interface PuzzleHistoryResponse {
   items: PuzzleHistoryItem[]
   solvedCount: number
   failedCount: number
+  unsolvedCount: number
   currentStreak: number
 }
 
