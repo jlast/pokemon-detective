@@ -79,7 +79,6 @@ import {
 
 const getTodayCaseId = () => new Date().toISOString().slice(0, 10)
 const CASE_ID_PATTERN = /^\d{4}-\d{2}-\d{2}$/
-const REPLAY_ID_PATTERN = /^[a-zA-Z0-9._~-]{16,128}$/
 const MAX_ACCUSATIONS = 3
 const ENABLE_DAILY_REMINDER_OPT_IN = true
 const DEFAULT_REMINDER_PREFERENCES: ReminderPreferencesResponse = {
@@ -227,16 +226,11 @@ function App() {
     return CASE_ID_PATTERN.test(requestedCaseId) ? requestedCaseId : todayCaseId
   }, [searchParams, todayCaseId])
   const isArchivedCase = activeCaseId !== todayCaseId
-  const activeReplayId = useMemo(() => (
-    isArchivedCase && REPLAY_ID_PATTERN.test(searchParams.get('replay') ?? '')
-      ? searchParams.get('replay') ?? undefined
-      : undefined
-  ), [isArchivedCase, searchParams])
   const withActiveCase = useCallback((path: string) => (
     isArchivedCase && path.startsWith(TODAY_PATH)
-      ? `${path}?case=${encodeURIComponent(activeCaseId)}${activeReplayId ? `&replay=${encodeURIComponent(activeReplayId)}` : ''}`
+      ? `${path}?case=${encodeURIComponent(activeCaseId)}`
       : path
-  ), [activeCaseId, activeReplayId, isArchivedCase])
+  ), [activeCaseId, isArchivedCase])
 
   const [caseData, setCaseData] = useState<Case | null>(null)
   const [loading, setLoading] = useState(true)
@@ -376,7 +370,7 @@ function App() {
   const loadCase = useCallback(async () => {
     setLoading(true)
     try {
-      const data = isArchivedCase ? await getCase(activeCaseId, activeReplayId) : await getCurrentCase()
+      const data = isArchivedCase ? await getCase(activeCaseId) : await getCurrentCase()
       setCaseData(applyCurrentCaseAssets(data.case))
       setInvestigationsRemaining(data.investigationsRemaining)
       setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
@@ -388,7 +382,7 @@ function App() {
     } finally {
       setLoading(false)
     }
-  }, [activeCaseId, activeReplayId, isArchivedCase])
+  }, [activeCaseId, isArchivedCase])
 
   useEffect(() => {
     if (currentRoute === '/callback') {
@@ -491,14 +485,14 @@ function App() {
     const current = suspectNotes.get(suspectId)
     const newStatus = current?.noteStatus === 'ruled-out' ? 'suspect' : 'ruled-out'
     updateSuspectNote(suspectId, () => ({ noteStatus: newStatus }))
-    apiClearSuspect(activeCaseId, suspectId, newStatus === 'ruled-out', activeReplayId).catch((err) =>
+    apiClearSuspect(activeCaseId, suspectId, newStatus === 'ruled-out').catch((err) =>
       console.error('Failed to sync suspect status:', err),
     )
   }
 
   const setSuspectNoteStatus = (suspectId: number, noteStatus: SuspectNoteStatus) => {
     updateSuspectNote(suspectId, () => ({ noteStatus }))
-    apiClearSuspect(activeCaseId, suspectId, noteStatus === 'ruled-out', activeReplayId).catch((err) =>
+    apiClearSuspect(activeCaseId, suspectId, noteStatus === 'ruled-out').catch((err) =>
       console.error('Failed to sync suspect status:', err),
     )
   }
@@ -524,7 +518,7 @@ function App() {
     if (authed) {
       try {
         const caseId = activeCaseId
-        const data = await apiAccuse(caseId, accusationTarget.pokemonId, undefined, activeReplayId)
+        const data = await apiAccuse(caseId, accusationTarget.pokemonId)
         setCaseData(data.case)
         setAccusationHistory(data.accusationHistory ?? [])
         setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
@@ -580,7 +574,7 @@ function App() {
       let caseStreakAfterSubmit = 0
       let status: 'playing' | 'solved' | 'failed' = 'playing'
       try {
-        const data = await apiAccuse(caseId, accusationTarget.pokemonId, undefined, activeReplayId)
+        const data = await apiAccuse(caseId, accusationTarget.pokemonId)
         status = data.status
         accusationHistoryAfterSubmit = data.accusationHistory ?? []
         accusationsRemainingAfterSubmit = data.accusationsRemaining ?? MAX_ACCUSATIONS
@@ -649,7 +643,7 @@ function App() {
     if (authed) {
       try {
         const caseId = activeCaseId
-        const data = await apiInvestigate(caseId, locationId, actionId, witnessPokemonId, activeReplayId)
+        const data = await apiInvestigate(caseId, locationId, actionId, witnessPokemonId)
         setCaseData((prev) => prev
           ? {
               ...prev,
@@ -694,7 +688,7 @@ function App() {
       if (!action) return
       try {
         const caseId = activeCaseId
-        const data = await apiInvestigate(caseId, locationId, actionId, witnessPokemonId, activeReplayId)
+        const data = await apiInvestigate(caseId, locationId, actionId, witnessPokemonId)
         setCaseData({
           ...caseData,
           locations: caseData.locations.map((l) =>

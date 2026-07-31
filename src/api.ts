@@ -57,7 +57,6 @@ export interface PuzzleHistoryItem {
   culpritPokemonName?: string
   guessCount: number
   completedAt: string
-  canReplay: boolean
 }
 
 export interface PuzzleHistoryResponse {
@@ -134,12 +133,9 @@ export interface AdminCaseProgressResponse {
   players: AdminProgressPlayer[]
 }
 
-const authHeaders = async (replayId?: string): Promise<Record<string, string>> => {
+const authHeaders = async (): Promise<Record<string, string>> => {
   const token = await ensureValidSession() ? getToken() : null
-  return {
-    ...(token ? { Authorization: `Bearer ${token}` } : { 'X-Player-Session-Id': getPlayerSessionId() }),
-    ...(replayId ? { 'X-Case-Replay-Id': replayId } : {}),
-  }
+  return token ? { Authorization: `Bearer ${token}` } : { 'X-Player-Session-Id': getPlayerSessionId() }
 }
 
 const adminAuthHeaders = async (): Promise<Record<string, string>> => {
@@ -156,8 +152,8 @@ export const getCurrentCase = async (): Promise<SessionResponse> => {
   return res.json()
 }
 
-export const getCase = async (caseId: string, replayId?: string): Promise<SessionResponse> => {
-  const res = await fetch(`${BASE}/api/cases/${enc(caseId)}`, { headers: await authHeaders(replayId) })
+export const getCase = async (caseId: string): Promise<SessionResponse> => {
+  const res = await fetch(`${BASE}/api/cases/${enc(caseId)}`, { headers: await authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }
@@ -212,13 +208,12 @@ export const investigate = async (
   locationId: string,
   actionId: string,
   witnessPokemonId?: number,
-  replayId?: string,
 ): Promise<InvestigationResponse> => {
   const res = await fetch(
     `${BASE}/api/cases/${enc(caseId)}/investigate/${enc(locationId)}/${enc(actionId)}`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...await authHeaders(replayId) },
+      headers: { 'Content-Type': 'application/json', ...await authHeaders() },
       body: JSON.stringify(witnessPokemonId ? { witnessPokemonId } : {}),
     },
   )
@@ -230,11 +225,10 @@ export const clearSuspect = async (
   caseId: string,
   suspectId: number,
   cleared: boolean,
-  replayId?: string,
 ): Promise<SessionResponse> => {
   const res = await fetch(
     `${BASE}/api/cases/${enc(caseId)}/suspects/${suspectId}/clear`,
-    { method: 'POST', headers: { 'Content-Type': 'application/json', ...await authHeaders(replayId) }, body: JSON.stringify({ cleared }) },
+    { method: 'POST', headers: { 'Content-Type': 'application/json', ...await authHeaders() }, body: JSON.stringify({ cleared }) },
   )
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
@@ -244,13 +238,12 @@ export const accuse = async (
   caseId: string,
   suspectId: number,
   progress?: { accusationHistory: number[], accusationsRemaining: number },
-  replayId?: string,
 ): Promise<SessionResponse> => {
   const res = await fetch(
     `${BASE}/api/cases/${enc(caseId)}/accuse/${suspectId}`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...await authHeaders(replayId) },
+      headers: { 'Content-Type': 'application/json', ...await authHeaders() },
       body: progress ? JSON.stringify(progress) : undefined,
     },
   )

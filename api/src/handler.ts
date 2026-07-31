@@ -64,7 +64,7 @@ type LegacyLocationActionBadges = {
 const corsHeaders: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Player-Session-Id, X-Case-Replay-Id',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Player-Session-Id',
 }
 
 const ok = (body: unknown): ApiGatewayResult => ({
@@ -137,7 +137,6 @@ interface CaseHistoryItem {
   culpritPokemonName?: string
   guessCount: number
   completedAt: string
-  canReplay: boolean
 }
 
 const calculateSolvedStreak = (outcomes: Record<string, 'solved' | 'failed'>): number => {
@@ -198,15 +197,6 @@ const getGameplaySub = (event: ApiGatewayEvent, userInfo: UserInfo): string => {
   if (!playerSessionId || !/^[a-zA-Z0-9._~-]{16,128}$/.test(playerSessionId)) return ''
 
   return `anonymous:${playerSessionId}`
-}
-
-const getGameplayProgressSub = (event: ApiGatewayEvent, gameplaySub: string): { progressSub: string, replay: boolean } => {
-  const replayId = getHeader(event, 'X-Case-Replay-Id')?.trim()
-  if (!replayId || !/^[a-zA-Z0-9._~-]{16,128}$/.test(replayId)) {
-    return { progressSub: gameplaySub, replay: false }
-  }
-
-  return { progressSub: `${gameplaySub}:replay:${replayId}`, replay: true }
 }
 
 const buildCaseStatsResponse = (stats: CaseStats): CaseStatsResponse => ({
@@ -1049,10 +1039,11 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   const pokedex = await getOrCreatePokedex(userInfo.sub)
   const caseHistory = pokedex.caseHistory ?? {}
   const caseOutcomes = pokedex.caseOutcomes ?? {}
+  const todayCaseId = getTodayUtc()
   const caseIds = [...new Set([...Object.keys(caseOutcomes), ...Object.keys(caseHistory)])]
+    .filter((caseId) => caseId !== todayCaseId)
   const items = (await Promise.all(caseIds.map(async (caseId): Promise<CaseHistoryItem | null> => {
     const stored = caseHistory[caseId]
-    const fullCase = await loadCase(caseId)
     if (stored) {
       return {
         caseId,
@@ -1063,13 +1054,13 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
         culpritPokemonName: getPokemonName(stored.culpritPokemonId),
         guessCount: stored.guessCount,
         completedAt: stored.completedAt,
-        canReplay: fullCase !== null,
       }
     }
 
     const status = caseOutcomes[caseId]
     if (!status) return null
 
+    const fullCase = await loadCase(caseId)
     if (!fullCase) {
       return {
         caseId,
@@ -1077,7 +1068,6 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
         caseTitle: 'Daily puzzle',
         guessCount: status === 'failed' ? MAX_ACCUSATIONS : 1,
         completedAt: `${caseId}T00:00:00.000Z`,
-        canReplay: false,
       }
     }
 
@@ -1090,7 +1080,6 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
       culpritPokemonName: getPokemonName(fullCase.culpritPokemonId),
       guessCount: status === 'failed' ? MAX_ACCUSATIONS : 1,
       completedAt: `${caseId}T00:00:00.000Z`,
-      canReplay: true,
     }
   })))
     .filter((item): item is CaseHistoryItem => item !== null)
@@ -1227,8 +1216,7 @@ const handleInvestigate = async (
     })
   }
 
-  const { progressSub, replay } = getGameplayProgressSub(event, gameplaySub)
-  const userId = getDateUserId(progressSub, caseId)
+  const userId = getDateUserId(gameplaySub, caseId)
   let progress = await getProgress(userId)
   const activityAt = getActivityTimestamp()
 
@@ -1262,7 +1250,7 @@ const handleInvestigate = async (
     ttl: getProgressTtl(),
   })
 
-  if (userInfo.sub && witnessPokemonId && !replay) {
+  if (userInfo.sub && witnessPokemonId) {
     await markPokedexSeen(userInfo.sub, [witnessPokemonId])
   }
 
@@ -1344,8 +1332,7 @@ const handleAccuse = async (
     })
   }
 
-  const { progressSub, replay } = getGameplayProgressSub(event, gameplaySub)
-  const userId = getDateUserId(progressSub, caseId)
+  const userId = getDateUserId(gameplaySub, caseId)
   let progress = await getProgress(userId)
   const activityAt = getActivityTimestamp()
 
@@ -1385,11 +1372,11 @@ const handleAccuse = async (
 
   let caseStats = buildCaseStatsResponse(getCaseStats(record))
   const guessCount = status === 'solved' ? accusationHistory.length : MAX_ACCUSATIONS
-  if ((status === 'solved' || status === 'failed') && !replay) {
+  if (status === 'solved' || status === 'failed') {
     caseStats = buildCaseStatsResponse(await recordCaseCompletion(caseId, status, guessCount))
   }
 
-  if (userInfo.sub && (status === 'solved' || status === 'failed') && !replay) {
+  if (userInfo.sub && (status === 'solved' || status === 'failed')) {
     const pokedex = await updatePokedexForCompletedCase(userInfo.sub, caseId, fullCase, progress, status, guessCount)
     caseStreak = getPokedexStreak(pokedex)
   }
