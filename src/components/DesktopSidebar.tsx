@@ -86,7 +86,7 @@ export function DesktopSidebar({
             className={`sidebar-nav-button ${activeSection === 'history' ? 'is-active' : ''}`}
             onClick={onSelectHistory}
           >
-            History
+            Archived cases
           </button>
 
         </div>

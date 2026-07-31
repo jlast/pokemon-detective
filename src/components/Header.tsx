@@ -114,7 +114,7 @@ export function Header({
             >
               <span className="mobile-main-menu-icon mobile-main-menu-icon--history" aria-hidden="true" />
               <span>
-                <strong>History</strong>
+                <strong>Archived cases</strong>
                 <small>Review solved case files</small>
               </span>
             </button>
