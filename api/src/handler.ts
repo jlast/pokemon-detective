@@ -1086,7 +1086,7 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   const caseOutcomes = pokedex.caseOutcomes ?? {}
   const caseIds = getPastCaseIds(HISTORY_ARCHIVE_DAYS)
   const items = (await Promise.all(caseIds.map(async (caseId): Promise<CaseHistoryItem | null> => {
-    const fullCase = await loadCase(caseId)
+    const fullCase = await loadCase(caseId) ?? await generateAndStoreCase(caseId)
     if (!fullCase) return null
 
     const progress = await getProgress(getDateUserId(userInfo.sub, caseId))
@@ -1094,6 +1094,7 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
     const storedOutcome = caseOutcomes[caseId]
     const status = progress?.status ?? stored?.status ?? storedOutcome ?? 'playing'
     const completed = status === 'solved' || status === 'failed'
+    const resolved = status === 'solved'
     const guessCount = progress
       ? progress.status === 'failed' ? MAX_ACCUSATIONS : progress.accusationHistory.length
       : stored?.guessCount ?? (storedOutcome === 'failed' ? MAX_ACCUSATIONS : storedOutcome === 'solved' ? 1 : undefined)
@@ -1104,8 +1105,8 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
         status,
         caseTitle: stored.caseTitle || fullCase.title,
         difficulty: stored.difficulty ?? fullCase.difficulty,
-        culpritPokemonId: completed ? fullCase.culpritPokemonId : undefined,
-        culpritPokemonName: completed ? getPokemonName(fullCase.culpritPokemonId) : undefined,
+        culpritPokemonId: resolved ? fullCase.culpritPokemonId : undefined,
+        culpritPokemonName: resolved ? getPokemonName(fullCase.culpritPokemonId) : undefined,
         guessCount,
         startedAt: stored.startedAt,
         completedAt: completed ? stored.completedAt ?? `${caseId}T00:00:00.000Z` : undefined,
@@ -1117,8 +1118,8 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
       status,
       caseTitle: fullCase.title,
       difficulty: fullCase.difficulty,
-      culpritPokemonId: completed ? fullCase.culpritPokemonId : undefined,
-      culpritPokemonName: completed ? getPokemonName(fullCase.culpritPokemonId) : undefined,
+      culpritPokemonId: resolved ? fullCase.culpritPokemonId : undefined,
+      culpritPokemonName: resolved ? getPokemonName(fullCase.culpritPokemonId) : undefined,
       guessCount,
       startedAt: progress ? getProgressActivityTimestamp(progress) ?? undefined : undefined,
       completedAt: completed ? `${caseId}T00:00:00.000Z` : undefined,
