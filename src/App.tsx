@@ -951,6 +951,7 @@ function App() {
           isAdmin={isAdmin}
           onSelectCase={() => {}}
           onSelectPokedex={() => {}}
+          onSelectHistory={() => {}}
           onSelectHowToPlay={() => {}}
           onSelectFeedback={() => {}}
           onSelectSettings={() => {}}
@@ -995,6 +996,7 @@ function App() {
         caseStreak={caseStreak}
         onSelectCase={() => navigate(TODAY_PATH)}
         onSelectPokedex={() => navigate(POKEDEX_PATH)}
+        onSelectHistory={() => navigate(HISTORY_PATH)}
         onSelectHowToPlay={() => navigate(HOW_TO_PLAY_PATH)}
         onSelectFeedback={() => navigate(FEEDBACK_PATH)}
         onSelectSettings={() => navigate(SETTINGS_PATH)}
@@ -1004,16 +1006,17 @@ function App() {
       />
 
       <div className="app-content">
-          <Header
-            currentCase={currentCase}
-            activeSection={activeSidebarSection}
-            authed={authed}
-            userProfile={userProfile}
-            isAdmin={isAdmin}
-            isMenuOpen={isMobileMenuOpen}
-            onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
-            onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
-            onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}
+        <Header
+          currentCase={currentCase}
+          activeSection={activeSidebarSection}
+          authed={authed}
+          userProfile={userProfile}
+          isAdmin={isAdmin}
+          isMenuOpen={isMobileMenuOpen}
+          onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
+          onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
+          onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}
+          onSelectHistory={() => navigateAndCloseMenu(HISTORY_PATH)}
           onSelectHowToPlay={() => navigateAndCloseMenu(HOW_TO_PLAY_PATH)}
           onSelectFeedback={() => navigateAndCloseMenu(FEEDBACK_PATH)}
           onSelectSettings={() => navigateAndCloseMenu(SETTINGS_PATH)}

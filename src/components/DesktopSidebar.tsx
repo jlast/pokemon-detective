@@ -9,6 +9,7 @@ interface DesktopSidebarProps {
   caseStreak?: number
   onSelectCase: () => void
   onSelectPokedex: () => void
+  onSelectHistory: () => void
   onSelectHowToPlay: () => void
   onSelectFeedback: () => void
   onSelectSettings: () => void
@@ -25,6 +26,7 @@ export function DesktopSidebar({
   caseStreak,
   onSelectCase,
   onSelectPokedex,
+  onSelectHistory,
   onSelectHowToPlay,
   onSelectFeedback,
   onSelectSettings,
@@ -77,6 +79,14 @@ export function DesktopSidebar({
             onClick={onSelectPokedex}
           >
             Pokédex
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-nav-button ${activeSection === 'history' ? 'is-active' : ''}`}
+            onClick={onSelectHistory}
+          >
+            History
           </button>
 
         </div>

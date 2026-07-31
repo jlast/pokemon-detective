@@ -11,6 +11,7 @@ interface HeaderProps {
   onToggleMenu: () => void
   onSelectCase: () => void
   onSelectPokedex: () => void
+  onSelectHistory: () => void
   onSelectHowToPlay: () => void
   onSelectFeedback: () => void
   onSelectSettings: () => void
@@ -29,6 +30,7 @@ export function Header({
   onToggleMenu,
   onSelectCase,
   onSelectPokedex,
+  onSelectHistory,
   onSelectHowToPlay,
   onSelectFeedback,
   onSelectSettings,
@@ -103,6 +105,17 @@ export function Header({
               <span>
                 <strong>Pokédex</strong>
                 <small>Review discovered Pokemon</small>
+              </span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-main-menu-item ${activeSection === 'history' ? 'is-active' : ''}`}
+              onClick={onSelectHistory}
+            >
+              <span className="mobile-main-menu-icon mobile-main-menu-icon--history" aria-hidden="true" />
+              <span>
+                <strong>History</strong>
+                <small>Review solved case files</small>
               </span>
             </button>
             <p className="mobile-main-menu-section-label">Support</p>
