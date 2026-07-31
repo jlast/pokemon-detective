@@ -26,10 +26,19 @@ const formatDifficulty = (difficulty: string | undefined): string => (
   difficulty ? difficulty[0].toUpperCase() + difficulty.slice(1) : 'Unknown'
 )
 
+const getDifficultyClassName = (difficulty: string | undefined): string => {
+  if (difficulty === 'easy' || difficulty === 'medium' || difficulty === 'hard') return `history-difficulty--${difficulty}`
+  return 'history-difficulty--unknown'
+}
+
 const getStatusLabel = (status: 'playing' | 'solved' | 'failed') => {
   if (status === 'playing') return 'Unsolved'
   return status === 'solved' ? 'Solved' : 'Failed'
 }
+
+const getCaseActionLabel = (status: 'playing' | 'solved' | 'failed') => (
+  status === 'solved' || status === 'failed' ? 'View debrief' : 'Play case'
+)
 
 export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
   const navigate = useNavigate()
@@ -92,12 +101,6 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
               Review previous daily puzzles saved to your detective profile.
             </p>
           </div>
-          <div className="history-stats" aria-label="Puzzle history stats">
-            <span><strong>{history.solvedCount}</strong> solved</span>
-            <span><strong>{history.failedCount}</strong> failed</span>
-            <span><strong>{history.unsolvedCount}</strong> unsolved</span>
-            <span><strong>{history.currentStreak}</strong> streak</span>
-          </div>
         </div>
 
         {loading ? (
@@ -125,14 +128,13 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
                   ) : null}
                 </div>
                 <div className="history-card__meta" aria-label={`${item.caseTitle} details`}>
-                  <span>{formatDifficulty(item.difficulty)}</span>
-                  <span>{item.guessCount == null ? 'No guesses yet' : `${item.guessCount} ${item.guessCount === 1 ? 'guess' : 'guesses'}`}</span>
+                  <span className={`history-difficulty ${getDifficultyClassName(item.difficulty)}`}>{formatDifficulty(item.difficulty)}</span>
                   <button
                     type="button"
                     className="history-card__play"
                     onClick={() => navigate(`${TODAY_PATH}?case=${encodeURIComponent(item.caseId)}`)}
                   >
-                    View case
+                    {getCaseActionLabel(item.status)}
                   </button>
                 </div>
               </article>
