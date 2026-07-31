@@ -907,8 +907,7 @@ const handleGetCase = async (event: ApiGatewayEvent, requestedCaseId = getTodayU
   const caseStreak = userInfo.sub ? getPokedexStreak(await getOrCreatePokedex(userInfo.sub)) : 0
   const gameplaySub = getGameplaySub(event, userInfo)
   if (gameplaySub) {
-    const { progressSub } = getGameplayProgressSub(event, gameplaySub)
-    const userId = getDateUserId(progressSub, caseId)
+    const userId = getDateUserId(gameplaySub, caseId)
     let progress = await getProgress(userId)
     if (!progress) {
       progress = createCaseProgress(userId, caseId, fullCase, undefined, getPlayerMetadataUpdates(userInfo, getActivityTimestamp()))
@@ -917,8 +916,12 @@ const handleGetCase = async (event: ApiGatewayEvent, requestedCaseId = getTodayU
       progress = await ensureProgressDefaults(userId, progress, fullCase)
     }
 
-    if (userInfo.sub) {
-      await markCaseHistoryStarted(userInfo.sub, caseId, fullCase)
+    if (userInfo.sub && !isToday) {
+      try {
+        await markCaseHistoryStarted(userInfo.sub, caseId, fullCase)
+      } catch (error) {
+        console.error('Failed to mark archived case history started:', error)
+      }
     }
 
     return ok({
@@ -1453,8 +1456,7 @@ const handleClearSuspect = async (
 
   const cleared = body.cleared ?? true
 
-  const { progressSub } = getGameplayProgressSub(event, gameplaySub)
-  const userId = getDateUserId(progressSub, caseId)
+  const userId = getDateUserId(gameplaySub, caseId)
   let progress = await getProgress(userId)
   const activityAt = getActivityTimestamp()
   const fullCase = await loadCase(caseId)
