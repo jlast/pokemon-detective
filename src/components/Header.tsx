@@ -11,7 +11,6 @@ interface HeaderProps {
   onToggleMenu: () => void
   onSelectCase: () => void
   onSelectPokedex: () => void
-  onSelectHistory: () => void
   onSelectHowToPlay: () => void
   onSelectFeedback: () => void
   onSelectSettings: () => void
@@ -30,7 +29,6 @@ export function Header({
   onToggleMenu,
   onSelectCase,
   onSelectPokedex,
-  onSelectHistory,
   onSelectHowToPlay,
   onSelectFeedback,
   onSelectSettings,
@@ -103,19 +101,8 @@ export function Header({
             >
               <span className="mobile-main-menu-icon mobile-main-menu-icon--pokedex" aria-hidden="true" />
               <span>
-                <strong>Pokedex</strong>
+                <strong>Pokédex</strong>
                 <small>Review discovered Pokemon</small>
-              </span>
-            </button>
-            <button
-              type="button"
-              className={`mobile-main-menu-item ${activeSection === 'history' ? 'is-active' : ''}`}
-              onClick={onSelectHistory}
-            >
-              <span className="mobile-main-menu-icon mobile-main-menu-icon--history" aria-hidden="true" />
-              <span>
-                <strong>Archived puzzles</strong>
-                <small>Review completed cases</small>
               </span>
             </button>
             <p className="mobile-main-menu-section-label">Support</p>
@@ -150,7 +137,7 @@ export function Header({
               <span className="mobile-main-menu-account-avatar" aria-hidden="true">D</span>
               <span className="mobile-main-menu-account-copy">
                 <strong>{authed ? userProfile?.name ?? userProfile?.email ?? 'Detective' : 'Guest detective'}</strong>
-                <small>{authed ? 'Detective' : 'Login to save progress'}</small>
+                <small>{authed ? 'Detective' : 'Sign in'}</small>
               </span>
             </div>
             <div className="mobile-main-menu-account-actions">
@@ -165,7 +152,7 @@ export function Header({
                 </>
               ) : null}
               <button type="button" className={`mobile-main-menu-auth ${authed ? '' : 'mobile-main-menu-auth--primary'}`} onClick={authed ? onLogout : onLogin}>
-                {authed ? 'Logout' : 'Login'}
+                {authed ? 'Logout' : 'Sign in'}
               </button>
               {!authed ? (
                 <button type="button" className="mobile-main-menu-auth" onClick={onSelectFeedback}>

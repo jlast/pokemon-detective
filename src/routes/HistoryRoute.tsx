@@ -78,12 +78,12 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
       <div className="main-layout-single">
         <section className="notebook-card history-page history-empty-state">
           <p className="eyebrow">Case archive</p>
-          <h2>Login to save puzzle history</h2>
+          <h2>Sign in to save puzzle history</h2>
           <p className="subtle-text">
             Completed cases are linked to your detective profile so you can review your solve record later.
           </p>
           <button type="button" className="primary-button" onClick={onLogin}>
-            Login
+            Sign in
           </button>
         </section>
       </div>

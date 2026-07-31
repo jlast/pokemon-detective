@@ -99,9 +99,9 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
       <div className="main-layout-single">
         <section className="notebook-card admin-page admin-page--signed-out">
           <p className="eyebrow">Admin desk</p>
-          <h2>Login required</h2>
+          <h2>Sign in required</h2>
           <p className="subtle-text">Admin puzzle details require a Cognito account in the admins group.</p>
-          <button type="button" className="primary-button" onClick={onLogin}>Login to admin</button>
+          <button type="button" className="primary-button" onClick={onLogin}>Sign in to continue</button>
         </section>
       </div>
     )

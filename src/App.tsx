@@ -892,7 +892,7 @@ function App() {
     },
     pokedex: {
       url: POKEDEX_PATH,
-      title: 'Pokedex',
+      title: 'Pokédex',
       outlet: <PokedexRoute authed={authed} onLogin={handleLogin} />,
     },
     history: {
@@ -951,7 +951,6 @@ function App() {
           isAdmin={isAdmin}
           onSelectCase={() => {}}
           onSelectPokedex={() => {}}
-          onSelectHistory={() => {}}
           onSelectHowToPlay={() => {}}
           onSelectFeedback={() => {}}
           onSelectSettings={() => {}}
@@ -996,7 +995,6 @@ function App() {
         caseStreak={caseStreak}
         onSelectCase={() => navigate(TODAY_PATH)}
         onSelectPokedex={() => navigate(POKEDEX_PATH)}
-        onSelectHistory={() => navigate(HISTORY_PATH)}
         onSelectHowToPlay={() => navigate(HOW_TO_PLAY_PATH)}
         onSelectFeedback={() => navigate(FEEDBACK_PATH)}
         onSelectSettings={() => navigate(SETTINGS_PATH)}
@@ -1016,7 +1014,6 @@ function App() {
             onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
             onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
             onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}
-            onSelectHistory={() => navigateAndCloseMenu(HISTORY_PATH)}
           onSelectHowToPlay={() => navigateAndCloseMenu(HOW_TO_PLAY_PATH)}
           onSelectFeedback={() => navigateAndCloseMenu(FEEDBACK_PATH)}
           onSelectSettings={() => navigateAndCloseMenu(SETTINGS_PATH)}

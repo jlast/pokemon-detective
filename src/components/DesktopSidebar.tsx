@@ -9,7 +9,6 @@ interface DesktopSidebarProps {
   caseStreak?: number
   onSelectCase: () => void
   onSelectPokedex: () => void
-  onSelectHistory: () => void
   onSelectHowToPlay: () => void
   onSelectFeedback: () => void
   onSelectSettings: () => void
@@ -26,7 +25,6 @@ export function DesktopSidebar({
   caseStreak,
   onSelectCase,
   onSelectPokedex,
-  onSelectHistory,
   onSelectHowToPlay,
   onSelectFeedback,
   onSelectSettings,
@@ -52,59 +50,59 @@ export function DesktopSidebar({
               <span className="sidebar-brand-title-top">Poké</span>
               <span className="sidebar-brand-title-bottom">Mystery</span>
             </h2>
+            <p className="sidebar-brand-subtitle">Daily Pokémon mysteries</p>
           </div>
         </div>
       </div>
 
-      <div className="desktop-sidebar-section">
-        <p className="sidebar-nav-section-label">Today</p>
+      <nav className="desktop-sidebar-section sidebar-nav" aria-label="Primary navigation">
+        <div className="sidebar-nav-group">
+          <p className="sidebar-nav-section-label">Today</p>
 
-        <button
-          type="button"
-          className={`sidebar-nav-button ${activeSection === 'case' ? 'is-active' : ''}`}
-          onClick={onSelectCase}
-        >
-          Today's case
-        </button>
-
-        <p className="sidebar-nav-section-label">Collection</p>
-
-        <button
-          type="button"
-          className={`sidebar-nav-button ${activeSection === 'pokedex' ? 'is-active' : ''}`}
-          onClick={onSelectPokedex}
-        >
-          Pokedex
-        </button>
-
-        <button
-          type="button"
-          className={`sidebar-nav-button ${activeSection === 'history' ? 'is-active' : ''}`}
-          onClick={onSelectHistory}
-        >
-          Archived puzzles
-        </button>
-
-        <p className="sidebar-nav-section-label">Support</p>
-
-        <button
-          type="button"
-          className={`sidebar-nav-button ${activeSection === 'how-to-play' ? 'is-active' : ''}`}
-          onClick={onSelectHowToPlay}
-        >
-          How to play
-        </button>
-
-        {isAdmin ? (
           <button
             type="button"
-            className={`sidebar-nav-button ${activeSection === 'admin' ? 'is-active' : ''}`}
-            onClick={onSelectAdmin}
+            className={`sidebar-nav-button ${activeSection === 'case' ? 'is-active' : ''}`}
+            onClick={onSelectCase}
           >
-            Admin
+            Today's case
           </button>
-        ) : null}
-      </div>
+        </div>
+
+        <div className="sidebar-nav-group">
+          <p className="sidebar-nav-section-label">Collection</p>
+
+          <button
+            type="button"
+            className={`sidebar-nav-button ${activeSection === 'pokedex' ? 'is-active' : ''}`}
+            onClick={onSelectPokedex}
+          >
+            Pokédex
+          </button>
+
+        </div>
+
+        <div className="sidebar-nav-group">
+          <p className="sidebar-nav-section-label">Support</p>
+
+          <button
+            type="button"
+            className={`sidebar-nav-button ${activeSection === 'how-to-play' ? 'is-active' : ''}`}
+            onClick={onSelectHowToPlay}
+          >
+            How to play
+          </button>
+
+          {isAdmin ? (
+            <button
+              type="button"
+              className={`sidebar-nav-button ${activeSection === 'admin' ? 'is-active' : ''}`}
+              onClick={onSelectAdmin}
+            >
+              Admin
+            </button>
+          ) : null}
+        </div>
+      </nav>
 
       <div className="desktop-sidebar-section desktop-sidebar-actions">
         {authed && userProfile ? (
@@ -122,7 +120,7 @@ export function DesktopSidebar({
               className="sidebar-guest-action sidebar-guest-action--primary"
               onClick={onLogin}
             >
-              Login
+              Sign in
             </button>
             <button
               type="button"

@@ -52,13 +52,13 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
     return (
       <div className="main-layout-single">
         <section className="notebook-card pokedex-page pokedex-empty-state">
-          <p className="eyebrow">Pokedex archive</p>
-          <h2>Login to track your discoveries</h2>
+          <p className="eyebrow">Pokédex archive</p>
+          <h2>Sign in to track your discoveries</h2>
           <p className="subtle-text">
-            Pokemon are marked seen or unlocked only after completed cases, so your Pokedex needs an account.
+            Pokemon are marked seen or unlocked only after completed cases, so your Pokédex needs an account.
           </p>
           <button type="button" className="primary-button" onClick={onLogin}>
-            Login
+            Sign in
           </button>
         </section>
       </div>
@@ -99,13 +99,13 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
       <section className="notebook-card pokedex-page">
         <div className="pokedex-header">
           <div>
-            <p className="eyebrow">Pokedex archive</p>
+            <p className="eyebrow">Pokédex archive</p>
             <h2>Case discoveries</h2>
             <p className="subtle-text">
               Failed cases mark Pokemon as seen. Solved cases unlock their full records.
             </p>
           </div>
-          <div className="pokedex-stats" aria-label="Pokedex filters">
+          <div className="pokedex-stats" aria-label="Pokédex filters">
             <button
               type="button"
               className={activeFilter === 'seen' ? 'is-active' : undefined}
@@ -145,11 +145,11 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
         </label>
 
         {loading ? (
-          <p className="placeholder-page">Loading Pokedex records...</p>
+          <p className="placeholder-page">Loading Pokédex records...</p>
         ) : error ? (
-          <p className="placeholder-page">Could not load your Pokedex right now.</p>
+          <p className="placeholder-page">Could not load your Pokédex right now.</p>
         ) : registeredPokemon.length === 0 ? (
-          <p className="placeholder-page">No Pokemon registered yet. Complete a case to add Pokemon to your Pokedex.</p>
+          <p className="placeholder-page">No Pokemon registered yet. Complete a case to add Pokemon to your Pokédex.</p>
         ) : filteredPokemon.length === 0 ? (
           <p className="placeholder-page">{normalizedSearchTerm ? 'No Pokemon match your search.' : 'No Pokemon match this filter.'}</p>
         ) : (

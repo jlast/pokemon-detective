@@ -22,7 +22,7 @@ const detectiveTips = [
   'Residue, trace, entry, and witness clues narrow the culprit to a small group. Cross-check that group against Pokedex records.',
   'Do not chase duplicate clue types. Greyed-out leads point to something your case file already covers.',
   'Use cleared markers aggressively. The game never marks suspects automatically.',
-  'Login to keep Pokedex progress across cases. Failed cases mark Pokemon as seen; solved cases unlock full records.',
+  'Sign in to keep Pokédex progress across cases. Failed cases mark Pokemon as seen; solved cases unlock full records.',
 ]
 
 export function HowToPlayRoute() {

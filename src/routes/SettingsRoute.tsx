@@ -23,8 +23,8 @@ export function SettingsRoute({
         <section className="notebook-card settings-page settings-page--signed-out">
           <p className="eyebrow">Detective settings</p>
           <h2>Email reminders</h2>
-          <p className="subtle-text">Log in to manage case reminder emails.</p>
-          <button type="button" className="primary-button" onClick={onLogin}>Login to settings</button>
+          <p className="subtle-text">Sign in to manage case reminder emails.</p>
+          <button type="button" className="primary-button" onClick={onLogin}>Sign in to continue</button>
         </section>
       </div>
     )
