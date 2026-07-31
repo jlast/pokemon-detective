@@ -1,6 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { allCases, createCaseById, pickRandomCaseDifficulty, rebuildFullCase } from '../../src/game/cases/index'
-import { getSolutionClueBadgesFromEvidence, type Case, type CaseDifficulty, type CaseSolution, type CaseStatus, type LocationCardVariant, type LocationAction } from '../../src/game/caseModel'
+import { getSolutionClueBadgesFromEvidence, type Case, type CaseDifficulty, type CaseSolution, type CaseStatus, type EvidenceBadgeData, type LocationCardVariant, type LocationAction } from '../../src/game/caseModel'
 import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseStats } from './caseDataDb'
@@ -11,6 +11,7 @@ import { validateGeneratedCase } from './validateGeneratedCase'
 import {
   getProgress,
   createProgress,
+  queryProgressByCaseId,
   updateProgress,
   type PlayerProgressRecord,
   type InvestigatedLocationRecord,
@@ -79,6 +80,41 @@ interface UserInfo {
   email?: string
   name?: string
   picture?: string
+  groups?: string[]
+}
+
+interface AdminProgressInvestigation {
+  locationId: string
+  locationName: string
+  actionId: string
+  actionLabel: string
+  outcomeType: string
+  observationText: string
+  evidenceId?: string
+  evidenceTitle?: string
+  evidenceText?: string
+  evidenceBadges?: EvidenceBadgeData[]
+  witnessPokemonId?: number
+  witnessPokemonName?: string
+}
+
+interface AdminProgressAccusation {
+  pokemonId: number
+  pokemonName: string
+  correct: boolean
+}
+
+interface AdminProgressPlayer {
+  userId: string
+  playerKind: 'authenticated' | 'anonymous'
+  status: 'playing' | 'solved' | 'failed'
+  succeeded: boolean
+  failed: boolean
+  investigationsRemaining: number
+  investigationsUsed: number
+  accusationsRemaining: number
+  accusationHistory: AdminProgressAccusation[]
+  investigatedLocations: AdminProgressInvestigation[]
 }
 
 interface CaseStatsResponse extends CaseStats {
@@ -118,6 +154,9 @@ const getUserInfo = async (event: ApiGatewayEvent): Promise<UserInfo> => {
       email: payload.email as string | undefined,
       name: payload.name as string | undefined,
       picture: payload.picture as string | undefined,
+      groups: Array.isArray(payload['cognito:groups'])
+        ? payload['cognito:groups'].filter((group): group is string => typeof group === 'string')
+        : [],
     }
   } catch {
     return { sub: '' }
@@ -146,6 +185,19 @@ const buildCaseStatsResponse = (stats: CaseStats): CaseStatsResponse => ({
   solveRate: stats.completedCount > 0 ? stats.solvedCount / stats.completedCount : null,
   averageGuesses: stats.completedCount > 0 ? stats.totalGuessCount / stats.completedCount : null,
 })
+
+const isAdmin = (userInfo: UserInfo): boolean => userInfo.groups?.includes('admins') ?? false
+
+const requireAdmin = async (event: ApiGatewayEvent): Promise<{ userInfo: UserInfo } | ApiGatewayResult> => {
+  const userInfo = await getUserInfo(event)
+  if (!userInfo.sub) return err(401, 'Authentication required')
+  if (!isAdmin(userInfo)) return err(403, 'Admin access required')
+  return { userInfo }
+}
+
+const isApiResult = (value: { userInfo: UserInfo } | ApiGatewayResult): value is ApiGatewayResult => (
+  'statusCode' in value
+)
 
 const shuffle = <T,>(items: T[]): T[] => {
   const copy = [...items]
@@ -797,6 +849,91 @@ const handleGetCurrentCase = async (event: ApiGatewayEvent): Promise<ApiGatewayR
   })
 }
 
+const getPokemonName = (pokemonId: number): string => (
+  pokemonData.find((pokemon) => pokemon.id === pokemonId)?.name ?? `Pokemon #${pokemonId}`
+)
+
+const buildAdminProgressPlayer = (fullCase: Case, progress: PlayerProgressRecord): AdminProgressPlayer => {
+  const investigationsUsed = (fullCase.maxInvestigations ?? DEFAULT_INVESTIGATIONS) - progress.investigationsRemaining
+  const investigatedLocations = progress.investigatedLocations.map((record) => {
+    const location = fullCase.locations.find((location) => location.id === record.locationId)
+    const action = location?.actions.find((action) => action.id === record.actionId)
+    return {
+      locationId: record.locationId,
+      locationName: location?.name ?? record.locationId,
+      actionId: record.actionId,
+      actionLabel: action?.label ?? record.actionId,
+      outcomeType: record.outcomeType,
+      observationText: record.observationText,
+      evidenceId: record.evidenceId,
+      evidenceTitle: resolveEvidenceTitle(record, action),
+      evidenceText: resolveEvidenceText(record, action),
+      evidenceBadges: resolveEvidenceBadges(record, action),
+      witnessPokemonId: record.witnessPokemonId,
+      witnessPokemonName: record.witnessPokemonId ? getPokemonName(record.witnessPokemonId) : undefined,
+    }
+  })
+  const accusationHistory = progress.accusationHistory.map((pokemonId) => ({
+    pokemonId,
+    pokemonName: getPokemonName(pokemonId),
+    correct: pokemonId === fullCase.culpritPokemonId,
+  }))
+
+  return {
+    userId: progress.userId,
+    playerKind: progress.userId.startsWith('anonymous:') ? 'anonymous' : 'authenticated',
+    status: progress.status,
+    succeeded: progress.status === 'solved',
+    failed: progress.status === 'failed',
+    investigationsRemaining: progress.investigationsRemaining,
+    investigationsUsed,
+    accusationsRemaining: progress.accusationsRemaining,
+    accusationHistory,
+    investigatedLocations,
+  }
+}
+
+const handleGetAdminSession = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
+  const admin = await requireAdmin(event)
+  if (isApiResult(admin)) return admin
+
+  return ok({
+    admin: true,
+    profile: {
+      sub: admin.userInfo.sub,
+      email: admin.userInfo.email,
+      name: admin.userInfo.name,
+      picture: admin.userInfo.picture,
+    },
+  })
+}
+
+const handleGetAdminCaseProgress = async (
+  caseId: string,
+  event: ApiGatewayEvent,
+): Promise<ApiGatewayResult> => {
+  const admin = await requireAdmin(event)
+  if (isApiResult(admin)) return admin
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(caseId)) return err(400, 'Invalid case date')
+
+  const fullCase = await loadCase(caseId)
+  if (!fullCase) return err(404, 'Case not found')
+
+  const progressRecords = await queryProgressByCaseId(caseId)
+  const players = progressRecords
+    .sort((left, right) => left.userId.localeCompare(right.userId))
+    .map((progress) => buildAdminProgressPlayer(fullCase, progress))
+
+  return ok({
+    caseId,
+    caseTitle: fullCase.title,
+    culpritPokemonId: fullCase.culpritPokemonId,
+    culpritPokemonName: getPokemonName(fullCase.culpritPokemonId),
+    players,
+  })
+}
+
 const handleGetPokedex = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
   const userInfo = await getUserInfo(event)
   if (!userInfo.sub) return err(401, 'Authentication required')
@@ -1237,6 +1374,15 @@ export const handler = async (
   try {
     if (method === 'GET' && path === '/api/cases/current') {
       return await handleGetCurrentCase(event)
+    }
+
+    if (method === 'GET' && path === '/api/admin/session') {
+      return await handleGetAdminSession(event)
+    }
+
+    const adminCaseProgressMatch = path.match(/^\/api\/admin\/cases\/([^/]+)\/progress$/)
+    if (method === 'GET' && adminCaseProgressMatch) {
+      return await handleGetAdminCaseProgress(decodeURIComponent(adminCaseProgressMatch[1]), event)
     }
 
     if (method === 'GET' && path === '/api/pokedex') {

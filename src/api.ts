@@ -1,4 +1,5 @@
 import { ensureValidSession, getPlayerSessionId, getToken } from './auth'
+import type { UserProfile } from './auth'
 import type { Case, EvidenceBadgeData } from './game/caseModel'
 
 const BASE = import.meta.env.VITE_API_BASE ?? ''
@@ -57,9 +58,62 @@ export interface ReminderPreferencesResponse {
   unfinishedCaseReminderEmails: boolean
 }
 
+export interface AdminSessionResponse {
+  admin: true
+  profile: UserProfile
+}
+
+export interface AdminProgressInvestigation {
+  locationId: string
+  locationName: string
+  actionId: string
+  actionLabel: string
+  outcomeType: string
+  observationText: string
+  evidenceId?: string
+  evidenceTitle?: string
+  evidenceText?: string
+  evidenceBadges?: EvidenceBadgeData[]
+  witnessPokemonId?: number
+  witnessPokemonName?: string
+}
+
+export interface AdminProgressAccusation {
+  pokemonId: number
+  pokemonName: string
+  correct: boolean
+}
+
+export interface AdminProgressPlayer {
+  userId: string
+  playerKind: 'authenticated' | 'anonymous'
+  status: 'playing' | 'solved' | 'failed'
+  succeeded: boolean
+  failed: boolean
+  investigationsRemaining: number
+  investigationsUsed: number
+  accusationsRemaining: number
+  accusationHistory: AdminProgressAccusation[]
+  investigatedLocations: AdminProgressInvestigation[]
+}
+
+export interface AdminCaseProgressResponse {
+  caseId: string
+  caseTitle: string
+  culpritPokemonId: number
+  culpritPokemonName: string
+  players: AdminProgressPlayer[]
+}
+
 const authHeaders = async (): Promise<Record<string, string>> => {
   const token = await ensureValidSession() ? getToken() : null
   return token ? { Authorization: `Bearer ${token}` } : { 'X-Player-Session-Id': getPlayerSessionId() }
+}
+
+const adminAuthHeaders = async (): Promise<Record<string, string>> => {
+  const token = await ensureValidSession() ? getToken() : null
+  if (!token) throw new Error('Authentication required')
+  return { Authorization: `Bearer ${token}` }
 }
 
 const enc = encodeURIComponent
@@ -78,6 +132,18 @@ export const getPokedex = async (): Promise<PokedexResponse> => {
 
 export const getReminderPreferences = async (): Promise<ReminderPreferencesResponse> => {
   const res = await fetch(`${BASE}/api/reminder-preferences`, { headers: await authHeaders() })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
+export const getAdminSession = async (): Promise<AdminSessionResponse> => {
+  const res = await fetch(`${BASE}/api/admin/session`, { headers: await adminAuthHeaders() })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
+export const getAdminCaseProgress = async (caseId: string): Promise<AdminCaseProgressResponse> => {
+  const res = await fetch(`${BASE}/api/admin/cases/${enc(caseId)}/progress`, { headers: await adminAuthHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }

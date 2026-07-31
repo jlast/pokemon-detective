@@ -153,6 +153,17 @@ resource "aws_dynamodb_table" "player_progress" {
     type = "S"
   }
 
+  attribute {
+    name = "caseId"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "caseId-index"
+    hash_key        = "caseId"
+    projection_type = "ALL"
+  }
+
   ttl {
     attribute_name = "ttl"
     enabled        = true
@@ -306,8 +317,12 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
           "dynamodb:GetItem",
           "dynamodb:PutItem",
           "dynamodb:UpdateItem",
+          "dynamodb:Query",
         ]
-        Resource = aws_dynamodb_table.player_progress.arn
+        Resource = [
+          aws_dynamodb_table.player_progress.arn,
+          "${aws_dynamodb_table.player_progress.arn}/index/caseId-index",
+        ]
       },
       {
         Effect = "Allow"
@@ -592,6 +607,13 @@ resource "aws_cognito_user_pool" "main" {
   }
 
   tags = var.tags
+}
+
+resource "aws_cognito_user_group" "admins" {
+  name         = "admins"
+  user_pool_id = aws_cognito_user_pool.main.id
+  description  = "PokeMystery administrators"
+  precedence   = 0
 }
 
 resource "aws_cognito_user_pool_domain" "main" {

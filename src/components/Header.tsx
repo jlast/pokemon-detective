@@ -6,12 +6,14 @@ interface HeaderProps {
   activeSection: string
   authed: boolean
   userProfile: UserProfile | null
+  isAdmin: boolean
   isMenuOpen: boolean
   onToggleMenu: () => void
   onSelectCase: () => void
   onSelectPokedex: () => void
   onSelectHowToPlay: () => void
   onSelectSettings: () => void
+  onSelectAdmin: () => void
   onLogin: () => void
   onLogout: () => void
 }
@@ -21,12 +23,14 @@ export function Header({
   activeSection,
   authed,
   userProfile,
+  isAdmin,
   isMenuOpen,
   onToggleMenu,
   onSelectCase,
   onSelectPokedex,
   onSelectHowToPlay,
   onSelectSettings,
+  onSelectAdmin,
   onLogin,
   onLogout,
 }: HeaderProps) {
@@ -108,6 +112,19 @@ export function Header({
                 <small>Rules, clues, accusations</small>
               </span>
             </button>
+            {isAdmin ? (
+              <button
+                type="button"
+                className={`mobile-main-menu-item ${activeSection === 'admin' ? 'is-active' : ''}`}
+                onClick={onSelectAdmin}
+              >
+                <span className="mobile-main-menu-icon mobile-main-menu-icon--admin" aria-hidden="true" />
+                <span>
+                  <strong>Admin</strong>
+                  <small>Review player puzzle details</small>
+                </span>
+              </button>
+            ) : null}
           </div>
 
           <div className="mobile-main-menu-account">

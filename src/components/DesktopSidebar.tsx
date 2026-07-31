@@ -5,11 +5,13 @@ interface DesktopSidebarProps {
   activeSection: string
   authed: boolean
   userProfile: UserProfile | null
+  isAdmin: boolean
   caseStreak?: number
   onSelectCase: () => void
   onSelectPokedex: () => void
   onSelectHowToPlay: () => void
   onSelectSettings: () => void
+  onSelectAdmin: () => void
   onLogin: () => void
   onLogout: () => void
 }
@@ -18,11 +20,13 @@ export function DesktopSidebar({
   activeSection,
   authed,
   userProfile,
+  isAdmin,
   caseStreak,
   onSelectCase,
   onSelectPokedex,
   onSelectHowToPlay,
   onSelectSettings,
+  onSelectAdmin,
   onLogin,
   onLogout,
 }: DesktopSidebarProps) {
@@ -72,6 +76,16 @@ export function DesktopSidebar({
         >
           How to play
         </button>
+
+        {isAdmin ? (
+          <button
+            type="button"
+            className={`sidebar-nav-button ${activeSection === 'admin' ? 'is-active' : ''}`}
+            onClick={onSelectAdmin}
+          >
+            Admin
+          </button>
+        ) : null}
       </div>
 
       <div className="desktop-sidebar-section desktop-sidebar-actions">

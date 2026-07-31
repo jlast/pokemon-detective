@@ -353,6 +353,205 @@
   font-weight: 900;
 }
 
+.admin-page {
+  display: grid;
+  gap: 1.1rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  overflow: hidden;
+}
+
+.admin-page--signed-out {
+  justify-items: start;
+}
+
+.admin-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-page__header h2 {
+  margin: 0.15rem 0 0.35rem;
+  color: #203250;
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+  line-height: 1;
+}
+
+.admin-page__date-field {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 12rem;
+  color: #5e6a7d;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.admin-page__date-field input {
+  min-height: 42px;
+  border: 1px solid rgba(31, 48, 80, 0.18);
+  border-radius: 12px;
+  padding: 0.55rem 0.7rem;
+  background: #fffdf7;
+  color: #203250;
+  font: inherit;
+  font-size: 0.95rem;
+  text-transform: none;
+}
+
+.admin-page__summary,
+.admin-page__case-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.admin-page__summary span,
+.admin-page__case-note span,
+.admin-page__case-note strong {
+  border: 1px solid rgba(31, 48, 80, 0.14);
+  border-radius: 999px;
+  padding: 0.4rem 0.65rem;
+  background: rgba(255, 248, 223, 0.76);
+  color: #203250;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.admin-player-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.admin-player-card {
+  border: 1px solid rgba(127, 92, 48, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 253, 247, 0.76);
+  box-shadow: 0 8px 18px rgba(47, 35, 21, 0.06);
+  overflow: hidden;
+}
+
+.admin-player-card summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  color: #203250;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.admin-player-card summary::marker {
+  content: '';
+}
+
+.admin-player-card__identity {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-player-card__status {
+  border-radius: 999px;
+  padding: 0.3rem 0.55rem;
+  background: #e5e9f0;
+  color: #203250;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.admin-player-card__status--solved {
+  background: #dcefc1;
+  color: #385315;
+}
+
+.admin-player-card__status--failed {
+  background: #f3d4c9;
+  color: #78301f;
+}
+
+.admin-player-card__details {
+  display: grid;
+  gap: 1rem;
+  padding: 0 1rem 1rem;
+}
+
+.admin-player-card__details h3 {
+  margin: 0 0 0.55rem;
+  color: #203250;
+  font-size: 1rem;
+}
+
+.admin-detail-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.admin-detail-card {
+  display: grid;
+  gap: 0.35rem;
+  border: 1px solid rgba(31, 48, 80, 0.12);
+  border-radius: 14px;
+  padding: 0.8rem;
+  background: #fffdf7;
+}
+
+.admin-detail-card strong {
+  color: #203250;
+}
+
+.admin-detail-card span,
+.admin-detail-card small {
+  color: #5e6a7d;
+  font-weight: 800;
+}
+
+.admin-detail-card p {
+  margin: 0;
+  color: #3b4658;
+  line-height: 1.45;
+}
+
+.admin-badge-list,
+.admin-accusation-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.admin-badge-list span,
+.admin-accusation-list span {
+  border-radius: 999px;
+  padding: 0.3rem 0.52rem;
+  background: rgba(244, 211, 94, 0.32);
+  color: #5a4618;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.admin-accusation-list span.is-correct {
+  background: #dcefc1;
+  color: #385315;
+}
+
+@media (max-width: 720px) {
+  .admin-page__header {
+    display: grid;
+  }
+
+  .admin-page__date-field {
+    min-width: 0;
+  }
+
+  .admin-player-card summary {
+    grid-template-columns: 1fr auto;
+  }
+}
+
 .reminder-settings-card__control {
   position: relative;
   width: 40px;
@@ -1181,6 +1380,22 @@
   border-radius: 999px;
   background: currentColor;
   box-shadow: 0 -0.42rem 0 0 currentColor;
+}
+
+.mobile-main-menu-icon--admin::before {
+  width: 1.1rem;
+  height: 0.82rem;
+  border: 2px solid currentColor;
+  border-radius: 0.18rem;
+}
+
+.mobile-main-menu-icon--admin::after {
+  width: 0.62rem;
+  height: 0.42rem;
+  border: 2px solid currentColor;
+  border-bottom: 0;
+  border-radius: 0.35rem 0.35rem 0 0;
+  transform: translateY(-0.55rem);
 }
 
 .mobile-main-menu-account {

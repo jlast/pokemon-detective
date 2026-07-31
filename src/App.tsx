@@ -4,6 +4,7 @@ import './App.css'
 import { DesktopSidebar } from './components/DesktopSidebar'
 import { Header } from './components/Header'
 import { AccuseRoute } from './routes/AccuseRoute'
+import { AdminRoute } from './routes/AdminRoute'
 import { LoginRoute } from './routes/LoginRoute'
 import { CaseOverviewRoute } from './routes/CaseOverviewRoute'
 import { CaseRoute } from './routes/CaseRoute'
@@ -16,6 +17,7 @@ import { SuspectFileRoute } from './routes/SuspectFileRoute'
 import { SuspectsRoute } from './routes/SuspectsRoute'
 import {
   getCurrentCase,
+  getAdminSession,
   getReminderPreferences,
   updateReminderPreferences,
   investigate as apiInvestigate,
@@ -45,6 +47,7 @@ import {
   POKEDEX_PATH,
   ROOT_PATH,
   SETTINGS_PATH,
+  ADMIN_PATH,
   TODAY_ACCUSE_PATH,
   TODAY_ACCUSE_ROUTE,
   TODAY_ENDING_PATH,
@@ -209,6 +212,7 @@ function App() {
   const [caseStreak, setCaseStreak] = useState(0)
 
   const [authed, setAuthed] = useState(() => isAuthenticated())
+  const [isAdmin, setIsAdmin] = useState(false)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() =>
     authed ? getUserProfile() : null,
   )
@@ -222,6 +226,7 @@ function App() {
 
   const handleLogout = useCallback(() => {
     authLogout()
+    setIsAdmin(false)
     setReminderPreferences(DEFAULT_REMINDER_PREFERENCES)
     setReminderStatus('idle')
   }, [])
@@ -314,9 +319,11 @@ function App() {
     ? 'case'
     : currentRoute.startsWith(POKEDEX_PATH)
       ? 'pokedex'
-      : currentRoute.startsWith(HOW_TO_PLAY_PATH)
-        ? 'how-to-play'
-        : currentRoute.startsWith(SETTINGS_PATH) ? 'settings' : ''
+        : currentRoute.startsWith(HOW_TO_PLAY_PATH)
+          ? 'how-to-play'
+          : currentRoute.startsWith(SETTINGS_PATH)
+            ? 'settings'
+            : currentRoute.startsWith(ADMIN_PATH) ? 'admin' : ''
   const clearScreenState = () => {
     setSelectedLocationId(null)
     setAccusationTargetId(null)
@@ -371,6 +378,7 @@ function App() {
 
   useEffect(() => {
     if (!authed) {
+      setIsAdmin(false)
       setReminderPreferences(DEFAULT_REMINDER_PREFERENCES)
       setReminderStatus('idle')
       return
@@ -388,6 +396,26 @@ function App() {
         console.error('Failed to load reminder preferences:', err)
         setReminderStatus('error')
       })
+  }, [authed])
+
+  useEffect(() => {
+    if (!authed) {
+      setIsAdmin(false)
+      return
+    }
+
+    let cancelled = false
+    getAdminSession()
+      .then(() => {
+        if (!cancelled) setIsAdmin(true)
+      })
+      .catch(() => {
+        if (!cancelled) setIsAdmin(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
   }, [authed])
 
   useEffect(() => {
@@ -847,6 +875,11 @@ function App() {
         />
       ),
     },
+    admin: {
+      url: ADMIN_PATH,
+      title: 'Admin',
+      outlet: <AdminRoute authed={authed} onLogin={handleLogin} />,
+    },
     howToPlay: {
       url: HOW_TO_PLAY_PATH,
       title: 'How to play',
@@ -872,10 +905,12 @@ function App() {
           activeSection=""
           authed={authed}
           userProfile={userProfile}
+          isAdmin={isAdmin}
           onSelectCase={() => {}}
           onSelectPokedex={() => {}}
           onSelectHowToPlay={() => {}}
           onSelectSettings={() => {}}
+          onSelectAdmin={() => {}}
           onLogin={handleLogin}
           onLogout={handleLogout}
         />
@@ -912,11 +947,13 @@ function App() {
         activeSection={activeSidebarSection}
         authed={authed}
         userProfile={userProfile}
+        isAdmin={isAdmin}
         caseStreak={caseStreak}
         onSelectCase={() => navigate(TODAY_PATH)}
         onSelectPokedex={() => navigate(POKEDEX_PATH)}
         onSelectHowToPlay={() => navigate(HOW_TO_PLAY_PATH)}
         onSelectSettings={() => navigate(SETTINGS_PATH)}
+        onSelectAdmin={() => navigate(ADMIN_PATH)}
         onLogin={handleLogin}
         onLogout={handleLogout}
       />
@@ -927,12 +964,14 @@ function App() {
             activeSection={activeSidebarSection}
             authed={authed}
             userProfile={userProfile}
+            isAdmin={isAdmin}
             isMenuOpen={isMobileMenuOpen}
             onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
             onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
             onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}
           onSelectHowToPlay={() => navigateAndCloseMenu(HOW_TO_PLAY_PATH)}
           onSelectSettings={() => navigateAndCloseMenu(SETTINGS_PATH)}
+          onSelectAdmin={() => navigateAndCloseMenu(ADMIN_PATH)}
           onLogin={() => navigateAndCloseMenu(LOGIN_PATH)}
           onLogout={() => {
             setIsMobileMenuOpen(false)

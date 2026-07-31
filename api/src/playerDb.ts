@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import type { EvidenceBadgeData } from '../../src/game/caseModel'
 
 const client = new DynamoDBClient({})
@@ -36,6 +36,7 @@ export interface PlayerProgressRecord {
 }
 
 const TABLE = process.env.PLAYER_PROGRESS_TABLE ?? 'PlayerProgress'
+const CASE_ID_INDEX = 'caseId-index'
 
 export const getProgress = async (userId: string): Promise<PlayerProgressRecord | null> => {
   const result = await doc.send(new GetCommand({ TableName: TABLE, Key: { userId } }))
@@ -44,6 +45,27 @@ export const getProgress = async (userId: string): Promise<PlayerProgressRecord 
 
 export const createProgress = async (record: PlayerProgressRecord): Promise<void> => {
   await doc.send(new PutCommand({ TableName: TABLE, Item: record }))
+}
+
+export const queryProgressByCaseId = async (caseId: string): Promise<PlayerProgressRecord[]> => {
+  const records: PlayerProgressRecord[] = []
+  let ExclusiveStartKey: Record<string, unknown> | undefined
+
+  do {
+    const result = await doc.send(new QueryCommand({
+      TableName: TABLE,
+      IndexName: CASE_ID_INDEX,
+      KeyConditionExpression: '#caseId = :caseId',
+      ExpressionAttributeNames: { '#caseId': 'caseId' },
+      ExpressionAttributeValues: { ':caseId': caseId },
+      ExclusiveStartKey,
+    }))
+
+    records.push(...(result.Items as PlayerProgressRecord[] | undefined ?? []))
+    ExclusiveStartKey = result.LastEvaluatedKey
+  } while (ExclusiveStartKey)
+
+  return records
 }
 
 export const updateProgress = async (
