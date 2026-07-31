@@ -24,19 +24,90 @@ const getIndefiniteArticle = (value: string): 'A' | 'An' => (
   /^[aeiou]/i.test(value.trim()) ? 'An' : 'A'
 )
 
-const getCaseSceneName = (caseData: Case): string => caseData.locations[0]?.name ?? 'the scene'
+export const getCaseThemeTitle = (theme: CaseTheme): string => {
+  switch (theme.kind) {
+    case 'stolen-item':
+      return `The Stolen ${theme.name}`
+    case 'damaged-item':
+      return `The Damaged ${theme.name}`
+    case 'misplaced-item':
+      return `The Misplaced ${theme.name}`
+    case 'missing-pokemon':
+      return `The Missing ${theme.name}`
+    case 'frightened-pokemon':
+      return `The Frightened ${theme.name}`
+    case 'trapped-pokemon':
+      return `The Trapped ${theme.name}`
+  }
+}
 
-const getCaseThemeStory = (theme: CaseTheme, sceneName: string): string => (
-  theme.kind === 'stolen-item'
-    ? `${getIndefiniteArticle(theme.name)} ${theme.name} was stolen from ${sceneName}.`
-    : `${theme.name} has gone missing. They were last seen around ${sceneName}.`
-)
+const getCaseThemeStory = (theme: CaseTheme): string => {
+  switch (theme.kind) {
+    case 'stolen-item':
+      return `${getIndefiniteArticle(theme.name)} ${theme.name} was stolen during the incident.`
+    case 'damaged-item':
+      return `${getIndefiniteArticle(theme.name)} ${theme.name} was found damaged after the incident.`
+    case 'misplaced-item':
+      return `${getIndefiniteArticle(theme.name)} ${theme.name} was moved from where it belonged.`
+    case 'missing-pokemon':
+      return `${theme.name} has gone missing.`
+    case 'frightened-pokemon':
+      return `${theme.name} was frightened away during the incident.`
+    case 'trapped-pokemon':
+      return `${theme.name} was trapped and needed help getting free.`
+  }
+}
+
+const getCaseThemeIcon = (theme: CaseTheme): string => {
+  switch (theme.kind) {
+    case 'stolen-item':
+      return '🎒'
+    case 'damaged-item':
+      return '🔨'
+    case 'misplaced-item':
+      return '📦'
+    case 'missing-pokemon':
+      return '❓'
+    case 'frightened-pokemon':
+      return '💨'
+    case 'trapped-pokemon':
+      return '🪤'
+  }
+}
+
+export const getCaseThemeExhibitLabel = (theme: CaseTheme | undefined): string => {
+  switch (theme?.kind) {
+    case 'stolen-item':
+      return 'Exhibit A: Stolen Item'
+    case 'damaged-item':
+      return 'Exhibit A: Damaged Item'
+    case 'misplaced-item':
+      return 'Exhibit A: Misplaced Item'
+    case 'missing-pokemon':
+      return 'Exhibit A: Missing Pokemon'
+    case 'frightened-pokemon':
+      return 'Exhibit A: Frightened Pokemon'
+    case 'trapped-pokemon':
+      return 'Exhibit A: Trapped Pokemon'
+    default:
+      return 'Exhibit A'
+  }
+}
 
 export const createCaseTheme = (suspectPokemonIds: number[] = []): CaseTheme => {
-  if (Math.random() < 0.5) {
+  const kind = pickRandom<CaseTheme['kind']>([
+    'stolen-item',
+    'damaged-item',
+    'misplaced-item',
+    'missing-pokemon',
+    'frightened-pokemon',
+    'trapped-pokemon',
+  ])
+
+  if (kind === 'stolen-item' || kind === 'damaged-item' || kind === 'misplaced-item') {
     const item = pickRandom(themeItems)
     return {
-      kind: 'stolen-item',
+      kind,
       name: item.name,
       image: item.sprite,
       alt: `Sprite for ${item.name}`,
@@ -47,7 +118,7 @@ export const createCaseTheme = (suspectPokemonIds: number[] = []): CaseTheme => 
   const pokemonPool = pokemonData.filter((pokemon) => !suspectIds.has(pokemon.id))
   const pokemon = pickRandom(pokemonPool.length > 0 ? pokemonPool : pokemonData)
   return {
-    kind: 'missing-pokemon',
+    kind,
     pokemonId: pokemon.id,
     name: pokemon.name,
     image: pokemon.sprite,
@@ -58,14 +129,14 @@ export const createCaseTheme = (suspectPokemonIds: number[] = []): CaseTheme => 
 export const applyCaseTheme = (caseData: Case, theme: CaseTheme): Case => ({
   ...caseData,
   theme,
-  title: theme.kind === 'stolen-item' ? `The Stolen ${theme.name}` : `The Missing ${theme.name}`,
-  shortStory: getCaseThemeStory(theme, getCaseSceneName(caseData)),
-  crimeIcon: theme.kind === 'stolen-item' ? '🎒' : '❓',
+  title: getCaseThemeTitle(theme),
+  shortStory: getCaseThemeStory(theme),
+  crimeIcon: getCaseThemeIcon(theme),
 })
 
 export const getCaseThemeNote = (caseData: Case): string => {
   const theme = caseData.theme
   if (!theme) return caseData.shortStory
 
-  return getCaseThemeStory(theme, getCaseSceneName(caseData))
+  return getCaseThemeStory(theme)
 }

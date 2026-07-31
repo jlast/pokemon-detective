@@ -1,4 +1,5 @@
 import { getDiscoveredEvidence, type Case, type LocationCardVariant } from '../../game/caseModel'
+import { getCaseThemeExhibitLabel } from '../../game/caseTheme'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { InvestigationLocationCard } from './InvestigationLocationCard'
 
@@ -67,11 +68,7 @@ export function LocationsPanel({
   const evidenceBoardCopy = getEvidenceBoardCopy(evidenceCollectedCount, maxInvestigations)
   const exhibitImage = getPublicAssetUrl(currentCase.theme?.image ?? currentCase.sceneImage ?? placeholderSceneImage)
   const exhibitAlt = currentCase.theme?.alt ?? currentCase.sceneImageAlt ?? `Scene photo for ${currentCase.title}`
-  const exhibitLabel = currentCase.theme?.kind === 'stolen-item'
-    ? 'Exhibit A: Stolen Item'
-    : currentCase.theme?.kind === 'missing-pokemon'
-      ? 'Exhibit A: Missing Pokemon'
-      : 'Exhibit A'
+  const exhibitLabel = getCaseThemeExhibitLabel(currentCase.theme)
   const exhibitTitle = currentCase.theme?.name ?? currentCase.title
 
   return (

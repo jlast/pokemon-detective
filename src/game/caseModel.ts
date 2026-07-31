@@ -149,13 +149,13 @@ export interface ClearedSuspectExplanation {
 
 export type CaseTheme =
   | {
-      kind: 'stolen-item'
+      kind: 'stolen-item' | 'damaged-item' | 'misplaced-item'
       name: string
       image: string
       alt: string
     }
   | {
-      kind: 'missing-pokemon'
+      kind: 'missing-pokemon' | 'frightened-pokemon' | 'trapped-pokemon'
       pokemonId: number
       name: string
       image: string

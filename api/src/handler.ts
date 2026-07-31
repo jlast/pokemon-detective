@@ -1,5 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { allCases, createCaseById, pickRandomCaseDifficulty, rebuildFullCase } from '../../src/game/cases/index'
+import { getCaseThemeTitle } from '../../src/game/caseTheme'
 import { getSolutionClueBadgesFromEvidence, getSolutionClueHintType, type Case, type CaseDifficulty, type CaseSolution, type CaseStatus, type EvidenceBadgeData, type LocationCardVariant, type LocationAction } from '../../src/game/caseModel'
 import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
@@ -966,8 +967,7 @@ const getCaseConfigTitle = (configId: string): string => (
 )
 
 const getCaseRecordTitle = (record: CaseDataRecord): string => {
-  if (record.theme?.kind === 'stolen-item') return `The Stolen ${record.theme.name}`
-  if (record.theme?.kind === 'missing-pokemon') return `The Missing ${record.theme.name}`
+  if (record.theme) return getCaseThemeTitle(record.theme)
   return getCaseConfigTitle(record.configId)
 }
 
