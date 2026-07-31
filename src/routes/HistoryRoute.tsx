@@ -120,9 +120,9 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
                     <p>
                       Culprit: <strong>{item.culpritPokemonName}</strong>
                     </p>
-                  ) : (
-                    <p>{item.status === 'playing' ? 'Case opened but not solved yet.' : 'Legacy record saved before detailed history was available.'}</p>
-                  )}
+                  ) : item.status !== 'playing' ? (
+                    <p>Legacy record saved before detailed history was available.</p>
+                  ) : null}
                 </div>
                 <div className="history-card__meta" aria-label={`${item.caseTitle} details`}>
                   <span>{formatDifficulty(item.difficulty)}</span>

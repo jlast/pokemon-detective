@@ -1086,7 +1086,7 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   const caseOutcomes = pokedex.caseOutcomes ?? {}
   const caseIds = getPastCaseIds(HISTORY_ARCHIVE_DAYS)
   const items = (await Promise.all(caseIds.map(async (caseId): Promise<CaseHistoryItem | null> => {
-    const fullCase = await loadCase(caseId) ?? await generateAndStoreCase(caseId)
+    const fullCase = await loadCase(caseId)
     if (!fullCase) return null
 
     const progress = await getProgress(getDateUserId(userInfo.sub, caseId))
@@ -1105,8 +1105,10 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
         status,
         caseTitle: stored.caseTitle || fullCase.title,
         difficulty: stored.difficulty ?? fullCase.difficulty,
-        culpritPokemonId: resolved ? fullCase.culpritPokemonId : undefined,
-        culpritPokemonName: resolved ? getPokemonName(fullCase.culpritPokemonId) : undefined,
+        ...(resolved ? {
+          culpritPokemonId: fullCase.culpritPokemonId,
+          culpritPokemonName: getPokemonName(fullCase.culpritPokemonId),
+        } : {}),
         guessCount,
         startedAt: stored.startedAt,
         completedAt: completed ? stored.completedAt ?? `${caseId}T00:00:00.000Z` : undefined,
@@ -1118,8 +1120,10 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
       status,
       caseTitle: fullCase.title,
       difficulty: fullCase.difficulty,
-      culpritPokemonId: resolved ? fullCase.culpritPokemonId : undefined,
-      culpritPokemonName: resolved ? getPokemonName(fullCase.culpritPokemonId) : undefined,
+      ...(resolved ? {
+        culpritPokemonId: fullCase.culpritPokemonId,
+        culpritPokemonName: getPokemonName(fullCase.culpritPokemonId),
+      } : {}),
       guessCount,
       startedAt: progress ? getProgressActivityTimestamp(progress) ?? undefined : undefined,
       completedAt: completed ? `${caseId}T00:00:00.000Z` : undefined,
