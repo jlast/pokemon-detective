@@ -3,7 +3,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = ">= 6.13.0, < 7.0"
     }
   }
 }
@@ -619,8 +619,9 @@ resource "aws_cognito_user_group" "admins" {
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
-  domain       = var.cognito_domain
-  user_pool_id = aws_cognito_user_pool.main.id
+  domain                = var.cognito_domain
+  managed_login_version = 2
+  user_pool_id          = aws_cognito_user_pool.main.id
 }
 
 resource "aws_cognito_user_pool_client" "client" {
@@ -632,7 +633,7 @@ resource "aws_cognito_user_pool_client" "client" {
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   callback_urls                        = concat(["${var.app_url}/callback"], var.additional_callback_urls)
   logout_urls                          = concat([var.app_url], var.additional_logout_urls)
-  supported_identity_providers         = ["Google"]
+  supported_identity_providers         = ["COGNITO", "Google"]
   access_token_validity                = 1
   id_token_validity                    = 1
   refresh_token_validity               = 30
@@ -644,6 +645,251 @@ resource "aws_cognito_user_pool_client" "client" {
   }
 
   depends_on = [aws_cognito_identity_provider.google]
+}
+
+resource "aws_cognito_managed_login_branding" "client" {
+  client_id    = aws_cognito_user_pool_client.client.id
+  user_pool_id = aws_cognito_user_pool.main.id
+
+  asset {
+    bytes      = filebase64("${path.module}/../public/pokemystery-logo.svg")
+    category   = "FORM_LOGO"
+    color_mode = "LIGHT"
+    extension  = "SVG"
+  }
+
+  asset {
+    bytes      = filebase64("${path.module}/../public/pokemystery-logo.svg")
+    category   = "FAVICON_SVG"
+    color_mode = "LIGHT"
+    extension  = "SVG"
+  }
+
+  settings = jsonencode({
+    categories = {
+      auth = {
+        authMethodOrder = [[
+          {
+            display = "INPUT"
+            type    = "USERNAME_PASSWORD"
+          }
+        ]]
+        federation = {
+          interfaceStyle = "BUTTON_LIST"
+          order          = []
+        }
+      }
+      form = {
+        displayGraphics = true
+        instructions = {
+          enabled = false
+        }
+        languageSelector = {
+          enabled = false
+        }
+        location = {
+          horizontal = "CENTER"
+          vertical   = "CENTER"
+        }
+        sessionTimerDisplay = "NONE"
+      }
+      global = {
+        colorSchemeMode = "LIGHT"
+        pageFooter = {
+          enabled = false
+        }
+        pageHeader = {
+          enabled = false
+        }
+        spacingDensity = "REGULAR"
+      }
+      signUp = {
+        acceptanceElements = [
+          {
+            enforcement = "NONE"
+            textKey     = "en"
+          }
+        ]
+      }
+    }
+    componentClasses = {
+      buttons = {
+        borderRadius = 14
+      }
+      divider = {
+        lightMode = {
+          borderColor = "d8cbb6ff"
+        }
+      }
+      focusState = {
+        lightMode = {
+          borderColor = "d9b13fff"
+        }
+      }
+      idpButtons = {
+        icons = {
+          enabled = true
+        }
+      }
+      input = {
+        borderRadius = 12
+        lightMode = {
+          defaults = {
+            backgroundColor = "fffaf0ff"
+            borderColor     = "c7b89fff"
+          }
+          placeholderColor = "60708dff"
+        }
+      }
+      inputDescription = {
+        lightMode = {
+          textColor = "60708dff"
+        }
+      }
+      inputLabel = {
+        lightMode = {
+          textColor = "1f2d47ff"
+        }
+      }
+      link = {
+        lightMode = {
+          defaults = {
+            textColor = "4a7bc9ff"
+          }
+          hover = {
+            textColor = "1f2d47ff"
+          }
+        }
+      }
+      statusIndicator = {
+        lightMode = {
+          error = {
+            backgroundColor = "fff7f7ff"
+            borderColor     = "c94949ff"
+            indicatorColor  = "c94949ff"
+          }
+          pending = {
+            indicatorColor = "60708dff"
+          }
+          success = {
+            backgroundColor = "f2fcf3ff"
+            borderColor     = "439663ff"
+            indicatorColor  = "439663ff"
+          }
+          warning = {
+            backgroundColor = "fff8dfff"
+            borderColor     = "d9b13fff"
+            indicatorColor  = "d9b13fff"
+          }
+        }
+      }
+    }
+    components = {
+      alert = {
+        borderRadius = 12
+        lightMode = {
+          error = {
+            backgroundColor = "fff7f7ff"
+            borderColor     = "c94949ff"
+          }
+        }
+      }
+      favicon = {
+        enabledTypes = ["SVG"]
+      }
+      form = {
+        backgroundImage = {
+          enabled = false
+        }
+        borderRadius = 24
+        lightMode = {
+          backgroundColor = "fffaf0ff"
+          borderColor     = "d8cbb6ff"
+        }
+        logo = {
+          enabled       = true
+          formInclusion = "IN"
+          location      = "CENTER"
+          position      = "TOP"
+        }
+      }
+      idpButton = {
+        standard = {
+          lightMode = {
+            active = {
+              backgroundColor = "f0e8d4ff"
+              borderColor     = "1f2d47ff"
+              textColor       = "1f2d47ff"
+            }
+            defaults = {
+              backgroundColor = "ffffffff"
+              borderColor     = "c7b89fff"
+              textColor       = "1f2d47ff"
+            }
+            hover = {
+              backgroundColor = "fff8dfff"
+              borderColor     = "d9b13fff"
+              textColor       = "1f2d47ff"
+            }
+          }
+        }
+      }
+      pageBackground = {
+        image = {
+          enabled = false
+        }
+        lightMode = {
+          color = "f6f1e6ff"
+        }
+      }
+      pageText = {
+        lightMode = {
+          bodyColor        = "1f2d47ff"
+          descriptionColor = "60708dff"
+          headingColor     = "1f2d47ff"
+        }
+      }
+      primaryButton = {
+        lightMode = {
+          active = {
+            backgroundColor = "d9b13fff"
+            textColor       = "1f2d47ff"
+          }
+          defaults = {
+            backgroundColor = "f3cf56ff"
+            textColor       = "1f2d47ff"
+          }
+          disabled = {
+            backgroundColor = "f0e8d4ff"
+            borderColor     = "d8cbb6ff"
+          }
+          hover = {
+            backgroundColor = "d9b13fff"
+            textColor       = "1f2d47ff"
+          }
+        }
+      }
+      secondaryButton = {
+        lightMode = {
+          active = {
+            backgroundColor = "f0e8d4ff"
+            borderColor     = "1f2d47ff"
+            textColor       = "1f2d47ff"
+          }
+          defaults = {
+            backgroundColor = "fffaf0ff"
+            borderColor     = "c7b89fff"
+            textColor       = "1f2d47ff"
+          }
+          hover = {
+            backgroundColor = "fff8dfff"
+            borderColor     = "d9b13fff"
+            textColor       = "1f2d47ff"
+          }
+        }
+      }
+    }
+  })
 }
 
 resource "aws_cognito_identity_provider" "google" {
@@ -714,7 +960,6 @@ resource "aws_api_gateway_deployment" "api" {
   depends_on = [aws_api_gateway_integration.proxy_any]
 
   rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name  = var.api_stage_name
 
   triggers = {
     redeployment = sha1(jsonencode([
@@ -724,6 +969,13 @@ resource "aws_api_gateway_deployment" "api" {
   }
 
   lifecycle { create_before_destroy = true }
+}
+
+resource "aws_api_gateway_stage" "api" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  deployment_id = aws_api_gateway_deployment.api.id
+  stage_name    = var.api_stage_name
+  tags          = var.tags
 }
 
 # ─── CloudFront Function for SPA routing ─────────────────────────────────────

@@ -7199,9 +7199,10 @@
   user-select: none;
 }
 
-/* ── Google button ── */
+/* ── Login buttons ── */
 
-.google-login-button {
+.google-login-button,
+.email-login-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7225,18 +7226,28 @@
     transform 140ms ease;
 }
 
-.google-login-button:hover {
+.email-login-button {
+  margin-top: 0.7rem;
+  background: var(--paper-dark);
+  border-color: var(--button-border);
+  color: var(--text-main);
+}
+
+.google-login-button:hover,
+.email-login-button:hover {
   background: #fff8df;
   border-color: var(--button-border);
   box-shadow: 0 2px 8px rgba(60, 50, 30, 0.1);
   transform: translateY(-1px);
 }
 
-.google-login-button:active {
+.google-login-button:active,
+.email-login-button:active {
   transform: scale(0.98);
 }
 
-.google-login-button:focus-visible {
+.google-login-button:focus-visible,
+.email-login-button:focus-visible {
   outline: 3px solid var(--gold);
   outline-offset: 3px;
 }

@@ -69,7 +69,8 @@ import {
 } from './paths'
 import {
   isAuthenticated,
-  login,
+  loginWithEmail,
+  loginWithGoogle,
   logout as authLogout,
   handleCallback,
   getUserProfile,
@@ -888,7 +889,7 @@ function App() {
     login: {
       url: LOGIN_PATH,
       title: 'Login',
-      outlet: <LoginRoute onLogin={() => login()} />,
+      outlet: <LoginRoute onGoogleLogin={loginWithGoogle} onEmailLogin={loginWithEmail} />,
     },
     pokedex: {
       url: POKEDEX_PATH,

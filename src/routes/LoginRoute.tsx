@@ -1,8 +1,9 @@
 interface LoginRouteProps {
-  onLogin: () => void
+  onGoogleLogin: () => void
+  onEmailLogin: () => void
 }
 
-export function LoginRoute({ onLogin }: LoginRouteProps) {
+export function LoginRoute({ onGoogleLogin, onEmailLogin }: LoginRouteProps) {
   return (
     <div className="login-page">
       <div className="login-shell">
@@ -13,7 +14,7 @@ export function LoginRoute({ onLogin }: LoginRouteProps) {
             Sign in to keep your investigation available across devices.
           </p>
 
-          <button type="button" className="google-login-button" onClick={onLogin}>
+          <button type="button" className="google-login-button" onClick={onGoogleLogin}>
             <svg className="google-login-logo" viewBox="0 0 48 48" aria-hidden="true">
               <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
               <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
@@ -23,12 +24,16 @@ export function LoginRoute({ onLogin }: LoginRouteProps) {
             Continue with Google
           </button>
 
+          <button type="button" className="email-login-button" onClick={onEmailLogin}>
+            Sign in with email
+          </button>
+
           <p className="login-security-note">
             <svg className="login-security-lock" width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="2" fill="none" />
               <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="2" fill="none" />
             </svg>
-            Your progress is securely linked to your Google account.
+            Your progress is securely linked to your account.
           </p>
 
           <div className="login-note-card__watermark" aria-hidden="true">CASE NO. 2024-001</div>

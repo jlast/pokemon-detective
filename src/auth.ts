@@ -163,7 +163,7 @@ const hasAuthConfig = (): boolean => {
   return COGNITO_CLIENT_ID.trim().length > 0
 }
 
-export const login = async (): Promise<void> => {
+const login = async (identityProvider?: 'Google' | 'COGNITO'): Promise<void> => {
   if (!hasAuthConfig()) {
     window.alert('Missing VITE_COGNITO_CLIENT_ID. Add it to .env.local and restart npm run dev.')
     return
@@ -184,10 +184,14 @@ export const login = async (): Promise<void> => {
     state,
     code_challenge: challenge,
     code_challenge_method: 'S256',
-    identity_provider: 'Google',
   })
+  if (identityProvider) params.set('identity_provider', identityProvider)
   window.location.href = `${COGNITO_URL}/oauth2/authorize?${params.toString()}`
 }
+
+export const loginWithGoogle = async (): Promise<void> => login('Google')
+
+export const loginWithEmail = async (): Promise<void> => login('COGNITO')
 
 export const logout = (): void => {
   clearAuth()
