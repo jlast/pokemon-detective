@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import type { Location } from '../../game/caseModel'
+import { getSolutionClueHintType, type Location } from '../../game/caseModel'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { getLocationIcon } from '../../game/locationIcons'
 import { pokemonData } from '../../data/pokemon'
@@ -71,12 +71,16 @@ export function InvestigationLocationPage({
     : null
   const primaryEvidenceBadgeText = evidenceBadges?.[0]?.text ?? evidenceTitle ?? 'Evidence'
   const primaryEvidenceBadgeSeparator = primaryEvidenceBadgeText.indexOf(':')
+  const evidenceBadgeValues = evidenceBadges?.map((badge) => {
+    const separatorIndex = badge.text.indexOf(':')
+    return separatorIndex > 0 ? badge.text.slice(separatorIndex + 1).trim() : badge.text
+  }) ?? [primaryEvidenceBadgeText]
   const evidenceCategory = primaryEvidenceBadgeSeparator > 0
     ? primaryEvidenceBadgeText.slice(0, primaryEvidenceBadgeSeparator)
-    : 'Evidence'
+    : getSolutionClueHintType(selectedAction?.clueRule?.axis ?? 'scene') ?? selectedAction?.cluePreview.label ?? 'Evidence'
   const evidenceValue = primaryEvidenceBadgeSeparator > 0
     ? primaryEvidenceBadgeText.slice(primaryEvidenceBadgeSeparator + 1).trim()
-    : primaryEvidenceBadgeText
+    : evidenceBadgeValues.join(' / ')
   const evidenceIcon = hasEvidence ? getEvidenceIcon(location.evidenceId, evidenceTitle) : null
   const locationIcon = getLocationIcon(location.name, location.icon)
   const compactTeaserText = getCompactTeaserText(location)
