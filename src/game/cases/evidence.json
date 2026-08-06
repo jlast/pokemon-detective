@@ -43,5 +43,15 @@
     "id": "type-affectedness-clue",
     "title": "Reaction Clue",
     "clueText": ""
+  },
+  {
+    "id": "region-clue",
+    "title": "Region Clue",
+    "clueText": ""
+  },
+  {
+    "id": "evolution-chain-clue",
+    "title": "Evolution Clue",
+    "clueText": ""
   }
 ]

@@ -35,6 +35,7 @@ const statLabels = {
 } as const
 
 type StatName = keyof typeof statLabels
+type EvolutionChainStage = 'stage1' | 'stage2' | 'stage3' | 'noEvolutionChain'
 
 const highestStatPriority: StatName[] = ['speed', 'attack', 'specialAttack', 'defense', 'specialDefense', 'hp']
 const lowestStatPriority: StatName[] = ['hp', 'defense', 'specialDefense', 'attack', 'specialAttack', 'speed']
@@ -104,6 +105,26 @@ const formatAffectednessValue = (value: string) => {
   return `Neutral to ${toTitle(attackType)}`
 }
 
+const getEvolutionChainStage = (pokemon: Pokemon): EvolutionChainStage => {
+  if (pokemon.evolutionLineStages === 1) return 'noEvolutionChain'
+  return `stage${pokemon.evolutionStage}` as EvolutionChainStage
+}
+
+const formatEvolutionChainStage = (value: string) => {
+  switch (value) {
+    case 'stage1':
+      return '1st stage'
+    case 'stage2':
+      return '2nd stage'
+    case 'stage3':
+      return '3rd stage'
+    case 'noEvolutionChain':
+      return 'No evolution chain'
+    default:
+      return value
+  }
+}
+
 const formatRuleValue = (rule: ClueRule, value: string) => {
   switch (rule.axis) {
     case 'height':
@@ -120,6 +141,10 @@ const formatRuleValue = (rule: ClueRule, value: string) => {
       return statLabels[value as StatName] ?? value
     case 'typeAffectedness':
       return formatAffectednessValue(value)
+    case 'region':
+      return value
+    case 'evolutionChain':
+      return formatEvolutionChainStage(value)
     case 'scene':
       return value
   }
@@ -142,6 +167,10 @@ const getTraitLabelForRule = (rule: ClueRule) => {
       return 'weakest stat'
     case 'typeAffectedness':
       return 'defensive matchup'
+    case 'region':
+      return 'region'
+    case 'evolutionChain':
+      return 'evolution chain'
     case 'scene':
       return 'case file'
   }
@@ -207,6 +236,14 @@ const formatEvaluationInterpretation = (pokemon: Pokemon, evidence: Evidence, su
       return compatible
         ? `This suspect is ${actual.toLowerCase()}, matching the reaction clue.`
         : `This suspect is ${actual.toLowerCase()}, which conflicts with the observed ${formatList(expected).toLowerCase()}.`
+    case 'region':
+      return compatible
+        ? `This suspect is from ${actual}, matching the regional trace.`
+        : `This suspect is from ${actual}, but the clue points to ${formatList(expected)}.`
+    case 'evolutionChain':
+      return compatible
+        ? `This suspect's evolution-chain position matches the clue.`
+        : `This suspect is ${actual.toLowerCase()}, but the clue points to ${formatList(expected).toLowerCase()}.`
     case 'scene':
       return `${evidence.title} does not point to a suspect trait yet.`
   }
@@ -255,6 +292,10 @@ const getSuspectRuleValue = (pokemon: Pokemon, rule: ClueRule): string => {
       const attackType = rule.matchingValues[0]?.split(':')[1] ?? ''
       return getAffectednessRuleValue(pokemon, attackType)
     }
+    case 'region':
+      return pokemon.region
+    case 'evolutionChain':
+      return getEvolutionChainStage(pokemon)
     case 'scene':
       return ''
   }
@@ -313,6 +354,8 @@ export const buildInvestigativeProfile = (pokemon: Pokemon): DetectiveProfileRow
   { label: 'Height', value: `${pokemon.heightM} m · ${formatHeightBucket(getHeightBucket(pokemon))}` },
   { label: 'Weight', value: `${pokemon.weightKg} kg · ${toTitle(getWeightBucket(pokemon))}` },
   { label: 'Type', value: '', badges: pokemon.types.map((type) => ({ text: toTitle(type), type })) },
+  { label: 'Region', value: pokemon.region },
+  { label: 'Evolution chain', value: formatEvolutionChainStage(getEvolutionChainStage(pokemon)) },
   { label: 'Highest stat', value: statLabels[pickStatKey(pokemon, highestStatPriority, 'highest')] },
   { label: 'Lowest stat', value: statLabels[pickStatKey(pokemon, lowestStatPriority, 'lowest')] },
 ]

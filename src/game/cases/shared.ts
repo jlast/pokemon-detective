@@ -94,6 +94,12 @@ const cluePreviewByEvidenceId: Record<string, CluePreview> = {
   'type-affectedness-clue': {
     label: 'Reaction clue',
   },
+  'region-clue': {
+    label: 'Region clue',
+  },
+  'evolution-chain-clue': {
+    label: 'Evolution clue',
+  },
 }
 
 const scenePreview = (label = 'Scene context'): CluePreview => ({
@@ -313,7 +319,7 @@ const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Loc
   location(`${caseId}-scene`, template.area, '🔎', `${template.area} shows signs of a careful disturbance.`,
     ev('search-scene-traces', 'height-clue', `Search ${template.area}`, `Look for dropped traces around ${template.area}.`, `Loose traces were scattered {movementWord} through ${template.area}.`),
     ev('check-scene-edge', 'ground-trace-clue', `Check around ${template.area}`, `Search the less disturbed parts of ${template.area}.`, `The quieter edge of ${template.area} showed {groundWord}.`),
-    ev('check-nearby-tools', 'force-clue', `Check nearby tools`, `Look over the tools closest to ${template.area}.`, 'One nearby tool showed {forceTrace}.'),
+    ev('check-nearby-tools', 'region-clue', `Check nearby tools`, `Look over the tools closest to ${template.area}.`, `One nearby tool carried a clue linked to the {region} region.`),
   ),
   location(`${caseId}-traces`, template.traceArea, '👣', `${template.traceArea} has marks leading away from the scene.`,
     ev('measure-tracks', 'weight-clue', 'Measure the marks', `Check the marks across ${template.traceArea}.`, `The marks run steadily across ${template.traceArea}.`,
@@ -324,7 +330,7 @@ const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Loc
   location(`${caseId}-storage`, template.storageArea, '📦', `${template.storageArea} looks disturbed near its base.`,
     ev('inspect-storage-base', 'ground-trace-clue', `Inspect ${template.storageArea}`, `Look under and around ${template.storageArea}.`, `The {groundWord} near ${template.storageArea} was disturbed.`),
     ev('check-high-surfaces', 'height-clue', `Check above ${template.storageArea}`, 'Search the higher surfaces nearby.', `Dust near ${template.storageArea} was shifted {heightPosition}.`),
-    ev('listen-quietly', 'highest-stat-clue', 'Listen quietly', 'Pause and listen for movement.', 'The quiet pause revealed signs of {strongStatTrace}.'),
+    ev('listen-quietly', 'evolution-chain-clue', 'Listen quietly', 'Pause and listen for movement.', 'The quiet pause revealed signs of {evolutionChainLabel}.'),
   ),
   location(`${caseId}-lock`, template.lockedObject, '🔐', `${template.lockedObject} shows signs of tampering.`,
     ev('inspect-forced-entry', 'force-clue', `Inspect ${template.lockedObject}`, `Study where ${template.lockedObject} was forced.`, `Something marked ${template.lockedObject} before it gave way.`),

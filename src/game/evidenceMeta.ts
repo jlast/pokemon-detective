@@ -8,6 +8,8 @@ const evidenceMetaById: Record<string, { icon: string; title: string }> = {
   'highest-stat-clue': { icon: '💪', title: 'Strength Clue' },
   'lowest-stat-clue': { icon: '🧭', title: 'Limitation Clue' },
   'type-affectedness-clue': { icon: '🧪', title: 'Reaction Clue' },
+  'region-clue': { icon: '🗺️', title: 'Region Clue' },
+  'evolution-chain-clue': { icon: '🔁', title: 'Evolution Clue' },
 }
 
 export const evidenceIcons: Record<string, string> = Object.fromEntries(

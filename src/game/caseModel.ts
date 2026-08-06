@@ -54,7 +54,7 @@ export interface LocationActionPresentation {
   witnessPromptTemplates?: string[]
 }
 
-export type ClueAxis = 'height' | 'weight' | 'type' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'typeAffectedness' | 'scene'
+export type ClueAxis = 'height' | 'weight' | 'type' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'typeAffectedness' | 'region' | 'evolutionChain' | 'scene'
 
 export type CluePrecision = 'exact' | 'grouped' | 'none'
 
@@ -247,6 +247,10 @@ export const getClueHintType = (axis: ClueAxis): string | undefined => {
       return 'Weakness clue'
     case 'typeAffectedness':
       return 'Reaction points to'
+    case 'region':
+      return 'Region clue'
+    case 'evolutionChain':
+      return 'Evolution clue'
     case 'scene':
       return undefined
   }
@@ -272,6 +276,10 @@ export const getSolutionClueHintType = (axis: ClueAxis): string | undefined => {
       return 'Stat'
     case 'typeAffectedness':
       return 'Reaction'
+    case 'region':
+      return 'Region'
+    case 'evolutionChain':
+      return 'Evolution'
     case 'scene':
       return undefined
   }
@@ -297,6 +305,10 @@ const getSolutionClueHintTypeFromEvidenceId = (evidenceId: string | undefined): 
       return 'Stat'
     case 'type-affectedness-clue':
       return 'Reaction'
+    case 'region-clue':
+      return 'Region'
+    case 'evolution-chain-clue':
+      return 'Evolution'
     default:
       return undefined
   }
@@ -332,6 +344,10 @@ const normalizeSolutionHintType = (hintType: string): string => {
     case 'Reaction points to':
     case 'Reaction clue':
       return 'Reaction'
+    case 'Region clue':
+      return 'Region'
+    case 'Evolution clue':
+      return 'Evolution'
     default:
       return hintType
   }
@@ -346,6 +362,8 @@ const inferClueHintType = (badge: EvidenceBadgeData): string => {
   if (badge.text.startsWith('Strength:')) return 'Stat'
   if (badge.text.startsWith('Weakness:')) return 'Stat'
   if (badge.text.startsWith('Weak to') || badge.text.startsWith('Strong to')) return 'Reaction'
+  if (badge.text.startsWith('Region:')) return 'Region'
+  if (badge.text.startsWith('Evolution:')) return 'Evolution'
   return badge.type ? 'Residue' : 'Solution'
 }
 
