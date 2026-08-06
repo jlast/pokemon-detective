@@ -9,6 +9,7 @@ interface EvidenceBadgeProps {
 interface EvidenceBadgeListProps {
   badges?: EvidenceBadgeData[] | null
   fallback?: string | null
+  className?: string
 }
 
 export function EvidenceBadge({ text, type, fallback }: EvidenceBadgeProps) {
@@ -30,10 +31,10 @@ export function EvidenceBadge({ text, type, fallback }: EvidenceBadgeProps) {
   )
 }
 
-export function EvidenceBadgeList({ badges, fallback }: EvidenceBadgeListProps) {
+export function EvidenceBadgeList({ badges, fallback, className }: EvidenceBadgeListProps) {
   if (badges?.length) {
     return (
-      <span className="evidence-badge-list">
+      <span className={`evidence-badge-list${className ? ` ${className}` : ''}`}>
         {badges.map((badge, index) => (
           <EvidenceBadge key={`${badge.text}-${index}`} text={badge.text} type={badge.type} />
         ))}

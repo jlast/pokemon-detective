@@ -35,6 +35,10 @@ export const validateGeneratedCase = (gameCase: Case): void => {
       throw new Error(`Generated case ${gameCase.id} has missing randomized clues at ${location.id}`)
     }
 
+    if (new Set(evidenceActionIds).size !== evidenceActionIds.length) {
+      throw new Error(`Generated case ${gameCase.id} has duplicate randomized clues at ${location.id}`)
+    }
+
     return [...new Set(evidenceActionIds)] as string[]
   })
 

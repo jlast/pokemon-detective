@@ -3218,6 +3218,18 @@
   gap: 0.22rem;
 }
 
+.location-evidence-result-badges .evidence-badge {
+  min-height: clamp(2.65rem, 6vw, 3.55rem);
+  padding: 0.42rem clamp(0.8rem, 2vw, 1.1rem);
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+  line-height: 1;
+}
+
+.location-evidence-result-badges .evidence-badge-type-sprite {
+  width: clamp(1.8rem, 4vw, 2.45rem);
+  height: clamp(1.8rem, 4vw, 2.45rem);
+}
+
 .location-evidence-copy {
   color: var(--muted);
   font-size: 0.9rem;

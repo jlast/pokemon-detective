@@ -703,10 +703,7 @@ const createSolvableLocationEvidenceChoices = (
 
     const additionalChoiceCount = Math.max(location.actions.length - 1, 0)
     for (let choiceIndex = 0; choiceIndex < additionalChoiceCount; choiceIndex += 1) {
-      const candidates = [
-        ...shuffle(allEvidenceIds.filter((evidenceId) => !choices.includes(evidenceId))),
-        ...shuffle(choices),
-      ]
+      const candidates = shuffle(allEvidenceIds.filter((evidenceId) => !choices.includes(evidenceId)))
       const candidate = candidates.find((evidenceId) => {
         const nextChoices = locationEvidenceChoices.map((locationChoices, index) => (
           index === locationIndex ? [...locationChoices, evidenceId] : locationChoices
