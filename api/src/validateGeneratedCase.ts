@@ -1,5 +1,5 @@
 import { getSolutionClueBadges, type Case } from '../../src/game/caseModel'
-import { isEvidenceSetSolvable } from '../../src/game/caseGeneration'
+import { areLocationEvidenceChoicesSolvable } from '../../src/game/caseGeneration'
 
 export const validateGeneratedCase = (gameCase: Case): void => {
   const evidenceIds = new Set(gameCase.evidence.map((evidence) => evidence.id))
@@ -26,26 +26,25 @@ export const validateGeneratedCase = (gameCase: Case): void => {
     throw new Error(`Generated case ${gameCase.id} has fewer investigations than locations`)
   }
 
-  const locationEvidenceIds = gameCase.locations.map((location) => {
+  const locationEvidenceChoices = gameCase.locations.map((location) => {
     const evidenceActionIds = location.actions
       .filter((action) => action.outcomeType === 'evidence' || action.outcomeType === 'witness')
       .map((action) => action.evidenceId)
-    const uniqueEvidenceIds = [...new Set(evidenceActionIds)]
 
-    if (uniqueEvidenceIds.length !== 1 || !uniqueEvidenceIds[0]) {
-      throw new Error(`Generated case ${gameCase.id} has inconsistent randomized clues at ${location.id}`)
+    if (evidenceActionIds.some((evidenceId) => !evidenceId)) {
+      throw new Error(`Generated case ${gameCase.id} has missing randomized clues at ${location.id}`)
     }
 
-    return uniqueEvidenceIds[0]
+    return [...new Set(evidenceActionIds)] as string[]
   })
 
-  if (!isEvidenceSetSolvable(
+  if (!areLocationEvidenceChoicesSolvable(
     gameCase.culpritPokemonId,
     gameCase.suspects.map((suspect) => suspect.pokemonId),
     gameCase.typeClueSlots,
     gameCase.typeClueGroups,
-    locationEvidenceIds,
+    locationEvidenceChoices,
   )) {
-    throw new Error(`Generated case ${gameCase.id} randomized location clues do not uniquely identify the culprit`)
+    throw new Error(`Generated case ${gameCase.id} has at least one softlocking randomized clue path`)
   }
 }
