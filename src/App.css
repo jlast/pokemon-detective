@@ -3560,7 +3560,7 @@
   gap: 0.2rem;
 }
 
-.suspect-evidence-tag-copy span:not(.evidence-badge) {
+.suspect-evidence-tag-copy > span:not(.evidence-badge-list) {
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.4;
@@ -3595,12 +3595,33 @@
   font-size: 0.86em;
 }
 
+.evidence-badge__label::after {
+  content: ':';
+}
+
+.suspect-evidence-tag-copy .evidence-badge__label,
+.detective-evidence-main .evidence-badge__label {
+  font-size: 1em;
+}
+
 .evidence-badge-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
   align-items: center;
 }
+
+.evidence-badge--clue-height { background: #dce8c7; color: #314c21; }
+.evidence-badge--clue-weight { background: #dfd6c3; color: #453620; }
+.evidence-badge--clue-type { background: #f2e7c8; color: #4c3b20; }
+.evidence-badge--clue-ground-trace { background: #ead8b9; color: #573b1f; }
+.evidence-badge--clue-force { background: #efd2c7; color: #663120; }
+.evidence-badge--clue-witness { background: #d7e6ee; color: #24465a; }
+.evidence-badge--clue-highest-stat { background: #f3dbb6; color: #5a3813; }
+.evidence-badge--clue-lowest-stat { background: #e8d7ed; color: #4c2b5a; }
+.evidence-badge--clue-type-affectedness { background: #d8e3f5; color: #243d68; }
+.evidence-badge--clue-region { background: #d5eadb; color: #255237; }
+.evidence-badge--clue-evolution-chain { background: #eadbd2; color: #5b3324; }
 
 .evidence-badge--type-bug { background: #a6b91a; color: #252906; }
 .evidence-badge--type-dark { background: #705746; color: #fff; }

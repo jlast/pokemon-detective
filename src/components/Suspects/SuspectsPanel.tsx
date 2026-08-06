@@ -1,9 +1,8 @@
 import { Link, useLocation } from 'react-router-dom'
 import { EvidenceBadgeList } from '../Evidence/EvidenceBadge'
-import { getDiscoveredEvidence, type Case } from '../../game/caseModel'
+import { getDiscoveredEvidence, getSolutionClueHintType, type Case } from '../../game/caseModel'
 import { TODAY_INVESTIGATION_PATH } from '../../paths'
 import { SuspectCard } from './SuspectCard'
-import { getEvidenceChipContext } from './evidenceChipContext'
 
 interface SuspectsProps {
   currentCase: Case
@@ -35,7 +34,7 @@ export function SuspectsPanel({
         {discoveredEvidence.length > 0 ? (
           <div className="suspect-evidence-list suspect-evidence-board-list">
             {discoveredEvidence.map((evidenceItem) => {
-              const chipContext = getEvidenceChipContext(evidenceItem)
+              const clueTitle = getSolutionClueHintType(evidenceItem.rule.axis) ?? evidenceItem.title
 
               return (
                 <article key={evidenceItem.id} className="suspect-evidence-tag evidence-note-card">
@@ -43,11 +42,11 @@ export function SuspectsPanel({
                     📎
                   </span>
                   <div className="suspect-evidence-tag-copy">
-                    <strong>{evidenceItem.title}</strong>
-                    {chipContext && evidenceItem.badges?.length ? <span>{chipContext}</span> : null}
+                    <strong>{clueTitle}</strong>
                     <EvidenceBadgeList
                       badges={evidenceItem.badges}
                       fallback={evidenceItem.clueText}
+                      clueType={evidenceItem.rule.axis}
                     />
                   </div>
                 </article>

@@ -1,7 +1,6 @@
-import type { Evidence } from '../../game/caseModel'
+import { getSolutionClueHintType, type Evidence } from '../../game/caseModel'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { EvidenceBadgeList } from '../Evidence/EvidenceBadge'
-import { getEvidenceChipContext } from './evidenceChipContext'
 
 interface SuspectEvidenceAssessmentProps {
   evidenceItems: Evidence[]
@@ -10,15 +9,15 @@ interface SuspectEvidenceAssessmentProps {
 interface DetectiveEvidenceCardProps {
   evidenceId: string
   title: string
-  chipContext?: string
   supportingValues?: Evidence['badges']
+  clueType: Evidence['rule']['axis']
 }
 
 function DetectiveEvidenceCard({
   evidenceId,
   title,
-  chipContext,
   supportingValues,
+  clueType,
 }: DetectiveEvidenceCardProps) {
   return (
     <article className="detective-evidence-card">
@@ -27,8 +26,7 @@ function DetectiveEvidenceCard({
         <div className="detective-evidence-heading">
           <strong>{title}</strong>
         </div>
-        {chipContext && supportingValues?.length ? <span className="detective-evidence-chip-context">{chipContext}</span> : null}
-        <EvidenceBadgeList badges={supportingValues} />
+        <EvidenceBadgeList badges={supportingValues} clueType={clueType} />
       </div>
     </article>
   )
@@ -42,13 +40,15 @@ export function SuspectEvidenceAssessment({ evidenceItems }: SuspectEvidenceAsse
         {evidenceItems.length ? (
           <div className="suspect-evidence-assessment-list">
             {evidenceItems.map((evidence) => {
+              const clueTitle = getSolutionClueHintType(evidence.rule.axis) ?? evidence.title
+
               return (
                 <DetectiveEvidenceCard
                   key={evidence.id}
                   evidenceId={evidence.id}
-                  title={evidence.title}
-                  chipContext={getEvidenceChipContext(evidence)}
+                  title={clueTitle}
                   supportingValues={evidence.badges}
+                  clueType={evidence.rule.axis}
                 />
               )
             })}

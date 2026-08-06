@@ -378,9 +378,9 @@ const getTypeClueGroup = (profile: PokemonCaseProfile, evidenceId: string): Poke
   profile.typeClueGroups[evidenceId] ?? []
 )
 
-const getProfileLabel = (hasSecondaryType: boolean, clueTypeSlot: TypeClueSlot): string => {
+const getProfileLabel = (hasSecondaryType: boolean, _clueTypeSlot: TypeClueSlot): string => {
   if (!hasSecondaryType) return 'profile'
-  return clueTypeSlot === 'secondary' ? 'secondary profile' : 'primary profile'
+  return 'type profile'
 }
 
 const getEvolutionChainStage = (pokemon: Pokemon): EvolutionChainStage => {

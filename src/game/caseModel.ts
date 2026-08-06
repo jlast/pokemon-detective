@@ -198,6 +198,14 @@ export interface ClueBadgeGroup {
   badges: EvidenceBadgeData[]
 }
 
+export const removeTypeSlotWording = (text: string): string => (
+  text
+    .replace(/\bprimary profile\b/gi, 'type profile')
+    .replace(/\bsecondary profile\b/gi, 'type profile')
+    .replace(/\bprimary typing\b/gi, 'type profile')
+    .replace(/\bsecondary typing\b/gi, 'type profile')
+)
+
 export function getDiscoveredEvidence(caseData: Case): Evidence[] {
   const discovered: Evidence[] = []
   const seenEvidenceIds = new Set<string>()
@@ -214,8 +222,8 @@ export function getDiscoveredEvidence(caseData: Case): Evidence[] {
       const evidenceItem = evidenceById.get(location.evidenceId)
       discovered.push({
         id: location.evidenceId,
-        title: action?.evidenceTitle ?? location.evidenceTitle ?? 'Unknown',
-        clueText: action?.evidenceText ?? location.evidenceText ?? '',
+        title: removeTypeSlotWording(action?.evidenceTitle ?? location.evidenceTitle ?? 'Unknown'),
+        clueText: removeTypeSlotWording(action?.evidenceText ?? location.evidenceText ?? ''),
         badges: action?.evidenceBadges ?? location.evidenceBadges,
         rule: action?.clueRule ?? { axis: 'scene', precision: 'none', matchingValues: [] },
         observation: evidenceItem?.observation,

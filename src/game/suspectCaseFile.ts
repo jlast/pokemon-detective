@@ -160,7 +160,7 @@ const getTraitLabelForRule = (rule: ClueRule) => {
     case 'groundTrace':
     case 'force':
     case 'witness':
-      return 'typing'
+      return 'type profile'
     case 'highestStat':
       return 'strongest stat'
     case 'lowestStat':
@@ -221,8 +221,8 @@ const formatEvaluationInterpretation = (pokemon: Pokemon, evidence: Evidence, su
     case 'witness': {
       const suspectTypes = pokemon.types.map(toTitle)
       return compatible
-        ? `Consistent with this suspect's ${formatList(suspectTypes)} typing.`
-        : `${pokemon.name}'s ${formatList(suspectTypes)} typing is outside the expected ${formatList(expected)} profile.`
+        ? `Consistent with this suspect's ${formatList(suspectTypes)} type profile.`
+        : `${pokemon.name}'s ${formatList(suspectTypes)} type profile is outside the expected ${formatList(expected)} profile.`
     }
     case 'highestStat':
       return compatible
