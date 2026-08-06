@@ -1,5 +1,6 @@
 import { pokemonData, type Pokemon, type PokemonType } from '../data/pokemon'
 import { getSolutionClueBadgesFromEvidence, type CaseDifficulty, type CaseEvidenceExplanation, type ClearedSuspectExplanation, type ClueRule, type Evidence, type EvidenceBadgeData, type EvidenceObservation, type Location, type LocationAction } from './caseModel'
+import { previewForEvidenceId } from './cases/shared'
 import { getPokemonById } from './suspectCaseFile'
 
 type StatName = 'hp' | 'attack' | 'defense' | 'specialAttack' | 'specialDefense' | 'speed'
@@ -536,6 +537,83 @@ const getRelevantClues = (_pokemon: Pokemon): EvidenceClue[] => evidenceTemplate
   category: template.category,
 }))
 
+const getEvidenceClue = (evidenceId: string): EvidenceClue => {
+  const template = getEvidenceTemplate(evidenceId)
+  return { evidenceId: template.id, category: template.category }
+}
+
+const getEvidenceClues = (evidenceIds: string[]): EvidenceClue[] => evidenceIds.map(getEvidenceClue)
+
+export const isEvidenceSetSolvable = (
+  culpritId: number,
+  suspectIds: number[],
+  typeClueSlots: TypeClueSlots | undefined,
+  typeClueGroups: TypeClueGroups | undefined,
+  evidenceIds: string[],
+): boolean => {
+  if (!typeClueSlots || !typeClueGroups || evidenceIds.length === 0) return false
+
+  const culprit = getPokemonById(culpritId)
+  const culpritProfile = getPokemonCaseProfile(culprit, typeClueSlots, typeClueGroups)
+  const clues = getEvidenceClues(evidenceIds)
+
+  return suspectIds
+    .filter((suspectId) => suspectId !== culpritId)
+    .every((suspectId) => scorePokemonAgainstProfile(suspectId, culpritProfile, clues) < clues.length)
+}
+
+const getCombinations = <T,>(items: T[], size: number): T[][] => {
+  if (size <= 0) return [[]]
+  if (size > items.length) return []
+
+  const combinations: T[][] = []
+
+  const visit = (startIndex: number, selected: T[]) => {
+    if (selected.length === size) {
+      combinations.push(selected)
+      return
+    }
+
+    for (let index = startIndex; index <= items.length - (size - selected.length); index += 1) {
+      visit(index + 1, [...selected, items[index]!])
+    }
+  }
+
+  visit(0, [])
+  return combinations
+}
+
+const pickSolvableLocationEvidenceIds = (
+  culpritId: number,
+  suspectIds: number[],
+  typeClueSlots: TypeClueSlots,
+  typeClueGroups: TypeClueGroups,
+  locationCount: number,
+): string[] | null => {
+  const evidenceIds = evidenceTemplates.map((template) => template.id)
+  const candidateSets = shuffle(getCombinations(evidenceIds, Math.min(locationCount, evidenceIds.length)))
+
+  return candidateSets.find((candidateSet) => (
+    isEvidenceSetSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, candidateSet)
+  )) ?? null
+}
+
+const assignLocationEvidence = (locations: Location[], evidenceIds: string[]): Location[] => {
+  const shuffledEvidenceIds = shuffle(evidenceIds)
+
+  return locations.map((location, locationIndex) => {
+    const evidenceId = shuffledEvidenceIds[locationIndex % shuffledEvidenceIds.length]!
+    return {
+      ...location,
+      actions: location.actions.map((action) => ({
+        ...action,
+        evidenceId,
+        cluePreview: previewForEvidenceId(evidenceId),
+      })),
+    }
+  })
+}
+
 const scorePokemonAgainstProfile = (pokemonId: number, culpritProfile: PokemonCaseProfile, clues: EvidenceClue[]) => {
   const pokemon = getPokemonById(pokemonId)
 
@@ -949,8 +1027,22 @@ export const generateCaseLineup = (
     }
 
     const suspectIds = shuffle([culprit.id, ...uniqueDistractors])
+    const solvableLocationEvidenceIds = pickSolvableLocationEvidenceIds(
+      culprit.id,
+      suspectIds,
+      typeClueSlots,
+      typeClueGroups,
+      locations.length,
+    )
+
+    if (!solvableLocationEvidenceIds) {
+      continue
+    }
+
+    const randomizedLocations = assignLocationEvidence(locations, solvableLocationEvidenceIds)
     const { generatedEvidence, generatedEvidenceById } = generateCaseEvidence(culprit, evidence, evidenceOverrides, typeClueSlots, typeClueGroups)
-    const generatedLocations = generateCaseLocations(culprit, locations, evidenceOverrides, typeClueSlots, typeClueGroups)
+    const generatedLocations = generateCaseLocations(culprit, randomizedLocations, evidenceOverrides, typeClueSlots, typeClueGroups)
+    const solutionClues = getEvidenceClues(solvableLocationEvidenceIds)
 
     return {
       culpritPokemonId: culprit.id,
@@ -964,7 +1056,7 @@ export const generateCaseLineup = (
         suspectIds,
         generatedEvidence,
         generatedLocations,
-        relevantClues,
+        solutionClues,
         generatedEvidenceById,
         typeClueSlots,
         typeClueGroups,

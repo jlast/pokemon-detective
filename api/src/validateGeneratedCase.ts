@@ -1,4 +1,5 @@
 import { getSolutionClueBadges, type Case } from '../../src/game/caseModel'
+import { isEvidenceSetSolvable } from '../../src/game/caseGeneration'
 
 export const validateGeneratedCase = (gameCase: Case): void => {
   const evidenceIds = new Set(gameCase.evidence.map((evidence) => evidence.id))
@@ -19,5 +20,32 @@ export const validateGeneratedCase = (gameCase: Case): void => {
 
   if (!getSolutionClueBadges(gameCase.solution).length) {
     throw new Error(`Generated case ${gameCase.id} has no solution clue badges`)
+  }
+
+  if ((gameCase.maxInvestigations ?? 0) < gameCase.locations.length) {
+    throw new Error(`Generated case ${gameCase.id} has fewer investigations than locations`)
+  }
+
+  const locationEvidenceIds = gameCase.locations.map((location) => {
+    const evidenceActionIds = location.actions
+      .filter((action) => action.outcomeType === 'evidence' || action.outcomeType === 'witness')
+      .map((action) => action.evidenceId)
+    const uniqueEvidenceIds = [...new Set(evidenceActionIds)]
+
+    if (uniqueEvidenceIds.length !== 1 || !uniqueEvidenceIds[0]) {
+      throw new Error(`Generated case ${gameCase.id} has inconsistent randomized clues at ${location.id}`)
+    }
+
+    return uniqueEvidenceIds[0]
+  })
+
+  if (!isEvidenceSetSolvable(
+    gameCase.culpritPokemonId,
+    gameCase.suspects.map((suspect) => suspect.pokemonId),
+    gameCase.typeClueSlots,
+    gameCase.typeClueGroups,
+    locationEvidenceIds,
+  )) {
+    throw new Error(`Generated case ${gameCase.id} randomized location clues do not uniquely identify the culprit`)
   }
 }

@@ -230,7 +230,7 @@ const getPresentation = (id: string, fallback: LocationActionPresentation): Loca
   presentationByActionId[id] ?? fallback
 )
 
-const previewForEvidenceId = (evidenceId?: string | null): CluePreview => (
+export const previewForEvidenceId = (evidenceId?: string | null): CluePreview => (
   evidenceId ? cluePreviewByEvidenceId[evidenceId] ?? scenePreview('Scene context') : scenePreview('Scene context')
 )
 
