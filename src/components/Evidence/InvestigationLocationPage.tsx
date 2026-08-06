@@ -4,7 +4,6 @@ import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { getLocationIcon } from '../../game/locationIcons'
 import { pokemonData } from '../../data/pokemon'
 import { TODAY_INVESTIGATION_PATH, TODAY_SUSPECTS_PATH } from '../../paths'
-import { EvidenceBadgeList } from './EvidenceBadge'
 import { InvestigationActionChooser } from './InvestigationActionChooser'
 
 interface InvestigationLocationPageProps {
@@ -70,12 +69,43 @@ export function InvestigationLocationPage({
   const evidenceBadges = hasEvidence
     ? selectedAction?.evidenceBadges ?? location.evidenceBadges
     : null
+  const primaryEvidenceBadgeText = evidenceBadges?.[0]?.text ?? evidenceTitle ?? 'Evidence'
+  const primaryEvidenceBadgeSeparator = primaryEvidenceBadgeText.indexOf(':')
+  const evidenceCategory = primaryEvidenceBadgeSeparator > 0
+    ? primaryEvidenceBadgeText.slice(0, primaryEvidenceBadgeSeparator)
+    : 'Evidence'
+  const evidenceValue = primaryEvidenceBadgeSeparator > 0
+    ? primaryEvidenceBadgeText.slice(primaryEvidenceBadgeSeparator + 1).trim()
+    : primaryEvidenceBadgeText
   const evidenceIcon = hasEvidence ? getEvidenceIcon(location.evidenceId, evidenceTitle) : null
   const locationIcon = getLocationIcon(location.name, location.icon)
   const compactTeaserText = getCompactTeaserText(location)
   const witnessPokemon = location.witnessPokemonId
     ? pokemonData.find((pokemon) => pokemon.id === location.witnessPokemonId)
     : null
+  const resultActions = !hasEvidence ? (
+    <Link to={withSearch(TODAY_INVESTIGATION_PATH)} className="primary-button suspect-file-back-button">
+      Continue Investigation →
+    </Link>
+  ) : allLocationsInvestigated ? (
+    <>
+      <Link to={withSearch(TODAY_SUSPECTS_PATH)} className="primary-button suspect-file-back-button">
+        Review Suspects →
+      </Link>
+      <Link to={withSearch(TODAY_INVESTIGATION_PATH)} className="secondary-button suspect-file-back-button">
+        Back to Investigation Board
+      </Link>
+    </>
+  ) : (
+    <>
+      <Link to={withSearch(TODAY_INVESTIGATION_PATH)} className="primary-button suspect-file-back-button">
+        Continue Investigation →
+      </Link>
+      <Link to={withSearch(TODAY_SUSPECTS_PATH)} className="secondary-button suspect-file-back-button">
+        Review Evidence
+      </Link>
+    </>
+  )
 
   return (
     <section className="notebook-card active-investigation-panel investigation-location-page">
@@ -115,27 +145,34 @@ export function InvestigationLocationPage({
           {hasEvidence ? (
             <section className="investigation-result-card">
               <div className="result-complete-header">
+                <span className="result-complete-check" aria-hidden="true">✓</span>
                 <div>
-                  <h3>✓ {location.name} completed</h3>
-                  <p>You followed the lead.</p>
+                  <h3>{location.name}</h3>
+                  <p>Completed</p>
                 </div>
               </div>
 
               <section className="evidence-hero">
-                <div className="evidence-hero-icon" aria-hidden="true">
-                  {evidenceIcon}
+                <div className="evidence-hero-visual">
+                  <div className="evidence-hero-icon" aria-hidden="true">
+                    {evidenceIcon}
+                  </div>
+                  <span className="result-status-pill">New evidence</span>
                 </div>
                 <div className="evidence-hero-copy">
-                  <span className="result-status-pill">New Evidence</span>
-                  <h3>{evidenceTitle}</h3>
-                  <EvidenceBadgeList badges={evidenceBadges} />
+                  <span className="evidence-category-badge">{evidenceCategory}</span>
+                  <h3>{evidenceValue}</h3>
                   <p>{evidenceText}</p>
                   {witnessPokemon ? (
-                    <p className="result-save-confirmation">Witness interviewed: {witnessPokemon.name}</p>
+                    <p className="result-witness-confirmation">Witness interviewed: {witnessPokemon.name}</p>
                   ) : null}
-                  <p className="result-save-confirmation">✓ Added to Evidence Board</p>
+                  <p className="result-save-confirmation"><span aria-hidden="true">✓</span> Added to evidence board</p>
                 </div>
               </section>
+
+              <div className="result-actions">
+                {resultActions}
+              </div>
             </section>
           ) : (
             <section className="no-evidence-result-card">
@@ -148,31 +185,7 @@ export function InvestigationLocationPage({
             </section>
           )}
 
-          <div className="result-actions">
-            {!hasEvidence ? (
-              <Link to={withSearch(TODAY_INVESTIGATION_PATH)} className="primary-button suspect-file-back-button">
-                Continue Investigation →
-              </Link>
-            ) : allLocationsInvestigated ? (
-              <>
-                <Link to={withSearch(TODAY_SUSPECTS_PATH)} className="primary-button suspect-file-back-button">
-                  Review Suspects →
-                </Link>
-                <Link to={withSearch(TODAY_INVESTIGATION_PATH)} className="secondary-button suspect-file-back-button">
-                  Back to Investigation Board
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link to={withSearch(TODAY_INVESTIGATION_PATH)} className="primary-button suspect-file-back-button">
-                  Continue Investigation →
-                </Link>
-                <Link to={withSearch(TODAY_SUSPECTS_PATH)} className="secondary-button suspect-file-back-button">
-                  Review Evidence
-                </Link>
-              </>
-            )}
-          </div>
+          {!hasEvidence ? <div className="result-actions">{resultActions}</div> : null}
         </>
       ) : null}
     </section>

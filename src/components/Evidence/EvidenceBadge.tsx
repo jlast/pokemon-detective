@@ -16,6 +16,10 @@ export function EvidenceBadge({ text, type, fallback }: EvidenceBadgeProps) {
   const badgeText = text ?? fallback
   if (!badgeText) return null
 
+  const separatorIndex = badgeText.indexOf(':')
+  const badgeLabel = separatorIndex > 0 ? badgeText.slice(0, separatorIndex) : null
+  const badgeValue = badgeLabel ? badgeText.slice(separatorIndex + 1).trim() : badgeText
+
   return (
     <span className={`evidence-badge ${type ? `evidence-badge--type-${type}` : ''}`}>
       {type ? (
@@ -26,7 +30,8 @@ export function EvidenceBadge({ text, type, fallback }: EvidenceBadgeProps) {
           aria-hidden="true"
         />
       ) : null}
-      {badgeText}
+      {badgeLabel ? <span className="evidence-badge__label">{badgeLabel}</span> : null}
+      <span className="evidence-badge__value">{badgeValue}</span>
     </span>
   )
 }
