@@ -3136,21 +3136,66 @@
 }
 
 .evidence-lead-card__visual {
-  width: 68px;
-  height: 68px;
+  position: relative;
+  width: 76px;
+  height: 76px;
   display: grid;
   place-items: center;
   margin: 0 0 12px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--ink);
-  box-shadow: none;
+  border: 2px solid rgba(255, 253, 247, 0.94);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.82), transparent 0 30%),
+    linear-gradient(145deg, var(--lead-sticker-top, #fffdf7) 0%, var(--lead-sticker-bottom, #f0e2bf) 100%);
+  color: var(--lead-sticker-ink, var(--ink));
+  box-shadow:
+    0 7px 12px rgba(75, 58, 31, 0.16),
+    0 0 0 1px rgba(143, 111, 55, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  transform: rotate(var(--lead-sticker-rotation, -3deg));
+}
+
+.evidence-lead-card__visual::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  z-index: -1;
+  border-radius: 999px;
+  background: rgba(255, 253, 247, 0.72);
+  filter: drop-shadow(0 2px 2px rgba(75, 58, 31, 0.08));
 }
 
 .evidence-lead-card__visual svg {
-  width: 62px;
-  height: 62px;
+  width: 45px;
+  height: 45px;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.72));
+}
+
+.evidence-lead-card:nth-child(3n + 2) .evidence-lead-card__visual {
+  --lead-sticker-rotation: 2deg;
+}
+
+.evidence-lead-card:nth-child(3n) .evidence-lead-card__visual {
+  --lead-sticker-rotation: -1deg;
+}
+
+.evidence-lead-card:nth-child(3n + 1) .evidence-lead-card__visual {
+  --lead-sticker-top: #fff3b8;
+  --lead-sticker-bottom: #f2c94c;
+  --lead-sticker-ink: #283756;
+  --lead-sticker-rotation: -4deg;
+}
+
+.evidence-lead-card:nth-child(3n + 2) .evidence-lead-card__visual {
+  --lead-sticker-top: #e8f5d2;
+  --lead-sticker-bottom: #aeca68;
+  --lead-sticker-ink: #263756;
+}
+
+.evidence-lead-card:nth-child(3n) .evidence-lead-card__visual {
+  --lead-sticker-top: #dfeeff;
+  --lead-sticker-bottom: #9eb9d9;
+  --lead-sticker-ink: #263756;
 }
 
 .evidence-lead-card__content {

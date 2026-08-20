@@ -74,16 +74,16 @@ const cluePreviewByEvidenceId: Record<string, CluePreview> = {
     label: 'Weight clue',
   },
   'type-residue-clue': {
-    label: 'Residue clue',
+    label: 'Type residue clue',
   },
   'ground-trace-clue': {
-    label: 'Trace clue',
+    label: 'Type trace clue',
   },
   'force-clue': {
-    label: 'Entry clue',
+    label: 'Type entry clue',
   },
   'witness-clue': {
-    label: 'Witness clue',
+    label: 'Type noticed clue',
   },
   'highest-stat-clue': {
     label: 'Stat clue',
@@ -279,42 +279,6 @@ const ev = (
   }),
 })
 
-const wit = (
-  id: string,
-  evidenceId: string,
-  label: string,
-  description: string,
-  observationText: string,
-  witnessRole: string,
-  witnessRoles: string[],
-  witnessPromptTemplates: string[],
-): LocationAction => ({
-  id,
-  label,
-  leadType: 'uncertain',
-  description,
-  outcomeType: 'witness',
-  evidenceId,
-  evidenceTitle: null,
-  evidenceText: null,
-  observationText,
-  cluePreview: previewForEvidenceId(evidenceId),
-  presentation: {
-    ...getPresentation(id, {
-      kind: 'question',
-      icon: '💬',
-      visualType: 'generic-search',
-      paperStyle: 'clipboard',
-      displayLabel: 'Witness account',
-      teaser: description,
-      witnessRole,
-    }),
-    witnessRole,
-    witnessRoles,
-    witnessPromptTemplates,
-  },
-})
-
 const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Location[] => [
   location(`${caseId}-scene`, template.area, '🔎', `${template.area} shows signs of a careful disturbance.`,
     ev('search-scene-traces', 'height-clue', `Search ${template.area}`, `Look for dropped traces around ${template.area}.`, `Loose traces were scattered {movementWord} through ${template.area}.`),
@@ -336,22 +300,6 @@ const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Loc
     ev('inspect-forced-entry', 'force-clue', `Inspect ${template.lockedObject}`, `Study where ${template.lockedObject} was forced.`, `Something marked ${template.lockedObject} before it gave way.`),
     ev('check-lingering-scent', 'type-affectedness-clue', `Test residue near ${template.lockedObject}`, 'Use a safe type sample on the lingering residue.', `The residue near ${template.lockedObject} reacted like it came from someone {affectednessLabel}.`),
     ev('check-nearby-surface', 'lowest-stat-clue', `Check beside ${template.lockedObject}`, `Look along the nearby surface beside ${template.lockedObject}.`, `Whoever handled ${template.lockedObject} left signs of {weakStatTrace} nearby.`),
-  ),
-  location(`${caseId}-witness`, 'Interview Witness', '🗣️', `Someone near ${template.witnessArea} noticed something odd.`,
-    wit('question-primary-witness', 'witness-clue', `Question the ${template.witnessRole}`, `Ask what the ${template.witnessRole} remembers.`, `The ${template.witnessRole} is certain about that detail.`, template.witnessRole,
-      [template.witnessRole],
-      [
-        'Ask {pokemonName} what {witnessRole} saw around the missing item before it disappeared.',
-      ],
-    ),
-    wit('question-assistant', 'witness-clue', 'Question the assistant', 'Ask what changed during the routine.', 'The assistant remembers a useful detail.', 'the assistant',
-      ['the assistant'],
-      ['Ask {pokemonName} what changed during the handoff, cleanup, or closing routine.'],
-    ),
-    wit('question-passerby', 'witness-clue', 'Question a passerby', 'Ask who passed through the area.', 'The passerby remembers a useful detail.', 'a passerby',
-      ['a passerby'],
-      ['Ask {pokemonName} who passed through and whether anything sounded or moved strangely.'],
-    ),
   ),
 ]
 

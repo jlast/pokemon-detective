@@ -332,16 +332,21 @@ const normalizeSolutionHintType = (hintType: string): string => {
       return 'Tracks'
     case 'Residue points to':
     case 'Residue clue':
+    case 'Type residue clue':
     case 'Type clue':
       return 'Residue'
     case 'Trace points to':
     case 'Trace clue':
+    case 'Type trace clue':
       return 'Trace'
     case 'Entry marks point to':
     case 'Entry mark clue':
+    case 'Entry clue':
+    case 'Type entry clue':
       return 'Entry marks'
     case 'Witness account points to':
     case 'Witness clue':
+    case 'Type noticed clue':
       return 'Witness'
     case 'Strength clue':
     case 'Stat clue':
