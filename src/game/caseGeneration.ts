@@ -610,6 +610,15 @@ const getEvidenceClue = (evidenceId: string): EvidenceClue => {
 
 const getEvidenceClues = (evidenceIds: string[]): EvidenceClue[] => evidenceIds.map(getEvidenceClue)
 
+const getLocationChoiceAxis = (category: EvidenceCategory): EvidenceCategory | 'stat' => (
+  category === 'highestStat' || category === 'lowestStat' ? 'stat' : category
+)
+
+const hasDistinctLocationChoiceAxes = (evidenceIds: string[]): boolean => {
+  const axes = evidenceIds.map((evidenceId) => getLocationChoiceAxis(getEvidenceClue(evidenceId).category))
+  return new Set(axes).size === axes.length
+}
+
 export const isEvidenceSetSolvable = (
   culpritId: number,
   suspectIds: number[],
@@ -705,8 +714,11 @@ const createSolvableLocationEvidenceChoices = (
     for (let choiceIndex = 0; choiceIndex < additionalChoiceCount; choiceIndex += 1) {
       const candidates = shuffle(allEvidenceIds.filter((evidenceId) => !choices.includes(evidenceId)))
       const candidate = candidates.find((evidenceId) => {
+        const nextLocationChoices = [...choices, evidenceId]
+        if (!hasDistinctLocationChoiceAxes(nextLocationChoices)) return false
+
         const nextChoices = locationEvidenceChoices.map((locationChoices, index) => (
-          index === locationIndex ? [...locationChoices, evidenceId] : locationChoices
+          index === locationIndex ? nextLocationChoices : locationChoices
         ))
 
         return areLocationEvidenceChoicesSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, nextChoices)
