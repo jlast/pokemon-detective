@@ -18,7 +18,7 @@ interface EvidenceLeadCardProps {
   visualType: LeadVisualType
   paperStyle: LeadPaperStyle
   label: string
-  teaser: string
+  description: string
   clueLabel: string
   onFollow: () => void
   disabled?: boolean
@@ -30,14 +30,14 @@ function EvidenceLeadCard({
   visualType,
   paperStyle,
   label,
-  teaser,
+  description,
   clueLabel,
   onFollow,
   disabled = false,
   isFollowed = false,
   isAlreadyCollected = false,
 }: EvidenceLeadCardProps) {
-  const statusText = isAlreadyCollected ? 'You already know this clue' : isFollowed ? 'Complete' : 'Click to investigate'
+  const statusText = isAlreadyCollected ? 'Known clue' : isFollowed ? 'Complete' : 'Investigate'
 
   return (
     <button
@@ -51,16 +51,28 @@ function EvidenceLeadCard({
       </div>
 
       <div className="evidence-lead-card__content">
-        <span className="evidence-lead-card__label">{label}</span>
         <span className="lead-value-pill">
           <strong>{clueLabel}</strong>
         </span>
-        <p className="lead-flavor">{teaser}</p>
+        <span className="evidence-lead-card__label">{label}</span>
+        <p className="lead-flavor">{description}</p>
       </div>
 
       <span className="evidence-lead-card__cta">{statusText}</span>
     </button>
   )
+}
+
+const getClueChoiceDescription = (clueLabel: string) => {
+  const normalizedLabel = clueLabel.toLowerCase()
+
+  if (normalizedLabel.includes('entry')) return 'Look for signs of how it began.'
+  if (normalizedLabel.includes('evolution')) return 'Check where evolution traits point.'
+  if (normalizedLabel.includes('trace')) return 'Study the marks left behind.'
+  if (normalizedLabel.includes('witness')) return 'Ask what someone saw nearby.'
+  if (normalizedLabel.includes('residue') || normalizedLabel.includes('type')) return 'Inspect what was left on the scene.'
+
+  return 'Follow this clue in the case file.'
 }
 
 interface InvestigationActionChooserProps {
@@ -91,7 +103,8 @@ export function InvestigationActionChooser({
   return (
     <div className="investigation-action-chooser">
       <div className="investigation-action-header">
-        <h3>Which lead will you follow?</h3>
+        <h3>Which clue will you follow?</h3>
+        <p className="investigation-action-hint">Choose one lead to investigate.</p>
         {noActionsRemaining ? <p className="investigation-action-hint">No actions remaining.</p> : null}
       </div>
       <div className="location-leads">
@@ -173,7 +186,7 @@ export function InvestigationActionChooser({
               visualType={presentation.visualType}
               paperStyle={presentation.paperStyle}
               label={presentation.displayLabel}
-              teaser={presentation.teaser}
+              description={getClueChoiceDescription(cluePreview.label)}
               clueLabel={cluePreview.label}
               onFollow={() => chooseAction(action.id)}
               disabled={disabled || isFollowed || isAlreadyCollected}
