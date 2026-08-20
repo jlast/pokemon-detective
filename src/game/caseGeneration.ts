@@ -981,7 +981,7 @@ export const generateCaseLocations = (
         evidenceText: generatedEvidenceItem?.clueText ?? action.evidenceText,
         evidenceBadges: generatedEvidenceItem?.badges,
         clueRule: generatedEvidenceItem?.rule,
-        cluePreview: action.cluePreview,
+        cluePreview: previewForEvidenceId(action.evidenceId),
         observationText: generatedNarrative.observationText,
         implicationText: generatedNarrative.implicationText,
       }
