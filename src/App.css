@@ -3505,7 +3505,7 @@
 .suspect-evidence-board-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: stretch;
+  align-items: start;
 }
 
 .suspect-evidence-pill {
@@ -3525,6 +3525,7 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
+  align-content: start;
   gap: 0.7rem;
   min-width: 0;
   padding: 0.8rem 0.85rem;
@@ -3558,6 +3559,11 @@
 .suspect-evidence-tag-copy {
   display: grid;
   gap: 0.2rem;
+}
+
+.suspect-evidence-tag-badges {
+  grid-column: 1 / -1;
+  justify-content: flex-start;
 }
 
 .suspect-evidence-tag-copy > span:not(.evidence-badge-list) {
@@ -3600,6 +3606,7 @@
 }
 
 .suspect-evidence-tag-copy .evidence-badge__label,
+.suspect-evidence-tag-badges .evidence-badge__label,
 .detective-evidence-main .evidence-badge__label {
   font-size: 1em;
 }

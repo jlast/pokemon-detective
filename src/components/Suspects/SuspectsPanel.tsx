@@ -43,12 +43,13 @@ export function SuspectsPanel({
                   </span>
                   <div className="suspect-evidence-tag-copy">
                     <strong>{clueTitle}</strong>
-                    <EvidenceBadgeList
-                      badges={evidenceItem.badges}
-                      fallback={evidenceItem.clueText}
-                      clueType={evidenceItem.rule.axis}
-                    />
                   </div>
+                  <EvidenceBadgeList
+                    badges={evidenceItem.badges}
+                    fallback={evidenceItem.clueText}
+                    clueType={evidenceItem.rule.axis}
+                    className="suspect-evidence-tag-badges"
+                  />
                 </article>
               )
             })}
