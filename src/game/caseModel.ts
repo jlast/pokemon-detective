@@ -346,7 +346,6 @@ const normalizeSolutionHintType = (hintType: string): string => {
       return 'Entry marks'
     case 'Witness account points to':
     case 'Witness clue':
-    case 'Type noticed clue':
       return 'Witness'
     case 'Strength clue':
     case 'Stat clue':

@@ -144,7 +144,6 @@ const evidenceTemplates: EvidenceTemplate[] = [
 ]
 
 const evidenceTemplateById = new Map(evidenceTemplates.map((template) => [template.id, template]))
-const activeEvidenceTemplates = evidenceTemplates.filter((template) => template.id !== 'witness-clue')
 
 const strongestStatPriority: StatName[] = ['speed', 'attack', 'specialAttack', 'defense', 'specialDefense', 'hp']
 const weakestStatPriority: StatName[] = ['hp', 'defense', 'specialDefense', 'attack', 'specialAttack', 'speed']
@@ -353,7 +352,6 @@ const getSelectedType = (pokemon: Pokemon, clueTypeSlot: TypeClueSlot): PokemonT
 )
 
 const getTypeEvidenceTemplates = () => evidenceTemplates.filter((template) => isTypeClueCategory(template.category))
-const getActiveEvidenceTemplates = () => activeEvidenceTemplates
 
 const createTypeClueSlots = (pokemon: Pokemon): TypeClueSlots => Object.fromEntries(
   getTypeEvidenceTemplates().map((template) => [template.id, getClueTypeSlot(pokemon)]),
@@ -600,7 +598,7 @@ const getEvidenceBadges = (clue: EvidenceClue, profile: PokemonCaseProfile): Evi
   }
 }
 
-const getRelevantClues = (_pokemon: Pokemon): EvidenceClue[] => getActiveEvidenceTemplates().map((template) => ({
+const getRelevantClues = (_pokemon: Pokemon): EvidenceClue[] => evidenceTemplates.map((template) => ({
   evidenceId: template.id,
   category: template.category,
 }))
@@ -680,7 +678,7 @@ const pickSolvableLocationEvidenceIds = (
   typeClueGroups: TypeClueGroups,
   locationCount: number,
 ): string[] | null => {
-  const evidenceIds = getActiveEvidenceTemplates().map((template) => template.id)
+  const evidenceIds = evidenceTemplates.map((template) => template.id)
   const candidateSets = shuffle(getCombinations(evidenceIds, Math.min(locationCount, evidenceIds.length)))
 
   return candidateSets.find((candidateSet) => (
@@ -696,7 +694,7 @@ const createSolvableLocationEvidenceChoices = (
   locations: Location[],
   baseEvidenceIds: string[],
 ): string[][] | null => {
-  const allEvidenceIds = getActiveEvidenceTemplates().map((template) => template.id)
+  const allEvidenceIds = evidenceTemplates.map((template) => template.id)
   const locationEvidenceChoices = shuffle(baseEvidenceIds).map((evidenceId) => [evidenceId])
 
   for (const [locationIndex, location] of locations.entries()) {
