@@ -255,10 +255,14 @@ const DifficultySelectScreen = ({ onSelectDifficulty }: DifficultySelectScreenPr
             <span />
           </span>
           <span className="difficulty-select-card difficulty-select-card--easy">
-            <strong>Easy case</strong>
-            <span className="difficulty-select-card__meta">6 first-stage suspects</span>
-            <DifficultySilhouettes pokemonIds={easySilhouettePokemonIds} />
-            <span className="difficulty-select-card__copy">Mixed lineup. Faster deductions, fewer faces on the board.</span>
+            <span className="difficulty-select-card__top">
+              <strong>Easy case</strong>
+              <span className="difficulty-select-card__meta">6 first-stage suspects</span>
+              <DifficultySilhouettes pokemonIds={easySilhouettePokemonIds} />
+            </span>
+            <span className="difficulty-select-card__bottom">
+              <span className="difficulty-select-card__copy">Mixed lineup. Faster deductions, fewer faces on the board.</span>
+            </span>
           </span>
         </button>
 
@@ -273,10 +277,14 @@ const DifficultySelectScreen = ({ onSelectDifficulty }: DifficultySelectScreenPr
             <span />
           </span>
           <span className="difficulty-select-card difficulty-select-card--hard">
-            <strong>Hard case</strong>
-            <span className="difficulty-select-card__meta">9 final-stage suspects</span>
-            <DifficultySilhouettes pokemonIds={hardSilhouettePokemonIds} />
-            <span className="difficulty-select-card__copy">More similar silhouettes, more suspects, less room for lucky guesses.</span>
+            <span className="difficulty-select-card__top">
+              <strong>Hard case</strong>
+              <span className="difficulty-select-card__meta">9 final-stage suspects</span>
+              <DifficultySilhouettes pokemonIds={hardSilhouettePokemonIds} />
+            </span>
+            <span className="difficulty-select-card__bottom">
+              <span className="difficulty-select-card__copy">More similar silhouettes, more suspects, less room for lucky guesses.</span>
+            </span>
           </span>
         </button>
       </div>
@@ -1027,8 +1035,8 @@ function App() {
   const appRoutes = Object.values(routeConfig)
 
   useEffect(() => {
-    document.title = `${getPageName(appRoutes, currentRoute, currentCase)} | PokéMystery`
-  }, [appRoutes, currentRoute, currentCase])
+    document.title = `${shouldShowDifficultySelect ? 'Choose Difficulty' : getPageName(appRoutes, currentRoute, currentCase)} | PokéMystery`
+  }, [appRoutes, currentRoute, currentCase, shouldShowDifficultySelect])
 
   if (shouldShowDifficultySelect) {
     return (

@@ -5040,7 +5040,8 @@
 .difficulty-select-card {
   position: relative;
   display: grid;
-  gap: 0.65rem;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 1rem;
   min-height: 24rem;
   padding: 1.45rem 1.2rem 1.2rem 1.8rem;
   border: 1px solid #d8c39c;
@@ -5049,6 +5050,23 @@
   color: #10233f;
   box-shadow: inset 18px 0 20px rgba(47, 35, 21, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.62);
   transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.difficulty-select-card__top,
+.difficulty-select-card__bottom {
+  display: grid;
+}
+
+.difficulty-select-card__top {
+  align-self: stretch;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 0.65rem;
+}
+
+.difficulty-select-card__bottom {
+  align-self: end;
+  gap: 0.45rem;
+  padding-right: 6rem;
 }
 
 .difficulty-select-card::before {
@@ -5122,6 +5140,7 @@
 
 .difficulty-silhouettes {
   display: grid;
+  align-self: center;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.55rem;
   margin: 0.25rem 0 0.4rem;
