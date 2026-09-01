@@ -1659,7 +1659,7 @@
 
 .difficulty-topbar__value--hard strong,
 .difficulty-topbar__value--hard .difficulty-topbar__status {
-  color: #d97720;
+  color: #334a8f;
 }
 
 .difficulty-topbar__status {
@@ -5009,7 +5009,7 @@
 }
 
 .difficulty-binder--hard .difficulty-binder__spine {
-  background: #8f4b1f;
+  background: #24355f;
 }
 
 .difficulty-binder__spine > span {
@@ -5085,23 +5085,7 @@
 }
 
 .difficulty-select-card::after {
-  content: 'Open file →';
-  position: absolute;
-  right: 1.1rem;
-  bottom: 1rem;
-  color: #10233f;
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  opacity: 0.5;
-  transition: transform 140ms ease, opacity 140ms ease;
-}
-
-.difficulty-binder:hover .difficulty-select-card::after,
-.difficulty-binder:focus-visible .difficulty-select-card::after {
-  opacity: 0.6;
-  transform: translateX(4px);
+  content: none;
 }
 
 .difficulty-select-card--easy {
@@ -5117,7 +5101,7 @@
 }
 
 .difficulty-select-card--hard strong {
-  color: #d97720;
+  color: #334a8f;
 }
 
 .difficulty-select-card strong {
@@ -5136,6 +5120,22 @@
   max-width: 26rem;
   color: #40536e;
   font-weight: 700;
+}
+
+.difficulty-select-card__action {
+  color: #10233f;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.62;
+  transition: transform 140ms ease, opacity 140ms ease;
+}
+
+.difficulty-binder:hover .difficulty-select-card__action,
+.difficulty-binder:focus-visible .difficulty-select-card__action {
+  opacity: 0.85;
+  transform: translateX(4px);
 }
 
 .difficulty-silhouettes {

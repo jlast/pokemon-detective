@@ -256,12 +256,13 @@ const DifficultySelectScreen = ({ onSelectDifficulty }: DifficultySelectScreenPr
           </span>
           <span className="difficulty-select-card difficulty-select-card--easy">
             <span className="difficulty-select-card__top">
-              <strong>Easy case</strong>
-              <span className="difficulty-select-card__meta">6 first-stage suspects</span>
+              <strong>Easy Case</strong>
+              <span className="difficulty-select-card__meta">6 suspects</span>
               <DifficultySilhouettes pokemonIds={easySilhouettePokemonIds} />
             </span>
             <span className="difficulty-select-card__bottom">
-              <span className="difficulty-select-card__copy">Mixed lineup. Faster deductions, fewer faces on the board.</span>
+              <span className="difficulty-select-card__copy">More varied suspects</span>
+              <span className="difficulty-select-card__action">Open case →</span>
             </span>
           </span>
         </button>
@@ -278,12 +279,13 @@ const DifficultySelectScreen = ({ onSelectDifficulty }: DifficultySelectScreenPr
           </span>
           <span className="difficulty-select-card difficulty-select-card--hard">
             <span className="difficulty-select-card__top">
-              <strong>Hard case</strong>
-              <span className="difficulty-select-card__meta">9 final-stage suspects</span>
+              <strong>Hard Case</strong>
+              <span className="difficulty-select-card__meta">9 suspects</span>
               <DifficultySilhouettes pokemonIds={hardSilhouettePokemonIds} />
             </span>
             <span className="difficulty-select-card__bottom">
-              <span className="difficulty-select-card__copy">More similar silhouettes, more suspects, less room for lucky guesses.</span>
+              <span className="difficulty-select-card__copy">More similar suspects</span>
+              <span className="difficulty-select-card__action">Open case →</span>
             </span>
           </span>
         </button>
@@ -1063,8 +1065,8 @@ function App() {
             <div className="brand-lockup">
               <div>
                 <p className="eyebrow">PokéMystery</p>
-                <h1>Daily case desk</h1>
-                <p className="subtle-text">Pick today's investigation before opening the case file.</p>
+                <h1>Choose your case</h1>
+                <p className="subtle-text">Both contain today's mystery.</p>
               </div>
             </div>
           </header>
