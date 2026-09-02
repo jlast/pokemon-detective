@@ -1066,7 +1066,7 @@ function App() {
               <div>
                 <p className="eyebrow">PokéMystery</p>
                 <h1>Choose your case</h1>
-                <p className="subtle-text">Both contain today's mystery.</p>
+                <p className="subtle-text">Pick one to start. You can solve both.</p>
               </div>
             </div>
           </header>
