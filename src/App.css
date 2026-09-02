@@ -7526,7 +7526,7 @@
     position: absolute;
     top: 0.55rem;
     right: calc(50% - 1.65rem);
-    z-index: 2;
+    z-index: 0;
     width: 0.78rem;
     height: 0.78rem;
     border: 2px solid #fffaf0;

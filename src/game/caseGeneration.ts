@@ -7,6 +7,7 @@ type StatName = 'hp' | 'attack' | 'defense' | 'specialAttack' | 'specialDefense'
 type HeightBucket = 'short' | 'medium' | 'tall'
 type WeightBucket = 'light' | 'medium' | 'heavy'
 type EvolutionChainStage = 'stage1' | 'stage2' | 'stage3' | 'noEvolutionChain'
+type EvolutionPotential = 'canEvolve' | 'cannotEvolve'
 type EvidenceCategory = 'height' | 'weight' | 'typeResidue' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'typeAffectedness' | 'region' | 'evolutionChain'
 type TypeAffectedness = 'weak' | 'strong'
 type TypeAffectednessCandidate = { affectedness: TypeAffectedness; attackType: PokemonType }
@@ -59,7 +60,9 @@ type PokemonCaseProfile = {
   affectednessType: PokemonType
   affectednessValue: string
   region: PokemonRegion
+  regionGroup: PokemonRegion[]
   evolutionChainStage: EvolutionChainStage
+  evolutionPotential: EvolutionPotential
   values: Record<string, string>
 }
 
@@ -131,15 +134,15 @@ const evidenceTemplates: EvidenceTemplate[] = [
     id: 'region-clue',
     category: 'region',
     titleTemplate: 'Regional Trace',
-    clueTemplate: 'The scene held details associated with the {region} region.',
-    endTemplate: 'The scene held details associated with the {region} region.',
+    clueTemplate: 'The scene held details associated with the {regionGroup} regions.',
+    endTemplate: 'The scene held details associated with the {regionGroup} regions.',
   },
   {
     id: 'evolution-chain-clue',
     category: 'evolutionChain',
     titleTemplate: 'Evolution Trace',
-    clueTemplate: 'The clue pointed to {evolutionChainLabel}.',
-    endTemplate: 'The clue pointed to {evolutionChainLabel}.',
+    clueTemplate: 'The clue suggested the culprit {evolutionChainLabel}.',
+    endTemplate: 'The clue suggested the culprit {evolutionChainLabel}.',
   },
 ]
 
@@ -388,30 +391,34 @@ const getEvolutionChainStage = (pokemon: Pokemon): EvolutionChainStage => {
   return `stage${pokemon.evolutionStage}` as EvolutionChainStage
 }
 
-const getEvolutionChainLabel = (stage: EvolutionChainStage): string => {
-  switch (stage) {
-    case 'stage1':
-      return 'a 1st-stage evolution line member'
-    case 'stage2':
-      return 'a 2nd-stage evolution line member'
-    case 'stage3':
-      return 'a 3rd-stage evolution line member'
-    case 'noEvolutionChain':
-      return 'a Pokemon with no evolution chain'
+const getEvolutionPotential = (pokemon: Pokemon): EvolutionPotential => (
+  pokemon.evolutionStage < pokemon.evolutionLineStages ? 'canEvolve' : 'cannotEvolve'
+)
+
+const getEvolutionChainLabel = (potential: EvolutionPotential): string => {
+  switch (potential) {
+    case 'canEvolve':
+      return 'can still evolve'
+    case 'cannotEvolve':
+      return 'cannot evolve anymore'
   }
 }
 
-const getEvolutionChainBadgeLabel = (stage: EvolutionChainStage): string => {
-  switch (stage) {
-    case 'stage1':
-      return '1st stage'
-    case 'stage2':
-      return '2nd stage'
-    case 'stage3':
-      return '3rd stage'
-    case 'noEvolutionChain':
-      return 'No evolution chain'
+const getEvolutionChainBadgeLabel = (potential: EvolutionPotential): string => {
+  switch (potential) {
+    case 'canEvolve':
+      return 'Can still evolve'
+    case 'cannotEvolve':
+      return 'Cannot evolve anymore'
   }
+}
+
+const pokemonRegions: PokemonRegion[] = ['Kanto', 'Johto', 'Hoenn', 'Sinnoh']
+
+const createRegionGroup = (region: PokemonRegion, pokemonId: number): PokemonRegion[] => {
+  const otherRegions = pokemonRegions.filter((candidateRegion) => candidateRegion !== region)
+  const partnerRegion = otherRegions[pokemonId % otherRegions.length] ?? otherRegions[0]
+  return [region, partnerRegion].filter((candidateRegion): candidateRegion is PokemonRegion => Boolean(candidateRegion))
 }
 
 const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, typeClueGroups?: TypeClueGroups, activeEvidenceId?: string): PokemonCaseProfile => {
@@ -428,6 +435,8 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
   const { affectedness, attackType: affectednessType } = getTypeAffectedness(pokemon)
   const affectednessLabel = `${affectedness === 'weak' ? 'weak' : 'strong'} to ${formatLabel(affectednessType)}`
   const evolutionChainStage = getEvolutionChainStage(pokemon)
+  const evolutionPotential = getEvolutionPotential(pokemon)
+  const regionGroup = createRegionGroup(pokemon.region, pokemon.id)
 
   return {
     height,
@@ -444,7 +453,9 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
     affectednessType,
     affectednessValue: getTypeAffectednessValue(affectedness, affectednessType),
     region: pokemon.region,
+    regionGroup,
     evolutionChainStage,
+    evolutionPotential,
     values: {
       ...heightValues[height],
       ...weightValues[weight],
@@ -455,8 +466,9 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
       affectednessLabel,
       affectednessRequirement: affectednessLabel,
       region: pokemon.region,
-      evolutionChainLabel: getEvolutionChainLabel(evolutionChainStage),
-      evolutionChainBadgeLabel: getEvolutionChainBadgeLabel(evolutionChainStage),
+      regionGroup: formatList(regionGroup),
+      evolutionChainLabel: getEvolutionChainLabel(evolutionPotential),
+      evolutionChainBadgeLabel: getEvolutionChainBadgeLabel(evolutionPotential),
       profileLabel,
       traceProfileLabel: profileLabel,
       entryProfileLabel: profileLabel,
@@ -532,9 +544,9 @@ const getClueRule = (clue: EvidenceClue, profile: PokemonCaseProfile): ClueRule 
     case 'typeAffectedness':
       return { axis: 'typeAffectedness', precision: 'exact', matchingValues: [profile.affectednessValue] }
     case 'region':
-      return { axis: 'region', precision: 'exact', matchingValues: [profile.region] }
+      return { axis: 'region', precision: 'grouped', matchingValues: profile.regionGroup }
     case 'evolutionChain':
-      return { axis: 'evolutionChain', precision: 'exact', matchingValues: [profile.evolutionChainStage] }
+      return { axis: 'evolutionChain', precision: 'grouped', matchingValues: [profile.evolutionPotential] }
   }
 }
 
@@ -560,7 +572,7 @@ const getClueRuleValue = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, clue: 
     case 'region':
       return profile.region
     case 'evolutionChain':
-      return profile.evolutionChainStage
+      return profile.evolutionPotential
   }
 }
 
@@ -592,9 +604,9 @@ const getEvidenceBadges = (clue: EvidenceClue, profile: PokemonCaseProfile): Evi
     case 'typeAffectedness':
       return [{ text: `${profile.typeAffectedness === 'weak' ? 'Weak' : 'Strong'} to ${formatLabel(profile.affectednessType)}`, type: profile.affectednessType }]
     case 'region':
-      return [{ text: `Region: ${profile.region}` }]
+      return [{ text: `Region: ${formatList(profile.regionGroup)}` }]
     case 'evolutionChain':
-      return [{ text: `Evolution: ${getEvolutionChainBadgeLabel(profile.evolutionChainStage)}` }]
+      return [{ text: `Evolution: ${getEvolutionChainBadgeLabel(profile.evolutionPotential)}` }]
   }
 }
 
@@ -783,7 +795,7 @@ const getCategoryConclusionFragment = (clue: EvidenceClue, profile: PokemonCaseP
     case 'typeAffectedness':
       return `${profile.values.affectednessRequirement} in type matchups`
     case 'region':
-      return `from the ${profile.region} region`
+      return `from ${formatList(profile.regionGroup)}`
     case 'evolutionChain':
       return profile.values.evolutionChainLabel
   }
@@ -808,9 +820,9 @@ const getCategoryDeductionText = (clue: EvidenceClue, profile: PokemonCaseProfil
     case 'typeAffectedness':
       return `This suggested the culprit was ${profile.values.affectednessRequirement}.`
     case 'region':
-      return `This pointed toward a Pokemon from the ${profile.region} region.`
+      return `This pointed toward a Pokemon from ${formatList(profile.regionGroup)}.`
     case 'evolutionChain':
-      return `This pointed toward ${profile.values.evolutionChainLabel}.`
+      return `This suggested the culprit ${profile.values.evolutionChainLabel}.`
   }
 }
 
@@ -875,14 +887,14 @@ const getEvidenceObservation = (clue: EvidenceClue, profile: PokemonCaseProfile,
     case 'region':
       return {
         title,
-        observation: `Regional traces at the scene pointed toward ${profile.region}.`,
-        interpretation: `That points toward a suspect first discovered in the ${profile.region} region.`,
+        observation: `Regional traces at the scene pointed toward ${formatList(profile.regionGroup)}.`,
+        interpretation: `That points toward a suspect first discovered in either region.`,
       }
     case 'evolutionChain':
       return {
         title,
-        observation: `The scene showed signs consistent with ${profile.values.evolutionChainLabel}.`,
-        interpretation: `That points toward the suspect's place in its evolution chain.`,
+        observation: `The scene suggested the culprit ${profile.values.evolutionChainLabel}.`,
+        interpretation: `That narrows suspects by whether they can still evolve.`,
       }
   }
 }
@@ -1028,7 +1040,7 @@ const getMismatchReason = (suspectId: number, culpritProfile: PokemonCaseProfile
     case 'typeAffectedness':
       return `Did not fit the ${culpritProfile.values.affectednessRequirement} type reaction.`
     case 'region':
-      return `Did not match the ${culpritProfile.region} region clue.`
+      return `Did not match the ${formatList(culpritProfile.regionGroup)} region clue.`
     case 'evolutionChain':
       return `Did not match ${culpritProfile.values.evolutionChainLabel}.`
     default:
@@ -1063,7 +1075,7 @@ const getMismatchEvidenceLabel = (suspectId: number, culpritProfile: PokemonCase
     case 'typeAffectedness':
       return `Type reaction mismatch: needed ${culpritProfile.values.affectednessRequirement}`
     case 'region':
-      return `Region mismatch: needed ${culpritProfile.region}`
+      return `Region mismatch: expected ${formatList(culpritProfile.regionGroup)}`
     case 'evolutionChain':
       return `Evolution mismatch: needed ${culpritProfile.values.evolutionChainBadgeLabel}`
     default:

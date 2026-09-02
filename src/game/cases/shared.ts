@@ -330,7 +330,7 @@ const buildTemplatedLocations = (caseId: string, template: RawCaseTemplate): Loc
   location(`${caseId}-storage`, template.storageArea, '📦', `${template.storageArea} looks disturbed near its base.`,
     ev('inspect-storage-base', 'ground-trace-clue', `Inspect ${template.storageArea}`, `Look under and around ${template.storageArea}.`, `The {groundWord} near ${template.storageArea} was disturbed.`),
     ev('check-high-surfaces', 'height-clue', `Check above ${template.storageArea}`, 'Search the higher surfaces nearby.', `Dust near ${template.storageArea} was shifted {heightPosition}.`),
-    ev('listen-quietly', 'evolution-chain-clue', 'Listen quietly', 'Pause and listen for movement.', 'The quiet pause revealed signs of {evolutionChainLabel}.'),
+    ev('listen-quietly', 'evolution-chain-clue', 'Listen quietly', 'Pause and listen for movement.', 'The quiet pause suggested the culprit {evolutionChainLabel}.'),
   ),
   location(`${caseId}-lock`, template.lockedObject, '🔐', `${template.lockedObject} shows signs of tampering.`,
     ev('inspect-forced-entry', 'force-clue', `Inspect ${template.lockedObject}`, `Study where ${template.lockedObject} was forced.`, `Something marked ${template.lockedObject} before it gave way.`),
