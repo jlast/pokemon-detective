@@ -960,6 +960,8 @@
 }
 
 .case-flow-nav {
+  position: relative;
+  z-index: 0;
   display: flex;
   gap: 0;
   border-bottom: 2px solid var(--border);
@@ -1014,7 +1016,7 @@
   position: absolute;
   top: 0.38rem;
   right: 0.55rem;
-  z-index: 2;
+  z-index: 0;
   width: 0.58rem;
   height: 0.58rem;
   border: 2px solid #fffaf0;
@@ -1687,7 +1689,7 @@
   top: calc(100% + 0.4rem);
   right: 0;
   left: 0;
-  z-index: 2;
+  z-index: 20;
   display: grid;
   gap: 0.2rem;
   padding: 0.35rem;
@@ -2502,7 +2504,6 @@
   background: rgba(255, 254, 250, 0.98);
   border: 1px solid rgba(210, 198, 172, 0.86);
   box-shadow: 0 10px 24px rgba(62, 48, 26, 0.08);
-  animation: result-content-fade 360ms ease-out both;
 }
 
 .result-complete-header {
@@ -2559,7 +2560,6 @@
   letter-spacing: 0.09em;
   text-transform: uppercase;
   box-shadow: 0 5px 10px rgba(95, 69, 27, 0.08);
-  animation: evidence-reveal-step 220ms ease-out 120ms both;
 }
 
 .evidence-hero {
@@ -2593,7 +2593,6 @@
   color: #5b4312;
   font-size: clamp(4.1rem, 8vw, 6.2rem);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72), 0 8px 18px rgba(95, 69, 27, 0.1);
-  animation: evidence-reveal-step 260ms ease-out both;
 }
 
 .evidence-hero-copy {
@@ -2610,7 +2609,6 @@
   font-size: clamp(2.35rem, 5vw, 3.35rem);
   line-height: 0.98;
   letter-spacing: -0.03em;
-  animation: evidence-reveal-step 260ms ease-out 220ms both;
 }
 
 .evidence-category-badge {
@@ -2626,7 +2624,6 @@
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  animation: evidence-reveal-step 240ms ease-out 220ms both;
 }
 
 .evidence-hero-copy > p:not(.eyebrow):not(.result-witness-confirmation):not(.result-save-confirmation) {
@@ -2635,7 +2632,6 @@
   font-size: clamp(0.95rem, 1.7vw, 1.05rem);
   line-height: 1.4;
   max-width: 38rem;
-  animation: evidence-reveal-step 260ms ease-out 340ms both;
 }
 
 .evidence-hero-copy .result-witness-confirmation {
@@ -2656,7 +2652,6 @@
   color: #24663f;
   font-size: 0.86rem;
   font-weight: 900;
-  animation: evidence-reveal-step 260ms ease-out 460ms both;
 }
 
 .no-evidence-result-card {
@@ -2669,7 +2664,6 @@
   background: rgba(255, 250, 240, 0.86);
   border: 1px dashed rgba(139, 102, 64, 0.48);
   box-shadow: 0 10px 24px rgba(80, 56, 26, 0.08);
-  animation: result-content-fade 260ms ease-out both;
 }
 
 .no-evidence-location {

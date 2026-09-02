@@ -41,16 +41,13 @@ export function InvestigationLocationRoute({
     if (searchingLocationId !== null) return
 
     setSearchingLocationId(locationId)
-
-    window.setTimeout(() => {
-      void (async () => {
-        try {
-          await investigateLocation(locationId, actionId, witnessPokemonId)
-        } finally {
-          setSearchingLocationId((currentId) => (currentId === locationId ? null : currentId))
-        }
-      })()
-    }, 650)
+    void (async () => {
+      try {
+        await investigateLocation(locationId, actionId, witnessPokemonId)
+      } finally {
+        setSearchingLocationId((currentId) => (currentId === locationId ? null : currentId))
+      }
+    })()
   }
 
   const navigate = useNavigate()
