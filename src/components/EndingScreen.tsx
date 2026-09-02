@@ -105,11 +105,12 @@ export function EndingScreen({
   const [feedbackStatus, setFeedbackStatus] = useState<'idle' | 'saving' | 'submitted' | 'error'>('idle')
   const feedbackCardRef = useRef<HTMLElement | null>(null)
   const isSolved = currentCase.status === 'solved'
+  const isFinished = currentCase.status === 'solved' || currentCase.status === 'failed'
   const currentDifficulty = getCaseDifficulty(caseId, currentCase.difficulty)
   const otherDifficulty = currentDifficulty === 'hard' ? 'easy' : 'hard'
   const otherDifficultyLabel = otherDifficulty[0].toUpperCase() + otherDifficulty.slice(1)
   const otherCaseId = getDailyCaseId(getCaseDate(caseId), otherDifficulty)
-  const [hasSolvedOtherCase, setHasSolvedOtherCase] = useState(() => getStoredSolvedCaseIds().includes(otherCaseId))
+  const [hasSolvedOtherCase, setHasSolvedOtherCase] = useState(false)
   const displayCaseStats = getDisplayCaseStats(caseStats, isSolved, playerGuessCount)
   const solution = currentCase.solution
   const culpritName = culpritSuspect?.name ?? 'The culprit'
@@ -151,14 +152,13 @@ export function EndingScreen({
   }, [enjoymentRating])
 
   useEffect(() => {
-    if (!isSolved) return
+    if (!isFinished) return
 
-    storeSolvedCaseId(caseId)
-    setHasSolvedOtherCase(getStoredSolvedCaseIds().includes(otherCaseId))
-  }, [caseId, isSolved, otherCaseId])
+    if (isSolved) storeSolvedCaseId(caseId)
+  }, [caseId, isFinished, isSolved])
 
   useEffect(() => {
-    if (!isSolved) return
+    if (!isFinished) return
 
     getPuzzleHistory()
       .then((history) => {
@@ -166,10 +166,10 @@ export function EndingScreen({
           .filter((item) => item.status === 'solved')
           .map((item) => item.caseId)
         for (const solvedCaseId of solvedCaseIds) storeSolvedCaseId(solvedCaseId)
-        setHasSolvedOtherCase(solvedCaseIds.includes(otherCaseId) || getStoredSolvedCaseIds().includes(otherCaseId))
+        setHasSolvedOtherCase(solvedCaseIds.includes(otherCaseId))
       })
-      .catch(() => {})
-  }, [isSolved, otherCaseId])
+      .catch(() => setHasSolvedOtherCase(false))
+  }, [isFinished, otherCaseId])
 
   const renderSuspectRow = (suspect: Suspect) => {
     const explanation = clearedSuspects.find((item) => item.pokemonId === suspect.pokemonId)
@@ -247,20 +247,28 @@ export function EndingScreen({
       </section>
 
       <div className="post-hero-utility-row">
-        {isSolved ? (
+        {isFinished && !hasSolvedOtherCase ? (
           <section className="post-game-next" aria-label="Next case">
-            {hasSolvedOtherCase ? (
-              <div className="other-lineup-strip other-lineup-strip--complete">
-                <span>Both cases solved</span>
-                <strong aria-hidden="true">✓</strong>
-              </div>
-            ) : (
-              <div className="post-game-next-action">
-                <Link to={`/today?case=${encodeURIComponent(otherCaseId)}`} className="other-lineup-strip">
-                  Try {otherDifficultyLabel} case →
-                </Link>
-              </div>
-            )}
+            <Link
+              to={`/today?case=${encodeURIComponent(otherCaseId)}`}
+              className={`another-case-cta another-case-cta--${otherDifficulty}`}
+            >
+              <span className="another-case-cta__icon" aria-hidden="true">
+                <img
+                  className="another-case-cta__sprite"
+                  src={`/sprites/${otherDifficulty === 'hard' ? 248 : 175}.png`}
+                  alt=""
+                  loading="lazy"
+                />
+              </span>
+              <span className="another-case-cta__text">
+                <strong><span className="another-case-cta__play">Play the </span>{otherDifficultyLabel} case</strong>
+                <span className="another-case-cta__meta">
+                  {otherDifficulty === 'hard' ? 9 : 6} suspects · {otherDifficulty === 'hard' ? 'More similar lineup' : 'Different lineup'}
+                </span>
+              </span>
+              <span className="another-case-cta__chevron" aria-hidden="true">›</span>
+            </Link>
           </section>
         ) : null}
 
