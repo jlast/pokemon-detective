@@ -256,7 +256,7 @@ const DifficultySelectScreen = ({ onSelectDifficulty }: DifficultySelectScreenPr
           </span>
           <span className="difficulty-select-card difficulty-select-card--easy">
             <span className="difficulty-select-card__top">
-              <strong>Easy Case</strong>
+              <strong>Easy</strong>
               <span className="difficulty-select-card__meta">6 suspects</span>
               <DifficultySilhouettes pokemonIds={easySilhouettePokemonIds} />
             </span>
@@ -279,7 +279,7 @@ const DifficultySelectScreen = ({ onSelectDifficulty }: DifficultySelectScreenPr
           </span>
           <span className="difficulty-select-card difficulty-select-card--hard">
             <span className="difficulty-select-card__top">
-              <strong>Hard Case</strong>
+              <strong>Hard</strong>
               <span className="difficulty-select-card__meta">9 suspects</span>
               <DifficultySilhouettes pokemonIds={hardSilhouettePokemonIds} />
             </span>

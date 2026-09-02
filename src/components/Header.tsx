@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Case } from '../game/caseModel'
 import type { UserProfile } from '../auth'
 
@@ -42,10 +43,19 @@ export function Header({
   onLogin,
   onLogout,
 }: HeaderProps) {
+  const [isDifficultyMenuOpen, setIsDifficultyMenuOpen] = useState(false)
   const menuButtonLabel = isMenuOpen ? 'Close main navigation' : 'Open main navigation'
-  const nextPuzzleDifficulty = activePuzzleDifficulty === 'easy' ? 'hard' : 'easy'
   const activeDifficultyLabel = activePuzzleDifficulty[0].toUpperCase() + activePuzzleDifficulty.slice(1)
   const suspectCount = activePuzzleDifficulty === 'hard' ? 9 : 6
+  const difficultyOptions = [
+    { difficulty: 'easy' as const, label: 'Easy', suspectCount: 6 },
+    { difficulty: 'hard' as const, label: 'Hard', suspectCount: 9 },
+  ]
+
+  const selectDifficulty = (difficulty: 'easy' | 'hard') => {
+    setIsDifficultyMenuOpen(false)
+    if (difficulty !== activePuzzleDifficulty) onChangePuzzleDifficulty(difficulty)
+  }
 
   return (
     <header className="app-header notebook-card">
@@ -59,27 +69,42 @@ export function Header({
         </div>
 
         <div className="app-header-actions">
-          <div className="difficulty-topbar" aria-label="Current puzzle difficulty">
+          <div
+            className="difficulty-topbar"
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) setIsDifficultyMenuOpen(false)
+            }}
+          >
             <p className="difficulty-topbar__label">Difficulty</p>
-            <div className={`difficulty-topbar__value difficulty-topbar__value--${activePuzzleDifficulty}`}>
-              <span className="difficulty-topbar__status" aria-hidden="true" />
+            <button
+              type="button"
+              className={`difficulty-topbar__value difficulty-topbar__value--${activePuzzleDifficulty}`}
+              aria-haspopup="menu"
+              aria-expanded={isDifficultyMenuOpen}
+              onClick={() => setIsDifficultyMenuOpen((isOpen) => !isOpen)}
+            >
               <strong>{activeDifficultyLabel}</strong>
               <span aria-hidden="true">·</span>
               <span>{suspectCount} suspects</span>
-            </div>
-          </div>
-          <div className="difficulty-change-shell">
-            <button
-              type="button"
-              className="difficulty-topbar__change"
-              aria-label="Change difficulty"
-              onClick={() => onChangePuzzleDifficulty(nextPuzzleDifficulty)}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M7.2 7.4h8.3l-2.3-2.3 1.4-1.4L19.3 8l-4.7 4.3-1.4-1.4 2.3-2.1H7.2c-1.4 0-2.6 1.2-2.6 2.6 0 .6.2 1.1.5 1.6L3.6 14.3a4.4 4.4 0 0 1-.9-2.9c0-2.5 2-4 4.5-4Zm9.6 9.2H8.5l2.3 2.3-1.4 1.4L4.7 16l4.7-4.3 1.4 1.4-2.3 2.1h8.3c1.4 0 2.6-1.2 2.6-2.6 0-.6-.2-1.1-.5-1.6l1.5-1.3c.6.8.9 1.8.9 2.9 0 2.5-2 4-4.5 4Z" />
-              </svg>
+              <span className="difficulty-topbar__chevron" aria-hidden="true">▾</span>
             </button>
-            <span className="difficulty-change-shell__tooltip">Change difficulty</span>
+            {isDifficultyMenuOpen ? (
+              <div className="difficulty-topbar__menu" role="menu">
+                {difficultyOptions.map((option) => (
+                  <button
+                    key={option.difficulty}
+                    type="button"
+                    className={`difficulty-topbar__menu-item difficulty-topbar__menu-item--${option.difficulty}`}
+                    role="menuitemradio"
+                    aria-checked={option.difficulty === activePuzzleDifficulty}
+                    onClick={() => selectDifficulty(option.difficulty)}
+                  >
+                    <span>{option.label} · {option.suspectCount} suspects</span>
+                    {option.difficulty === activePuzzleDifficulty ? <span aria-hidden="true">✓</span> : null}
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <button
