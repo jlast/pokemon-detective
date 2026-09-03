@@ -403,6 +403,16 @@ const getPastCaseIds = (days: number): string[] => {
   }).flat()
 }
 
+const getPastDifficultyCaseIds = (days: number): string[] => {
+  const current = new Date(`${getTodayUtc()}T00:00:00.000Z`)
+  return Array.from({ length: days }, (_, index) => {
+    const date = new Date(current)
+    date.setUTCDate(current.getUTCDate() - index - 1)
+    const caseDate = date.toISOString().slice(0, 10)
+    return DAILY_DIFFICULTIES.map((difficulty) => getDailyCaseId(caseDate, difficulty))
+  }).flat()
+}
+
 const stripActionOutcome = (action: LocationAction & LegacyLocationActionBadges): LocationAction => {
   const {
     observationText: _observationText,
@@ -1114,8 +1124,19 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   const caseHistory = pokedex.caseHistory ?? {}
   const caseOutcomes = pokedex.caseOutcomes ?? {}
   const caseIds = getPastCaseIds(HISTORY_ARCHIVE_DAYS)
-  const caseRecords = await batchGetCaseData(caseIds)
+  let caseRecords = await batchGetCaseData(caseIds)
   const caseRecordMap = new Map(caseRecords.map((record) => [record.caseId, record]))
+  const missingDifficultyCaseIds = getPastDifficultyCaseIds(HISTORY_ARCHIVE_DAYS)
+    .filter((caseId) => !caseRecordMap.has(caseId))
+
+  if (missingDifficultyCaseIds.length > 0) {
+    await Promise.all(missingDifficultyCaseIds.map((caseId) => generateAndStoreCase(caseId)))
+    const generatedRecords = await batchGetCaseData(missingDifficultyCaseIds)
+    caseRecords = [...caseRecords, ...generatedRecords]
+    for (const record of generatedRecords) {
+      caseRecordMap.set(record.caseId, record)
+    }
+  }
   const progressRecords = await batchGetProgress(caseRecords.map((record) => getDateUserId(userInfo.sub, record.caseId)))
   const progressMap = new Map(progressRecords.map((progress) => [progress.caseId, progress]))
   const buildItem = (record: CaseDataRecord): CaseHistoryItem => {
