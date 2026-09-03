@@ -404,14 +404,13 @@ const getPastCaseIds = (days: number): string[] => {
   }).flat()
 }
 
-const getPastDifficultyCaseIds = (days: number): string[] => {
+const getPastCaseDates = (days: number): string[] => {
   const current = new Date(`${getTodayUtc()}T00:00:00.000Z`)
   return Array.from({ length: days }, (_, index) => {
     const date = new Date(current)
     date.setUTCDate(current.getUTCDate() - index - 1)
-    const caseDate = date.toISOString().slice(0, 10)
-    return DAILY_DIFFICULTIES.map((difficulty) => getDailyCaseId(caseDate, difficulty))
-  }).flat()
+    return date.toISOString().slice(0, 10)
+  })
 }
 
 const stripActionOutcome = (action: LocationAction & LegacyLocationActionBadges): LocationAction => {
@@ -1127,8 +1126,12 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   const caseIds = getPastCaseIds(HISTORY_ARCHIVE_DAYS)
   let caseRecords = await batchGetCaseData(caseIds)
   const caseRecordMap = new Map(caseRecords.map((record) => [record.caseId, record]))
-  const missingDifficultyCaseIds = getPastDifficultyCaseIds(HISTORY_ARCHIVE_DAYS)
-    .filter((caseId) => !caseRecordMap.has(caseId))
+  const missingDifficultyCaseIds = getPastCaseDates(HISTORY_ARCHIVE_DAYS)
+    .filter((caseDate) => (
+      !caseRecordMap.has(caseDate)
+      && !DAILY_DIFFICULTIES.some((difficulty) => caseRecordMap.has(getDailyCaseId(caseDate, difficulty)))
+    ))
+    .flatMap((caseDate) => DAILY_DIFFICULTIES.map((difficulty) => getDailyCaseId(caseDate, difficulty)))
     .slice(0, HISTORY_BACKFILL_CASE_LIMIT)
 
   if (missingDifficultyCaseIds.length > 0) {
