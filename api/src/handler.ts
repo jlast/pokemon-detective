@@ -1124,6 +1124,7 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   const caseOutcomes = pokedex.caseOutcomes ?? {}
   const caseIds = getPastCaseIds(HISTORY_ARCHIVE_DAYS)
   const caseRecords = await batchGetCaseData(caseIds)
+  const caseRecordMap = new Map(caseRecords.map((record) => [record.caseId, record]))
   const progressRecords = await batchGetProgress(caseRecords.map((record) => getDateUserId(userInfo.sub, record.caseId)))
   const progressMap = new Map(progressRecords.map((progress) => [progress.caseId, progress]))
   const buildItem = (record: CaseDataRecord): CaseHistoryItem => {
