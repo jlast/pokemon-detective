@@ -89,14 +89,22 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
     void getPuzzleHistory()
       .then((data) => {
         if (!cancelled) setHistory(data)
-        void backfillPuzzleHistory()
-          .then((backfill) => {
-            if (cancelled || backfill.generatedCaseIds.length === 0) return
-            return getPuzzleHistory().then((data) => {
-              if (!cancelled) setHistory(data)
-            })
-          })
-          .catch((err) => console.error('Failed to backfill puzzle history:', err))
+        void (async () => {
+          try {
+            for (let attempt = 0; attempt < 30; attempt += 1) {
+              const backfill = await backfillPuzzleHistory()
+              if (cancelled || backfill.generatedCaseIds.length === 0) return
+
+              const history = await getPuzzleHistory()
+              if (cancelled) return
+              setHistory(history)
+
+              if (backfill.complete) return
+            }
+          } catch (err) {
+            console.error('Failed to backfill puzzle history:', err)
+          }
+        })()
       })
       .catch((err) => {
         console.error('Failed to load puzzle history:', err)

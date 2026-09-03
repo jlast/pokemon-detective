@@ -1183,16 +1183,20 @@ const handleBackfillHistory = async (event: ApiGatewayEvent): Promise<ApiGateway
   ))
 
   if (!missingCaseDate) {
+    console.log('History backfill complete', { userId: userInfo.sub })
     return ok({ generatedCaseIds: [], complete: true })
   }
 
   const generatedCaseIds = DAILY_DIFFICULTIES
     .map((difficulty) => getDailyCaseId(missingCaseDate, difficulty))
 
+  console.log('History backfill generating', { userId: userInfo.sub, caseDate: missingCaseDate, generatedCaseIds })
+
   for (const caseId of generatedCaseIds) {
     await generateAndStoreCase(caseId)
   }
 
+  console.log('History backfill generated', { userId: userInfo.sub, caseDate: missingCaseDate, generatedCaseIds })
   return ok({ generatedCaseIds, complete: false })
 }
 
