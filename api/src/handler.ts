@@ -1,5 +1,5 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
-import { allCases, createCaseById, pickRandomCaseDifficulty, rebuildFullCase } from '../../src/game/cases/index'
+import { allCases, createCaseById, rebuildFullCase } from '../../src/game/cases/index'
 import { getCaseThemeTitle } from '../../src/game/caseTheme'
 import { getSolutionClueBadgesFromEvidence, getSolutionClueHintType, type Case, type CaseDifficulty, type CaseSolution, type CaseStatus, type EvidenceBadgeData, type LocationCardVariant, type LocationAction } from '../../src/game/caseModel'
 import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
@@ -143,11 +143,36 @@ interface CaseHistoryItem {
   completedAt?: string
 }
 
+const DAILY_CASE_ID_PATTERN = /^(\d{4}-\d{2}-\d{2})(?:-(easy|hard))?$/
+const DAILY_DIFFICULTIES = ['easy', 'hard'] as const
+
+const getCaseDate = (caseId: string): string => caseId.slice(0, 10)
+
+const getCaseIdDifficulty = (caseId: string): CaseDifficulty | undefined => {
+  const difficulty = DAILY_CASE_ID_PATTERN.exec(caseId)?.[2]
+  return difficulty === 'easy' || difficulty === 'hard' ? difficulty : undefined
+}
+
+const getDailyCaseId = (date: string, difficulty: typeof DAILY_DIFFICULTIES[number]): string => `${date}-${difficulty}`
+
+const getDefaultTodayCaseId = (): string => getDailyCaseId(getTodayUtc(), 'easy')
+
+const getDailyCaseSortRank = (caseId: string): number => {
+  const difficulty = getCaseIdDifficulty(caseId)
+  if (difficulty === 'easy') return 0
+  if (difficulty === 'hard') return 1
+  return 2
+}
+
+const hasSolvedCaseOnDate = (outcomes: Record<string, 'solved' | 'failed'>, date: string): boolean => (
+  outcomes[date] === 'solved' || DAILY_DIFFICULTIES.some((difficulty) => outcomes[getDailyCaseId(date, difficulty)] === 'solved')
+)
+
 const calculateSolvedStreak = (outcomes: Record<string, 'solved' | 'failed'>): number => {
   const current = new Date(`${getTodayUtc()}T00:00:00.000Z`)
   let streak = 0
 
-  while (outcomes[current.toISOString().slice(0, 10)] === 'solved') {
+  while (hasSolvedCaseOnDate(outcomes, current.toISOString().slice(0, 10))) {
     streak += 1
     current.setUTCDate(current.getUTCDate() - 1)
   }
@@ -186,7 +211,7 @@ const getUserInfo = async (event: ApiGatewayEvent): Promise<UserInfo> => {
 
 const getDateUserId = (sub: string, caseId: string): string => `${sub}:${caseId}`
 
-const stripDateFromUserId = (userId: string): string => userId.replace(/:\d{4}-\d{2}-\d{2}$/, '')
+const stripDateFromUserId = (userId: string): string => userId.replace(/:\d{4}-\d{2}-\d{2}(?:-(?:easy|hard))?$/, '')
 
 const getHeader = (event: ApiGatewayEvent, name: string): string | undefined => {
   const lowerName = name.toLowerCase()
@@ -373,8 +398,9 @@ const getPastCaseIds = (days: number): string[] => {
   return Array.from({ length: days }, (_, index) => {
     const date = new Date(current)
     date.setUTCDate(current.getUTCDate() - index - 1)
-    return date.toISOString().slice(0, 10)
-  })
+    const caseDate = date.toISOString().slice(0, 10)
+    return [getDailyCaseId(caseDate, 'easy'), getDailyCaseId(caseDate, 'hard'), caseDate]
+  }).flat()
 }
 
 const stripActionOutcome = (action: LocationAction & LegacyLocationActionBadges): LocationAction => {
@@ -747,14 +773,7 @@ const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null
   } as Case
 }
 
-const getTodayCaseData = async () => {
-  const caseId = getTodayUtc()
-  const record = await getCaseData(caseId)
-  if (!record) return null
-  return { record, caseId }
-}
-
-const isCaseDate = (caseId: string): boolean => /^\d{4}-\d{2}-\d{2}$/.test(caseId)
+const isCaseId = (caseId: string): boolean => DAILY_CASE_ID_PATTERN.test(caseId)
 
 const typeEvidenceIds = ['type-residue-clue', 'ground-trace-clue', 'force-clue', 'witness-clue']
 
@@ -839,7 +858,7 @@ const loadCase = async (caseId: string) => {
 const generateAndStoreCase = async (caseId: string) => {
   const config = allCases[Math.floor(Math.random() * allCases.length)]
   if (!config) return null
-  const difficulty = pickRandomCaseDifficulty()
+  const difficulty = getCaseIdDifficulty(caseId) ?? 'easy'
   const gameCase = createCaseById(config.id, difficulty)
   if (!gameCase) return null
   validateGeneratedCase(gameCase)
@@ -893,14 +912,13 @@ const generateAndStoreCase = async (caseId: string) => {
   return applyLocationCardVariants(assignWitnessPokemonToActions(gameCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
 }
 
-const handleGetCase = async (event: ApiGatewayEvent, requestedCaseId = getTodayUtc()): Promise<ApiGatewayResult> => {
-  if (!isCaseDate(requestedCaseId)) return err(400, 'Invalid case date')
+const handleGetCase = async (event: ApiGatewayEvent, requestedCaseId = getDefaultTodayCaseId()): Promise<ApiGatewayResult> => {
+  if (!isCaseId(requestedCaseId)) return err(400, 'Invalid case ID')
 
   const todayCaseId = getTodayUtc()
-  const isToday = requestedCaseId === todayCaseId
-  const result = isToday ? await getTodayCaseData() : null
+  const isToday = getCaseDate(requestedCaseId) === todayCaseId
   const caseId = requestedCaseId
-  const record = result?.record ?? await getCaseData(caseId)
+  const record = await getCaseData(caseId)
   const caseStats = buildCaseStatsResponse(getCaseStats(record ?? null))
 
   let fullCase: Case | null = null
@@ -909,7 +927,7 @@ const handleGetCase = async (event: ApiGatewayEvent, requestedCaseId = getTodayU
     fullCase = await loadCase(caseId)
   }
 
-  if (!fullCase && isToday) {
+  if (!fullCase && isToday && getCaseIdDifficulty(caseId)) {
     fullCase = await generateAndStoreCase(caseId)
   }
 
@@ -1050,7 +1068,7 @@ const handleGetAdminCaseProgress = async (
   const admin = await requireAdmin(event)
   if (isApiResult(admin)) return admin
 
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(caseId)) return err(400, 'Invalid case date')
+  if (!isCaseId(caseId)) return err(400, 'Invalid case ID')
 
   const fullCase = await loadCase(caseId)
   if (!fullCase) return err(404, 'Case not found')
@@ -1122,14 +1140,17 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
       } : {}),
       guessCount,
       startedAt: stored?.startedAt ?? (progress ? getProgressActivityTimestamp(progress) ?? undefined : undefined),
-      completedAt: completed ? stored?.completedAt ?? `${record.caseId}T00:00:00.000Z` : undefined,
+      completedAt: completed ? stored?.completedAt ?? `${getCaseDate(record.caseId)}T00:00:00.000Z` : undefined,
     }
   }
   const items = caseIds
     .map((caseId) => caseRecordMap.get(caseId))
     .filter((record): record is CaseDataRecord => record !== undefined)
     .map(buildItem)
-    .sort((left, right) => right.caseId.localeCompare(left.caseId))
+    .sort((left, right) => (
+      getCaseDate(right.caseId).localeCompare(getCaseDate(left.caseId))
+      || getDailyCaseSortRank(left.caseId) - getDailyCaseSortRank(right.caseId)
+    ))
 
   return ok({
     items,

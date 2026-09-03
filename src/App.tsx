@@ -78,8 +78,14 @@ import {
   type UserProfile,
 } from './auth'
 
-const getTodayCaseId = () => new Date().toISOString().slice(0, 10)
-const CASE_ID_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+type DailyPuzzleDifficulty = 'easy' | 'hard'
+
+const getTodayCaseDate = () => new Date().toISOString().slice(0, 10)
+const getDailyCaseId = (date: string, difficulty: DailyPuzzleDifficulty) => `${date}-${difficulty}`
+const getTodayCaseId = (difficulty: DailyPuzzleDifficulty = 'easy') => getDailyCaseId(getTodayCaseDate(), difficulty)
+const getCaseDate = (caseId: string) => caseId.slice(0, 10)
+const getCaseDifficulty = (caseId: string): DailyPuzzleDifficulty => caseId.endsWith('-hard') ? 'hard' : 'easy'
+const CASE_ID_PATTERN = /^\d{4}-\d{2}-\d{2}(?:-(?:easy|hard))?$/
 const MAX_ACCUSATIONS = 3
 const ENABLE_DAILY_REMINDER_OPT_IN = true
 const DEFAULT_REMINDER_PREFERENCES: ReminderPreferencesResponse = {
@@ -217,21 +223,99 @@ const AppFooter = () => (
   </footer>
 )
 
+interface DifficultySelectScreenProps {
+  onSelectDifficulty: (difficulty: DailyPuzzleDifficulty) => void
+}
+
+const easySilhouettePokemonIds = [1, 4, 7, 133, 152, 158]
+const hardSilhouettePokemonIds = [6, 9, 149, 248, 254, 257, 260, 376, 445]
+
+const DifficultySilhouettes = ({ pokemonIds }: { pokemonIds: readonly number[] }) => (
+  <div className="difficulty-silhouettes" aria-hidden="true">
+    {pokemonIds.map((pokemonId) => (
+      <span key={pokemonId} className="difficulty-silhouette-frame">
+        <img src={`/sprites/${pokemonId}.png`} alt="" loading="lazy" />
+      </span>
+    ))}
+  </div>
+)
+
+const DifficultySelectScreen = ({ onSelectDifficulty }: DifficultySelectScreenProps) => (
+  <div className="main-layout-single">
+    <section className="difficulty-select-screen">
+      <div className="difficulty-select-grid">
+        <button
+          type="button"
+          className="difficulty-binder difficulty-binder--easy"
+          onClick={() => onSelectDifficulty('easy')}
+        >
+          <span className="difficulty-binder__spine" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
+          <span className="difficulty-select-card difficulty-select-card--easy">
+            <span className="difficulty-select-card__top">
+              <strong>Easy</strong>
+              <span className="difficulty-select-card__meta">6 suspects</span>
+              <DifficultySilhouettes pokemonIds={easySilhouettePokemonIds} />
+            </span>
+            <span className="difficulty-select-card__bottom">
+              <span className="difficulty-select-card__copy">More varied suspects</span>
+              <span className="difficulty-select-card__action">Open case →</span>
+            </span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          className="difficulty-binder difficulty-binder--hard"
+          onClick={() => onSelectDifficulty('hard')}
+        >
+          <span className="difficulty-binder__spine" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
+          <span className="difficulty-select-card difficulty-select-card--hard">
+            <span className="difficulty-select-card__top">
+              <strong>Hard</strong>
+              <span className="difficulty-select-card__meta">9 suspects</span>
+              <DifficultySilhouettes pokemonIds={hardSilhouettePokemonIds} />
+            </span>
+            <span className="difficulty-select-card__bottom">
+              <span className="difficulty-select-card__copy">More similar suspects</span>
+              <span className="difficulty-select-card__action">Open case →</span>
+            </span>
+          </span>
+        </button>
+      </div>
+    </section>
+  </div>
+)
+
 function App() {
   const location = useLocation()
   const navigate = useNavigate()
-  const todayCaseId = getTodayCaseId()
+  const todayCaseDate = getTodayCaseDate()
+  const defaultTodayCaseId = getTodayCaseId()
   const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search])
+  const requestedCaseId = searchParams.get('case')?.trim() ?? ''
+  const hasSelectedCase = CASE_ID_PATTERN.test(requestedCaseId)
   const activeCaseId = useMemo(() => {
-    const requestedCaseId = searchParams.get('case')?.trim() ?? ''
-    return CASE_ID_PATTERN.test(requestedCaseId) ? requestedCaseId : todayCaseId
-  }, [searchParams, todayCaseId])
-  const isArchivedCase = activeCaseId !== todayCaseId
+    return hasSelectedCase ? requestedCaseId : defaultTodayCaseId
+  }, [defaultTodayCaseId, hasSelectedCase, requestedCaseId])
+  const activeCaseDate = getCaseDate(activeCaseId)
+  const activePuzzleDifficulty = getCaseDifficulty(activeCaseId)
+  const isArchivedCase = activeCaseDate !== todayCaseDate
+  const isDefaultTodayCase = activeCaseId === defaultTodayCaseId
+  const shouldShowDifficultySelect = !hasSelectedCase && (location.pathname === ROOT_PATH || location.pathname.startsWith(TODAY_PATH))
+  const shouldAttachCaseParam = hasSelectedCase || !isDefaultTodayCase
   const withActiveCase = useCallback((path: string) => (
-    isArchivedCase && path.startsWith(TODAY_PATH)
+    shouldAttachCaseParam && path.startsWith(TODAY_PATH)
       ? `${path}?case=${encodeURIComponent(activeCaseId)}`
       : path
-  ), [activeCaseId, isArchivedCase])
+  ), [activeCaseId, shouldAttachCaseParam])
 
   const [caseData, setCaseData] = useState<Case | null>(null)
   const [loading, setLoading] = useState(true)
@@ -285,6 +369,11 @@ function App() {
     navigate(path)
   }, [navigate])
 
+  const selectPuzzleDifficulty = useCallback((difficulty: DailyPuzzleDifficulty) => {
+    const caseId = getDailyCaseId(activeCaseDate, difficulty)
+    navigate(`${TODAY_PATH}?case=${encodeURIComponent(caseId)}`)
+  }, [activeCaseDate, navigate])
+
   const [suspectNotes, setSuspectNotes] = useState<Map<number, {
     noteStatus: SuspectNoteStatus
   }>>(new Map())
@@ -321,6 +410,10 @@ function App() {
     })
     return c
   }, [caseData, suspectNotes])
+
+  useEffect(() => {
+    setSuspectNotes(new Map())
+  }, [activeCaseId])
 
   const wrongAccusationIds = useMemo(() => {
     if (!currentCase?.culpritPokemonId) return accusationHistory ?? []
@@ -369,9 +462,14 @@ function App() {
   }
 
   const loadCase = useCallback(async () => {
+    if (shouldShowDifficultySelect) {
+      setLoading(false)
+      return
+    }
+
     setLoading(true)
     try {
-      const data = isArchivedCase ? await getCase(activeCaseId) : await getCurrentCase()
+      const data = isDefaultTodayCase ? await getCurrentCase() : await getCase(activeCaseId)
       setCaseData(applyCurrentCaseAssets(data.case))
       setInvestigationsRemaining(data.investigationsRemaining)
       setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
@@ -383,7 +481,7 @@ function App() {
     } finally {
       setLoading(false)
     }
-  }, [activeCaseId, isArchivedCase])
+  }, [activeCaseId, isDefaultTodayCase, shouldShowDifficultySelect])
 
   useEffect(() => {
     if (currentRoute === '/callback') {
@@ -939,8 +1037,45 @@ function App() {
   const appRoutes = Object.values(routeConfig)
 
   useEffect(() => {
-    document.title = `${getPageName(appRoutes, currentRoute, currentCase)} | PokéMystery`
-  }, [appRoutes, currentRoute, currentCase])
+    document.title = `${shouldShowDifficultySelect ? 'Choose Difficulty' : getPageName(appRoutes, currentRoute, currentCase)} | PokéMystery`
+  }, [appRoutes, currentRoute, currentCase, shouldShowDifficultySelect])
+
+  if (shouldShowDifficultySelect) {
+    return (
+      <main className="app-shell">
+        <DesktopSidebar
+          activeSection="case"
+          authed={authed}
+          userProfile={userProfile}
+          isAdmin={isAdmin}
+          caseStreak={caseStreak}
+          onSelectCase={() => navigate(TODAY_PATH)}
+          onSelectPokedex={() => navigate(POKEDEX_PATH)}
+          onSelectHistory={() => navigate(HISTORY_PATH)}
+          onSelectHowToPlay={() => navigate(HOW_TO_PLAY_PATH)}
+          onSelectFeedback={() => navigate(FEEDBACK_PATH)}
+          onSelectSettings={() => navigate(SETTINGS_PATH)}
+          onSelectAdmin={() => navigate(ADMIN_PATH)}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+        />
+
+        <div className="app-content">
+          <header className="app-header notebook-card difficulty-select-header">
+            <div className="brand-lockup">
+              <div>
+                <p className="eyebrow">PokéMystery</p>
+                <h1>Choose your case</h1>
+                <p className="subtle-text">Pick one to start. You can solve both.</p>
+              </div>
+            </div>
+          </header>
+          <DifficultySelectScreen onSelectDifficulty={selectPuzzleDifficulty} />
+          <AppFooter />
+        </div>
+      </main>
+    )
+  }
 
   if (loading || !currentCase) {
     return (
@@ -1010,10 +1145,13 @@ function App() {
         <Header
           currentCase={currentCase}
           activeSection={activeSidebarSection}
+          activePuzzleDifficulty={activePuzzleDifficulty}
           authed={authed}
           userProfile={userProfile}
           isAdmin={isAdmin}
           isMenuOpen={isMobileMenuOpen}
+          hideDifficultySelector={!currentRoute.startsWith(TODAY_PATH) || currentRoute.startsWith(TODAY_ENDING_PATH) || isArchivedCase}
+          onChangePuzzleDifficulty={selectPuzzleDifficulty}
           onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
           onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
           onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}

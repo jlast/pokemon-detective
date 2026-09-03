@@ -1,7 +1,7 @@
 import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2'
-import { allCases, createCaseById, pickRandomCaseDifficulty } from '../../src/game/cases/index'
+import { allCases, createCaseById } from '../../src/game/cases/index'
 import { pokemonData } from '../../src/data/pokemon'
-import type { Case, LocationCardVariant } from '../../src/game/caseModel'
+import type { Case, CaseDifficulty, LocationCardVariant } from '../../src/game/caseModel'
 import { putCaseData } from './caseDataDb'
 import { getProgress } from './playerDb'
 import {
@@ -22,6 +22,10 @@ const getTodayUtc = (): string => {
   const now = new Date()
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`
 }
+
+const DAILY_DIFFICULTIES = ['easy', 'hard'] as const
+
+const getDailyCaseId = (date: string, difficulty: typeof DAILY_DIFFICULTIES[number]): string => `${date}-${difficulty}`
 
 const CASE_DATA_TTL_DAYS = 366
 const WITNESS_OPTION_COUNT = 1
@@ -91,9 +95,10 @@ const createLocationCardTiltMap = (locations: Case['locations']): Record<string,
 
 const getDateUserId = (sub: string, caseId: string): string => `${sub}:${caseId}`
 
-const hasCompletedToday = async (userId: string, caseId: string): Promise<boolean> => {
-  const progress = await getProgress(getDateUserId(userId, caseId))
-  return progress?.status === 'solved' || progress?.status === 'failed'
+const hasCompletedToday = async (userId: string, date: string): Promise<boolean> => {
+  const caseIds = [date, ...DAILY_DIFFICULTIES.map((difficulty) => getDailyCaseId(date, difficulty))]
+  const progressRecords = await Promise.all(caseIds.map((caseId) => getProgress(getDateUserId(userId, caseId))))
+  return progressRecords.some((progress) => progress?.status === 'solved' || progress?.status === 'failed')
 }
 
 const sendReminderEmail = async (subscription: ReminderSubscriptionRecord, caseId: string): Promise<void> => {
@@ -316,6 +321,64 @@ const sendUnfinishedCaseReminders = async (caseId: string): Promise<{ sent: numb
   return { sent, skipped, failed }
 }
 
+const generateAndStoreDailyCase = async (caseId: string, difficulty: CaseDifficulty): Promise<{ configId: string; difficulty: CaseDifficulty }> => {
+  const configIndex = Math.floor(Math.random() * allCases.length)
+  const config = allCases[configIndex]
+  if (!config) throw new Error('No case configs available')
+
+  const gameCase = createCaseById(config.id, difficulty)
+  if (!gameCase) throw new Error(`Failed to generate case for config: ${config.id}`)
+  validateGeneratedCase(gameCase)
+
+  const actionEvidenceMap: Record<string, string> = {}
+  for (const location of gameCase.locations) {
+    for (const action of location.actions) {
+      if (action.evidenceId) {
+        actionEvidenceMap[action.id] = action.evidenceId
+      }
+    }
+  }
+
+  const suspectShinyMap: Record<string, boolean> = {}
+  for (const suspect of gameCase.suspects) {
+    if (suspect.isShiny) {
+      suspectShinyMap[String(suspect.pokemonId)] = true
+    }
+  }
+  const suspectPokemonIds = gameCase.suspects.map((s) => s.pokemonId)
+  const witnessPokemonIds = createWitnessPokemonIds(suspectPokemonIds, countWitnessActions(gameCase) * WITNESS_OPTION_COUNT)
+  const witnessPokemonIdMap = createWitnessPokemonIdMap(gameCase, witnessPokemonIds)
+  const locationCardVariantMap = createLocationCardVariantMap(gameCase.locations)
+  const locationCardTiltMap = createLocationCardTiltMap(gameCase.locations)
+
+  await putCaseData({
+    caseId,
+    configId: gameCase.id,
+    difficulty: gameCase.difficulty,
+    culpritPokemonId: gameCase.culpritPokemonId,
+    typeClueSlots: gameCase.typeClueSlots,
+    typeClueGroups: gameCase.typeClueGroups,
+    suspectPokemonIds,
+    suspectShinyMap,
+    witnessPokemonIds,
+    witnessPokemonIdMap,
+    locationCardVariantMap,
+    locationCardTiltMap,
+    theme: gameCase.theme,
+    actionEvidenceMap,
+    solution: {
+      culpritRevealText: gameCase.solution?.culpritRevealText ?? '',
+      detectiveConclusion: gameCase.solution?.detectiveConclusion ?? '',
+      clueBadges: gameCase.solution?.clueBadges ?? [],
+      evidenceExplanation: gameCase.solution?.evidenceExplanation ?? [],
+      clearedSuspects: gameCase.solution?.clearedSuspects ?? [],
+    },
+    ttl: Math.floor(Date.now() / 1000) + CASE_DATA_TTL_DAYS * 86400,
+  })
+
+  return { configId: config.id, difficulty: gameCase.difficulty }
+}
+
 interface CloudWatchEvent {
   version?: string
   id?: string
@@ -330,74 +393,25 @@ interface CloudWatchEvent {
 
 export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: number; body: string }> => {
   try {
-    const caseId = getTodayUtc()
+    const date = getTodayUtc()
 
     if (_event?.detail?.reminderType === 'unfinished-case') {
-      const reminders = await sendUnfinishedCaseReminders(caseId)
-      console.log(`Unfinished-case reminders for ${caseId}: ${reminders.sent} sent, ${reminders.skipped} skipped, ${reminders.failed} failed`)
-      return { statusCode: 200, body: JSON.stringify({ caseId, reminders }) }
+      const reminders = await sendUnfinishedCaseReminders(date)
+      console.log(`Unfinished-case reminders for ${date}: ${reminders.sent} sent, ${reminders.skipped} skipped, ${reminders.failed} failed`)
+      return { statusCode: 200, body: JSON.stringify({ caseId: date, reminders }) }
     }
 
-    const configIndex = Math.floor(Math.random() * allCases.length)
-    const config = allCases[configIndex]
-    if (!config) throw new Error('No case configs available')
+    const cases = await Promise.all(DAILY_DIFFICULTIES.map(async (difficulty) => {
+      const caseId = getDailyCaseId(date, difficulty)
+      const generated = await generateAndStoreDailyCase(caseId, difficulty)
+      console.log(`Generated daily case ${caseId} using config "${generated.configId}" at ${generated.difficulty} difficulty`)
+      return { caseId, ...generated }
+    }))
 
-    const difficulty = pickRandomCaseDifficulty()
-    const gameCase = createCaseById(config.id, difficulty)
-    if (!gameCase) throw new Error(`Failed to generate case for config: ${config.id}`)
-    validateGeneratedCase(gameCase)
+    const reminders = await sendDailyReminders(date)
 
-    const actionEvidenceMap: Record<string, string> = {}
-    for (const location of gameCase.locations) {
-      for (const action of location.actions) {
-        if (action.evidenceId) {
-          actionEvidenceMap[action.id] = action.evidenceId
-        }
-      }
-    }
-
-    const suspectShinyMap: Record<string, boolean> = {}
-    for (const suspect of gameCase.suspects) {
-      if (suspect.isShiny) {
-        suspectShinyMap[String(suspect.pokemonId)] = true
-      }
-    }
-    const suspectPokemonIds = gameCase.suspects.map((s) => s.pokemonId)
-    const witnessPokemonIds = createWitnessPokemonIds(suspectPokemonIds, countWitnessActions(gameCase) * WITNESS_OPTION_COUNT)
-    const witnessPokemonIdMap = createWitnessPokemonIdMap(gameCase, witnessPokemonIds)
-    const locationCardVariantMap = createLocationCardVariantMap(gameCase.locations)
-    const locationCardTiltMap = createLocationCardTiltMap(gameCase.locations)
-
-    await putCaseData({
-      caseId,
-      configId: gameCase.id,
-      difficulty: gameCase.difficulty,
-      culpritPokemonId: gameCase.culpritPokemonId,
-      typeClueSlots: gameCase.typeClueSlots,
-      typeClueGroups: gameCase.typeClueGroups,
-      suspectPokemonIds,
-      suspectShinyMap,
-      witnessPokemonIds,
-      witnessPokemonIdMap,
-      locationCardVariantMap,
-      locationCardTiltMap,
-      theme: gameCase.theme,
-      actionEvidenceMap,
-      solution: {
-        culpritRevealText: gameCase.solution?.culpritRevealText ?? '',
-        detectiveConclusion: gameCase.solution?.detectiveConclusion ?? '',
-        clueBadges: gameCase.solution?.clueBadges ?? [],
-        evidenceExplanation: gameCase.solution?.evidenceExplanation ?? [],
-        clearedSuspects: gameCase.solution?.clearedSuspects ?? [],
-      },
-      ttl: Math.floor(Date.now() / 1000) + CASE_DATA_TTL_DAYS * 86400,
-    })
-
-    const reminders = await sendDailyReminders(caseId)
-
-    console.log(`Generated daily case ${caseId} using config "${config.id}" at ${gameCase.difficulty} difficulty`)
-    console.log(`Daily reminders for ${caseId}: ${reminders.sent} sent, ${reminders.skipped} skipped, ${reminders.failed} failed`)
-    return { statusCode: 200, body: JSON.stringify({ caseId, configId: config.id, difficulty: gameCase.difficulty, reminders }) }
+    console.log(`Daily reminders for ${date}: ${reminders.sent} sent, ${reminders.skipped} skipped, ${reminders.failed} failed`)
+    return { statusCode: 200, body: JSON.stringify({ caseId: date, cases, reminders }) }
   } catch (error) {
     console.error('Cron handler error:', error)
     return { statusCode: 500, body: JSON.stringify({ error: 'Failed to generate daily case' }) }

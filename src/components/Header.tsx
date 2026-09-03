@@ -1,13 +1,17 @@
+import { useState } from 'react'
 import type { Case } from '../game/caseModel'
 import type { UserProfile } from '../auth'
 
 interface HeaderProps {
   currentCase: Case
   activeSection: string
+  activePuzzleDifficulty: 'easy' | 'hard'
   authed: boolean
   userProfile: UserProfile | null
   isAdmin: boolean
   isMenuOpen: boolean
+  hideDifficultySelector?: boolean
+  onChangePuzzleDifficulty: (difficulty: 'easy' | 'hard') => void
   onToggleMenu: () => void
   onSelectCase: () => void
   onSelectPokedex: () => void
@@ -23,10 +27,13 @@ interface HeaderProps {
 export function Header({
   currentCase,
   activeSection,
+  activePuzzleDifficulty,
   authed,
   userProfile,
   isAdmin,
   isMenuOpen,
+  hideDifficultySelector = false,
+  onChangePuzzleDifficulty,
   onToggleMenu,
   onSelectCase,
   onSelectPokedex,
@@ -38,7 +45,19 @@ export function Header({
   onLogin,
   onLogout,
 }: HeaderProps) {
+  const [isDifficultyMenuOpen, setIsDifficultyMenuOpen] = useState(false)
   const menuButtonLabel = isMenuOpen ? 'Close main navigation' : 'Open main navigation'
+  const activeDifficultyLabel = activePuzzleDifficulty[0].toUpperCase() + activePuzzleDifficulty.slice(1)
+  const suspectCount = activePuzzleDifficulty === 'hard' ? 9 : 6
+  const difficultyOptions = [
+    { difficulty: 'easy' as const, label: 'Easy', suspectCount: 6 },
+    { difficulty: 'hard' as const, label: 'Hard', suspectCount: 9 },
+  ]
+
+  const selectDifficulty = (difficulty: 'easy' | 'hard') => {
+    setIsDifficultyMenuOpen(false)
+    if (difficulty !== activePuzzleDifficulty) onChangePuzzleDifficulty(difficulty)
+  }
 
   return (
     <header className="app-header notebook-card">
@@ -51,18 +70,60 @@ export function Header({
           </div>
         </div>
 
-        <button
-          type="button"
-          className={`mobile-menu-button ${isMenuOpen ? 'is-open' : ''}`}
-          aria-label={menuButtonLabel}
-          aria-expanded={isMenuOpen}
-          aria-controls="mobile-main-menu"
-          onClick={onToggleMenu}
-        >
-          <span aria-hidden="true" />
-          <span aria-hidden="true" />
-          <span aria-hidden="true" />
-        </button>
+        <div className="app-header-actions">
+          {!hideDifficultySelector ? (
+            <div
+              className="difficulty-topbar"
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) setIsDifficultyMenuOpen(false)
+              }}
+            >
+              <p className="difficulty-topbar__label">Difficulty</p>
+              <button
+                type="button"
+                className={`difficulty-topbar__value difficulty-topbar__value--${activePuzzleDifficulty}`}
+                aria-haspopup="menu"
+                aria-expanded={isDifficultyMenuOpen}
+                onClick={() => setIsDifficultyMenuOpen((isOpen) => !isOpen)}
+              >
+                <strong>{activeDifficultyLabel}</strong>
+                <span aria-hidden="true">·</span>
+                <span>{suspectCount} suspects</span>
+                <span className="difficulty-topbar__chevron" aria-hidden="true">▾</span>
+              </button>
+              {isDifficultyMenuOpen ? (
+                <div className="difficulty-topbar__menu" role="menu">
+                  {difficultyOptions.map((option) => (
+                    <button
+                      key={option.difficulty}
+                      type="button"
+                      className={`difficulty-topbar__menu-item difficulty-topbar__menu-item--${option.difficulty}`}
+                      role="menuitemradio"
+                      aria-checked={option.difficulty === activePuzzleDifficulty}
+                      onClick={() => selectDifficulty(option.difficulty)}
+                    >
+                      <span>{option.label} · {option.suspectCount} suspects</span>
+                      {option.difficulty === activePuzzleDifficulty ? <span aria-hidden="true">✓</span> : null}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            className={`mobile-menu-button ${isMenuOpen ? 'is-open' : ''}`}
+            aria-label={menuButtonLabel}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-main-menu"
+            onClick={onToggleMenu}
+          >
+            <span aria-hidden="true" />
+            <span aria-hidden="true" />
+            <span aria-hidden="true" />
+          </button>
+        </div>
       </div>
 
       <div className={`mobile-drawer-shell ${isMenuOpen ? 'is-open' : ''}`} aria-hidden={!isMenuOpen}>

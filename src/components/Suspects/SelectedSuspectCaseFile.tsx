@@ -49,6 +49,7 @@ export function SelectedSuspectCaseFile({
   const isSuspect = selectedSuspect.noteStatus !== 'ruled-out'
   const verdictDisabled = currentCase.status !== 'active'
   const accuseDisabled = verdictDisabled || attemptsLeft <= 0 || selectedSuspect.noteStatus === 'ruled-out' || isFalseLead
+  const showDetectiveProfile = currentCase.difficulty !== 'hard'
 
   return (
     <div className="suspect-notebook-shell">
@@ -112,7 +113,7 @@ export function SelectedSuspectCaseFile({
             </div>
 
             <div className="suspect-evidence-column">
-              <DetectiveProfile profile={detectiveProfile} />
+              {showDetectiveProfile ? <DetectiveProfile profile={detectiveProfile} /> : null}
               <SuspectEvidenceAssessment
                 evidenceItems={discoveredEvidence}
               />

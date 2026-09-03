@@ -1,5 +1,6 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { submitCaseFeedback, type CaseStatsResponse } from '../api'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
+import { getPuzzleHistory, submitCaseFeedback, type CaseStatsResponse } from '../api'
 import { getSolutionClueBadgeGroups, type Case, type Suspect } from '../game/caseModel'
 import { EvidenceBadgeList } from './Evidence/EvidenceBadge'
 import { ShareResultButton } from './ShareResultButton'
@@ -20,6 +21,37 @@ const formatCountdown = (milliseconds: number) => {
 }
 
 const ratingOptions = [1, 2, 3, 4, 5]
+const SOLVED_CASE_IDS_KEY = 'pokemystery:solved-case-ids'
+
+const getCaseDate = (caseId: string): string => caseId.slice(0, 10)
+
+const getDailyCaseId = (date: string, difficulty: 'easy' | 'hard'): string => `${date}-${difficulty}`
+
+const getCaseDifficulty = (caseId: string, fallbackDifficulty: Case['difficulty']): 'easy' | 'hard' => {
+  if (caseId.endsWith('-hard')) return 'hard'
+  if (caseId.endsWith('-easy')) return 'easy'
+  return fallbackDifficulty === 'hard' ? 'hard' : 'easy'
+}
+
+const getStoredSolvedCaseIds = (): string[] => {
+  if (typeof window === 'undefined') return []
+
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(SOLVED_CASE_IDS_KEY) ?? '[]')
+    return Array.isArray(parsed) ? parsed.filter((caseId): caseId is string => typeof caseId === 'string') : []
+  } catch {
+    return []
+  }
+}
+
+const storeSolvedCaseId = (caseId: string): void => {
+  if (typeof window === 'undefined') return
+
+  const solvedCaseIds = getStoredSolvedCaseIds()
+  if (solvedCaseIds.includes(caseId)) return
+
+  window.localStorage.setItem(SOLVED_CASE_IDS_KEY, JSON.stringify([...solvedCaseIds, caseId]))
+}
 
 interface EndingScreenProps {
   currentCase: Case
@@ -71,7 +103,14 @@ export function EndingScreen({
   const [enjoymentRating, setEnjoymentRating] = useState<number | null>(null)
   const [comment, setComment] = useState('')
   const [feedbackStatus, setFeedbackStatus] = useState<'idle' | 'saving' | 'submitted' | 'error'>('idle')
+  const feedbackCardRef = useRef<HTMLElement | null>(null)
   const isSolved = currentCase.status === 'solved'
+  const isFinished = currentCase.status === 'solved' || currentCase.status === 'failed'
+  const currentDifficulty = getCaseDifficulty(caseId, currentCase.difficulty)
+  const otherDifficulty = currentDifficulty === 'hard' ? 'easy' : 'hard'
+  const otherDifficultyLabel = otherDifficulty[0].toUpperCase() + otherDifficulty.slice(1)
+  const otherCaseId = getDailyCaseId(getCaseDate(caseId), otherDifficulty)
+  const [hasSolvedOtherCase, setHasSolvedOtherCase] = useState(false)
   const displayCaseStats = getDisplayCaseStats(caseStats, isSolved, playerGuessCount)
   const solution = currentCase.solution
   const culpritName = culpritSuspect?.name ?? 'The culprit'
@@ -98,6 +137,39 @@ export function EndingScreen({
 
     return () => window.clearInterval(timer)
   }, [])
+
+  useEffect(() => {
+    if (enjoymentRating === null) return
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (feedbackCardRef.current && !feedbackCardRef.current.contains(event.target as Node)) {
+        setEnjoymentRating(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [enjoymentRating])
+
+  useEffect(() => {
+    if (!isFinished) return
+
+    if (isSolved) storeSolvedCaseId(caseId)
+  }, [caseId, isFinished, isSolved])
+
+  useEffect(() => {
+    if (!isFinished) return
+
+    getPuzzleHistory()
+      .then((history) => {
+        const solvedCaseIds = history.items
+          .filter((item) => item.status === 'solved')
+          .map((item) => item.caseId)
+        for (const solvedCaseId of solvedCaseIds) storeSolvedCaseId(solvedCaseId)
+        setHasSolvedOtherCase(solvedCaseIds.includes(otherCaseId))
+      })
+      .catch(() => setHasSolvedOtherCase(false))
+  }, [isFinished, otherCaseId])
 
   const renderSuspectRow = (suspect: Suspect) => {
     const explanation = clearedSuspects.find((item) => item.pokemonId === suspect.pokemonId)
@@ -174,6 +246,73 @@ export function EndingScreen({
         </div>
       </section>
 
+      <div className="post-hero-utility-row">
+        {isFinished && !hasSolvedOtherCase ? (
+          <section className="post-game-next" aria-label="Next case">
+            <Link
+              to={`/today?case=${encodeURIComponent(otherCaseId)}`}
+              className={`another-case-cta another-case-cta--${otherDifficulty}`}
+            >
+              <span className="another-case-cta__icon" aria-hidden="true">
+                <img
+                  className="another-case-cta__sprite"
+                  src={`/sprites/${otherDifficulty === 'hard' ? 248 : 175}.png`}
+                  alt=""
+                  loading="lazy"
+                />
+              </span>
+              <span className="another-case-cta__text">
+                <strong><span className="another-case-cta__play">Play the </span>{otherDifficultyLabel} case</strong>
+                <span className="another-case-cta__meta">
+                  {otherDifficulty === 'hard' ? 9 : 6} suspects · {otherDifficulty === 'hard' ? 'More similar lineup' : 'Different lineup'}
+                </span>
+              </span>
+              <span className="another-case-cta__chevron" aria-hidden="true">›</span>
+            </Link>
+          </section>
+        ) : null}
+
+        <section ref={feedbackCardRef} className="case-feedback-card" aria-labelledby="case-feedback-title">
+          <div className="case-feedback-heading">
+            <h3 id="case-feedback-title">Enjoyed this case?</h3>
+          </div>
+
+          <form className="case-feedback-form" onSubmit={handleFeedbackSubmit}>
+            {renderStarRating()}
+
+            {enjoymentRating !== null ? (
+              <div className="case-feedback-popover" role="dialog" aria-label="Feedback details">
+                {feedbackStatus === 'submitted' ? (
+                  <p className="case-feedback-thanks">Thanks. Your notes help tune future cases.</p>
+                ) : (
+                  <>
+                    <label className="case-feedback-comment">
+                      <span>Optional comment</span>
+                      <textarea
+                        value={comment}
+                        maxLength={1000}
+                        rows={2}
+                        placeholder="Anything confusing, too easy, too hard, or broken?"
+                        onChange={(event) => setComment(event.target.value)}
+                      />
+                    </label>
+
+                    <div className="case-feedback-actions">
+                      <button className="primary-button" type="submit" disabled={!canSubmitFeedback}>
+                        {feedbackStatus === 'saving' ? 'Sending...' : 'Send feedback'}
+                      </button>
+                      {feedbackStatus === 'error' ? (
+                        <span className="feedback-error" role="status">Could not send feedback. Try again?</span>
+                      ) : null}
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : null}
+          </form>
+        </section>
+      </div>
+
       <section className="case-result-stats" aria-label="Case summary">
         <section className="case-result-stat-group" aria-labelledby="community-results-label">
           <p id="community-results-label" className="case-result-stat-group-label">Community results</p>
@@ -216,73 +355,36 @@ export function EndingScreen({
         </section>
       </section>
 
-      <section className="case-feedback-card" aria-labelledby="case-feedback-title">
-        <div className="case-feedback-heading">
-          <div>
-            <p className="eyebrow">Quick feedback</p>
-            <h3 id="case-feedback-title">Enjoyed this case?</h3>
-          </div>
-          {feedbackStatus === 'submitted' ? <span className="feedback-submitted-pill">Submitted</span> : null}
-        </div>
+      <section className="case-explanation-section" aria-labelledby="case-explanation-title">
+        <h3 id="case-explanation-title">How the case worked</h3>
+        <div className="ending-details-grid">
+          <section className="compact-result-panel evidence-used-panel">
+            <strong>Case clues</strong>
+            <div className="case-clue-list">
+              {sortedSolutionClueBadgeGroups.map((group) => {
+                const discovered = group.evidenceId ? discoveredEvidenceIds.has(group.evidenceId) : false
 
-        {feedbackStatus === 'submitted' ? (
-          <p className="case-feedback-thanks">Thanks. Your notes help tune future cases.</p>
-        ) : (
-          <form className="case-feedback-form" onSubmit={handleFeedbackSubmit}>
-            {renderStarRating()}
-
-            {enjoymentRating !== null ? (
-              <label className="case-feedback-comment">
-                <span>Optional comment</span>
-                <textarea
-                  value={comment}
-                  maxLength={1000}
-                  rows={3}
-                  placeholder="Anything confusing, too easy, too hard, or broken?"
-                  onChange={(event) => setComment(event.target.value)}
-                />
-              </label>
-            ) : null}
-
-            <div className="case-feedback-actions">
-              <button className="primary-button" type="submit" disabled={!canSubmitFeedback}>
-                {feedbackStatus === 'saving' ? 'Sending...' : 'Send feedback'}
-              </button>
-              {feedbackStatus === 'error' ? (
-                <span className="feedback-error" role="status">Could not send feedback. Try again?</span>
-              ) : null}
+                return (
+                <div key={group.evidenceId ?? group.hintType} className={`solution-clue-badge-group ${discovered ? 'is-discovered' : 'is-undiscovered'}`}>
+                  <span className="solution-clue-badge-group__label">
+                    <span className="solution-clue-badge-group__status" aria-hidden="true">{discovered ? '✓' : '×'}</span>
+                    {group.hintType}
+                  </span>
+                  <EvidenceBadgeList badges={group.badges} />
+                </div>
+                )
+              })}
             </div>
-          </form>
-        )}
+          </section>
+
+          <section className="compact-result-panel suspects-ruled-out-panel">
+            <strong>Suspects ruled out</strong>
+            <div className="cleared-suspect-list">
+              {nonCulpritSuspects.map(renderSuspectRow)}
+            </div>
+          </section>
+        </div>
       </section>
-
-      <div className="ending-details-grid">
-        <section className="inspect-item compact-result-panel evidence-used-panel">
-          <strong>Case clues</strong>
-          <div className="case-clue-list">
-            {sortedSolutionClueBadgeGroups.map((group) => {
-              const discovered = group.evidenceId ? discoveredEvidenceIds.has(group.evidenceId) : false
-
-              return (
-              <div key={group.evidenceId ?? group.hintType} className={`solution-clue-badge-group ${discovered ? 'is-discovered' : 'is-undiscovered'}`}>
-                <span className="solution-clue-badge-group__label">
-                  <span className="solution-clue-badge-group__status" aria-hidden="true">{discovered ? '✓' : '×'}</span>
-                  {group.hintType}
-                </span>
-                <EvidenceBadgeList badges={group.badges} />
-              </div>
-              )
-            })}
-          </div>
-        </section>
-
-        <section className="inspect-item compact-result-panel suspects-ruled-out-panel">
-          <strong>Suspects ruled out</strong>
-          <div className="cleared-suspect-list">
-            {nonCulpritSuspects.map(renderSuspectRow)}
-          </div>
-        </section>
-      </div>
     </section>
   )
 }
