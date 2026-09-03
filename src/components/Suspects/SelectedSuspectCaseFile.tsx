@@ -113,7 +113,16 @@ export function SelectedSuspectCaseFile({
             </div>
 
             <div className="suspect-evidence-column">
-              {showDetectiveProfile ? <DetectiveProfile profile={detectiveProfile} /> : null}
+              {showDetectiveProfile ? (
+                <DetectiveProfile profile={detectiveProfile} />
+              ) : (
+                <section className="detective-profile" aria-label="Detective profile unavailable">
+                  <div className="detective-profile-card detective-profile-card--unavailable">
+                    <h3>Suspect Dossier</h3>
+                    <p>Not available on hard mode.</p>
+                  </div>
+                </section>
+              )}
               <SuspectEvidenceAssessment
                 evidenceItems={discoveredEvidence}
               />

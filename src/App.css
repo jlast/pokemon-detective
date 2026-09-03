@@ -1790,12 +1790,14 @@
 
 @media (max-width: 560px) {
   .app-header-topline {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
   }
 
   .app-header-actions {
-    justify-content: space-between;
-    width: 100%;
+    justify-content: flex-end;
+    justify-self: end;
+    width: auto;
   }
 
   .difficulty-topbar {
@@ -1903,6 +1905,10 @@
   gap: 1.25rem;
   width: min(20.5rem, calc(100vw - 2.5rem));
   min-height: 100dvh;
+  max-height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: calc(1rem + env(safe-area-inset-top)) 1rem calc(1rem + env(safe-area-inset-bottom));
   border-left: 1px solid #c7b89f;
   background:
@@ -6231,6 +6237,13 @@
 .detective-profile-empty {
   color: #6f604d;
   font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.detective-profile-card--unavailable p {
+  margin: 0;
+  color: #6f604d;
+  font-size: 0.92rem;
   font-weight: 800;
 }
 

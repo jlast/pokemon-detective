@@ -84,7 +84,6 @@ const getTodayCaseDate = () => new Date().toISOString().slice(0, 10)
 const getDailyCaseId = (date: string, difficulty: DailyPuzzleDifficulty) => `${date}-${difficulty}`
 const getTodayCaseId = (difficulty: DailyPuzzleDifficulty = 'easy') => getDailyCaseId(getTodayCaseDate(), difficulty)
 const getCaseDate = (caseId: string) => caseId.slice(0, 10)
-const getCaseDifficulty = (caseId: string): DailyPuzzleDifficulty => caseId.endsWith('-hard') ? 'hard' : 'easy'
 const CASE_ID_PATTERN = /^\d{4}-\d{2}-\d{2}(?:-(?:easy|hard))?$/
 const MAX_ACCUSATIONS = 3
 const ENABLE_DAILY_REMINDER_OPT_IN = true
@@ -306,7 +305,6 @@ function App() {
     return hasSelectedCase ? requestedCaseId : defaultTodayCaseId
   }, [defaultTodayCaseId, hasSelectedCase, requestedCaseId])
   const activeCaseDate = getCaseDate(activeCaseId)
-  const activePuzzleDifficulty = getCaseDifficulty(activeCaseId)
   const isArchivedCase = activeCaseDate !== todayCaseDate
   const isDefaultTodayCase = activeCaseId === defaultTodayCaseId
   const shouldShowDifficultySelect = !hasSelectedCase && (location.pathname === ROOT_PATH || location.pathname.startsWith(TODAY_PATH))
@@ -1061,15 +1059,29 @@ function App() {
         />
 
         <div className="app-content">
-          <header className="app-header notebook-card difficulty-select-header">
-            <div className="brand-lockup">
-              <div>
-                <p className="eyebrow">PokéMystery</p>
-                <h1>Choose your case</h1>
-                <p className="subtle-text">Pick one to start. You can solve both.</p>
-              </div>
-            </div>
-          </header>
+          <Header
+            title="Choose your case"
+            subtitle="Pick one to start. You can solve both."
+            className="difficulty-select-header"
+            activeSection="case"
+            authed={authed}
+            userProfile={userProfile}
+            isAdmin={isAdmin}
+            isMenuOpen={isMobileMenuOpen}
+            onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
+            onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
+            onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}
+            onSelectHistory={() => navigateAndCloseMenu(HISTORY_PATH)}
+            onSelectHowToPlay={() => navigateAndCloseMenu(HOW_TO_PLAY_PATH)}
+            onSelectFeedback={() => navigateAndCloseMenu(FEEDBACK_PATH)}
+            onSelectSettings={() => navigateAndCloseMenu(SETTINGS_PATH)}
+            onSelectAdmin={() => navigateAndCloseMenu(ADMIN_PATH)}
+            onLogin={() => navigateAndCloseMenu(LOGIN_PATH)}
+            onLogout={() => {
+              setIsMobileMenuOpen(false)
+              handleLogout()
+            }}
+          />
           <DifficultySelectScreen onSelectDifficulty={selectPuzzleDifficulty} />
           <AppFooter />
         </div>
@@ -1145,13 +1157,10 @@ function App() {
         <Header
           currentCase={currentCase}
           activeSection={activeSidebarSection}
-          activePuzzleDifficulty={activePuzzleDifficulty}
           authed={authed}
           userProfile={userProfile}
           isAdmin={isAdmin}
           isMenuOpen={isMobileMenuOpen}
-          hideDifficultySelector={!currentRoute.startsWith(TODAY_PATH) || currentRoute.startsWith(TODAY_ENDING_PATH) || isArchivedCase}
-          onChangePuzzleDifficulty={selectPuzzleDifficulty}
           onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
           onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
           onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}
