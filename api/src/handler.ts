@@ -40,6 +40,7 @@ const GENERAL_FEEDBACK_MESSAGE_MAX_LENGTH = 2000
 const GENERAL_FEEDBACK_CONTACT_MAX_LENGTH = 250
 const GENERAL_FEEDBACK_CONTEXT_MAX_LENGTH = 500
 const HISTORY_ARCHIVE_DAYS = 30
+const HISTORY_BACKFILL_CASE_LIMIT = 6
 
 interface ApiGatewayEvent {
   path: string
@@ -1128,6 +1129,7 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   const caseRecordMap = new Map(caseRecords.map((record) => [record.caseId, record]))
   const missingDifficultyCaseIds = getPastDifficultyCaseIds(HISTORY_ARCHIVE_DAYS)
     .filter((caseId) => !caseRecordMap.has(caseId))
+    .slice(0, HISTORY_BACKFILL_CASE_LIMIT)
 
   if (missingDifficultyCaseIds.length > 0) {
     await Promise.all(missingDifficultyCaseIds.map((caseId) => generateAndStoreCase(caseId)))
