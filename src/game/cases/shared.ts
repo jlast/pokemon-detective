@@ -8,7 +8,6 @@ export type CaseConfig = {
   id: string
   title: string
   shortStory: string
-  crimeIcon: string
   sceneImage: string
   sceneImageAlt: string
   difficulty: CaseDifficulty
@@ -31,7 +30,6 @@ export type RawCaseConfig = {
   id: string
   title: string
   shortStory: string
-  crimeIcon: string
   sceneImage?: string
   sceneImageAlt?: string
   difficulty: CaseDifficulty
@@ -362,7 +360,6 @@ export const hydrateCaseConfig = (rawCaseConfig: RawCaseConfig): CaseConfig => {
     id: rawCaseConfig.id,
     title: rawCaseConfig.title,
     shortStory: rawCaseConfig.shortStory,
-    crimeIcon: rawCaseConfig.crimeIcon,
     sceneImage: rawCaseConfig.sceneImage ?? '/case-scenes/placeholder.svg',
     sceneImageAlt: rawCaseConfig.sceneImageAlt ?? `Scene photo for ${rawCaseConfig.title}`,
     difficulty: rawCaseConfig.difficulty,
@@ -372,7 +369,7 @@ export const hydrateCaseConfig = (rawCaseConfig: RawCaseConfig): CaseConfig => {
   }
 }
 
-export const createBaseCase = (caseConfig: CaseConfig): Omit<Case, 'culpritPokemonId' | 'suspects' | 'solution'> => ({
+export const createBaseCase = (caseConfig: CaseConfig): Omit<Case, 'crimeIcon' | 'culpritPokemonId' | 'suspects' | 'solution'> => ({
   ...caseConfig,
   locations: caseConfig.locations.map((locationItem) => ({
     ...locationItem,

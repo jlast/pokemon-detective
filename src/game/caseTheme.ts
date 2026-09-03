@@ -126,7 +126,7 @@ export const createCaseTheme = (suspectPokemonIds: number[] = []): CaseTheme => 
   }
 }
 
-export const applyCaseTheme = (caseData: Case, theme: CaseTheme): Case => ({
+export const applyCaseTheme = (caseData: Omit<Case, 'crimeIcon'>, theme: CaseTheme): Case => ({
   ...caseData,
   theme,
   title: getCaseThemeTitle(theme),

@@ -5,7 +5,6 @@ export const cases = [
     "id": "missing-cookies",
     "title": "The Missing Cookies",
     "shortStory": "Someone snuck into camp overnight and ate all the cookies.",
-    "crimeIcon": "🍪",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -24,7 +23,6 @@ export const cases = [
     "id": "purloined-page",
     "title": "The Purloined Page",
     "shortStory": "A rare page was torn from a locked book in the library.",
-    "crimeIcon": "📖",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -43,7 +41,6 @@ export const cases = [
     "id": "missing-medal",
     "title": "The Missing Medal",
     "shortStory": "A championship medal vanished from the locked trophy case overnight.",
-    "crimeIcon": "🏅",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -62,7 +59,6 @@ export const cases = [
     "id": "ravaged-pantry",
     "title": "The Ravaged Pantry",
     "shortStory": "Someone raided the restaurant pantry after closing hours.",
-    "crimeIcon": "🥘",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -81,7 +77,6 @@ export const cases = [
     "id": "stolen-artifact",
     "title": "The Stolen Artifact",
     "shortStory": "A priceless artifact was taken from a sealed museum exhibit.",
-    "crimeIcon": "🗿",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -100,7 +95,6 @@ export const cases = [
     "id": "vanishing-vase",
     "title": "The Vanishing Vase",
     "shortStory": "A painted vase disappeared from the florist's front display overnight.",
-    "crimeIcon": "🏺",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -119,7 +113,6 @@ export const cases = [
     "id": "broken-bakery-window",
     "title": "The Broken Bakery Window",
     "shortStory": "Someone broke into the bakery and scattered flour across the counter.",
-    "crimeIcon": "🥐",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -138,7 +131,6 @@ export const cases = [
     "id": "missing-moonstone",
     "title": "The Missing Moonstone",
     "shortStory": "A moonstone vanished from a quiet shrine before sunrise.",
-    "crimeIcon": "🌙",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -157,7 +149,6 @@ export const cases = [
     "id": "stolen-stage-prop",
     "title": "The Stolen Stage Prop",
     "shortStory": "The theater's prized prop vanished moments before rehearsal.",
-    "crimeIcon": "🎭",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -176,7 +167,6 @@ export const cases = [
     "id": "ransacked-greenhouse",
     "title": "The Ransacked Greenhouse",
     "shortStory": "Rare seedlings were uprooted from the greenhouse after closing.",
-    "crimeIcon": "🌱",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -195,7 +185,6 @@ export const cases = [
     "id": "vanished-fishing-net",
     "title": "The Vanished Fishing Net",
     "shortStory": "A fisher's best net vanished from the pier shed.",
-    "crimeIcon": "🎣",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -214,7 +203,6 @@ export const cases = [
     "id": "pilfered-parcel",
     "title": "The Pilfered Parcel",
     "shortStory": "A sealed parcel disappeared from the post office sorting room.",
-    "crimeIcon": "📦",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -233,7 +221,6 @@ export const cases = [
     "id": "toppled-totem",
     "title": "The Toppled Totem",
     "shortStory": "A carved totem was knocked over in the village square.",
-    "crimeIcon": "🪵",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -252,7 +239,6 @@ export const cases = [
     "id": "missing-map",
     "title": "The Missing Map",
     "shortStory": "A hand-drawn route map vanished from the ranger station.",
-    "crimeIcon": "🗺️",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -271,7 +257,6 @@ export const cases = [
     "id": "raided-berry-stall",
     "title": "The Raided Berry Stall",
     "shortStory": "A market stall was emptied of its ripest berries overnight.",
-    "crimeIcon": "🫐",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -290,7 +275,6 @@ export const cases = [
     "id": "stolen-silver-bell",
     "title": "The Stolen Silver Bell",
     "shortStory": "A silver bell disappeared from the town hall display.",
-    "crimeIcon": "🔔",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -309,7 +293,6 @@ export const cases = [
     "id": "scrambled-signal",
     "title": "The Scrambled Signal",
     "shortStory": "The radio tower's tuning crystal was disturbed during the night.",
-    "crimeIcon": "📡",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -328,7 +311,6 @@ export const cases = [
     "id": "missing-museum-key",
     "title": "The Missing Museum Key",
     "shortStory": "The curator's master key vanished from a locked office.",
-    "crimeIcon": "🗝️",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -347,7 +329,6 @@ export const cases = [
     "id": "wrecked-workshop",
     "title": "The Wrecked Workshop",
     "shortStory": "A repair workshop was found open with parts scattered everywhere.",
-    "crimeIcon": "🛠️",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -366,7 +347,6 @@ export const cases = [
     "id": "empty-aquarium-cache",
     "title": "The Empty Aquarium Cache",
     "shortStory": "A hidden cache beside the aquarium tank was emptied overnight.",
-    "crimeIcon": "🐠",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -385,7 +365,6 @@ export const cases = [
     "id": "lost-lantern",
     "title": "The Lost Lantern",
     "shortStory": "The festival lantern disappeared before the evening procession.",
-    "crimeIcon": "🏮",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -404,7 +383,6 @@ export const cases = [
     "id": "stolen-snowglobe",
     "title": "The Stolen Snowglobe",
     "shortStory": "A souvenir snowglobe vanished from the lodge display.",
-    "crimeIcon": "❄️",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -423,7 +401,6 @@ export const cases = [
     "id": "disturbed-dojo-locker",
     "title": "The Disturbed Dojo Locker",
     "shortStory": "A training badge was taken from the dojo locker room.",
-    "crimeIcon": "🥋",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -442,7 +419,6 @@ export const cases = [
     "id": "missing-honey-jar",
     "title": "The Missing Honey Jar",
     "shortStory": "A jar of rare honey vanished from the apiary shed.",
-    "crimeIcon": "🍯",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -461,7 +437,6 @@ export const cases = [
     "id": "raided-rooftop-garden",
     "title": "The Raided Rooftop Garden",
     "shortStory": "A rooftop planter was stripped of its prize herbs.",
-    "crimeIcon": "🪴",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -480,7 +455,6 @@ export const cases = [
     "id": "broken-observatory-case",
     "title": "The Broken Observatory Case",
     "shortStory": "A star chart was taken from the observatory display case.",
-    "crimeIcon": "🔭",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -499,7 +473,6 @@ export const cases = [
     "id": "stolen-ticket-roll",
     "title": "The Stolen Ticket Roll",
     "shortStory": "A full roll of tickets disappeared from the arcade booth.",
-    "crimeIcon": "🎟️",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -518,7 +491,6 @@ export const cases = [
     "id": "missing-train-luggage",
     "title": "The Missing Train Luggage",
     "shortStory": "A passenger's luggage vanished from the station platform.",
-    "crimeIcon": "🚂",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -537,7 +509,6 @@ export const cases = [
     "id": "vandalized-clocktower",
     "title": "The Vandalized Clocktower",
     "shortStory": "The clocktower mechanism was tampered with before noon.",
-    "crimeIcon": "🕰️",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -556,7 +527,6 @@ export const cases = [
     "id": "missing-tea-tin",
     "title": "The Missing Tea Tin",
     "shortStory": "A prized tea tin vanished from the cafe shelf.",
-    "crimeIcon": "🍵",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -575,7 +545,6 @@ export const cases = [
     "id": "looted-market-cart",
     "title": "The Looted Market Cart",
     "shortStory": "A market cart was raided before the morning rush.",
-    "crimeIcon": "🛒",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -594,7 +563,6 @@ export const cases = [
     "id": "stolen-camp-badge",
     "title": "The Stolen Camp Badge",
     "shortStory": "A camp leader's badge disappeared from the notice board.",
-    "crimeIcon": "🏕️",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -613,7 +581,6 @@ export const cases = [
     "id": "cracked-fountain-box",
     "title": "The Cracked Fountain Box",
     "shortStory": "The donation box beside the fountain was found cracked open.",
-    "crimeIcon": "⛲",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -632,7 +599,6 @@ export const cases = [
     "id": "missing-ship-log",
     "title": "The Missing Ship Log",
     "shortStory": "A ship log vanished from the harbor master's office.",
-    "crimeIcon": "⚓",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -651,7 +617,6 @@ export const cases = [
     "id": "raided-archive-drawer",
     "title": "The Raided Archive Drawer",
     "shortStory": "A sealed archive drawer was opened and a record removed.",
-    "crimeIcon": "🗄️",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -670,7 +635,6 @@ export const cases = [
     "id": "stolen-circus-banner",
     "title": "The Stolen Circus Banner",
     "shortStory": "The circus banner vanished before the opening parade.",
-    "crimeIcon": "🎪",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -689,7 +653,6 @@ export const cases = [
     "id": "empty-orchard-crate",
     "title": "The Empty Orchard Crate",
     "shortStory": "A crate of perfect apples vanished from the orchard shed.",
-    "crimeIcon": "🍎",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -708,7 +671,6 @@ export const cases = [
     "id": "broken-lighthouse-lens",
     "title": "The Broken Lighthouse Lens",
     "shortStory": "A spare lighthouse lens was damaged and moved from its case.",
-    "crimeIcon": "🛟",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -727,7 +689,6 @@ export const cases = [
     "id": "missing-mining-tools",
     "title": "The Missing Mining Tools",
     "shortStory": "A set of mining tools disappeared from the quarry shed.",
-    "crimeIcon": "⛏️",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -746,7 +707,6 @@ export const cases = [
     "id": "ransacked-art-room",
     "title": "The Ransacked Art Room",
     "shortStory": "A rare paint box vanished from the school art room.",
-    "crimeIcon": "🎨",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -765,7 +725,6 @@ export const cases = [
     "id": "stolen-picnic-basket",
     "title": "The Stolen Picnic Basket",
     "shortStory": "A picnic basket vanished from the park pavilion.",
-    "crimeIcon": "🧺",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -784,7 +743,6 @@ export const cases = [
     "id": "missing-courtyard-statue",
     "title": "The Missing Courtyard Statue",
     "shortStory": "A small statue disappeared from the academy courtyard.",
-    "crimeIcon": "🗿",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -803,7 +761,6 @@ export const cases = [
     "id": "pilfered-lab-sample",
     "title": "The Pilfered Lab Sample",
     "shortStory": "A sealed lab sample disappeared from the research bench.",
-    "crimeIcon": "🧪",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -822,7 +779,6 @@ export const cases = [
     "id": "tampered-radio-booth",
     "title": "The Tampered Radio Booth",
     "shortStory": "A broadcast booth was disturbed during a late-night show.",
-    "crimeIcon": "🎙️",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -841,7 +797,6 @@ export const cases = [
     "id": "missing-inn-register",
     "title": "The Missing Inn Register",
     "shortStory": "The inn's guest register vanished from the front desk.",
-    "crimeIcon": "🏨",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -860,7 +815,6 @@ export const cases = [
     "id": "ransacked-flower-cart",
     "title": "The Ransacked Flower Cart",
     "shortStory": "A flower cart was overturned and its rare blooms taken.",
-    "crimeIcon": "💐",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -879,7 +833,6 @@ export const cases = [
     "id": "stolen-wind-chime",
     "title": "The Stolen Wind Chime",
     "shortStory": "A handmade wind chime disappeared from a porch display.",
-    "crimeIcon": "🎐",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -898,7 +851,6 @@ export const cases = [
     "id": "disturbed-ranger-cache",
     "title": "The Disturbed Ranger Cache",
     "shortStory": "A ranger supply cache was opened and emergency gear removed.",
-    "crimeIcon": "🎒",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -917,7 +869,6 @@ export const cases = [
     "id": "missing-ferry-token",
     "title": "The Missing Ferry Token",
     "shortStory": "A ferry token was stolen from the dock office drawer.",
-    "crimeIcon": "⛴️",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {
@@ -936,7 +887,6 @@ export const cases = [
     "id": "raided-candy-counter",
     "title": "The Raided Candy Counter",
     "shortStory": "A candy counter was raided and the rarest sweets disappeared.",
-    "crimeIcon": "🍬",
     "difficulty": "easy",
     "maxInvestigations": 5,
     "template": {

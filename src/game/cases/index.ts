@@ -73,7 +73,7 @@ export const createMissingMedalCase = (): Case => createRequiredCaseById('missin
 export const createRavagedPantryCase = (): Case => createRequiredCaseById('ravaged-pantry')
 export const createStolenArtifactCase = (): Case => createRequiredCaseById('stolen-artifact')
 
-export const getCaseList = () => allCases.map((c) => ({ id: c.id, title: c.title, shortStory: c.shortStory, crimeIcon: c.crimeIcon, difficulty: c.difficulty }))
+export const getCaseList = () => allCases.map((c) => ({ id: c.id, title: c.title, shortStory: c.shortStory, difficulty: c.difficulty }))
 
 export const createCaseById = (id: string, difficulty?: CaseDifficulty): Case | undefined => {
   const config = allCases.find((c) => c.id === id)
