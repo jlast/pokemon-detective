@@ -7513,6 +7513,26 @@
 }
 
 @media (max-width: 640px) {
+  .post-hero-utility-row {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .post-game-next,
+  .another-case-cta {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .another-case-cta {
+    gap: 0.65rem;
+  }
+
+  .another-case-cta__text,
+  .another-case-cta__meta {
+    min-width: 0;
+  }
+
   .post-game-summary {
     grid-template-columns: 1fr;
     gap: 0.7rem;
@@ -7554,6 +7574,12 @@
 
   .case-feedback-card {
     width: 100%;
+    justify-content: flex-start;
+    justify-self: stretch;
+  }
+
+  .feedback-rating-buttons {
+    justify-content: flex-start;
   }
 
   .location-leads {
