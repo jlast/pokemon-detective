@@ -40,7 +40,6 @@ const GENERAL_FEEDBACK_MESSAGE_MAX_LENGTH = 2000
 const GENERAL_FEEDBACK_CONTACT_MAX_LENGTH = 250
 const GENERAL_FEEDBACK_CONTEXT_MAX_LENGTH = 500
 const HISTORY_ARCHIVE_DAYS = 30
-const HISTORY_BACKFILL_CASE_LIMIT = 6
 
 interface ApiGatewayEvent {
   path: string
@@ -1124,24 +1123,7 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
   const caseHistory = pokedex.caseHistory ?? {}
   const caseOutcomes = pokedex.caseOutcomes ?? {}
   const caseIds = getPastCaseIds(HISTORY_ARCHIVE_DAYS)
-  let caseRecords = await batchGetCaseData(caseIds)
-  const caseRecordMap = new Map(caseRecords.map((record) => [record.caseId, record]))
-  const missingDifficultyCaseIds = getPastCaseDates(HISTORY_ARCHIVE_DAYS)
-    .filter((caseDate) => (
-      !caseRecordMap.has(caseDate)
-      && !DAILY_DIFFICULTIES.some((difficulty) => caseRecordMap.has(getDailyCaseId(caseDate, difficulty)))
-    ))
-    .flatMap((caseDate) => DAILY_DIFFICULTIES.map((difficulty) => getDailyCaseId(caseDate, difficulty)))
-    .slice(0, HISTORY_BACKFILL_CASE_LIMIT)
-
-  if (missingDifficultyCaseIds.length > 0) {
-    await Promise.all(missingDifficultyCaseIds.map((caseId) => generateAndStoreCase(caseId)))
-    const generatedRecords = await batchGetCaseData(missingDifficultyCaseIds)
-    caseRecords = [...caseRecords, ...generatedRecords]
-    for (const record of generatedRecords) {
-      caseRecordMap.set(record.caseId, record)
-    }
-  }
+  const caseRecords = await batchGetCaseData(caseIds)
   const progressRecords = await batchGetProgress(caseRecords.map((record) => getDateUserId(userInfo.sub, record.caseId)))
   const progressMap = new Map(progressRecords.map((progress) => [progress.caseId, progress]))
   const buildItem = (record: CaseDataRecord): CaseHistoryItem => {
@@ -1185,6 +1167,32 @@ const handleGetHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResul
     unsolvedCount: items.filter((item) => item.status === 'playing').length,
     currentStreak: getPokedexStreak(pokedex),
   })
+}
+
+const handleBackfillHistory = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
+  const userInfo = await getUserInfo(event)
+  if (!userInfo.sub) return err(401, 'Authentication required')
+
+  const caseIds = getPastCaseIds(HISTORY_ARCHIVE_DAYS)
+  const caseRecords = await batchGetCaseData(caseIds)
+  const caseRecordMap = new Map(caseRecords.map((record) => [record.caseId, record]))
+  const missingCaseDate = getPastCaseDates(HISTORY_ARCHIVE_DAYS).find((caseDate) => (
+    !caseRecordMap.has(caseDate)
+    && !DAILY_DIFFICULTIES.some((difficulty) => caseRecordMap.has(getDailyCaseId(caseDate, difficulty)))
+  ))
+
+  if (!missingCaseDate) {
+    return ok({ generatedCaseIds: [], complete: true })
+  }
+
+  const generatedCaseIds = DAILY_DIFFICULTIES
+    .map((difficulty) => getDailyCaseId(missingCaseDate, difficulty))
+
+  for (const caseId of generatedCaseIds) {
+    await generateAndStoreCase(caseId)
+  }
+
+  return ok({ generatedCaseIds, complete: false })
 }
 
 const handleGetReminderPreferences = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
@@ -1685,75 +1693,85 @@ export const handler = async (
   event: ApiGatewayEvent,
   _context: unknown,
 ): Promise<ApiGatewayResult> => {
-  if (event.requestContext.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers: corsHeaders, body: '' }
-  }
-
   const path = event.path.replace(/\/+$/, '')
   const method = event.requestContext.httpMethod
+  const logAndReturn = (result: ApiGatewayResult): ApiGatewayResult => {
+    console.log('API response', { method, path, statusCode: result.statusCode })
+    return result
+  }
+
+  console.log('API request', { method, path })
+
+  if (event.requestContext.httpMethod === 'OPTIONS') {
+    return logAndReturn({ statusCode: 204, headers: corsHeaders, body: '' })
+  }
 
   try {
     if (method === 'GET' && path === '/api/cases/current') {
-      return await handleGetCase(event)
+      return logAndReturn(await handleGetCase(event))
     }
 
     if (method === 'GET' && path === '/api/admin/session') {
-      return await handleGetAdminSession(event)
+      return logAndReturn(await handleGetAdminSession(event))
     }
 
     const adminCaseProgressMatch = path.match(/^\/api\/admin\/cases\/([^/]+)\/progress$/)
     if (method === 'GET' && adminCaseProgressMatch) {
-      return await handleGetAdminCaseProgress(decodeURIComponent(adminCaseProgressMatch[1]), event)
+      return logAndReturn(await handleGetAdminCaseProgress(decodeURIComponent(adminCaseProgressMatch[1]), event))
     }
 
     if (method === 'GET' && path === '/api/pokedex') {
-      return await handleGetPokedex(event)
+      return logAndReturn(await handleGetPokedex(event))
     }
 
     if (method === 'GET' && path === '/api/history') {
-      return await handleGetHistory(event)
+      return logAndReturn(await handleGetHistory(event))
+    }
+
+    if (method === 'POST' && path === '/api/history/backfill') {
+      return logAndReturn(await handleBackfillHistory(event))
     }
 
     if (method === 'GET' && path === '/api/reminder-preferences') {
-      return await handleGetReminderPreferences(event)
+      return logAndReturn(await handleGetReminderPreferences(event))
     }
 
     if (method === 'POST' && path === '/api/reminder-preferences') {
-      return await handleUpdateReminderPreferences(event)
+      return logAndReturn(await handleUpdateReminderPreferences(event))
     }
 
     if (method === 'POST' && path === '/api/feedback') {
-      return await handleSubmitGeneralFeedback(event)
+      return logAndReturn(await handleSubmitGeneralFeedback(event))
     }
 
     const apiCasesMatch = path.match(/^\/api\/cases\/([^/]+)$/)
     if (method === 'GET' && apiCasesMatch) {
-      return await handleGetCase(event, decodeURIComponent(apiCasesMatch[1]))
+      return logAndReturn(await handleGetCase(event, decodeURIComponent(apiCasesMatch[1])))
     }
 
     const investigateMatch = path.match(/^\/api\/cases\/([^/]+)\/investigate\/([^/]+)\/([^/]+)$/)
     if (method === 'POST' && investigateMatch) {
-      return await handleInvestigate(investigateMatch[1], investigateMatch[2], investigateMatch[3], event)
+      return logAndReturn(await handleInvestigate(investigateMatch[1], investigateMatch[2], investigateMatch[3], event))
     }
 
     const accuseMatch = path.match(/^\/api\/cases\/([^/]+)\/accuse\/(\d+)$/)
     if (method === 'POST' && accuseMatch) {
-      return await handleAccuse(accuseMatch[1], accuseMatch[2], event)
+      return logAndReturn(await handleAccuse(accuseMatch[1], accuseMatch[2], event))
     }
 
     const clearMatch = path.match(/^\/api\/cases\/([^/]+)\/suspects\/(\d+)\/clear$/)
     if (method === 'POST' && clearMatch) {
-      return await handleClearSuspect(clearMatch[1], clearMatch[2], event)
+      return logAndReturn(await handleClearSuspect(clearMatch[1], clearMatch[2], event))
     }
 
     const feedbackMatch = path.match(/^\/api\/cases\/([^/]+)\/feedback$/)
     if (method === 'POST' && feedbackMatch) {
-      return await handleSubmitFeedback(feedbackMatch[1], event)
+      return logAndReturn(await handleSubmitFeedback(feedbackMatch[1], event))
     }
 
-    return err(404, 'Not found')
+    return logAndReturn(err(404, 'Not found'))
   } catch (error) {
-    console.error('Handler error:', error)
-    return err(500, 'Internal server error')
+    console.error('Handler error:', { method, path, error })
+    return logAndReturn(err(500, 'Internal server error'))
   }
 }

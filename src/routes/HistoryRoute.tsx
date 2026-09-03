@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getPuzzleHistory, type PuzzleHistoryItem, type PuzzleHistoryResponse } from '../api'
+import { backfillPuzzleHistory, getPuzzleHistory, type PuzzleHistoryItem, type PuzzleHistoryResponse } from '../api'
 import { TODAY_PATH } from '../paths'
 
 interface HistoryRouteProps {
@@ -89,6 +89,14 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
     void getPuzzleHistory()
       .then((data) => {
         if (!cancelled) setHistory(data)
+        void backfillPuzzleHistory()
+          .then((backfill) => {
+            if (cancelled || backfill.generatedCaseIds.length === 0) return
+            return getPuzzleHistory().then((data) => {
+              if (!cancelled) setHistory(data)
+            })
+          })
+          .catch((err) => console.error('Failed to backfill puzzle history:', err))
       })
       .catch((err) => {
         console.error('Failed to load puzzle history:', err)

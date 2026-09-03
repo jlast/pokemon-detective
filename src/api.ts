@@ -172,6 +172,12 @@ export const getPuzzleHistory = async (): Promise<PuzzleHistoryResponse> => {
   return res.json()
 }
 
+export const backfillPuzzleHistory = async (): Promise<{ generatedCaseIds: string[]; complete: boolean }> => {
+  const res = await fetch(`${BASE}/api/history/backfill`, { method: 'POST', headers: await authHeaders() })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
 export const getReminderPreferences = async (): Promise<ReminderPreferencesResponse> => {
   const res = await fetch(`${BASE}/api/reminder-preferences`, { headers: await authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
