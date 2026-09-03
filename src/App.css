@@ -1411,6 +1411,49 @@
   gap: 0.8rem;
 }
 
+.history-day-card {
+  display: grid;
+  grid-template-columns: minmax(8.5rem, 0.7fr) minmax(0, 2.4fr);
+  gap: 0.9rem;
+  align-items: start;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 0.85rem;
+  background: rgba(255, 250, 240, 0.88);
+  box-shadow: 0 10px 22px rgba(47, 35, 21, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.history-day-card__date span {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.history-day-card__cases {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.history-case-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, auto);
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.7rem;
+  border: 1px solid rgba(118, 126, 132, 0.2);
+  border-left: 5px solid #a9c94b;
+  border-radius: 14px;
+  background: rgba(255, 253, 247, 0.62);
+}
+
+.history-case-row--failed {
+  border-left-color: #c7664a;
+}
+
+.history-case-row--playing {
+  border-left-color: #d8a833;
+}
+
 .history-card {
   display: grid;
   grid-template-columns: minmax(8.5rem, 0.8fr) minmax(0, 2fr) minmax(8rem, auto);
@@ -1496,6 +1539,10 @@
   gap: 0.4rem;
 }
 
+.history-case-row .history-card__meta {
+  grid-template-columns: minmax(5.5rem, auto) minmax(5.5rem, auto) minmax(7.25rem, auto);
+}
+
 .history-card__meta span {
   width: fit-content;
   justify-self: center;
@@ -1530,6 +1577,25 @@
   border-color: rgba(95, 109, 132, 0.3) !important;
   background: #eef1f4 !important;
   color: #5f6d84 !important;
+}
+
+.history-status {
+  border-color: rgba(67, 150, 99, 0.3) !important;
+  background: #eef4d9 !important;
+  color: #43571e !important;
+  text-transform: uppercase;
+}
+
+.history-case-row--failed .history-status {
+  border-color: rgba(199, 102, 74, 0.34) !important;
+  background: #f5dfd6 !important;
+  color: #8a3b27 !important;
+}
+
+.history-case-row--playing .history-status {
+  border-color: rgba(216, 168, 51, 0.42) !important;
+  background: #fff0bd !important;
+  color: #745719 !important;
 }
 
 .history-card__play {
@@ -8215,9 +8281,18 @@
     align-items: start;
   }
 
+  .history-day-card,
+  .history-case-row {
+    grid-template-columns: 1fr;
+  }
+
   .history-card__meta {
     grid-template-columns: minmax(5.5rem, auto) minmax(7.25rem, auto);
     justify-content: start;
+  }
+
+  .history-case-row .history-card__meta {
+    grid-template-columns: minmax(5.5rem, auto) minmax(5.5rem, auto) minmax(7.25rem, auto);
   }
 
   .history-card__meta span,

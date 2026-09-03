@@ -927,7 +927,7 @@ const handleGetCase = async (event: ApiGatewayEvent, requestedCaseId = getDefaul
     fullCase = await loadCase(caseId)
   }
 
-  if (!fullCase && isToday) {
+  if (!fullCase && isToday && getCaseIdDifficulty(caseId)) {
     fullCase = await generateAndStoreCase(caseId)
   }
 
