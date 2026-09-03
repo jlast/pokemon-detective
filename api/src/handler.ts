@@ -1079,25 +1079,49 @@ const handleGetAdminCaseProgress = async (
 
   if (!isCaseId(caseId)) return err(400, 'Invalid case ID')
 
-  const fullCase = await loadCase(caseId)
-  if (!fullCase) return err(404, 'Case not found')
+  const buildCaseProgress = async (resolvedCaseId: string) => {
+    const fullCase = await loadCase(resolvedCaseId)
+    if (!fullCase) return null
 
-  const progressRecords = await queryProgressByCaseId(caseId)
-  const players = progressRecords
-    .filter((progress) => progress.status !== 'playing' || (progress.investigatedLocations?.length ?? 0) > 0)
-    .sort((left, right) => {
-      const rightActivity = getProgressActivityTimestamp(right) ?? ''
-      const leftActivity = getProgressActivityTimestamp(left) ?? ''
-      return rightActivity.localeCompare(leftActivity) || stripDateFromUserId(left.userId).localeCompare(stripDateFromUserId(right.userId))
-    })
-    .map((progress) => buildAdminProgressPlayer(fullCase, progress))
+    const progressRecords = await queryProgressByCaseId(resolvedCaseId)
+    const players = progressRecords
+      .filter((progress) => progress.status !== 'playing' || (progress.investigatedLocations?.length ?? 0) > 0)
+      .sort((left, right) => {
+        const rightActivity = getProgressActivityTimestamp(right) ?? ''
+        const leftActivity = getProgressActivityTimestamp(left) ?? ''
+        return rightActivity.localeCompare(leftActivity) || stripDateFromUserId(left.userId).localeCompare(stripDateFromUserId(right.userId))
+      })
+      .map((progress) => buildAdminProgressPlayer(fullCase, progress))
+
+    return {
+      caseId: resolvedCaseId,
+      difficulty: fullCase.difficulty,
+      caseTitle: fullCase.title,
+      culpritPokemonId: fullCase.culpritPokemonId,
+      culpritPokemonName: getPokemonName(fullCase.culpritPokemonId),
+      players,
+    }
+  }
+
+  const requestedDifficulty = getCaseIdDifficulty(caseId)
+  const date = getCaseDate(caseId)
+  const candidateCaseIds = requestedDifficulty
+    ? [caseId]
+    : [getDailyCaseId(date, 'easy'), getDailyCaseId(date, 'hard')]
+
+  let cases = (await Promise.all(candidateCaseIds.map(buildCaseProgress)))
+    .filter((caseProgress): caseProgress is NonNullable<typeof caseProgress> => caseProgress !== null)
+
+  if (!requestedDifficulty && cases.length === 0) {
+    const legacyCase = await buildCaseProgress(date)
+    if (legacyCase) cases = [legacyCase]
+  }
+
+  if (cases.length === 0) return err(404, 'Case not found')
 
   return ok({
-    caseId,
-    caseTitle: fullCase.title,
-    culpritPokemonId: fullCase.culpritPokemonId,
-    culpritPokemonName: getPokemonName(fullCase.culpritPokemonId),
-    players,
+    date,
+    cases,
   })
 }
 

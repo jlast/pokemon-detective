@@ -692,6 +692,16 @@
   gap: 0.8rem;
 }
 
+.admin-case-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-case-section {
+  display: grid;
+  gap: 0.8rem;
+}
+
 .admin-player-card {
   border: 1px solid rgba(127, 92, 48, 0.18);
   border-radius: 18px;

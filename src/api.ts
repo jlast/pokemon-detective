@@ -127,12 +127,18 @@ export interface AdminProgressPlayer {
   investigatedLocations: AdminProgressInvestigation[]
 }
 
-export interface AdminCaseProgressResponse {
+export interface AdminCaseProgressCase {
   caseId: string
+  difficulty: string
   caseTitle: string
   culpritPokemonId: number
   culpritPokemonName: string
   players: AdminProgressPlayer[]
+}
+
+export interface AdminCaseProgressResponse {
+  date: string
+  cases: AdminCaseProgressCase[]
 }
 
 const authHeaders = async (): Promise<Record<string, string>> => {
