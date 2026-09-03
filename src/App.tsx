@@ -1150,6 +1150,7 @@ function App() {
           userProfile={userProfile}
           isAdmin={isAdmin}
           isMenuOpen={isMobileMenuOpen}
+          hideDifficultySelector={currentRoute.startsWith(TODAY_ENDING_PATH)}
           onChangePuzzleDifficulty={selectPuzzleDifficulty}
           onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
           onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}

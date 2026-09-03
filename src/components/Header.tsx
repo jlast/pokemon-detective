@@ -10,6 +10,7 @@ interface HeaderProps {
   userProfile: UserProfile | null
   isAdmin: boolean
   isMenuOpen: boolean
+  hideDifficultySelector?: boolean
   onChangePuzzleDifficulty: (difficulty: 'easy' | 'hard') => void
   onToggleMenu: () => void
   onSelectCase: () => void
@@ -31,6 +32,7 @@ export function Header({
   userProfile,
   isAdmin,
   isMenuOpen,
+  hideDifficultySelector = false,
   onChangePuzzleDifficulty,
   onToggleMenu,
   onSelectCase,
@@ -69,43 +71,45 @@ export function Header({
         </div>
 
         <div className="app-header-actions">
-          <div
-            className="difficulty-topbar"
-            onBlur={(event) => {
-              if (!event.currentTarget.contains(event.relatedTarget)) setIsDifficultyMenuOpen(false)
-            }}
-          >
-            <p className="difficulty-topbar__label">Difficulty</p>
-            <button
-              type="button"
-              className={`difficulty-topbar__value difficulty-topbar__value--${activePuzzleDifficulty}`}
-              aria-haspopup="menu"
-              aria-expanded={isDifficultyMenuOpen}
-              onClick={() => setIsDifficultyMenuOpen((isOpen) => !isOpen)}
+          {!hideDifficultySelector ? (
+            <div
+              className="difficulty-topbar"
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) setIsDifficultyMenuOpen(false)
+              }}
             >
-              <strong>{activeDifficultyLabel}</strong>
-              <span aria-hidden="true">·</span>
-              <span>{suspectCount} suspects</span>
-              <span className="difficulty-topbar__chevron" aria-hidden="true">▾</span>
-            </button>
-            {isDifficultyMenuOpen ? (
-              <div className="difficulty-topbar__menu" role="menu">
-                {difficultyOptions.map((option) => (
-                  <button
-                    key={option.difficulty}
-                    type="button"
-                    className={`difficulty-topbar__menu-item difficulty-topbar__menu-item--${option.difficulty}`}
-                    role="menuitemradio"
-                    aria-checked={option.difficulty === activePuzzleDifficulty}
-                    onClick={() => selectDifficulty(option.difficulty)}
-                  >
-                    <span>{option.label} · {option.suspectCount} suspects</span>
-                    {option.difficulty === activePuzzleDifficulty ? <span aria-hidden="true">✓</span> : null}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </div>
+              <p className="difficulty-topbar__label">Difficulty</p>
+              <button
+                type="button"
+                className={`difficulty-topbar__value difficulty-topbar__value--${activePuzzleDifficulty}`}
+                aria-haspopup="menu"
+                aria-expanded={isDifficultyMenuOpen}
+                onClick={() => setIsDifficultyMenuOpen((isOpen) => !isOpen)}
+              >
+                <strong>{activeDifficultyLabel}</strong>
+                <span aria-hidden="true">·</span>
+                <span>{suspectCount} suspects</span>
+                <span className="difficulty-topbar__chevron" aria-hidden="true">▾</span>
+              </button>
+              {isDifficultyMenuOpen ? (
+                <div className="difficulty-topbar__menu" role="menu">
+                  {difficultyOptions.map((option) => (
+                    <button
+                      key={option.difficulty}
+                      type="button"
+                      className={`difficulty-topbar__menu-item difficulty-topbar__menu-item--${option.difficulty}`}
+                      role="menuitemradio"
+                      aria-checked={option.difficulty === activePuzzleDifficulty}
+                      onClick={() => selectDifficulty(option.difficulty)}
+                    >
+                      <span>{option.label} · {option.suspectCount} suspects</span>
+                      {option.difficulty === activePuzzleDifficulty ? <span aria-hidden="true">✓</span> : null}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
 
           <button
             type="button"

@@ -4395,11 +4395,15 @@
   align-self: stretch;
   display: grid;
   place-items: center;
-  width: 4.7rem;
-  border-radius: 13px 0 0 13px;
+  width: calc(4.7rem - 2px);
+  min-width: calc(4.7rem - 2px);
+  height: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 12px 0 0 12px;
   background: #ead9b5;
   color: #3f3215;
-  box-shadow: inset -1px 0 0 rgba(127, 92, 48, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.58);
+  box-shadow: inset -1px 0 0 rgba(127, 92, 48, 0.18);
 }
 
 .another-case-cta__icon svg {
@@ -4413,11 +4417,19 @@
 }
 
 .another-case-cta__sprite {
+  place-self: center;
   width: 96%;
   height: 96%;
   object-fit: contain;
+  object-position: center center;
   filter: brightness(0) saturate(0) opacity(0.8) drop-shadow(0 3px 2px rgba(47, 35, 21, 0.18));
   image-rendering: pixelated;
+}
+
+.another-case-cta--easy .another-case-cta__sprite {
+  width: 144%;
+  height: 144%;
+  transform: translateY(-16px) translateX(2px);
 }
 
 .another-case-cta__text {
