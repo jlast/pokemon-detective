@@ -6,6 +6,7 @@ interface HeaderProps {
   title?: string
   subtitle?: string
   className?: string
+  hideTitle?: boolean
   activeSection: string
   authed: boolean
   userProfile: UserProfile | null
@@ -28,6 +29,7 @@ export function Header({
   title,
   subtitle,
   className = '',
+  hideTitle = false,
   activeSection,
   authed,
   userProfile,
@@ -49,15 +51,17 @@ export function Header({
   const headerSubtitle = subtitle ?? currentCase?.shortStory
 
   return (
-    <header className={`app-header notebook-card ${className}`.trim()}>
+    <header className={`app-header notebook-card ${hideTitle ? 'app-header--menu-only' : ''} ${className}`.trim()}>
       <div className="app-header-topline">
-        <div className="brand-lockup">
-          <div>
-            <p className="eyebrow">PokéMystery</p>
-            <h1>{headerTitle}</h1>
-            {headerSubtitle ? <p className="subtle-text">{headerSubtitle}</p> : null}
+        {!hideTitle ? (
+          <div className="brand-lockup">
+            <div>
+              <p className="eyebrow">PokéMystery</p>
+              <h1>{headerTitle}</h1>
+              {headerSubtitle ? <p className="subtle-text">{headerSubtitle}</p> : null}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <div className="app-header-actions">
           <button

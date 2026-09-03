@@ -1689,6 +1689,22 @@
   gap: 0.9rem;
 }
 
+.app-header--menu-only {
+  justify-items: end;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.app-header--menu-only .app-header-topline {
+  grid-template-columns: auto;
+}
+
+.app-header--menu-only .app-header-actions {
+  justify-self: end;
+}
+
 .difficulty-topbar {
   position: relative;
   display: grid;
