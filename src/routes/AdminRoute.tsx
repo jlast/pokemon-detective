@@ -120,7 +120,12 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
     try {
       const result = await sendAdminMailing({ title: mailTitle, body: mailBody })
       setMailingStatus('sent')
-      setMailingResult(`${result.sent} sent, ${result.skipped} skipped, ${result.failed} failed.`)
+      setMailingResult([
+        `${result.sent} sent, ${result.skipped} skipped, ${result.failed} failed.`,
+        result.sentEmails.length > 0 ? `Accepted by SES: ${result.sentEmails.join(', ')}` : '',
+        result.skippedEmails.length > 0 ? `Skipped: ${result.skippedEmails.join(', ')}` : '',
+        result.failedEmails.length > 0 ? `Failed: ${result.failedEmails.join(', ')}` : '',
+      ].filter(Boolean).join(' '))
       setMailTitle('')
       setMailBody('')
     } catch (err) {

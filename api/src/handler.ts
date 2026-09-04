@@ -1192,16 +1192,20 @@ const handleSendAdminMailing = async (event: ApiGatewayEvent): Promise<ApiGatewa
   let sent = 0
   let skipped = 0
   let failed = 0
+  const sentEmails: string[] = []
+  const skippedEmails: string[] = []
+  const failedEmails: string[] = []
 
   for (const recipient of cognitoRecipients) {
     const subscription = subscriptionMap.get(recipient.userId)
     if (subscription?.newsAndUpdatesEmails === false) {
       skipped += 1
+      skippedEmails.push(recipient.email)
       continue
     }
 
     try {
-      await ses.send(new SendEmailCommand({
+      const sendResult = await ses.send(new SendEmailCommand({
         FromEmailAddress: fromAddress,
         Destination: { ToAddresses: [recipient.email] },
         Content: {
@@ -1214,13 +1218,18 @@ const handleSendAdminMailing = async (event: ApiGatewayEvent): Promise<ApiGatewa
         },
       }))
       sent += 1
+      sentEmails.push(recipient.email)
+      console.log('Admin mailing accepted by SES', { userId: recipient.userId, email: recipient.email, messageId: sendResult.MessageId })
     } catch (error) {
       failed += 1
+      failedEmails.push(recipient.email)
       console.error(`Failed to send admin mailing to user ${recipient.userId}:`, error)
     }
   }
 
-  return ok({ sent, skipped, failed })
+  console.log('Admin mailing complete', { sent, skipped, failed, sentEmails, skippedEmails, failedEmails })
+
+  return ok({ sent, skipped, failed, sentEmails, skippedEmails, failedEmails })
 }
 
 const handleGetPokedex = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {

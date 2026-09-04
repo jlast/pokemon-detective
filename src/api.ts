@@ -96,6 +96,9 @@ export interface AdminMailingResponse {
   sent: number
   skipped: number
   failed: number
+  sentEmails: string[]
+  skippedEmails: string[]
+  failedEmails: string[]
 }
 
 export interface AdminSessionResponse {
