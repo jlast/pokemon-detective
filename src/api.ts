@@ -90,6 +90,8 @@ export interface ReminderPreferencesResponse {
 export interface AdminMailingPayload {
   title: string
   body: string
+  buttonText?: string
+  buttonUrl?: string
 }
 
 export interface AdminMailingResponse {

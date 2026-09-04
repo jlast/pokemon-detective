@@ -61,7 +61,8 @@ jobs:
             exit 1
           fi
 
-      - run: npm ci
+      - name: Install client dependencies
+        run: npm ci
       - run: npm run build
         env:
           VITE_COGNITO_DOMAIN: ${{ env.VITE_COGNITO_DOMAIN }}
@@ -70,7 +71,8 @@ jobs:
           VITE_GA_MEASUREMENT_ID: ${{ env.VITE_GA_MEASUREMENT_ID }}
 
       # ── Build Lambdas ──
-      - working-directory: api
+      - name: Install API dependencies
+        working-directory: api
         run: npm ci
 
       - name: Build handler Lambda

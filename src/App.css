@@ -732,6 +732,12 @@
   line-height: 1.5;
 }
 
+.admin-mailing-form__button-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
 .admin-mailing-form__actions {
   display: flex;
   flex-wrap: wrap;
@@ -905,6 +911,10 @@
 
   .admin-page__date-field {
     min-width: 0;
+  }
+
+  .admin-mailing-form__button-fields {
+    grid-template-columns: 1fr;
   }
 
   .admin-player-card summary {

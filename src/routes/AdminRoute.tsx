@@ -65,6 +65,8 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
   const [error, setError] = useState<string | null>(null)
   const [mailTitle, setMailTitle] = useState('')
   const [mailBody, setMailBody] = useState('')
+  const [mailButtonText, setMailButtonText] = useState('')
+  const [mailButtonUrl, setMailButtonUrl] = useState('')
   const [mailingStatus, setMailingStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const [mailingResult, setMailingResult] = useState<string | null>(null)
 
@@ -118,7 +120,13 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
     setMailingResult(null)
 
     try {
-      const result = await sendAdminMailing({ title: mailTitle, body: mailBody })
+      const buttonText = mailButtonText.trim()
+      const buttonUrl = mailButtonUrl.trim()
+      const result = await sendAdminMailing({
+        title: mailTitle,
+        body: mailBody,
+        ...(buttonText && buttonUrl ? { buttonText, buttonUrl } : {}),
+      })
       setMailingStatus('sent')
       setMailingResult([
         `${result.sent} sent, ${result.skipped} skipped, ${result.failed} failed.`,
@@ -128,12 +136,16 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
       ].filter(Boolean).join(' '))
       setMailTitle('')
       setMailBody('')
+      setMailButtonText('')
+      setMailButtonUrl('')
     } catch (err) {
       console.error('Failed to send admin mailing:', err)
       setMailingStatus('error')
       setMailingResult('Could not send mailing.')
     }
   }
+
+  const hasPartialButton = Boolean(mailButtonText.trim()) !== Boolean(mailButtonUrl.trim())
 
   if (!authed) {
     return (
@@ -222,11 +234,37 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
               />
             </label>
 
+            <div className="admin-mailing-form__button-fields">
+              <label className="admin-mailing-form__field">
+                <span>Button text optional</span>
+                <input
+                  type="text"
+                  value={mailButtonText}
+                  maxLength={80}
+                  disabled={mailingStatus === 'sending'}
+                  onChange={(event) => setMailButtonText(event.currentTarget.value)}
+                  placeholder="Try hard mode"
+                />
+              </label>
+
+              <label className="admin-mailing-form__field">
+                <span>Button link optional</span>
+                <input
+                  type="url"
+                  value={mailButtonUrl}
+                  maxLength={2000}
+                  disabled={mailingStatus === 'sending'}
+                  onChange={(event) => setMailButtonUrl(event.currentTarget.value)}
+                  placeholder="https://pokemysterygame.com/today"
+                />
+              </label>
+            </div>
+
             <div className="admin-mailing-form__actions">
               <button
                 type="submit"
                 className="primary-button"
-                disabled={mailingStatus === 'sending' || !mailTitle.trim() || !mailBody.trim()}
+                disabled={mailingStatus === 'sending' || !mailTitle.trim() || !mailBody.trim() || hasPartialButton}
               >
                 {mailingStatus === 'sending' ? 'Sending...' : 'Send mailing'}
               </button>

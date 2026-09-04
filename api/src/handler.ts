@@ -48,6 +48,8 @@ const GENERAL_FEEDBACK_CONTACT_MAX_LENGTH = 250
 const GENERAL_FEEDBACK_CONTEXT_MAX_LENGTH = 500
 const ADMIN_MAILING_TITLE_MAX_LENGTH = 160
 const ADMIN_MAILING_BODY_MAX_LENGTH = 10000
+const ADMIN_MAILING_BUTTON_TEXT_MAX_LENGTH = 80
+const ADMIN_MAILING_BUTTON_URL_MAX_LENGTH = 2000
 const HISTORY_ARCHIVE_DAYS = 30
 
 interface ApiGatewayEvent {
@@ -1172,16 +1174,27 @@ const getCognitoMailingRecipients = async (): Promise<MailingRecipient[]> => {
   return recipients
 }
 
-const buildAdminMailingContent = (title: string, mailBody: string) => {
+const buildAdminMailingContent = (title: string, mailBody: string, buttonText?: string, buttonUrl?: string) => {
   const settingsUrl = `${APP_URL}/settings`
   const escapedTitle = escapeHtml(title)
   const bodyHtml = escapeHtml(mailBody).replaceAll('\n', '<br>')
+  const escapedButtonText = buttonText ? escapeHtml(buttonText) : ''
+  const escapedButtonUrl = buttonUrl ? escapeHtml(buttonUrl) : ''
+  const textLink = buttonText && buttonUrl ? ['', `${buttonText}: ${buttonUrl}`] : []
+  const htmlLink = buttonText && buttonUrl
+    ? `<tr>
+              <td style="padding:20px 24px 28px;">
+                <a href="${escapedButtonUrl}" style="display:inline-block;background:#203250;color:#fffdf7;text-decoration:none;border-radius:14px;padding:14px 20px;font-family:Arial,sans-serif;font-size:15px;font-weight:900;box-shadow:0 8px 16px rgba(31,50,80,0.18);">${escapedButtonText}</a>
+              </td>
+            </tr>`
+    : ''
 
   return {
     text: [
       'Hi detective,',
       '',
       mailBody,
+      ...textLink,
       '',
       'You are receiving this because news and update emails are enabled in your detective profile.',
       `Manage email preferences: ${settingsUrl}`,
@@ -1211,6 +1224,7 @@ const buildAdminMailingContent = (title: string, mailBody: string) => {
                 <p style="margin:14px 0 0;font-size:18px;line-height:1.55;">${bodyHtml}</p>
               </td>
             </tr>
+            ${htmlLink}
             <tr>
               <td style="border-top:1px solid #e3d2ad;padding:16px 24px 22px;color:#67738a;font-family:Arial,sans-serif;font-size:12px;line-height:1.5;">
                 You are receiving this because news and update emails are enabled in your detective profile.
@@ -1233,7 +1247,7 @@ const handleSendAdminMailing = async (event: ApiGatewayEvent): Promise<ApiGatewa
 
   if (!REMINDER_EMAIL_FROM) return err(500, 'Mail sender is not configured')
 
-  let body: { title?: unknown; body?: unknown } = {}
+  let body: { title?: unknown; body?: unknown; buttonText?: unknown; buttonUrl?: unknown } = {}
   try {
     body = JSON.parse(event.body ?? '{}')
   } catch {
@@ -1242,11 +1256,18 @@ const handleSendAdminMailing = async (event: ApiGatewayEvent): Promise<ApiGatewa
 
   const title = typeof body.title === 'string' ? body.title.trim() : ''
   const mailBody = typeof body.body === 'string' ? body.body.trim() : ''
+  const buttonText = typeof body.buttonText === 'string' ? body.buttonText.trim() : ''
+  const buttonUrl = typeof body.buttonUrl === 'string' ? body.buttonUrl.trim() : ''
 
   if (!title) return err(400, 'Title is required')
   if (!mailBody) return err(400, 'Body is required')
   if (title.length > ADMIN_MAILING_TITLE_MAX_LENGTH) return err(400, 'Title is too long')
   if (mailBody.length > ADMIN_MAILING_BODY_MAX_LENGTH) return err(400, 'Body is too long')
+  if (buttonText.length > ADMIN_MAILING_BUTTON_TEXT_MAX_LENGTH) return err(400, 'Button text is too long')
+  if (buttonUrl.length > ADMIN_MAILING_BUTTON_URL_MAX_LENGTH) return err(400, 'Button link is too long')
+  if ((buttonText && !buttonUrl) || (!buttonText && buttonUrl)) return err(400, 'Button text and button link must be provided together')
+  if (buttonUrl && !URL.canParse(buttonUrl)) return err(400, 'Button link must be a valid URL')
+  if (buttonUrl && new URL(buttonUrl).protocol !== 'https:') return err(400, 'Button link must use https')
 
   const [cognitoRecipients, subscriptions] = await Promise.all([
     getCognitoMailingRecipients(),
@@ -1254,7 +1275,7 @@ const handleSendAdminMailing = async (event: ApiGatewayEvent): Promise<ApiGatewa
   ])
   const subscriptionMap = new Map(subscriptions.map((subscription) => [subscription.userId, subscription]))
   const fromAddress = `${REMINDER_EMAIL_FROM_NAME} <${REMINDER_EMAIL_FROM}>`
-  const content = buildAdminMailingContent(title, mailBody)
+  const content = buildAdminMailingContent(title, mailBody, buttonText || undefined, buttonUrl || undefined)
   let sent = 0
   let skipped = 0
   let failed = 0
