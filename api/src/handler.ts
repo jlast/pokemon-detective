@@ -26,6 +26,7 @@ const USER_POOL_ID = process.env.USER_POOL_ID ?? ''
 const REGION = process.env.REGION ?? 'us-east-1'
 const REMINDER_EMAIL_FROM = process.env.REMINDER_EMAIL_FROM ?? ''
 const REMINDER_EMAIL_FROM_NAME = 'PokeMystery'
+const APP_URL = process.env.APP_URL ?? 'https://pokemysterygame.com'
 
 const jwksUrl = new URL(
   `https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}/.well-known/jwks.json`,
@@ -89,6 +90,15 @@ const err = (statusCode: number, message: string): ApiGatewayResult => ({
   headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   body: JSON.stringify({ error: message }),
 })
+
+const escapeHtml = (value: string): string => (
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+)
 
 interface UserInfo {
   sub: string
@@ -1162,6 +1172,61 @@ const getCognitoMailingRecipients = async (): Promise<MailingRecipient[]> => {
   return recipients
 }
 
+const buildAdminMailingContent = (title: string, mailBody: string) => {
+  const settingsUrl = `${APP_URL}/settings`
+  const escapedTitle = escapeHtml(title)
+  const bodyHtml = escapeHtml(mailBody).replaceAll('\n', '<br>')
+
+  return {
+    text: [
+      'Hi detective,',
+      '',
+      mailBody,
+      '',
+      'You are receiving this because news and update emails are enabled in your detective profile.',
+      `Manage email preferences: ${settingsUrl}`,
+    ].join('\n'),
+    html: `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${escapedTitle}</title>
+  </head>
+  <body style="margin:0;background:#f3ead6;color:#203250;font-family:Georgia,'Times New Roman',serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f3ead6;padding:28px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#fff8df;border:1px solid #d8c39c;border-radius:22px;box-shadow:0 16px 36px rgba(47,35,21,0.14);overflow:hidden;">
+            <tr>
+              <td style="background:#203250;color:#fffdf7;padding:22px 24px;">
+                <div style="font-family:Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#f4d35e;">PokeMystery</div>
+                <h1 style="margin:8px 0 0;font-size:28px;line-height:1.1;font-weight:900;">${escapedTitle}</h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:26px 24px 8px;">
+                <div style="display:inline-block;background:#f4d35e;color:#203250;border:1px solid #b69134;border-radius:999px;padding:7px 12px;font-family:Arial,sans-serif;font-size:12px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;">Detective update</div>
+                <p style="margin:18px 0 0;font-size:18px;line-height:1.55;">Hi detective,</p>
+                <p style="margin:14px 0 0;font-size:18px;line-height:1.55;">${bodyHtml}</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="border-top:1px solid #e3d2ad;padding:16px 24px 22px;color:#67738a;font-family:Arial,sans-serif;font-size:12px;line-height:1.5;">
+                You are receiving this because news and update emails are enabled in your detective profile.
+                <br>
+                <a href="${settingsUrl}" style="color:#203250;font-weight:800;text-decoration:underline;">Manage email preferences</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`,
+  }
+}
+
 const handleSendAdminMailing = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
   const admin = await requireAdmin(event)
   if (isApiResult(admin)) return admin
@@ -1189,6 +1254,7 @@ const handleSendAdminMailing = async (event: ApiGatewayEvent): Promise<ApiGatewa
   ])
   const subscriptionMap = new Map(subscriptions.map((subscription) => [subscription.userId, subscription]))
   const fromAddress = `${REMINDER_EMAIL_FROM_NAME} <${REMINDER_EMAIL_FROM}>`
+  const content = buildAdminMailingContent(title, mailBody)
   let sent = 0
   let skipped = 0
   let failed = 0
@@ -1212,7 +1278,8 @@ const handleSendAdminMailing = async (event: ApiGatewayEvent): Promise<ApiGatewa
           Simple: {
             Subject: { Data: title },
             Body: {
-              Text: { Data: mailBody },
+              Text: { Data: content.text },
+              Html: { Data: content.html },
             },
           },
         },

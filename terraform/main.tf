@@ -449,6 +449,7 @@ resource "aws_lambda_function" "api" {
       USER_POOL_ID                 = aws_cognito_user_pool.main.id
       REGION                       = var.region
       REMINDER_EMAIL_FROM          = var.reminder_email_from
+      APP_URL                      = var.app_url
     }
   }
 
