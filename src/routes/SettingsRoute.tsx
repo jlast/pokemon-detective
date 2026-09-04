@@ -84,6 +84,27 @@ export function SettingsRoute({
               <span className="reminder-settings-card__switch" aria-hidden="true" />
             </span>
           </label>
+
+          <label className="reminder-settings-card settings-page__reminder-card">
+            <span className="reminder-settings-card__icon" aria-hidden="true">News</span>
+            <span className="reminder-settings-card__copy">
+              <strong>News and updates</strong>
+              <small>Get occasional emails about new PokeMystery features and releases.</small>
+            </span>
+            <span className="reminder-settings-card__control">
+              <input
+                className="reminder-settings-card__input"
+                type="checkbox"
+                checked={reminderPreferences.newsAndUpdatesEmails}
+                disabled={reminderDisabled}
+                onChange={(event) => onUpdateReminderPreferences({
+                  ...reminderPreferences,
+                  newsAndUpdatesEmails: event.currentTarget.checked,
+                })}
+              />
+              <span className="reminder-settings-card__switch" aria-hidden="true" />
+            </span>
+          </label>
         </div>
 
         {reminderStatus === 'error' ? (

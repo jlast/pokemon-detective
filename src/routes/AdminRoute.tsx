@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import {
   getAdminCaseProgress,
   getAdminSession,
+  sendAdminMailing,
   type AdminCaseProgressCase,
   type AdminCaseProgressResponse,
   type AdminProgressPlayer,
@@ -57,10 +58,15 @@ const getCaseStats = (adminCase: AdminCaseProgressCase) => ({
 })
 
 export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
+  const [activeTab, setActiveTab] = useState<'statistics' | 'mailing'>('statistics')
   const [caseId, setCaseId] = useState(getTodayUtc)
   const [progress, setProgress] = useState<AdminCaseProgressResponse | null>(null)
   const [loading, setLoading] = useState(authed)
   const [error, setError] = useState<string | null>(null)
+  const [mailTitle, setMailTitle] = useState('')
+  const [mailBody, setMailBody] = useState('')
+  const [mailingStatus, setMailingStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [mailingResult, setMailingResult] = useState<string | null>(null)
 
   useEffect(() => {
     if (!authed) {
@@ -106,6 +112,24 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
     }
   }, [progress])
 
+  const sendMailing = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setMailingStatus('sending')
+    setMailingResult(null)
+
+    try {
+      const result = await sendAdminMailing({ title: mailTitle, body: mailBody })
+      setMailingStatus('sent')
+      setMailingResult(`${result.sent} sent, ${result.skipped} skipped, ${result.failed} failed.`)
+      setMailTitle('')
+      setMailBody('')
+    } catch (err) {
+      console.error('Failed to send admin mailing:', err)
+      setMailingStatus('error')
+      setMailingResult('Could not send mailing.')
+    }
+  }
+
   if (!authed) {
     return (
       <div className="main-layout-single">
@@ -125,20 +149,90 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
         <div className="admin-page__header">
           <div>
             <p className="eyebrow">Admin desk</p>
-            <h2>User puzzle details</h2>
-            <p className="subtle-text">Open every recorded player puzzle for a selected UTC date.</p>
+            <h2>{activeTab === 'statistics' ? 'User puzzle details' : 'Mailing'}</h2>
+            <p className="subtle-text">
+              {activeTab === 'statistics'
+                ? 'Open every recorded player puzzle for a selected UTC date.'
+                : 'Send a plain news email to users who allow news and update emails.'}
+            </p>
           </div>
-          <label className="admin-page__date-field">
-            <span>Case date</span>
-            <input
-              type="date"
-              value={caseId}
-              onChange={(event) => setCaseId(event.currentTarget.value)}
-            />
-          </label>
+          {activeTab === 'statistics' ? (
+            <label className="admin-page__date-field">
+              <span>Case date</span>
+              <input
+                type="date"
+                value={caseId}
+                onChange={(event) => setCaseId(event.currentTarget.value)}
+              />
+            </label>
+          ) : null}
         </div>
 
-        {loading ? (
+        <div className="admin-page__tabs" role="tablist" aria-label="Admin sections">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'statistics'}
+            className={activeTab === 'statistics' ? 'admin-page__tab is-active' : 'admin-page__tab'}
+            onClick={() => setActiveTab('statistics')}
+          >
+            Puzzle statistics
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'mailing'}
+            className={activeTab === 'mailing' ? 'admin-page__tab is-active' : 'admin-page__tab'}
+            onClick={() => setActiveTab('mailing')}
+          >
+            Mailing
+          </button>
+        </div>
+
+        {activeTab === 'mailing' ? (
+          <form className="admin-mailing-form" onSubmit={sendMailing}>
+            <label className="admin-mailing-form__field">
+              <span>Title</span>
+              <input
+                type="text"
+                value={mailTitle}
+                maxLength={160}
+                disabled={mailingStatus === 'sending'}
+                required
+                onChange={(event) => setMailTitle(event.currentTarget.value)}
+                placeholder="Hard mode is now available"
+              />
+            </label>
+
+            <label className="admin-mailing-form__field">
+              <span>Body</span>
+              <textarea
+                value={mailBody}
+                maxLength={10000}
+                disabled={mailingStatus === 'sending'}
+                required
+                rows={10}
+                onChange={(event) => setMailBody(event.currentTarget.value)}
+                placeholder="We are excited to share that hard mode is now live. Start a new case to test your detective skills against tougher puzzles."
+              />
+            </label>
+
+            <div className="admin-mailing-form__actions">
+              <button
+                type="submit"
+                className="primary-button"
+                disabled={mailingStatus === 'sending' || !mailTitle.trim() || !mailBody.trim()}
+              >
+                {mailingStatus === 'sending' ? 'Sending...' : 'Send mailing'}
+              </button>
+              {mailingResult ? (
+                <p className={mailingStatus === 'error' ? 'admin-mailing-form__status is-error' : 'admin-mailing-form__status'} role="status">
+                  {mailingResult}
+                </p>
+              ) : null}
+            </div>
+          </form>
+        ) : loading ? (
           <p className="placeholder-page">Loading admin case records...</p>
         ) : error ? (
           <p className="placeholder-page" role="status">{error}</p>

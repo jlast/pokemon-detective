@@ -84,6 +84,18 @@ export interface GeneralFeedbackPayload {
 export interface ReminderPreferencesResponse {
   dailyReminderEmails: boolean
   unfinishedCaseReminderEmails: boolean
+  newsAndUpdatesEmails: boolean
+}
+
+export interface AdminMailingPayload {
+  title: string
+  body: string
+}
+
+export interface AdminMailingResponse {
+  sent: number
+  skipped: number
+  failed: number
 }
 
 export interface AdminSessionResponse {
@@ -198,6 +210,19 @@ export const getAdminSession = async (): Promise<AdminSessionResponse> => {
 
 export const getAdminCaseProgress = async (caseId: string): Promise<AdminCaseProgressResponse> => {
   const res = await fetch(`${BASE}/api/admin/cases/${enc(caseId)}/progress`, { headers: await adminAuthHeaders() })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
+export const sendAdminMailing = async (payload: AdminMailingPayload): Promise<AdminMailingResponse> => {
+  const res = await fetch(
+    `${BASE}/api/admin/mailing`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...await adminAuthHeaders() },
+      body: JSON.stringify(payload),
+    },
+  )
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }

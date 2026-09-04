@@ -1,3 +1,5 @@
+import { CognitoIdentityProviderClient, ListUsersCommand } from '@aws-sdk/client-cognito-identity-provider'
+import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2'
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { allCases, createCaseById, rebuildFullCase } from '../../src/game/cases/index'
 import { getCaseThemeTitle } from '../../src/game/caseTheme'
@@ -7,7 +9,7 @@ import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { batchGetCaseData, getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseDataRecord, type CaseStats } from './caseDataDb'
 import { publishFeedbackCommentAlert, publishGeneralFeedbackAlert } from './feedbackAlert'
 import { putCaseFeedback, putGeneralFeedback } from './feedbackDb'
-import { getReminderSubscription, putReminderSubscription } from './reminderSubscriptionDb'
+import { getReminderSubscription, listReminderSubscriptions, putReminderSubscription } from './reminderSubscriptionDb'
 import { validateGeneratedCase } from './validateGeneratedCase'
 import {
   getProgress,
@@ -22,11 +24,15 @@ import { getPokedexRecord, putPokedexRecord, type PokedexRecord } from './pokede
 
 const USER_POOL_ID = process.env.USER_POOL_ID ?? ''
 const REGION = process.env.REGION ?? 'us-east-1'
+const REMINDER_EMAIL_FROM = process.env.REMINDER_EMAIL_FROM ?? ''
+const REMINDER_EMAIL_FROM_NAME = 'PokeMystery'
 
 const jwksUrl = new URL(
   `https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}/.well-known/jwks.json`,
 )
 const jwks = createRemoteJWKSet(jwksUrl)
+const cognito = new CognitoIdentityProviderClient({ region: REGION })
+const ses = new SESv2Client({ region: REGION })
 
 const SESSION_TTL_DAYS = 7
 const CASE_DATA_TTL_DAYS = 366
@@ -39,6 +45,8 @@ const FEEDBACK_COMMENT_MAX_LENGTH = 1000
 const GENERAL_FEEDBACK_MESSAGE_MAX_LENGTH = 2000
 const GENERAL_FEEDBACK_CONTACT_MAX_LENGTH = 250
 const GENERAL_FEEDBACK_CONTEXT_MAX_LENGTH = 500
+const ADMIN_MAILING_TITLE_MAX_LENGTH = 160
+const ADMIN_MAILING_BODY_MAX_LENGTH = 10000
 const HISTORY_ARCHIVE_DAYS = 30
 
 interface ApiGatewayEvent {
@@ -1002,7 +1010,7 @@ const resolveAdminEvidenceBadges = (
   record: InvestigatedLocationRecord,
   action: LocationAction | undefined,
 ): EvidenceBadgeData[] | undefined => {
-  const badges = resolveEvidenceBadges(record, action)
+  const badges = resolveEvidenceBadges(record, action) as EvidenceBadgeData[] | undefined
   if (!badges?.length) return undefined
 
   const hintType = action?.clueRule ? getSolutionClueHintType(action.clueRule.axis) : undefined
@@ -1125,6 +1133,96 @@ const handleGetAdminCaseProgress = async (
   })
 }
 
+interface MailingRecipient {
+  userId: string
+  email: string
+}
+
+const getCognitoMailingRecipients = async (): Promise<MailingRecipient[]> => {
+  const recipients: MailingRecipient[] = []
+  let PaginationToken: string | undefined
+
+  do {
+    const result = await cognito.send(new ListUsersCommand({
+      UserPoolId: USER_POOL_ID,
+      PaginationToken,
+    }))
+
+    for (const user of result.Users ?? []) {
+      const attributes = Object.fromEntries((user.Attributes ?? []).map((attribute) => [attribute.Name, attribute.Value]))
+      const userId = attributes.sub
+      const email = attributes.email
+      if (!userId || !email) continue
+      recipients.push({ userId, email })
+    }
+
+    PaginationToken = result.PaginationToken
+  } while (PaginationToken)
+
+  return recipients
+}
+
+const handleSendAdminMailing = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
+  const admin = await requireAdmin(event)
+  if (isApiResult(admin)) return admin
+
+  if (!REMINDER_EMAIL_FROM) return err(500, 'Mail sender is not configured')
+
+  let body: { title?: unknown; body?: unknown } = {}
+  try {
+    body = JSON.parse(event.body ?? '{}')
+  } catch {
+    return err(400, 'Invalid JSON')
+  }
+
+  const title = typeof body.title === 'string' ? body.title.trim() : ''
+  const mailBody = typeof body.body === 'string' ? body.body.trim() : ''
+
+  if (!title) return err(400, 'Title is required')
+  if (!mailBody) return err(400, 'Body is required')
+  if (title.length > ADMIN_MAILING_TITLE_MAX_LENGTH) return err(400, 'Title is too long')
+  if (mailBody.length > ADMIN_MAILING_BODY_MAX_LENGTH) return err(400, 'Body is too long')
+
+  const [cognitoRecipients, subscriptions] = await Promise.all([
+    getCognitoMailingRecipients(),
+    listReminderSubscriptions(),
+  ])
+  const subscriptionMap = new Map(subscriptions.map((subscription) => [subscription.userId, subscription]))
+  const fromAddress = `${REMINDER_EMAIL_FROM_NAME} <${REMINDER_EMAIL_FROM}>`
+  let sent = 0
+  let skipped = 0
+  let failed = 0
+
+  for (const recipient of cognitoRecipients) {
+    const subscription = subscriptionMap.get(recipient.userId)
+    if (subscription?.newsAndUpdatesEmails === false) {
+      skipped += 1
+      continue
+    }
+
+    try {
+      await ses.send(new SendEmailCommand({
+        FromEmailAddress: fromAddress,
+        Destination: { ToAddresses: [recipient.email] },
+        Content: {
+          Simple: {
+            Subject: { Data: title },
+            Body: {
+              Text: { Data: mailBody },
+            },
+          },
+        },
+      }))
+      sent += 1
+    } catch (error) {
+      failed += 1
+      console.error(`Failed to send admin mailing to user ${recipient.userId}:`, error)
+    }
+  }
+
+  return ok({ sent, skipped, failed })
+}
+
 const handleGetPokedex = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
   const userInfo = await getUserInfo(event)
   if (!userInfo.sub) return err(401, 'Authentication required')
@@ -1230,13 +1328,15 @@ const handleGetReminderPreferences = async (event: ApiGatewayEvent): Promise<Api
 
   const subscription = await getReminderSubscription(userInfo.sub)
   const unfinishedCaseReminderEmails = subscription?.unfinishedCaseReminderEmails ?? true
+  const newsAndUpdatesEmails = subscription?.newsAndUpdatesEmails ?? true
 
-  if (userInfo.email && (!subscription || subscription.unfinishedCaseReminderEmails == null)) {
+  if (userInfo.email && (!subscription || subscription.unfinishedCaseReminderEmails == null || subscription.newsAndUpdatesEmails == null)) {
     await putReminderSubscription({
       userId: userInfo.sub,
       email: userInfo.email,
       dailyReminderEmails: subscription?.dailyReminderEmails ?? false,
       unfinishedCaseReminderEmails,
+      newsAndUpdatesEmails,
       updatedAt: new Date().toISOString(),
       lastReminderCaseId: subscription?.lastReminderCaseId,
       lastUnfinishedCaseReminderCaseId: subscription?.lastUnfinishedCaseReminderCaseId,
@@ -1246,6 +1346,7 @@ const handleGetReminderPreferences = async (event: ApiGatewayEvent): Promise<Api
   return ok({
     dailyReminderEmails: subscription?.dailyReminderEmails ?? false,
     unfinishedCaseReminderEmails,
+    newsAndUpdatesEmails,
   })
 }
 
@@ -1254,7 +1355,7 @@ const handleUpdateReminderPreferences = async (event: ApiGatewayEvent): Promise<
   if (!userInfo.sub) return err(401, 'Authentication required')
   if (!userInfo.email) return err(400, 'Email address required')
 
-  let body: { dailyReminderEmails?: unknown; unfinishedCaseReminderEmails?: unknown } = {}
+  let body: { dailyReminderEmails?: unknown; unfinishedCaseReminderEmails?: unknown; newsAndUpdatesEmails?: unknown } = {}
   try {
     body = JSON.parse(event.body ?? '{}')
   } catch {}
@@ -1267,12 +1368,17 @@ const handleUpdateReminderPreferences = async (event: ApiGatewayEvent): Promise<
     return err(400, 'unfinishedCaseReminderEmails must be a boolean')
   }
 
+  if (typeof body.newsAndUpdatesEmails !== 'boolean') {
+    return err(400, 'newsAndUpdatesEmails must be a boolean')
+  }
+
   const existing = await getReminderSubscription(userInfo.sub)
   await putReminderSubscription({
     userId: userInfo.sub,
     email: userInfo.email,
     dailyReminderEmails: body.dailyReminderEmails,
     unfinishedCaseReminderEmails: body.unfinishedCaseReminderEmails,
+    newsAndUpdatesEmails: body.newsAndUpdatesEmails,
     updatedAt: new Date().toISOString(),
     lastReminderCaseId: existing?.lastReminderCaseId,
     lastUnfinishedCaseReminderCaseId: existing?.lastUnfinishedCaseReminderCaseId,
@@ -1281,6 +1387,7 @@ const handleUpdateReminderPreferences = async (event: ApiGatewayEvent): Promise<
   return ok({
     dailyReminderEmails: body.dailyReminderEmails,
     unfinishedCaseReminderEmails: body.unfinishedCaseReminderEmails,
+    newsAndUpdatesEmails: body.newsAndUpdatesEmails,
   })
 }
 
@@ -1747,6 +1854,10 @@ export const handler = async (
     const adminCaseProgressMatch = path.match(/^\/api\/admin\/cases\/([^/]+)\/progress$/)
     if (method === 'GET' && adminCaseProgressMatch) {
       return logAndReturn(await handleGetAdminCaseProgress(decodeURIComponent(adminCaseProgressMatch[1]), event))
+    }
+
+    if (method === 'POST' && path === '/api/admin/mailing') {
+      return logAndReturn(await handleSendAdminMailing(event))
     }
 
     if (method === 'GET' && path === '/api/pokedex') {

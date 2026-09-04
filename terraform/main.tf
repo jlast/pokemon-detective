@@ -339,6 +339,7 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
         Action = [
           "dynamodb:GetItem",
           "dynamodb:PutItem",
+          "dynamodb:Scan",
         ]
         Resource = aws_dynamodb_table.reminder_subscriptions.arn
       },
@@ -350,6 +351,44 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
         Resource = aws_dynamodb_table.feedback.arn
       },
     ]
+  })
+}
+
+resource "aws_iam_role_policy" "lambda_ses" {
+  name = "${var.project_name}-api-ses"
+  role = aws_iam_role.lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "ses:SendEmail",
+        "ses:SendRawEmail",
+      ]
+      Resource = "*"
+      Condition = {
+        StringEquals = {
+          "ses:FromAddress" = var.reminder_email_from
+        }
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "lambda_cognito" {
+  name = "${var.project_name}-api-cognito"
+  role = aws_iam_role.lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "cognito-idp:ListUsers",
+      ]
+      Resource = aws_cognito_user_pool.main.arn
+    }]
   })
 }
 
@@ -409,6 +448,7 @@ resource "aws_lambda_function" "api" {
       FEEDBACK_ALERT_TOPIC_ARN     = aws_sns_topic.feedback_alerts.arn
       USER_POOL_ID                 = aws_cognito_user_pool.main.id
       REGION                       = var.region
+      REMINDER_EMAIL_FROM          = var.reminder_email_from
     }
   }
 

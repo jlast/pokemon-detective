@@ -90,6 +90,7 @@ const ENABLE_DAILY_REMINDER_OPT_IN = true
 const DEFAULT_REMINDER_PREFERENCES: ReminderPreferencesResponse = {
   dailyReminderEmails: false,
   unfinishedCaseReminderEmails: true,
+  newsAndUpdatesEmails: true,
 }
 
 type RouteTitleContext = {

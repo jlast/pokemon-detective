@@ -9,6 +9,7 @@ export interface ReminderSubscriptionRecord {
   email: string
   dailyReminderEmails: boolean
   unfinishedCaseReminderEmails?: boolean
+  newsAndUpdatesEmails?: boolean
   updatedAt: string
   lastReminderCaseId?: string
   lastUnfinishedCaseReminderCaseId?: string
@@ -54,6 +55,22 @@ export const listUnfinishedCaseReminderSubscriptions = async (): Promise<Reminde
       FilterExpression: '#unfinishedCaseReminderEmails = :enabled OR attribute_not_exists(#unfinishedCaseReminderEmails)',
       ExpressionAttributeNames: { '#unfinishedCaseReminderEmails': 'unfinishedCaseReminderEmails' },
       ExpressionAttributeValues: { ':enabled': true },
+      ExclusiveStartKey,
+    }))
+    records.push(...(result.Items as ReminderSubscriptionRecord[] ?? []))
+    ExclusiveStartKey = result.LastEvaluatedKey
+  } while (ExclusiveStartKey)
+
+  return records
+}
+
+export const listReminderSubscriptions = async (): Promise<ReminderSubscriptionRecord[]> => {
+  const records: ReminderSubscriptionRecord[] = []
+  let ExclusiveStartKey: Record<string, unknown> | undefined
+
+  do {
+    const result = await doc.send(new ScanCommand({
+      TableName: TABLE,
       ExclusiveStartKey,
     }))
     records.push(...(result.Items as ReminderSubscriptionRecord[] ?? []))
