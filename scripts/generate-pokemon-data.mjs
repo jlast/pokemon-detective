@@ -158,12 +158,21 @@ const visitEvolutionNode = (node, stage, chainMap) => {
 const serializeDataFile = (pokemonEntries) => {
   const typeUnion = [...new Set(pokemonEntries.flatMap((entry) => entry.types))].sort()
   const regionUnion = [...new Set(pokemonEntries.map((entry) => entry.region))].sort()
+  const chunkSize = 100
+  const chunks = Array.from(
+    { length: Math.ceil(pokemonEntries.length / chunkSize) },
+    (_, index) => pokemonEntries.slice(index * chunkSize, (index + 1) * chunkSize),
+  )
+  const serializedChunks = chunks
+    .map((chunk, index) => `const pokemonDataChunk${index + 1}: Pokemon[] = ${JSON.stringify(chunk, null, 2)}`)
+    .join('\n\n')
+  const chunkNames = chunks.map((_, index) => `pokemonDataChunk${index + 1}`).join(', ')
 
   return `export type PokemonType =\n${typeUnion
     .map((type) => `  | '${type}'`)
     .join('\n')}\n\nexport type PokemonRegion =\n${regionUnion
     .map((region) => `  | '${region}'`)
-    .join('\n')}\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite?: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`/sprites/shiny/\${pokemonId}.png\`\n\nexport const pokemonData: Pokemon[] = ${JSON.stringify(pokemonEntries, null, 2)}\n`
+    .join('\n')}\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite?: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`/sprites/shiny/\${pokemonId}.png\`\n\n${serializedChunks}\n\nexport const pokemonData: Pokemon[] = [${chunkNames}].flat()\n`
 }
 
 const main = async () => {

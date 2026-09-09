@@ -56,7 +56,7 @@ export interface Pokemon {
 export const getShinySpriteUrl = (pokemonId: number): string =>
   `/sprites/shiny/${pokemonId}.png`
 
-export const pokemonData: Pokemon[] = [
+const pokemonDataChunk1: Pokemon[] = [
   {
     "id": 1,
     "name": "Bulbasaur",
@@ -2404,7 +2404,10 @@ export const pokemonData: Pokemon[] = [
     "isLegendary": false,
     "isMythical": false,
     "sprite": "/sprites/100.png"
-  },
+  }
+]
+
+const pokemonDataChunk2: Pokemon[] = [
   {
     "id": 101,
     "name": "Electrode",
@@ -4746,7 +4749,10 @@ export const pokemonData: Pokemon[] = [
     "isLegendary": false,
     "isMythical": false,
     "sprite": "/sprites/200.png"
-  },
+  }
+]
+
+const pokemonDataChunk3: Pokemon[] = [
   {
     "id": 201,
     "name": "Unown",
@@ -7097,7 +7103,10 @@ export const pokemonData: Pokemon[] = [
     "isLegendary": false,
     "isMythical": false,
     "sprite": "/sprites/300.png"
-  },
+  }
+]
+
+const pokemonDataChunk4: Pokemon[] = [
   {
     "id": 301,
     "name": "Delcatty",
@@ -9446,7 +9455,10 @@ export const pokemonData: Pokemon[] = [
     "isLegendary": false,
     "isMythical": false,
     "sprite": "/sprites/400.png"
-  },
+  }
+]
+
+const pokemonDataChunk5: Pokemon[] = [
   {
     "id": 401,
     "name": "Kricketot",
@@ -11794,7 +11806,10 @@ export const pokemonData: Pokemon[] = [
     "isLegendary": false,
     "isMythical": false,
     "sprite": "/sprites/500.png"
-  },
+  }
+]
+
+const pokemonDataChunk6: Pokemon[] = [
   {
     "id": 501,
     "name": "Oshawott",
@@ -14136,7 +14151,10 @@ export const pokemonData: Pokemon[] = [
     "isLegendary": false,
     "isMythical": false,
     "sprite": "/sprites/600.png"
-  },
+  }
+]
+
+const pokemonDataChunk7: Pokemon[] = [
   {
     "id": 601,
     "name": "Klinklang",
@@ -16491,7 +16509,10 @@ export const pokemonData: Pokemon[] = [
     "isLegendary": false,
     "isMythical": false,
     "sprite": "/sprites/700.png"
-  },
+  }
+]
+
+const pokemonDataChunk8: Pokemon[] = [
   {
     "id": 701,
     "name": "Hawlucha",
@@ -18856,7 +18877,10 @@ export const pokemonData: Pokemon[] = [
     "isLegendary": true,
     "isMythical": false,
     "sprite": "/sprites/800.png"
-  },
+  }
+]
+
+const pokemonDataChunk9: Pokemon[] = [
   {
     "id": 801,
     "name": "Magearna",
@@ -21200,7 +21224,10 @@ export const pokemonData: Pokemon[] = [
     "isLegendary": false,
     "isMythical": false,
     "sprite": "/sprites/900.png"
-  },
+  }
+]
+
+const pokemonDataChunk10: Pokemon[] = [
   {
     "id": 901,
     "name": "Ursaluna",
@@ -23559,7 +23586,10 @@ export const pokemonData: Pokemon[] = [
     "isLegendary": false,
     "isMythical": false,
     "sprite": "/sprites/1000.png"
-  },
+  }
+]
+
+const pokemonDataChunk11: Pokemon[] = [
   {
     "id": 1001,
     "name": "Wo Chien",
@@ -24159,3 +24189,5 @@ export const pokemonData: Pokemon[] = [
     "sprite": "/sprites/1025.png"
   }
 ]
+
+export const pokemonData: Pokemon[] = [pokemonDataChunk1, pokemonDataChunk2, pokemonDataChunk3, pokemonDataChunk4, pokemonDataChunk5, pokemonDataChunk6, pokemonDataChunk7, pokemonDataChunk8, pokemonDataChunk9, pokemonDataChunk10, pokemonDataChunk11].flat()
