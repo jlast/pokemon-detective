@@ -413,7 +413,7 @@ const getEvolutionChainBadgeLabel = (potential: EvolutionPotential): string => {
   }
 }
 
-const pokemonRegions: PokemonRegion[] = ['Kanto', 'Johto', 'Hoenn', 'Sinnoh']
+const pokemonRegions: PokemonRegion[] = [...new Set(pokemonData.map((pokemon) => pokemon.region))]
 
 const createRegionGroup = (region: PokemonRegion, pokemonId: number): PokemonRegion[] => {
   const otherRegions = pokemonRegions.filter((candidateRegion) => candidateRegion !== region)

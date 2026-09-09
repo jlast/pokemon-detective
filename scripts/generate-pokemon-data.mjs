@@ -9,17 +9,24 @@ const outputPath = path.join(projectRoot, 'src/data/pokemon.ts')
 
 const API_ROOT = 'https://pokeapi.co/api/v2'
 const POKEDOKU_POKEMON_URL = 'https://www.pokedoku-helper.com/data/pokemon.json'
-const GENERATIONS = [1, 2, 3, 4]
+const GENERATIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 const CONCURRENCY = 16
 
-const starterIds = new Set([1, 4, 7, 152, 155, 158, 252, 255, 258, 387, 390, 393])
+const starterIds = new Set([1, 4, 7, 152, 155, 158, 252, 255, 258, 387, 390, 393, 495, 498, 501, 650, 653, 656, 722, 725, 728, 810, 813, 816, 906, 909, 912])
 
 const regionByGeneration = {
   'generation-i': 'Kanto',
   'generation-ii': 'Johto',
   'generation-iii': 'Hoenn',
   'generation-iv': 'Sinnoh',
+  'generation-v': 'Unova',
+  'generation-vi': 'Kalos',
+  'generation-vii': 'Alola',
+  'generation-viii': 'Galar',
+  'generation-ix': 'Paldea',
 }
+
+const supportedRegions = new Set(['Kanto', 'Johto', 'Hoenn', 'Sinnoh', 'Unova', 'Kalos', 'Alola', 'Galar', 'Hisui', 'Paldea'])
 
 const supportedTypes = new Set([
   'bug',
@@ -150,10 +157,13 @@ const visitEvolutionNode = (node, stage, chainMap) => {
 
 const serializeDataFile = (pokemonEntries) => {
   const typeUnion = [...new Set(pokemonEntries.flatMap((entry) => entry.types))].sort()
+  const regionUnion = [...new Set(pokemonEntries.map((entry) => entry.region))].sort()
 
   return `export type PokemonType =\n${typeUnion
     .map((type) => `  | '${type}'`)
-    .join('\n')}\n\nexport type PokemonRegion = 'Kanto' | 'Johto' | 'Hoenn' | 'Sinnoh'\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite?: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`/sprites/shiny/\${pokemonId}.png\`\n\nexport const pokemonData: Pokemon[] = ${JSON.stringify(pokemonEntries, null, 2)}\n`
+    .join('\n')}\n\nexport type PokemonRegion =\n${regionUnion
+    .map((region) => `  | '${region}'`)
+    .join('\n')}\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite?: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`/sprites/shiny/\${pokemonId}.png\`\n\nexport const pokemonData: Pokemon[] = ${JSON.stringify(pokemonEntries, null, 2)}\n`
 }
 
 const main = async () => {
@@ -161,6 +171,11 @@ const main = async () => {
     GENERATIONS.map((generation) => fetchJson(`${API_ROOT}/generation/${generation}/`)),
   )
   const pokedokuPokemon = await fetchJson(POKEDOKU_POKEMON_URL)
+  const pokedokuDefaultEntryById = new Map(
+    pokedokuPokemon
+      .filter((entry) => entry.formId === entry.id)
+      .map((entry) => [entry.id, entry]),
+  )
 
   const speciesEntries = generationResponses.flatMap((generationResponse) =>
     generationResponse.pokemon_species.map((species) => ({
@@ -194,6 +209,8 @@ const main = async () => {
     const species = speciesDetails[index]
     const evolution = evolutionMap.get(id) ?? createEmptyEvolutionEntry()
     const pokedokuEvolution = pokedokuEvolutionMap.get(id)
+    const pokedokuRegion = pokedokuDefaultEntryById.get(id)?.region?.[0]
+    const resolvedRegion = pokedokuRegion ?? region
     const statByName = Object.fromEntries(pokemon.stats.map((entry) => [entry.stat.name, entry.base_stat]))
     const types = pokemon.types
       .slice()
@@ -206,10 +223,14 @@ const main = async () => {
       }
     }
 
+    if (!supportedRegions.has(resolvedRegion)) {
+      throw new Error(`Unsupported region '${resolvedRegion}' for Pokemon ${pokemon.name}`)
+    }
+
     return {
       id,
       name: toTitleCase(pokemon.name),
-      region,
+      region: resolvedRegion,
       types,
       heightM: pokemon.height / 10,
       weightKg: pokemon.weight / 10,

@@ -10,7 +10,7 @@ const projectRoot = path.resolve(__dirname, '..')
 const SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon'
 const OUTPUT_DIR = path.join(projectRoot, 'public', 'sprites')
 const CONCURRENCY = 4
-const MAX_ID = 493
+const MAX_ID = 1025
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
