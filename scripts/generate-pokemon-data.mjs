@@ -8,6 +8,7 @@ const projectRoot = path.resolve(__dirname, '..')
 const outputPath = path.join(projectRoot, 'src/data/pokemon.ts')
 
 const API_ROOT = 'https://pokeapi.co/api/v2'
+const POKEDOKU_POKEMON_URL = 'https://www.pokedoku-helper.com/data/pokemon.json'
 const GENERATIONS = [1, 2, 3, 4]
 const CONCURRENCY = 16
 
@@ -81,6 +82,52 @@ const createEmptyEvolutionEntry = () => ({
   evolvesByStone: false,
 })
 
+const createPokedokuEvolutionMap = (pokedokuEntries) => {
+  const defaultEntryById = new Map(
+    pokedokuEntries
+      .filter((entry) => entry.formId === entry.id && entry.evolutionStage)
+      .map((entry) => [entry.id, entry]),
+  )
+  const entryByFormId = new Map(pokedokuEntries.map((entry) => [entry.formId, entry]))
+  const stageByFormId = new Map()
+  const lineStagesByFormId = new Map()
+
+  const getStage = (entry, seenFormIds = new Set()) => {
+    const cached = stageByFormId.get(entry.formId)
+    if (cached) return cached
+    if (seenFormIds.has(entry.formId)) return 1
+
+    const parentStages = (entry.evolution?.from ?? [])
+      .map((formId) => entryByFormId.get(formId))
+      .filter(Boolean)
+      .map((parentEntry) => getStage(parentEntry, new Set([...seenFormIds, entry.formId])))
+    const stage = parentStages.length > 0 ? Math.max(...parentStages) + 1 : 1
+
+    stageByFormId.set(entry.formId, stage)
+    return stage
+  }
+
+  const getLineStages = (entry) => {
+    const cached = lineStagesByFormId.get(entry.formId)
+    if (cached) return cached
+
+    const stage = getStage(entry)
+    const childStages = (entry.evolution?.to ?? [])
+      .map((formId) => entryByFormId.get(formId))
+      .filter(Boolean)
+      .map(getLineStages)
+    const lineStages = childStages.length > 0 ? Math.max(stage, ...childStages) : stage
+
+    lineStagesByFormId.set(entry.formId, lineStages)
+    return lineStages
+  }
+
+  return new Map([...defaultEntryById].map(([id, entry]) => [id, {
+    stage: getStage(entry),
+    lineStages: getLineStages(entry),
+  }]))
+}
+
 const visitEvolutionNode = (node, stage, chainMap) => {
   const speciesId = parseIdFromUrl(node.species.url)
   const evolvesByStone = node.evolves_to.some((evolution) =>
@@ -106,13 +153,14 @@ const serializeDataFile = (pokemonEntries) => {
 
   return `export type PokemonType =\n${typeUnion
     .map((type) => `  | '${type}'`)
-    .join('\n')}\n\nexport type PokemonRegion = 'Kanto' | 'Johto' | 'Hoenn' | 'Sinnoh'\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`/sprites/shiny/\${pokemonId}.png\`\n\nexport const pokemonData: Pokemon[] = ${JSON.stringify(pokemonEntries, null, 2)}\n`
+    .join('\n')}\n\nexport type PokemonRegion = 'Kanto' | 'Johto' | 'Hoenn' | 'Sinnoh'\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite?: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`/sprites/shiny/\${pokemonId}.png\`\n\nexport const pokemonData: Pokemon[] = ${JSON.stringify(pokemonEntries, null, 2)}\n`
 }
 
 const main = async () => {
   const generationResponses = await Promise.all(
     GENERATIONS.map((generation) => fetchJson(`${API_ROOT}/generation/${generation}/`)),
   )
+  const pokedokuPokemon = await fetchJson(POKEDOKU_POKEMON_URL)
 
   const speciesEntries = generationResponses.flatMap((generationResponse) =>
     generationResponse.pokemon_species.map((species) => ({
@@ -135,6 +183,7 @@ const main = async () => {
   const evolutionChains = await runWithConcurrency(evolutionChainUrls, (url) => fetchJson(url))
 
   const evolutionMap = new Map()
+  const pokedokuEvolutionMap = createPokedokuEvolutionMap(pokedokuPokemon)
 
   for (const chain of evolutionChains) {
     visitEvolutionNode(chain.chain, 1, evolutionMap)
@@ -144,6 +193,7 @@ const main = async () => {
     const pokemon = pokemonDetails[index]
     const species = speciesDetails[index]
     const evolution = evolutionMap.get(id) ?? createEmptyEvolutionEntry()
+    const pokedokuEvolution = pokedokuEvolutionMap.get(id)
     const statByName = Object.fromEntries(pokemon.stats.map((entry) => [entry.stat.name, entry.base_stat]))
     const types = pokemon.types
       .slice()
@@ -169,14 +219,13 @@ const main = async () => {
       specialAttack: statByName['special-attack'],
       specialDefense: statByName['special-defense'],
       speed: statByName.speed,
-      evolutionStage: Math.min(evolution.stage, 3),
-      evolutionLineStages: Math.min(evolution.lineStages, 3),
+      evolutionStage: Math.min(pokedokuEvolution?.stage ?? evolution.stage, 3),
+      evolutionLineStages: Math.min(pokedokuEvolution?.lineStages ?? evolution.lineStages, 3),
       evolvesByStone: evolution.evolvesByStone,
       isStarter: starterIds.has(id),
       isLegendary: species.is_legendary,
       isMythical: species.is_mythical,
       sprite: `/sprites/${id}.png`,
-      shinySprite: `/sprites/shiny/${id}.png`,
     }
   })
 
