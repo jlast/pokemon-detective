@@ -417,8 +417,11 @@ const pokemonRegions: PokemonRegion[] = [...new Set(pokemonData.map((pokemon) =>
 
 const createRegionGroup = (region: PokemonRegion, pokemonId: number): PokemonRegion[] => {
   const otherRegions = pokemonRegions.filter((candidateRegion) => candidateRegion !== region)
-  const partnerRegion = otherRegions[pokemonId % otherRegions.length] ?? otherRegions[0]
-  return [region, partnerRegion].filter((candidateRegion): candidateRegion is PokemonRegion => Boolean(candidateRegion))
+  const partnerRegions = [0, 1]
+    .map((offset) => otherRegions[(pokemonId + offset) % otherRegions.length])
+    .filter((candidateRegion): candidateRegion is PokemonRegion => Boolean(candidateRegion))
+
+  return [region, ...partnerRegions]
 }
 
 const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, typeClueGroups?: TypeClueGroups, activeEvidenceId?: string): PokemonCaseProfile => {
@@ -888,7 +891,7 @@ const getEvidenceObservation = (clue: EvidenceClue, profile: PokemonCaseProfile,
       return {
         title,
         observation: `Regional traces at the scene pointed toward ${formatList(profile.regionGroup)}.`,
-        interpretation: `That points toward a suspect first discovered in either region.`,
+        interpretation: `That points toward a suspect first discovered in one of those regions.`,
       }
     case 'evolutionChain':
       return {
