@@ -5445,6 +5445,10 @@
   transform: translateY(-2px);
 }
 
+.difficulty-binder.is-completed {
+  filter: drop-shadow(0 14px 22px rgba(47, 35, 21, 0.13)) drop-shadow(0 0 0 rgba(75, 143, 40, 0.22));
+}
+
 .difficulty-binder:focus-visible {
   outline: 3px solid rgba(31, 45, 71, 0.28);
   outline-offset: 4px;
@@ -5523,6 +5527,29 @@
 .difficulty-select-card__bottom {
   align-self: end;
   gap: 0.45rem;
+}
+
+.difficulty-select-card__check {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 2px solid rgba(255, 253, 247, 0.9);
+  border-radius: 999px;
+  background: #4b8f28;
+  color: #fffdf7;
+  box-shadow: 0 8px 18px rgba(47, 35, 21, 0.18);
+  font-size: 1.15rem;
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.difficulty-select-card--hard .difficulty-select-card__check {
+  background: #334a8f;
 }
 
 .difficulty-select-card::before {

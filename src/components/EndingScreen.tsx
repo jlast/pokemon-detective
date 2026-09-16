@@ -21,7 +21,8 @@ const formatCountdown = (milliseconds: number) => {
 }
 
 const ratingOptions = [1, 2, 3, 4, 5]
-const SOLVED_CASE_IDS_KEY = 'pokemystery:solved-case-ids'
+const COMPLETED_CASE_IDS_KEY = 'pokemystery:completed-case-ids'
+const LEGACY_SOLVED_CASE_IDS_KEY = 'pokemystery:solved-case-ids'
 
 const getCaseDate = (caseId: string): string => caseId.slice(0, 10)
 
@@ -33,24 +34,24 @@ const getCaseDifficulty = (caseId: string, fallbackDifficulty: Case['difficulty'
   return fallbackDifficulty === 'hard' ? 'hard' : 'easy'
 }
 
-const getStoredSolvedCaseIds = (): string[] => {
+const getStoredCaseIds = (key: string): string[] => {
   if (typeof window === 'undefined') return []
 
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(SOLVED_CASE_IDS_KEY) ?? '[]')
+    const parsed = JSON.parse(window.localStorage.getItem(key) ?? '[]')
     return Array.isArray(parsed) ? parsed.filter((caseId): caseId is string => typeof caseId === 'string') : []
   } catch {
     return []
   }
 }
 
-const storeSolvedCaseId = (caseId: string): void => {
+const storeCompletedCaseId = (caseId: string): void => {
   if (typeof window === 'undefined') return
 
-  const solvedCaseIds = getStoredSolvedCaseIds()
-  if (solvedCaseIds.includes(caseId)) return
+  const completedCaseIds = getStoredCaseIds(COMPLETED_CASE_IDS_KEY)
+  if (completedCaseIds.includes(caseId)) return
 
-  window.localStorage.setItem(SOLVED_CASE_IDS_KEY, JSON.stringify([...solvedCaseIds, caseId]))
+  window.localStorage.setItem(COMPLETED_CASE_IDS_KEY, JSON.stringify([...completedCaseIds, caseId]))
 }
 
 interface EndingScreenProps {
@@ -154,8 +155,8 @@ export function EndingScreen({
   useEffect(() => {
     if (!isFinished) return
 
-    if (isSolved) storeSolvedCaseId(caseId)
-  }, [caseId, isFinished, isSolved])
+    storeCompletedCaseId(caseId)
+  }, [caseId, isFinished])
 
   useEffect(() => {
     if (!isFinished) return
@@ -165,7 +166,9 @@ export function EndingScreen({
         const solvedCaseIds = history.items
           .filter((item) => item.status === 'solved')
           .map((item) => item.caseId)
-        for (const solvedCaseId of solvedCaseIds) storeSolvedCaseId(solvedCaseId)
+        for (const solvedCaseId of [...getStoredCaseIds(LEGACY_SOLVED_CASE_IDS_KEY), ...solvedCaseIds]) {
+          storeCompletedCaseId(solvedCaseId)
+        }
         setHasSolvedOtherCase(solvedCaseIds.includes(otherCaseId))
       })
       .catch(() => setHasSolvedOtherCase(false))

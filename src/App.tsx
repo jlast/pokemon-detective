@@ -225,10 +225,29 @@ const AppFooter = () => (
 
 interface DifficultySelectScreenProps {
   onSelectDifficulty: (difficulty: DailyPuzzleDifficulty) => void
+  completedCaseIds: readonly string[]
+  caseDate: string
 }
 
 const easySilhouettePokemonIds = [1, 4, 7, 133, 152, 158]
 const hardSilhouettePokemonIds = [6, 9, 149, 248, 254, 257, 260, 376, 445]
+const COMPLETED_CASE_IDS_KEY = 'pokemystery:completed-case-ids'
+const LEGACY_SOLVED_CASE_IDS_KEY = 'pokemystery:solved-case-ids'
+
+const getStoredCompletedCaseIds = (): string[] => {
+  if (typeof window === 'undefined') return []
+
+  const readCaseIds = (key: string): string[] => {
+    try {
+      const parsed = JSON.parse(window.localStorage.getItem(key) ?? '[]')
+      return Array.isArray(parsed) ? parsed.filter((caseId): caseId is string => typeof caseId === 'string') : []
+    } catch {
+      return []
+    }
+  }
+
+  return [...new Set([...readCaseIds(COMPLETED_CASE_IDS_KEY), ...readCaseIds(LEGACY_SOLVED_CASE_IDS_KEY)])]
+}
 
 const DifficultySilhouettes = ({ pokemonIds }: { pokemonIds: readonly number[] }) => (
   <div className="difficulty-silhouettes" aria-hidden="true">
@@ -240,59 +259,66 @@ const DifficultySilhouettes = ({ pokemonIds }: { pokemonIds: readonly number[] }
   </div>
 )
 
-const DifficultySelectScreen = ({ onSelectDifficulty }: DifficultySelectScreenProps) => (
-  <div className="main-layout-single">
-    <section className="difficulty-select-screen">
-      <div className="difficulty-select-grid">
-        <button
-          type="button"
-          className="difficulty-binder difficulty-binder--easy"
-          onClick={() => onSelectDifficulty('easy')}
-        >
-          <span className="difficulty-binder__spine" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </span>
-          <span className="difficulty-select-card difficulty-select-card--easy">
-            <span className="difficulty-select-card__top">
-              <strong>Easy</strong>
-              <span className="difficulty-select-card__meta">6 suspects</span>
-              <DifficultySilhouettes pokemonIds={easySilhouettePokemonIds} />
-            </span>
-            <span className="difficulty-select-card__bottom">
-              <span className="difficulty-select-card__copy">More varied suspects</span>
-              <span className="difficulty-select-card__action">Open case →</span>
-            </span>
-          </span>
-        </button>
+const DifficultySelectScreen = ({ onSelectDifficulty, completedCaseIds, caseDate }: DifficultySelectScreenProps) => {
+  const isEasyCompleted = completedCaseIds.includes(getDailyCaseId(caseDate, 'easy'))
+  const isHardCompleted = completedCaseIds.includes(getDailyCaseId(caseDate, 'hard'))
 
-        <button
-          type="button"
-          className="difficulty-binder difficulty-binder--hard"
-          onClick={() => onSelectDifficulty('hard')}
-        >
-          <span className="difficulty-binder__spine" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </span>
-          <span className="difficulty-select-card difficulty-select-card--hard">
-            <span className="difficulty-select-card__top">
-              <strong>Hard</strong>
-              <span className="difficulty-select-card__meta">9 suspects</span>
-              <DifficultySilhouettes pokemonIds={hardSilhouettePokemonIds} />
+  return (
+    <div className="main-layout-single">
+      <section className="difficulty-select-screen">
+        <div className="difficulty-select-grid">
+          <button
+            type="button"
+            className={`difficulty-binder difficulty-binder--easy ${isEasyCompleted ? 'is-completed' : ''}`}
+            onClick={() => onSelectDifficulty('easy')}
+          >
+            <span className="difficulty-binder__spine" aria-hidden="true">
+              <span />
+              <span />
+              <span />
             </span>
-            <span className="difficulty-select-card__bottom">
-              <span className="difficulty-select-card__copy">More similar suspects</span>
-              <span className="difficulty-select-card__action">Open case →</span>
+            <span className="difficulty-select-card difficulty-select-card--easy">
+              {isEasyCompleted ? <span className="difficulty-select-card__check" aria-label="Completed">✓</span> : null}
+              <span className="difficulty-select-card__top">
+                <strong>Easy</strong>
+                <span className="difficulty-select-card__meta">6 suspects</span>
+                <DifficultySilhouettes pokemonIds={easySilhouettePokemonIds} />
+              </span>
+              <span className="difficulty-select-card__bottom">
+                <span className="difficulty-select-card__copy">More varied suspects</span>
+                <span className="difficulty-select-card__action">{isEasyCompleted ? 'Review case →' : 'Open case →'}</span>
+              </span>
             </span>
-          </span>
-        </button>
-      </div>
-    </section>
-  </div>
-)
+          </button>
+
+          <button
+            type="button"
+            className={`difficulty-binder difficulty-binder--hard ${isHardCompleted ? 'is-completed' : ''}`}
+            onClick={() => onSelectDifficulty('hard')}
+          >
+            <span className="difficulty-binder__spine" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
+            <span className="difficulty-select-card difficulty-select-card--hard">
+              {isHardCompleted ? <span className="difficulty-select-card__check" aria-label="Completed">✓</span> : null}
+              <span className="difficulty-select-card__top">
+                <strong>Hard</strong>
+                <span className="difficulty-select-card__meta">9 suspects</span>
+                <DifficultySilhouettes pokemonIds={hardSilhouettePokemonIds} />
+              </span>
+              <span className="difficulty-select-card__bottom">
+                <span className="difficulty-select-card__copy">More similar suspects</span>
+                <span className="difficulty-select-card__action">{isHardCompleted ? 'Review case →' : 'Open case →'}</span>
+              </span>
+            </span>
+          </button>
+        </div>
+      </section>
+    </div>
+  )
+}
 
 function App() {
   const location = useLocation()
@@ -1083,7 +1109,11 @@ function App() {
               handleLogout()
             }}
           />
-          <DifficultySelectScreen onSelectDifficulty={selectPuzzleDifficulty} />
+          <DifficultySelectScreen
+            onSelectDifficulty={selectPuzzleDifficulty}
+            completedCaseIds={getStoredCompletedCaseIds()}
+            caseDate={activeCaseDate}
+          />
           <AppFooter />
         </div>
       </main>
