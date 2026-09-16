@@ -50,6 +50,13 @@ const getPlayerClueBadgeGroups = (player: AdminProgressPlayer) => (
   )))
 )
 
+interface ClueUsageRow {
+  clueType: string
+  easy: number
+  hard: number
+  total: number
+}
+
 const getCaseStats = (adminCase: AdminCaseProgressCase) => ({
   total: adminCase.players.length,
   solved: adminCase.players.filter((player) => player.status === 'solved').length,
@@ -58,7 +65,7 @@ const getCaseStats = (adminCase: AdminCaseProgressCase) => ({
 })
 
 export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
-  const [activeTab, setActiveTab] = useState<'statistics' | 'mailing'>('statistics')
+  const [activeTab, setActiveTab] = useState<'statistics' | 'clues' | 'mailing'>('statistics')
   const [caseId, setCaseId] = useState(getTodayUtc)
   const [progress, setProgress] = useState<AdminCaseProgressResponse | null>(null)
   const [loading, setLoading] = useState(authed)
@@ -114,6 +121,31 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
     }
   }, [progress])
 
+  const clueUsageRows = useMemo<ClueUsageRow[]>(() => {
+    const counts = new Map<string, { easy: number; hard: number }>()
+
+    for (const adminCase of progress?.cases ?? []) {
+      if (adminCase.difficulty !== 'easy' && adminCase.difficulty !== 'hard') continue
+
+      for (const player of adminCase.players) {
+        for (const group of getPlayerClueBadgeGroups(player)) {
+          const current = counts.get(group.hintType) ?? { easy: 0, hard: 0 }
+          current[adminCase.difficulty] += 1
+          counts.set(group.hintType, current)
+        }
+      }
+    }
+
+    return [...counts.entries()]
+      .map(([clueType, count]) => ({
+        clueType,
+        easy: count.easy,
+        hard: count.hard,
+        total: count.easy + count.hard,
+      }))
+      .sort((left, right) => right.total - left.total || left.clueType.localeCompare(right.clueType))
+  }, [progress])
+
   const sendMailing = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setMailingStatus('sending')
@@ -166,14 +198,16 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
         <div className="admin-page__header">
           <div>
             <p className="eyebrow">Admin desk</p>
-            <h2>{activeTab === 'statistics' ? 'User puzzle details' : 'Mailing'}</h2>
+            <h2>{activeTab === 'mailing' ? 'Mailing' : activeTab === 'clues' ? 'Clue usage' : 'User puzzle details'}</h2>
             <p className="subtle-text">
-              {activeTab === 'statistics'
-                ? 'Open every recorded player puzzle for a selected UTC date.'
-                : 'Send a plain news email to users who allow news and update emails.'}
+              {activeTab === 'mailing'
+                ? 'Send a plain news email to users who allow news and update emails.'
+                : activeTab === 'clues'
+                  ? 'See how often each clue type was used, split between easy and hard puzzles.'
+                  : 'Open every recorded player puzzle for a selected UTC date.'}
             </p>
           </div>
-          {activeTab === 'statistics' ? (
+          {activeTab !== 'mailing' ? (
             <label className="admin-page__date-field">
               <span>Case date</span>
               <input
@@ -194,6 +228,15 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
             onClick={() => setActiveTab('statistics')}
           >
             Puzzle statistics
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'clues'}
+            className={activeTab === 'clues' ? 'admin-page__tab is-active' : 'admin-page__tab'}
+            onClick={() => setActiveTab('clues')}
+          >
+            Clue usage
           </button>
           <button
             type="button"
@@ -279,6 +322,35 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
           <p className="placeholder-page">Loading admin case records...</p>
         ) : error ? (
           <p className="placeholder-page" role="status">{error}</p>
+        ) : activeTab === 'clues' && progress ? (
+          <>
+            <div className="admin-page__summary" aria-label="Clue usage summary">
+              <span>{progress.date} UTC</span>
+              <span>{clueUsageRows.reduce((sum, row) => sum + row.easy, 0)} easy clues</span>
+              <span>{clueUsageRows.reduce((sum, row) => sum + row.hard, 0)} hard clues</span>
+            </div>
+
+            {clueUsageRows.length === 0 ? (
+              <p className="placeholder-page">No clue usage has been recorded for this date.</p>
+            ) : (
+              <div className="admin-clue-usage" role="table" aria-label="Clue usage by difficulty">
+                <div className="admin-clue-usage__row admin-clue-usage__row--header" role="row">
+                  <span role="columnheader">Clue type</span>
+                  <span role="columnheader">Easy</span>
+                  <span role="columnheader">Hard</span>
+                  <span role="columnheader">Total</span>
+                </div>
+                {clueUsageRows.map((row) => (
+                  <div key={row.clueType} className="admin-clue-usage__row" role="row">
+                    <span role="cell">{row.clueType}</span>
+                    <span role="cell">{row.easy}</span>
+                    <span role="cell">{row.hard}</span>
+                    <span role="cell">{row.total}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         ) : progress ? (
           <>
             <div className="admin-page__summary" aria-label="Case progress summary">
@@ -296,12 +368,19 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
                   const caseStats = getCaseStats(adminCase)
 
                   return (
-                    <section key={adminCase.caseId} className="admin-case-section">
+                    <details
+                      key={adminCase.caseId}
+                      className={`admin-case-section admin-case-section--${adminCase.difficulty}`}
+                      open
+                    >
+                      <summary className="admin-case-section__summary">
+                        <span className="admin-case-section__difficulty">{formatDifficulty(adminCase.difficulty)}</span>
+                        <span className="admin-case-section__title">{adminCase.caseTitle}</span>
+                        <span className="admin-case-section__count">{caseStats.total} players</span>
+                      </summary>
+
                       <div className="admin-page__case-note">
-                        <strong>{formatDifficulty(adminCase.difficulty)}</strong>
-                        <span>{adminCase.caseTitle}</span>
                         <span>Culprit: {adminCase.culpritPokemonName}</span>
-                        <span>{caseStats.total} players</span>
                         <span>{caseStats.solved} solved</span>
                         <span>{caseStats.failed} failed</span>
                         <span>{caseStats.playing} playing</span>
@@ -362,7 +441,7 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
                           ))}
                         </div>
                       )}
-                    </section>
+                    </details>
                   )
                 })}
               </div>
