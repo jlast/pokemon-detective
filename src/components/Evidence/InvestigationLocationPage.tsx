@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { getSolutionClueHintType, type Location } from '../../game/caseModel'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
+import { getLocationIcon } from '../../game/locationIcons'
 import { pokemonData } from '../../data/pokemon'
 import { TODAY_INVESTIGATION_PATH, TODAY_SUSPECTS_PATH } from '../../paths'
 import { InvestigationActionChooser } from './InvestigationActionChooser'
@@ -81,8 +82,8 @@ export function InvestigationLocationPage({
     ? primaryEvidenceBadgeText.slice(primaryEvidenceBadgeSeparator + 1).trim()
     : evidenceBadgeValues.join(' / ')
   const evidenceIcon = hasEvidence ? getEvidenceIcon(location.evidenceId, evidenceTitle) : null
+  const locationIcon = getLocationIcon(location.name, location.icon)
   const compactTeaserText = getCompactTeaserText(location)
-  const searchesUsed = resolvedCount + (location.investigated ? 0 : 1)
   const witnessPokemon = location.witnessPokemonId
     ? pokemonData.find((pokemon) => pokemon.id === location.witnessPokemonId)
     : null
@@ -113,16 +114,18 @@ export function InvestigationLocationPage({
   return (
     <section className="notebook-card active-investigation-panel investigation-location-page">
       {!location.investigated ? (
-        <div className="decision-briefing">
-          <div className="decision-briefing__copy">
-            <span className="decision-briefing__kicker">Decision point</span>
-            <h2>Choose one lead.</h2>
-            <p>{location.name}: {compactTeaserText}</p>
-          </div>
-          <div className="decision-briefing__meta" aria-label="Investigation status">
-            <span><strong>{pointsLeft}</strong> searches left</span>
-            <span><strong>{searchesUsed}</strong>/{totalLocations} queued</span>
-            <span className="location-status-stamp is-idle">{statusLabel}</span>
+        <div className="active-investigation-location">
+          <span className="location-icon" aria-hidden="true">
+            {locationIcon}
+          </span>
+          <div className="location-heading-copy">
+            <div className="location-title-row">
+              <h2 className="location-name">{location.name}</h2>
+              <span className="location-status-stamp is-idle">
+                {statusLabel}
+              </span>
+            </div>
+            <p className="location-description">{compactTeaserText}</p>
           </div>
         </div>
       ) : null}
