@@ -366,9 +366,7 @@ export function EndingScreen({
               >
                 <span className="case-result-progress__fill" style={{ width: `${correctGuessRatePercent ?? 0}%` }}></span>
               </div>
-              <small>
-                {formatCorrectGuessRate(displayCaseStats)} · {displayCaseStats.solvedCount}/{displayCaseStats.totalGuessCount} correct guesses
-              </small>
+              <small>{formatCorrectGuessRate(displayCaseStats)}</small>
             </div>
           </div>
         </section>
