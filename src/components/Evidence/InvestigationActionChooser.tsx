@@ -103,8 +103,9 @@ export function InvestigationActionChooser({
   return (
     <div className="investigation-action-chooser">
       <div className="investigation-action-header">
-        <h3>Which clue will you follow?</h3>
-        <p className="investigation-action-hint">Choose one lead to investigate.</p>
+        <span className="investigation-action-kicker">Choose your angle</span>
+        <h3>Commit to one line of inquiry.</h3>
+        <p className="investigation-action-hint">Each lead filters the scene through a different kind of evidence.</p>
         {noActionsRemaining ? <p className="investigation-action-hint">No actions remaining.</p> : null}
       </div>
       <div className="location-leads">

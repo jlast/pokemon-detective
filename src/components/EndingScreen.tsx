@@ -61,6 +61,8 @@ interface EndingScreenProps {
   caseStats: CaseStatsResponse | null
   caseStreak: number
   playerGuessCount?: number
+  authed: boolean
+  onLogin: () => void
 }
 
 const getDisplayCaseStats = (
@@ -99,6 +101,8 @@ export function EndingScreen({
   caseStats,
   caseStreak,
   playerGuessCount,
+  authed,
+  onLogin,
 }: EndingScreenProps) {
   const [timeUntilNextCase, setTimeUntilNextCase] = useState(getMsUntilNextUtcDay)
   const [enjoymentRating, setEnjoymentRating] = useState<number | null>(null)
@@ -248,6 +252,19 @@ export function EndingScreen({
           ) : null}
         </div>
       </section>
+
+      {!authed ? (
+        <section className="login-incentive-card login-incentive-card--ending" aria-labelledby="ending-login-title">
+          <span className="login-incentive-card__stamp" aria-hidden="true">Save This Case</span>
+          <div className="login-incentive-card__copy">
+            <h2 id="ending-login-title">Sign in to keep this result</h2>
+            <p>Save your case history, protect your streak, and build your Pokédex as new cases arrive.</p>
+          </div>
+          <button type="button" className="primary-button login-incentive-card__button" onClick={onLogin}>
+            <span className="login-incentive-card__button-label">Sign in</span>
+          </button>
+        </section>
+      ) : null}
 
       <div className="post-hero-utility-row">
         {isFinished && !hasSolvedOtherCase ? (

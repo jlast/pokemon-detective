@@ -9,6 +9,8 @@ interface EndingRouteProps {
   caseStats: CaseStatsResponse | null
   caseStreak: number
   playerGuessCount: number
+  authed: boolean
+  onLogin: () => void
 }
 
 export function EndingRoute({
@@ -18,6 +20,8 @@ export function EndingRoute({
   caseStats,
   caseStreak,
   playerGuessCount,
+  authed,
+  onLogin,
 }: EndingRouteProps) {
   return (
     <div className="">
@@ -28,6 +32,8 @@ export function EndingRoute({
         caseStats={caseStats}
         caseStreak={caseStreak}
         playerGuessCount={playerGuessCount}
+        authed={authed}
+        onLogin={onLogin}
       />
     </div>
   )
