@@ -565,7 +565,9 @@ const getClueRuleValue = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, clue: 
     case 'groundTrace':
     case 'force':
     case 'witness':
-      return profile.clueType ?? ''
+      return clueProfile
+        ? pokemon.types.find((type) => getTypeClueGroup(clueProfile, clue.evidenceId).includes(type)) ?? profile.clueType ?? ''
+        : profile.clueType ?? ''
     case 'highestStat':
       return profile.highestStat
     case 'lowestStat':
