@@ -411,7 +411,10 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
                                     <div className="case-clue-list admin-case-clue-list">
                                       {getPlayerClueBadgeGroups(player).map((group) => (
                                         <div key={group.evidenceId ?? group.hintType} className="solution-clue-badge-group is-discovered">
-                                          <span className="solution-clue-badge-group__label">{group.hintType}</span>
+                                          <span className="solution-clue-badge-group__label">
+                                            {group.hintType}
+                                            {group.subtitle ? <span className="solution-clue-badge-group__subtitle">{group.subtitle}</span> : null}
+                                          </span>
                                           <EvidenceBadgeList badges={group.badges} />
                                         </div>
                                       ))}

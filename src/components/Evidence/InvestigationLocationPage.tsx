@@ -78,6 +78,7 @@ export function InvestigationLocationPage({
   const evidenceCategory = primaryEvidenceBadgeSeparator > 0
     ? primaryEvidenceBadgeText.slice(0, primaryEvidenceBadgeSeparator)
     : getSolutionClueHintType(selectedAction?.clueRule?.axis ?? 'scene') ?? selectedAction?.cluePreview.label ?? 'Evidence'
+  const evidenceSubtitle = selectedAction?.cluePreview.subtitle
   const evidenceValue = primaryEvidenceBadgeSeparator > 0
     ? primaryEvidenceBadgeText.slice(primaryEvidenceBadgeSeparator + 1).trim()
     : evidenceBadgeValues.join(' / ')
@@ -165,6 +166,7 @@ export function InvestigationLocationPage({
                 </div>
                 <div className="evidence-hero-copy">
                   <span className="evidence-category-badge">{evidenceCategory}</span>
+                  {evidenceSubtitle ? <span className="evidence-lead-card__subtitle">{evidenceSubtitle}</span> : null}
                   <h3>{evidenceValue}</h3>
                   <p>{evidenceText}</p>
                   {witnessPokemon ? (

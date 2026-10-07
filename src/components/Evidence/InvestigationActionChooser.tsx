@@ -20,6 +20,7 @@ interface EvidenceLeadCardProps {
   label: string
   description: string
   clueLabel: string
+  clueSubtitle?: string
   onFollow: () => void
   disabled?: boolean
   isFollowed?: boolean
@@ -32,6 +33,7 @@ function EvidenceLeadCard({
   label,
   description,
   clueLabel,
+  clueSubtitle,
   onFollow,
   disabled = false,
   isFollowed = false,
@@ -54,6 +56,7 @@ function EvidenceLeadCard({
         <span className="lead-value-pill">
           <strong>{clueLabel}</strong>
         </span>
+        {clueSubtitle ? <span className="evidence-lead-card__subtitle">{clueSubtitle}</span> : null}
         <span className="evidence-lead-card__label">{label}</span>
         <p className="lead-flavor">{description}</p>
       </div>
@@ -63,12 +66,12 @@ function EvidenceLeadCard({
   )
 }
 
-const getClueChoiceDescription = (clueLabel: string) => {
-  const normalizedLabel = clueLabel.toLowerCase()
+const getClueChoiceDescription = (clueLabel: string, clueSubtitle?: string) => {
+  const normalizedLabel = `${clueLabel} ${clueSubtitle ?? ''}`.toLowerCase()
 
   if (normalizedLabel.includes('entry')) return 'Look for signs of how it began.'
   if (normalizedLabel.includes('evolution')) return 'Check where evolution traits point.'
-  if (normalizedLabel.includes('trace')) return 'Study the marks left behind.'
+  if (normalizedLabel.includes('trace') || normalizedLabel.includes('ground')) return 'Study the marks left behind.'
   if (normalizedLabel.includes('witness') || normalizedLabel.includes('noticed')) return 'Ask what someone noticed nearby.'
   if (normalizedLabel.includes('residue') || normalizedLabel.includes('type')) return 'Inspect what was left on the scene.'
 
@@ -115,7 +118,7 @@ export function InvestigationActionChooser({
           const isFollowed = action.id === followedActionId
           const isAlreadyCollected = Boolean(
             (action.evidenceId && collectedEvidenceIdSet.has(action.evidenceId))
-            || collectedClueLabelSet.has(cluePreview.label),
+            || (!action.evidenceId && collectedClueLabelSet.has(cluePreview.label)),
           )
           const witnessPokemon = leadKind === 'question'
             ? (action.witnessPokemonIds ?? [])
@@ -165,6 +168,7 @@ export function InvestigationActionChooser({
                   <span className="lead-value-pill">
                     <strong>{cluePreview.label}</strong>
                   </span>
+                  {cluePreview.subtitle ? <span className="lead-option__description">{cluePreview.subtitle}</span> : null}
                   <span className="lead-option__pokemon-preview" aria-label="Available witness Pokemon">
                     <span className="lead-option__pokemon">
                       <span className="lead-option__pokemon-frame">
@@ -186,7 +190,8 @@ export function InvestigationActionChooser({
               visualType={presentation.visualType}
               paperStyle={presentation.paperStyle}
               label={presentation.displayLabel}
-              description={getClueChoiceDescription(cluePreview.label)}
+              description={getClueChoiceDescription(cluePreview.label, cluePreview.subtitle)}
+              clueSubtitle={cluePreview.subtitle}
               clueLabel={cluePreview.label}
               onFollow={() => chooseAction(action.id)}
               disabled={disabled || isFollowed || isAlreadyCollected}

@@ -66,6 +66,7 @@ export interface ClueRule {
 
 export interface CluePreview {
   label: string
+  subtitle?: string
 }
 
 export interface EvidenceBadgeData {
@@ -195,6 +196,7 @@ export interface Case {
 export interface ClueBadgeGroup {
   evidenceId?: string
   hintType: string
+  subtitle?: string
   badges: EvidenceBadgeData[]
 }
 
@@ -242,13 +244,13 @@ export const getClueHintType = (axis: ClueAxis): string | undefined => {
     case 'weight':
       return 'Track estimate'
     case 'type':
-      return 'Residue points to'
+      return 'Type clue'
     case 'groundTrace':
-      return 'Trace points to'
+      return 'Type clue'
     case 'force':
-      return 'Entry marks point to'
+      return 'Type clue'
     case 'witness':
-      return 'Witness account points to'
+      return 'Type clue'
     case 'highestStat':
       return 'Stat clue'
     case 'lowestStat':
@@ -271,13 +273,13 @@ export const getSolutionClueHintType = (axis: ClueAxis): string | undefined => {
     case 'weight':
       return 'Tracks'
     case 'type':
-      return 'Residue'
+      return 'Type clue'
     case 'groundTrace':
-      return 'Trace'
+      return 'Type clue'
     case 'force':
-      return 'Entry marks'
+      return 'Type clue'
     case 'witness':
-      return 'Witness'
+      return 'Type clue'
     case 'highestStat':
       return 'Stat'
     case 'lowestStat':
@@ -300,13 +302,13 @@ const getSolutionClueHintTypeFromEvidenceId = (evidenceId: string | undefined): 
     case 'weight-clue':
       return 'Tracks'
     case 'type-residue-clue':
-      return 'Residue'
+      return 'Type clue'
     case 'ground-trace-clue':
-      return 'Trace'
+      return 'Type clue'
     case 'force-clue':
-      return 'Entry marks'
+      return 'Type clue'
     case 'witness-clue':
-      return 'Witness'
+      return 'Type clue'
     case 'highest-stat-clue':
       return 'Stat'
     case 'lowest-stat-clue':
@@ -317,6 +319,21 @@ const getSolutionClueHintTypeFromEvidenceId = (evidenceId: string | undefined): 
       return 'Region'
     case 'evolution-chain-clue':
       return 'Evolution'
+    default:
+      return undefined
+  }
+}
+
+const getSolutionClueSubtitleFromEvidenceId = (evidenceId: string | undefined): string | undefined => {
+  switch (evidenceId) {
+    case 'type-residue-clue':
+      return 'Residue'
+    case 'ground-trace-clue':
+      return 'Ground marks'
+    case 'force-clue':
+      return 'Entry marks'
+    case 'witness-clue':
+      return 'Witness report'
     default:
       return undefined
   }
@@ -334,19 +351,19 @@ const normalizeSolutionHintType = (hintType: string): string => {
     case 'Residue clue':
     case 'Type residue clue':
     case 'Type clue':
-      return 'Residue'
+      return 'Type clue'
     case 'Trace points to':
     case 'Trace clue':
     case 'Type trace clue':
-      return 'Trace'
+      return 'Type clue'
     case 'Entry marks point to':
     case 'Entry mark clue':
     case 'Entry clue':
     case 'Type entry clue':
-      return 'Entry marks'
+      return 'Type clue'
     case 'Witness account points to':
     case 'Witness clue':
-      return 'Witness'
+      return 'Type clue'
     case 'Strength clue':
     case 'Stat clue':
       return 'Stat'
@@ -376,7 +393,7 @@ const inferClueHintType = (badge: EvidenceBadgeData): string => {
   if (badge.text.startsWith('Weak to') || badge.text.startsWith('Strong to')) return 'Reaction'
   if (badge.text.startsWith('Region:')) return 'Region'
   if (badge.text.startsWith('Evolution:')) return 'Evolution'
-  return badge.type ? 'Residue' : 'Solution'
+  return badge.type ? 'Type clue' : 'Solution'
 }
 
 export function getSolutionClueBadges(solution?: CaseSolution | null): EvidenceBadgeData[] {
@@ -414,7 +431,7 @@ export function getClueBadgeGroupsFromBadges(badges: EvidenceBadgeData[]): ClueB
   for (const badge of badges) {
     const hintType = inferClueHintType(badge)
     const key = badge.evidenceId ?? hintType
-    const group = groups.get(key) ?? { evidenceId: badge.evidenceId, hintType, badges: [] }
+    const group = groups.get(key) ?? { evidenceId: badge.evidenceId, hintType, subtitle: getSolutionClueSubtitleFromEvidenceId(badge.evidenceId), badges: [] }
     groups.set(key, { ...group, badges: [...group.badges, badge] })
   }
 

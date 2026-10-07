@@ -3654,6 +3654,21 @@
   text-transform: uppercase;
 }
 
+.evidence-lead-card__subtitle,
+.solution-clue-badge-group__subtitle {
+  display: block;
+  color: #7a8498;
+  font-size: 0.74rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.solution-clue-badge-group__subtitle {
+  margin-left: 1.35rem;
+}
+
 .evidence-lead-card__teaser,
 .lead-flavor {
   margin: 0;

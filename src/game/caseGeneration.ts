@@ -503,29 +503,6 @@ const formatList = (values: string[]): string => {
   return `${labels.slice(0, -1).join(', ')}, or ${labels.at(-1)}`
 }
 
-const getTypeClueLabel = (profile: PokemonCaseProfile): string => {
-  return getProfileLabel(profile.hasSecondaryType, profile.clueTypeSlot)
-}
-
-const getCategoryProfileLabel = (clue: EvidenceClue, profile: PokemonCaseProfile): string => {
-  const profileLabel = getTypeClueLabel(profile)
-
-  switch (clue.category) {
-    case 'typeResidue':
-      return `residue ${profileLabel}`
-    case 'groundTrace':
-      return `trace ${profileLabel}`
-    case 'force':
-      return `entry ${profileLabel}`
-    case 'witness':
-      return `witness ${profileLabel}`
-    case 'typeAffectedness':
-      return 'type reaction profile'
-    default:
-      return profileLabel
-  }
-}
-
 const getClueRule = (clue: EvidenceClue, profile: PokemonCaseProfile): ClueRule => {
   switch (clue.category) {
     case 'height':
@@ -786,13 +763,10 @@ const getCategoryConclusionFragment = (clue: EvidenceClue, profile: PokemonCaseP
     case 'weight':
       return `${profile.values.weightRequirement} enough to match the track depth`
     case 'typeResidue':
-      return `linked to ${typeGroup} residue profiles`
     case 'groundTrace':
-      return `linked to ${typeGroup} trace profiles`
     case 'force':
-      return `linked to ${typeGroup} entry profiles`
     case 'witness':
-      return `linked to ${typeGroup} witness profiles`
+      return `matched a type clue for ${typeGroup}`
     case 'highestStat':
       return `strong in ${profile.values.strongStatTrace}`
     case 'lowestStat':
@@ -817,7 +791,7 @@ const getCategoryDeductionText = (clue: EvidenceClue, profile: PokemonCaseProfil
     case 'groundTrace':
     case 'force':
     case 'witness':
-      return `This narrowed the ${getCategoryProfileLabel(clue, profile)} to ${typeGroup}.`
+      return `This type clue pointed to ${typeGroup}.`
     case 'highestStat':
       return `This suggested the culprit relied on ${profile.values.strongStatTrace}.`
     case 'lowestStat':
@@ -1031,13 +1005,10 @@ const getMismatchReason = (suspectId: number, culpritProfile: PokemonCaseProfile
     case 'weight':
       return `Did not fit the ${culpritProfile.values.weightRequirement} track clues.`
     case 'typeResidue':
-      return `Did not match the ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} residue profile.`
     case 'groundTrace':
-      return `Did not explain the ${culpritProfile.values.groundTrace} at the scene.`
     case 'force':
-      return `Did not fit the ${culpritProfile.values.forceTrace} at the point of entry.`
     case 'witness':
-      return `Did not match the witness account of someone ${culpritProfile.values.witnessDetail}.`
+      return `Did not match the ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} type clue.`
     case 'highestStat':
       return `Did not fit the signs of ${culpritProfile.values.strongStatTrace}.`
     case 'lowestStat':
@@ -1066,13 +1037,10 @@ const getMismatchEvidenceLabel = (suspectId: number, culpritProfile: PokemonCase
     case 'weight':
       return `Track mismatch: needed a ${culpritProfile.values.weightRequirement} Pokemon`
     case 'typeResidue':
-      return `Residue mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} profile`
     case 'groundTrace':
-      return `Ground trace mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} profile`
     case 'force':
-      return `Entry mark mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} profile`
     case 'witness':
-      return `Witness mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))} profile`
+      return `Type clue mismatch: expected ${formatList(getTypeClueGroup(culpritProfile, missingClue.evidenceId))}`
     case 'highestStat':
       return `Strength mismatch: needed ${formatLabel(culpritProfile.highestStat)}`
     case 'lowestStat':

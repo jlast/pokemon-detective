@@ -402,6 +402,7 @@ export function EndingScreen({
                   <span className="solution-clue-badge-group__label">
                     <span className="solution-clue-badge-group__status" aria-hidden="true">{discovered ? '✓' : '×'}</span>
                     {group.hintType}
+                    {group.subtitle ? <span className="solution-clue-badge-group__subtitle">{group.subtitle}</span> : null}
                   </span>
                   <EvidenceBadgeList badges={group.badges} />
                 </div>
