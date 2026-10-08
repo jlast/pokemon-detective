@@ -391,6 +391,18 @@ interface CloudWatchEvent {
   detail?: Record<string, unknown>
 }
 
+export const regenerateDailyCases = async (
+  date = getTodayUtc(),
+  difficulties: readonly CaseDifficulty[] = DAILY_DIFFICULTIES,
+): Promise<Array<{ caseId: string; configId: string; difficulty: CaseDifficulty }>> => (
+  Promise.all(difficulties.map(async (difficulty) => {
+    const caseId = getDailyCaseId(date, difficulty as typeof DAILY_DIFFICULTIES[number])
+    const generated = await generateAndStoreDailyCase(caseId, difficulty)
+    console.log(`Generated daily case ${caseId} using config "${generated.configId}" at ${generated.difficulty} difficulty`)
+    return { caseId, ...generated }
+  }))
+)
+
 export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: number; body: string }> => {
   try {
     const date = getTodayUtc()
@@ -401,12 +413,7 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       return { statusCode: 200, body: JSON.stringify({ caseId: date, reminders }) }
     }
 
-    const cases = await Promise.all(DAILY_DIFFICULTIES.map(async (difficulty) => {
-      const caseId = getDailyCaseId(date, difficulty)
-      const generated = await generateAndStoreDailyCase(caseId, difficulty)
-      console.log(`Generated daily case ${caseId} using config "${generated.configId}" at ${generated.difficulty} difficulty`)
-      return { caseId, ...generated }
-    }))
+    const cases = await regenerateDailyCases(date)
 
     const reminders = await sendDailyReminders(date)
 
