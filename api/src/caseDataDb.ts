@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { BatchGetCommand, DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import type { CaseDifficulty, CaseTheme, EvidenceBadgeData } from '../../src/game/caseModel'
-import type { PokemonType } from '../../src/data/pokemon'
+import type { PokemonRegion, PokemonType } from '../../src/data/pokemon'
 
 const client = new DynamoDBClient({})
 const doc = DynamoDBDocumentClient.from(client, { marshallOptions: { removeUndefinedValues: true } })
@@ -15,6 +15,7 @@ export interface CaseDataRecord {
   typeClueSlots?: Record<string, 'primary' | 'secondary'>
   typeClueGroup?: PokemonType[]
   typeClueGroups?: Record<string, PokemonType[]>
+  regionClueGroups?: Record<string, PokemonRegion[]>
   suspectPokemonIds: number[]
   suspectShinyMap: Record<string, boolean>
   witnessPokemonIds?: number[]

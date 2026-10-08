@@ -9,6 +9,9 @@ const evidenceMetaById: Record<string, { icon: string; title: string }> = {
   'lowest-stat-clue': { icon: '🧭', title: 'Limitation Clue' },
   'type-affectedness-clue': { icon: '🧪', title: 'Reaction Clue' },
   'region-clue': { icon: '🗺️', title: 'Region Clue' },
+  'region-clue-a': { icon: '🗺️', title: 'Region Clue' },
+  'region-clue-b': { icon: '🗺️', title: 'Region Clue' },
+  'region-clue-c': { icon: '🗺️', title: 'Region Clue' },
   'evolution-chain-clue': { icon: '🔁', title: 'Evolution Clue' },
 }
 

@@ -45,7 +45,17 @@
     "clueText": ""
   },
   {
-    "id": "region-clue",
+    "id": "region-clue-a",
+    "title": "Region Clue",
+    "clueText": ""
+  },
+  {
+    "id": "region-clue-b",
+    "title": "Region Clue",
+    "clueText": ""
+  },
+  {
+    "id": "region-clue-c",
     "title": "Region Clue",
     "clueText": ""
   },

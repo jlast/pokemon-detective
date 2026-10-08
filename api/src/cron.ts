@@ -358,6 +358,7 @@ const generateAndStoreDailyCase = async (caseId: string, difficulty: CaseDifficu
     culpritPokemonId: gameCase.culpritPokemonId,
     typeClueSlots: gameCase.typeClueSlots,
     typeClueGroups: gameCase.typeClueGroups,
+    regionClueGroups: gameCase.regionClueGroups,
     suspectPokemonIds,
     suspectShinyMap,
     witnessPokemonIds,

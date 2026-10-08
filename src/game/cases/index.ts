@@ -1,5 +1,5 @@
 import type { Case, CaseDifficulty, CaseSolution } from '../caseModel'
-import type { PokemonType } from '../../data/pokemon'
+import type { PokemonRegion, PokemonType } from '../../data/pokemon'
 import { getPokemonById } from '../suspectCaseFile'
 import { generateCaseEvidence, generateCaseLineup, generateCaseLocations, type CaseLineupOptions } from '../caseGeneration'
 import { applyCaseTheme, createCaseTheme } from '../caseTheme'
@@ -36,6 +36,10 @@ const addSuspectCaseNotes = (suspects: ReturnType<typeof createSuspect>[], caseC
     : undefined,
 }))
 
+const normalizeStoredEvidenceId = (evidenceId: string): string => (
+  evidenceId === 'region-clue' ? 'region-clue-a' : evidenceId
+)
+
 const buildCase = (caseConfig: CaseConfig, difficulty = caseConfig.difficulty): Case => {
   const baseCase = createBaseCase(caseConfig)
   const generated = generateCaseLineup(baseCase.evidence, baseCase.locations, caseConfig.evidenceOverrides, getLineupOptions(difficulty))
@@ -47,6 +51,7 @@ const buildCase = (caseConfig: CaseConfig, difficulty = caseConfig.difficulty): 
     culpritPokemonId: generated.culpritPokemonId,
     typeClueSlots: generated.typeClueSlots,
     typeClueGroups: generated.typeClueGroups,
+    regionClueGroups: generated.regionClueGroups,
     suspects: addSuspectCaseNotes(generated.suspectPokemonIds.map((id) => createSuspect(id)), caseConfig),
     locations: generated.locations.map((locationItem) => ({
       ...locationItem,
@@ -91,6 +96,7 @@ export const rebuildFullCase = (
   _typeClueSlot: 'primary' | 'secondary' = 'primary',
   typeClueSlots?: Record<string, 'primary' | 'secondary'>,
   typeClueGroups?: Record<string, PokemonType[]>,
+  regionClueGroups?: Record<string, PokemonRegion[]>,
   theme = createCaseTheme(suspectPokemonIds),
   difficultyOverride?: CaseDifficulty,
 ): Case => {
@@ -104,12 +110,12 @@ export const rebuildFullCase = (
     ...location,
     actions: location.actions.map((action) => {
       const chosenId = actionEvidenceMap[action.id]
-      return chosenId ? { ...action, evidenceId: chosenId } : action
+      return chosenId ? { ...action, evidenceId: normalizeStoredEvidenceId(chosenId) } : action
     }),
   }))
 
-  const { generatedEvidence, typeClueSlots: resolvedTypeClueSlots, typeClueGroups: resolvedTypeClueGroups } = generateCaseEvidence(culprit, baseCase.evidence, config.evidenceOverrides, typeClueSlots, typeClueGroups)
-  const generatedLocations = generateCaseLocations(culprit, overriddenLocations, config.evidenceOverrides, resolvedTypeClueSlots, resolvedTypeClueGroups)
+  const { generatedEvidence, typeClueSlots: resolvedTypeClueSlots, typeClueGroups: resolvedTypeClueGroups, regionClueGroups: resolvedRegionClueGroups } = generateCaseEvidence(culprit, baseCase.evidence, config.evidenceOverrides, typeClueSlots, typeClueGroups, regionClueGroups)
+  const generatedLocations = generateCaseLocations(culprit, overriddenLocations, config.evidenceOverrides, resolvedTypeClueSlots, resolvedTypeClueGroups, resolvedRegionClueGroups)
 
   const suspects = addSuspectCaseNotes(suspectPokemonIds.map((id) => createSuspect(id, suspectShinyMap[id])), config)
 
@@ -119,6 +125,7 @@ export const rebuildFullCase = (
     culpritPokemonId,
     typeClueSlots: resolvedTypeClueSlots,
     typeClueGroups: resolvedTypeClueGroups,
+    regionClueGroups: resolvedRegionClueGroups,
     witnessPokemonIds,
     suspects,
     locations: generatedLocations,

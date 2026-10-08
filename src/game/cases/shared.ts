@@ -99,6 +99,15 @@ const cluePreviewByEvidenceId: Record<string, CluePreview> = {
   'region-clue': {
     label: 'Region clue',
   },
+  'region-clue-a': {
+    label: 'Region clue',
+  },
+  'region-clue-b': {
+    label: 'Region clue',
+  },
+  'region-clue-c': {
+    label: 'Region clue',
+  },
   'evolution-chain-clue': {
     label: 'Evolution clue',
   },

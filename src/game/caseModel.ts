@@ -1,4 +1,4 @@
-import type { PokemonType } from '../data/pokemon'
+import type { PokemonRegion, PokemonType } from '../data/pokemon'
 
 export type CaseStatus = 'active' | 'solved' | 'failed'
 
@@ -188,6 +188,7 @@ export interface Case {
   typeClueSlot?: 'primary' | 'secondary'
   typeClueSlots?: Record<string, 'primary' | 'secondary'>
   typeClueGroups?: Record<string, PokemonType[]>
+  regionClueGroups?: Record<string, PokemonRegion[]>
   maxInvestigations: number
   witnessPokemonIds?: number[]
   suspects: Suspect[]
@@ -320,6 +321,9 @@ const getSolutionClueHintTypeFromEvidenceId = (evidenceId: string | undefined): 
     case 'type-affectedness-clue':
       return 'Reaction'
     case 'region-clue':
+    case 'region-clue-a':
+    case 'region-clue-b':
+    case 'region-clue-c':
       return 'Region'
     case 'evolution-chain-clue':
       return 'Evolution'

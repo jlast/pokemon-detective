@@ -48,6 +48,8 @@ export const validateGeneratedCase = (gameCase: Case): void => {
     gameCase.typeClueSlots,
     gameCase.typeClueGroups,
     locationEvidenceChoices,
+    undefined,
+    gameCase.regionClueGroups,
   )) {
     throw new Error(`Generated case ${gameCase.id} has at least one softlocking randomized clue path`)
   }

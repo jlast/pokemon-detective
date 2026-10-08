@@ -4,7 +4,7 @@ import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { allCases, createCaseById, rebuildFullCase } from '../../src/game/cases/index'
 import { getCaseThemeTitle } from '../../src/game/caseTheme'
 import { getSolutionClueBadgesFromEvidence, getSolutionClueHintType, type Case, type CaseDifficulty, type CaseSolution, type CaseStatus, type EvidenceBadgeData, type LocationCardVariant, type LocationAction } from '../../src/game/caseModel'
-import { getShinySpriteUrl, pokemonData, type PokemonType } from '../../src/data/pokemon'
+import { getShinySpriteUrl, pokemonData, type PokemonRegion, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById } from '../../src/game/suspectCaseFile'
 import { batchGetCaseData, getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseDataRecord, type CaseStats } from './caseDataDb'
 import { publishFeedbackCommentAlert, publishGeneralFeedbackAlert } from './feedbackAlert'
@@ -736,7 +736,7 @@ const applyPlayerShinyMap = (fullCase: Case, progress: PlayerProgressRecord): Ca
 )
 
 const buildResponseCase = (fullCase: Case, progress: PlayerProgressRecord | null): Case => {
-  const { evidence: _ev, culpritPokemonId: _cp, typeClueSlot: _typeClueSlot, typeClueSlots: _typeClueSlots, typeClueGroups: _typeClueGroups, ...caseWithoutEvidence } = fullCase
+  const { evidence: _ev, culpritPokemonId: _cp, typeClueSlot: _typeClueSlot, typeClueSlots: _typeClueSlots, typeClueGroups: _typeClueGroups, regionClueGroups: _regionClueGroups, ...caseWithoutEvidence } = fullCase
   if (!progress) {
     return {
       ...caseWithoutEvidence,
@@ -820,6 +820,11 @@ const getStoredTypeClueGroups = (record: Awaited<ReturnType<typeof getCaseData>>
   return undefined
 }
 
+const getStoredRegionClueGroups = (record: Awaited<ReturnType<typeof getCaseData>>): Record<string, PokemonRegion[]> | undefined => {
+  if (!record) return undefined
+  return record.regionClueGroups
+}
+
 const getStoredDifficulty = (record: Awaited<ReturnType<typeof getCaseData>>): CaseDifficulty | undefined => {
   if (!record) return undefined
   if (record.difficulty) return record.difficulty
@@ -831,6 +836,7 @@ const loadCase = async (caseId: string) => {
   if (!record) return null
   const storedTypeClueSlots = getStoredTypeClueSlots(record)
   const storedTypeClueGroups = getStoredTypeClueGroups(record)
+  const storedRegionClueGroups = getStoredRegionClueGroups(record)
   const storedDifficulty = getStoredDifficulty(record)
   let fullCase = rebuildFullCase(
     record.configId,
@@ -843,6 +849,7 @@ const loadCase = async (caseId: string) => {
     record.typeClueSlot ?? 'primary',
     storedTypeClueSlots,
     storedTypeClueGroups,
+    storedRegionClueGroups,
     record.theme,
     storedDifficulty,
   )
@@ -874,11 +881,12 @@ const loadCase = async (caseId: string) => {
     || !hasCompleteLocationCardTiltMap(fullCase.locations, record.locationCardTiltMap)
     || !record.typeClueSlots
     || !record.typeClueGroups
+    || !record.regionClueGroups
     || !record.theme
     || !record.difficulty
     || solutionChanged
   ) {
-    await putCaseData({ ...record, difficulty: fullCase.difficulty, typeClueSlots: fullCase.typeClueSlots, typeClueGroups: fullCase.typeClueGroups, theme: fullCase.theme, solution: normalizedSolution ?? record.solution, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap, ttl: getCaseDataTtl() })
+    await putCaseData({ ...record, difficulty: fullCase.difficulty, typeClueSlots: fullCase.typeClueSlots, typeClueGroups: fullCase.typeClueGroups, regionClueGroups: fullCase.regionClueGroups, theme: fullCase.theme, solution: normalizedSolution ?? record.solution, witnessPokemonIds, witnessPokemonIdMap, locationCardVariantMap, locationCardTiltMap, ttl: getCaseDataTtl() })
   }
 
   return applyLocationCardVariants(assignWitnessPokemonToActions(fullCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
@@ -920,6 +928,7 @@ const generateAndStoreCase = async (caseId: string) => {
     culpritPokemonId: gameCase.culpritPokemonId,
     typeClueSlots: gameCase.typeClueSlots,
     typeClueGroups: gameCase.typeClueGroups,
+    regionClueGroups: gameCase.regionClueGroups,
     suspectPokemonIds,
     suspectShinyMap,
     witnessPokemonIds,
