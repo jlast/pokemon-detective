@@ -37,6 +37,8 @@ type GeneratedEvidence = {
   observation: EvidenceObservation
 }
 
+type ScorePokemonAgainstProfile = (pokemonId: number, culpritProfile: PokemonCaseProfile, clues: EvidenceClue[]) => number
+
 type LineupSimilarity = 'mixed' | 'similar'
 
 export type CaseLineupOptions = {
@@ -531,30 +533,29 @@ const getClueRule = (clue: EvidenceClue, profile: PokemonCaseProfile): ClueRule 
 }
 
 const getClueRuleValue = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, clue: EvidenceClue, clueProfile?: PokemonCaseProfile): string => {
-  const profile = getPokemonCaseProfile(pokemon, typeClueSlots, undefined, clue.evidenceId)
+  if (clue.category === 'typeResidue' || clue.category === 'groundTrace' || clue.category === 'force' || clue.category === 'witness') {
+    if (clueProfile) {
+      return pokemon.types.find((type) => getTypeClueGroup(clueProfile, clue.evidenceId).includes(type)) ?? getPokemonCaseProfile(pokemon, typeClueSlots, undefined, clue.evidenceId).clueType ?? ''
+    }
+
+    return getPokemonCaseProfile(pokemon, typeClueSlots, undefined, clue.evidenceId).clueType ?? ''
+  }
 
   switch (clue.category) {
     case 'height':
-      return profile.height
+      return getHeightBucket(pokemon)
     case 'weight':
-      return profile.weight
-    case 'typeResidue':
-    case 'groundTrace':
-    case 'force':
-    case 'witness':
-      return clueProfile
-        ? pokemon.types.find((type) => getTypeClueGroup(clueProfile, clue.evidenceId).includes(type)) ?? profile.clueType ?? ''
-        : profile.clueType ?? ''
+      return getWeightBucket(pokemon)
     case 'highestStat':
-      return profile.highestStat
+      return pickPriorityStat(pokemon, strongestStatPriority, 'max')
     case 'lowestStat':
-      return profile.lowestStat
+      return pickPriorityStat(pokemon, weakestStatPriority, 'min')
     case 'typeAffectedness':
-      return getPokemonAffectednessRuleValue(pokemon, clueProfile?.affectednessType ?? profile.affectednessType)
+      return getPokemonAffectednessRuleValue(pokemon, clueProfile?.affectednessType ?? getTypeAffectedness(pokemon).attackType)
     case 'region':
-      return profile.region
+      return pokemon.region
     case 'evolutionChain':
-      return profile.evolutionPotential
+      return getEvolutionPotential(pokemon)
   }
 }
 
@@ -619,6 +620,7 @@ export const isEvidenceSetSolvable = (
   typeClueSlots: TypeClueSlots | undefined,
   typeClueGroups: TypeClueGroups | undefined,
   evidenceIds: string[],
+  scoreAgainstProfile: ScorePokemonAgainstProfile = scorePokemonAgainstProfile,
 ): boolean => {
   if (!typeClueSlots || !typeClueGroups || evidenceIds.length === 0) return false
 
@@ -628,7 +630,7 @@ export const isEvidenceSetSolvable = (
 
   return suspectIds
     .filter((suspectId) => suspectId !== culpritId)
-    .every((suspectId) => scorePokemonAgainstProfile(suspectId, culpritProfile, clues) < clues.length)
+    .every((suspectId) => scoreAgainstProfile(suspectId, culpritProfile, clues) < clues.length)
 }
 
 export const areLocationEvidenceChoicesSolvable = (
@@ -637,12 +639,13 @@ export const areLocationEvidenceChoicesSolvable = (
   typeClueSlots: TypeClueSlots | undefined,
   typeClueGroups: TypeClueGroups | undefined,
   locationEvidenceChoices: string[][],
+  scoreAgainstProfile: ScorePokemonAgainstProfile = scorePokemonAgainstProfile,
 ): boolean => {
   if (locationEvidenceChoices.length === 0 || locationEvidenceChoices.some((choices) => choices.length === 0)) return false
 
   const visit = (locationIndex: number, selectedEvidenceIds: string[]): boolean => {
     if (locationIndex >= locationEvidenceChoices.length) {
-      return isEvidenceSetSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, selectedEvidenceIds)
+      return isEvidenceSetSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, selectedEvidenceIds, scoreAgainstProfile)
     }
 
     return locationEvidenceChoices[locationIndex]!.every((evidenceId) => (
@@ -680,12 +683,13 @@ const pickSolvableLocationEvidenceIds = (
   typeClueSlots: TypeClueSlots,
   typeClueGroups: TypeClueGroups,
   locationCount: number,
+  scoreAgainstProfile: ScorePokemonAgainstProfile = scorePokemonAgainstProfile,
 ): string[] | null => {
   const evidenceIds = evidenceTemplates.map((template) => template.id)
   const candidateSets = shuffle(getCombinations(evidenceIds, Math.min(locationCount, evidenceIds.length)))
 
   return candidateSets.find((candidateSet) => (
-    isEvidenceSetSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, candidateSet)
+    isEvidenceSetSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, candidateSet, scoreAgainstProfile)
   )) ?? null
 }
 
@@ -696,6 +700,7 @@ const createSolvableLocationEvidenceChoices = (
   typeClueGroups: TypeClueGroups,
   locations: Location[],
   baseEvidenceIds: string[],
+  scoreAgainstProfile: ScorePokemonAgainstProfile = scorePokemonAgainstProfile,
 ): string[][] | null => {
   const allEvidenceIds = evidenceTemplates.map((template) => template.id)
   const locationEvidenceChoices = shuffle(baseEvidenceIds).map((evidenceId) => [evidenceId])
@@ -715,7 +720,7 @@ const createSolvableLocationEvidenceChoices = (
           index === locationIndex ? nextLocationChoices : locationChoices
         ))
 
-        return areLocationEvidenceChoicesSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, nextChoices)
+        return areLocationEvidenceChoicesSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, nextChoices, scoreAgainstProfile)
       })
 
       if (!candidate) return null
@@ -1134,28 +1139,41 @@ export const generateCaseLineup = (
     const typeClueGroups = createTypeClueGroups(culprit, typeClueSlots)
     const culpritProfile = getPokemonCaseProfile(culprit, typeClueSlots, typeClueGroups)
     const relevantClues = getRelevantClues(culprit)
+    const scoreCache = new Map<string, number>()
+    const scoreAgainstProfile: ScorePokemonAgainstProfile = (pokemonId, profile, clues) => {
+      const clueKey = clues.map((clue) => clue.evidenceId).sort().join('|')
+      const key = `${pokemonId}:${clueKey}`
+      const cached = scoreCache.get(key)
+      if (cached !== undefined) return cached
+      const score = scorePokemonAgainstProfile(pokemonId, profile, clues)
+      scoreCache.set(key, score)
+      return score
+    }
 
     const scoredDistractors = shuffle(
       pokemonData
         .filter((pokemon) => pokemon.id !== culprit.id)
         .map((pokemon) => ({
           pokemonId: pokemon.id,
-          score: scorePokemonAgainstProfile(pokemon.id, culpritProfile, relevantClues),
+          score: scoreAgainstProfile(pokemon.id, culpritProfile, relevantClues),
         }))
         .filter((entry) => entry.score < relevantClues.length),
     ).sort((left, right) => right.score - left.score)
 
     const chosen = options.similarity === 'similar'
-      ? scoredDistractors
+      ? [
+          ...shuffle(scoredDistractors.slice(0, Math.max(distractorCount * 8, distractorCount))),
+          ...scoredDistractors,
+        ]
       : (() => {
           const nearMatches = scoredDistractors.filter((entry) => entry.score >= Math.max(relevantClues.length - 2, 1))
           const mediumMatches = scoredDistractors.filter((entry) => entry.score >= 1 && entry.score < Math.max(relevantClues.length - 2, 1))
           const weakMatches = scoredDistractors.filter((entry) => entry.score === 0)
 
           return [
-            ...nearMatches.slice(0, 2),
-            ...mediumMatches.slice(0, 2),
-            ...weakMatches.slice(0, Math.max(distractorCount - 4, 0)),
+            ...shuffle(nearMatches).slice(0, 1),
+            ...shuffle(mediumMatches).slice(0, 3),
+            ...shuffle(weakMatches).slice(0, Math.max(distractorCount - 4, 0)),
             ...scoredDistractors,
           ]
         })()
@@ -1169,7 +1187,7 @@ export const generateCaseLineup = (
     }
 
     const topDistractorScore = Math.max(
-      ...uniqueDistractors.map((pokemonId) => scorePokemonAgainstProfile(pokemonId, culpritProfile, relevantClues)),
+      ...uniqueDistractors.map((pokemonId) => scoreAgainstProfile(pokemonId, culpritProfile, relevantClues)),
     )
 
     if (topDistractorScore >= relevantClues.length) {
@@ -1183,6 +1201,7 @@ export const generateCaseLineup = (
       typeClueSlots,
       typeClueGroups,
       locations.length,
+      scoreAgainstProfile,
     )
 
     if (!solvableLocationEvidenceIds) {
@@ -1196,6 +1215,7 @@ export const generateCaseLineup = (
       typeClueGroups,
       locations,
       solvableLocationEvidenceIds,
+      scoreAgainstProfile,
     )
 
     if (!locationEvidenceChoices) {
