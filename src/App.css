@@ -4207,24 +4207,21 @@
 .evidence-badge--clue-evolution-chain { background: #eadbd2; color: #5b3324; }
 
 .evidence-badge--color-warm {
-  border-color: rgba(125, 40, 20, 0.28);
-  background: linear-gradient(100deg, #d93f2f 0%, #f2c94c 52%, #e78bb4 100%);
-  color: #24140d;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.26);
+  border-color: rgba(146, 72, 57, 0.22);
+  background: linear-gradient(90deg, #f2aaa1 0 33%, #f3dc83 33% 66%, #edb1cf 66% 100%);
+  color: #4b2a23;
 }
 
 .evidence-badge--color-cool {
-  border-color: rgba(24, 68, 112, 0.28);
-  background: linear-gradient(100deg, #4c91d9 0%, #65b96d 52%, #8e63c7 100%);
-  color: #101929;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.28);
+  border-color: rgba(60, 92, 124, 0.22);
+  background: linear-gradient(90deg, #a8caed 0 33%, #add9b1 33% 66%, #c5b0e3 66% 100%);
+  color: #26374f;
 }
 
 .evidence-badge--color-neutral {
-  border-color: rgba(31, 31, 31, 0.3);
-  background: linear-gradient(100deg, #252525 0%, #f7f3e8 34%, #9a9a9a 66%, #8a5f3d 100%);
-  color: #161616;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+  border-color: rgba(89, 78, 66, 0.22);
+  background: linear-gradient(90deg, #c9c9c9 0 25%, #f4efe4 25% 50%, #d9d9d9 50% 75%, #c2a184 75% 100%);
+  color: #3b332d;
 }
 
 .evidence-badge--type-bug { background: #a6b91a; color: #252906; }
