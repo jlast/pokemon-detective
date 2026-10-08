@@ -3,7 +3,7 @@ import { allCases, createCaseById } from '../../src/game/cases/index'
 import { pokemonData } from '../../src/data/pokemon'
 import type { Case, CaseDifficulty, LocationCardVariant } from '../../src/game/caseModel'
 import { putCaseData } from './caseDataDb'
-import { getProgress } from './playerDb'
+import { deleteProgressByCaseId, getProgress } from './playerDb'
 import {
   listDailyReminderSubscriptions,
   listUnfinishedCaseReminderSubscriptions,
@@ -401,6 +401,13 @@ export const regenerateDailyCases = async (
     console.log(`Generated daily case ${caseId} using config "${generated.configId}" at ${generated.difficulty} difficulty`)
     return { caseId, ...generated }
   }))
+)
+
+export const clearProgressForCaseIds = async (caseIds: readonly string[]): Promise<Array<{ caseId: string; deleted: number }>> => (
+  Promise.all(caseIds.map(async (caseId) => ({
+    caseId,
+    deleted: await deleteProgressByCaseId(caseId),
+  })))
 )
 
 export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: number; body: string }> => {

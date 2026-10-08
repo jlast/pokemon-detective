@@ -12,6 +12,7 @@ const getTodayUtc = () => new Date().toISOString().slice(0, 10)
 
 const date = getArgValue('--date') ?? getTodayUtc()
 const difficultyArg = getArgValue('--difficulty') ?? 'all'
+const keepProgress = getArgValue('--keep-progress') === 'true'
 const difficulties = difficultyArg === 'all'
   ? ['easy', 'hard']
   : [difficultyArg]
@@ -25,7 +26,11 @@ if (invalidDifficulties.length > 0) {
   throw new Error(`Invalid --difficulty value: ${difficultyArg}. Expected easy, hard, or all.`)
 }
 
-const { regenerateDailyCases } = require('../dist/cron.cjs')
+const { clearProgressForCaseIds, regenerateDailyCases } = require('../dist/cron.cjs')
 
 const cases = await regenerateDailyCases(date, difficulties)
-console.log(JSON.stringify({ date, cases }, null, 2))
+const clearedProgress = keepProgress
+  ? []
+  : await clearProgressForCaseIds(cases.map((item) => item.caseId))
+
+console.log(JSON.stringify({ date, cases, clearedProgress }, null, 2))

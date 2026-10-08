@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { BatchGetCommand, DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import { BatchGetCommand, BatchWriteCommand, DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import type { EvidenceBadgeData } from '../../src/game/caseModel'
 
 const client = new DynamoDBClient({})
@@ -88,6 +88,33 @@ export const queryProgressByCaseId = async (caseId: string): Promise<PlayerProgr
   } while (ExclusiveStartKey)
 
   return records
+}
+
+const chunk = <T,>(items: T[], size: number): T[][] => {
+  const chunks: T[][] = []
+  for (let index = 0; index < items.length; index += size) {
+    chunks.push(items.slice(index, index + size))
+  }
+  return chunks
+}
+
+export const deleteProgressByCaseId = async (caseId: string): Promise<number> => {
+  const records = await queryProgressByCaseId(caseId)
+
+  for (const recordChunk of chunk(records, 25)) {
+    let requestItems = {
+      [TABLE]: recordChunk.map((record) => ({
+        DeleteRequest: { Key: { userId: record.userId } },
+      })),
+    }
+
+    do {
+      const result = await doc.send(new BatchWriteCommand({ RequestItems: requestItems }))
+      requestItems = result.UnprocessedItems as typeof requestItems | undefined ?? {}
+    } while ((requestItems[TABLE] ?? []).length > 0)
+  }
+
+  return records.length
 }
 
 export const updateProgress = async (
