@@ -4208,19 +4208,19 @@
 
 .evidence-badge--color-warm {
   border-color: rgba(146, 72, 57, 0.22);
-  background: linear-gradient(90deg, #f2aaa1 0 33%, #f3dc83 33% 66%, #edb1cf 66% 100%);
+  background: linear-gradient(90deg, #f2aaa1 0%, #f3dc83 50%, #edb1cf 100%);
   color: #4b2a23;
 }
 
 .evidence-badge--color-cool {
   border-color: rgba(60, 92, 124, 0.22);
-  background: linear-gradient(90deg, #a8caed 0 33%, #add9b1 33% 66%, #c5b0e3 66% 100%);
+  background: linear-gradient(90deg, #a8caed 0%, #add9b1 50%, #c5b0e3 100%);
   color: #26374f;
 }
 
 .evidence-badge--color-neutral {
   border-color: rgba(89, 78, 66, 0.22);
-  background: linear-gradient(90deg, #c9c9c9 0 25%, #f4efe4 25% 50%, #d9d9d9 50% 75%, #c2a184 75% 100%);
+  background: linear-gradient(90deg, #b9b9b9 0%, #f4efe4 34%, #d9d9d9 66%, #c2a184 100%);
   color: #3b332d;
 }
 
