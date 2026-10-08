@@ -40,6 +40,7 @@ export type LeadVisualType =
   | 'container'
   | 'damage'
   | 'movement'
+  | 'paintbrush'
   | 'generic-search'
 
 export interface LocationActionPresentation {

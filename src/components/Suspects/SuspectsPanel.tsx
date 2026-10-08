@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { EvidenceBadgeList } from '../Evidence/EvidenceBadge'
+import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { getDiscoveredEvidence, getSolutionClueHintType, type Case } from '../../game/caseModel'
 import { TODAY_INVESTIGATION_PATH } from '../../paths'
 import { SuspectCard } from './SuspectCard'
@@ -39,7 +40,7 @@ export function SuspectsPanel({
               return (
                 <article key={evidenceItem.id} className="suspect-evidence-tag evidence-note-card">
                   <span className="suspect-evidence-tag-icon" aria-hidden="true">
-                    📎
+                    {getEvidenceIcon(evidenceItem.id, evidenceItem.title, '📎')}
                   </span>
                   <div className="suspect-evidence-tag-copy">
                     <strong>{clueTitle}</strong>

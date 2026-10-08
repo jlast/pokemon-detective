@@ -162,8 +162,8 @@ const evidenceTemplates: EvidenceTemplate[] = [
     id: 'color-clue',
     category: 'color',
     titleTemplate: 'Color Trace',
-    clueTemplate: 'A visual trace pointed to a {colorGroupLabel}: {colorGroupDescription}.',
-    endTemplate: 'A visual trace pointed to a {colorGroupLabel}: {colorGroupDescription}.',
+    clueTemplate: 'A visual trace pointed to the {colorGroupLabel}: {colorGroupDescription}.',
+    endTemplate: 'A visual trace pointed to the {colorGroupLabel}: {colorGroupDescription}.',
   },
   {
     id: 'evolution-chain-clue',
@@ -473,7 +473,7 @@ const getColorGroup = (color: PokemonColor): ColorGroup => {
   return 'neutral'
 }
 
-const getColorGroupLabel = (group: ColorGroup): string => `${formatLabel(group)} colors`
+const getColorGroupLabel = (group: ColorGroup): string => `${group} colors`
 
 const getColorGroupDescription = (group: ColorGroup): string => formatList(colorGroupColors[group])
 
@@ -678,7 +678,7 @@ const getEvidenceBadges = (clue: EvidenceClue, profile: PokemonCaseProfile): Evi
     case 'region':
       return [{ text: `Region: ${formatList(getRegionClueGroup(profile, clue.evidenceId))}` }]
     case 'color':
-      return [{ text: `Color: ${formatLabel(profile.colorGroup)}` }]
+      return [{ text: `Color: ${getColorGroupLabel(profile.colorGroup)} (${getColorGroupDescription(profile.colorGroup)})` }]
     case 'evolutionChain':
       return [{ text: `Evolution: ${getEvolutionChainBadgeLabel(profile.evolutionPotential)}` }]
   }
@@ -860,6 +860,9 @@ const assignLocationEvidence = (locations: Location[], locationEvidenceChoices: 
           ...action,
           evidenceId,
           cluePreview: previewForEvidenceId(evidenceId),
+          presentation: evidenceId === 'color-clue'
+            ? { ...action.presentation, icon: '🖌️', visualType: 'paintbrush', displayLabel: 'Visual trace' }
+            : action.presentation,
         }
       }),
     }

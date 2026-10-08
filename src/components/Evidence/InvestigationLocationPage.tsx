@@ -75,7 +75,10 @@ export function InvestigationLocationPage({
     const separatorIndex = badge.text.indexOf(':')
     return separatorIndex > 0 ? badge.text.slice(separatorIndex + 1).trim() : badge.text
   }) ?? [primaryEvidenceBadgeText]
-  const evidenceCategory = primaryEvidenceBadgeSeparator > 0
+  const isColorClue = selectedAction?.clueRule?.axis === 'color'
+  const evidenceCategory = isColorClue
+    ? 'Color clue'
+    : primaryEvidenceBadgeSeparator > 0
     ? primaryEvidenceBadgeText.slice(0, primaryEvidenceBadgeSeparator)
     : getSolutionClueHintType(selectedAction?.clueRule?.axis ?? 'scene') ?? selectedAction?.cluePreview.label ?? 'Evidence'
   const evidenceSubtitle = selectedAction?.cluePreview.subtitle
