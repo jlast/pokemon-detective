@@ -614,6 +614,8 @@ const hasDistinctLocationChoiceAxes = (evidenceIds: string[]): boolean => {
   return new Set(axes).size === axes.length
 }
 
+const isSingleUseEvidenceId = (evidenceId: string): boolean => evidenceId === 'region-clue'
+
 export const isEvidenceSetSolvable = (
   culpritId: number,
   suspectIds: number[],
@@ -713,6 +715,10 @@ const createSolvableLocationEvidenceChoices = (
     for (let choiceIndex = 0; choiceIndex < additionalChoiceCount; choiceIndex += 1) {
       const candidates = shuffle(allEvidenceIds.filter((evidenceId) => !choices.includes(evidenceId)))
       const candidate = candidates.find((evidenceId) => {
+        if (isSingleUseEvidenceId(evidenceId) && locationEvidenceChoices.some((locationChoices, index) => index !== locationIndex && locationChoices.includes(evidenceId))) {
+          return false
+        }
+
         const nextLocationChoices = [...choices, evidenceId]
         if (!hasDistinctLocationChoiceAxes(nextLocationChoices)) return false
 
