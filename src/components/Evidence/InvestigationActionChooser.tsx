@@ -1,4 +1,4 @@
-import type { InvestigationLeadKind, LeadPaperStyle, LeadVisualType, LocationAction } from '../../game/caseModel'
+import { getClueCollectionKey, type InvestigationLeadKind, type LeadPaperStyle, type LeadVisualType, type LocationAction } from '../../game/caseModel'
 import { pokemonData, type Pokemon } from '../../data/pokemon'
 import { LeadVisualIcon } from './leadVisualIcons'
 
@@ -116,9 +116,10 @@ export function InvestigationActionChooser({
           const leadKind = presentation.kind
           const cluePreview = action.cluePreview
           const isFollowed = action.id === followedActionId
+          const clueCollectionKey = getClueCollectionKey(action)
           const isAlreadyCollected = Boolean(
-            (action.evidenceId && collectedEvidenceIdSet.has(action.evidenceId))
-            || (!action.evidenceId && collectedClueLabelSet.has(cluePreview.label)),
+            collectedClueLabelSet.has(clueCollectionKey)
+            || (action.evidenceId && collectedEvidenceIdSet.has(action.evidenceId) && !cluePreview.subtitle && cluePreview.label !== 'Region clue'),
           )
           const witnessPokemon = leadKind === 'question'
             ? (action.witnessPokemonIds ?? [])

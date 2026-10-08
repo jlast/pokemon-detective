@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { InvestigationLocationPage } from '../components/Evidence/InvestigationLocationPage'
-import type { Case } from '../game/caseModel'
+import { getClueCollectionKey, type Case } from '../game/caseModel'
 import { TODAY_INVESTIGATION_PATH } from '../paths'
 import { InvestigationRouteFrame } from './InvestigationRouteFrame'
 
@@ -29,7 +29,7 @@ export function InvestigationLocationRoute({
   const collectedClueLabels = currentCase.locations.flatMap((location) => {
     if (!location.investigated || !location.selectedActionId) return []
     const action = location.actions.find((locationAction) => locationAction.id === location.selectedActionId)
-    return action?.cluePreview.label ? [action.cluePreview.label] : []
+    return action ? [getClueCollectionKey(action)] : []
   })
   const pointsLeft = Math.max(currentCase.maxInvestigations - actionsUsed, 0)
 
