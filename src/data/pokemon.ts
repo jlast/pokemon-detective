@@ -30,10 +30,23 @@ export type PokemonRegion =
   | 'Sinnoh'
   | 'Unova'
 
+export type PokemonColor =
+  | 'black'
+  | 'blue'
+  | 'brown'
+  | 'gray'
+  | 'green'
+  | 'pink'
+  | 'purple'
+  | 'red'
+  | 'white'
+  | 'yellow'
+
 export interface Pokemon {
   id: number
   name: string
   region: PokemonRegion
+  color: PokemonColor
   types: PokemonType[]
   heightM: number
   weightKg: number
@@ -61,6 +74,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 1,
     "name": "Bulbasaur",
     "region": "Kanto",
+    "color": "green",
     "types": [
       "grass",
       "poison"
@@ -85,6 +99,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 2,
     "name": "Ivysaur",
     "region": "Kanto",
+    "color": "green",
     "types": [
       "grass",
       "poison"
@@ -109,6 +124,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 3,
     "name": "Venusaur",
     "region": "Kanto",
+    "color": "green",
     "types": [
       "grass",
       "poison"
@@ -133,6 +149,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 4,
     "name": "Charmander",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -156,6 +173,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 5,
     "name": "Charmeleon",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -179,6 +197,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 6,
     "name": "Charizard",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "fire",
       "flying"
@@ -203,6 +222,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 7,
     "name": "Squirtle",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -226,6 +246,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 8,
     "name": "Wartortle",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -249,6 +270,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 9,
     "name": "Blastoise",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -272,6 +294,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 10,
     "name": "Caterpie",
     "region": "Kanto",
+    "color": "green",
     "types": [
       "bug"
     ],
@@ -295,6 +318,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 11,
     "name": "Metapod",
     "region": "Kanto",
+    "color": "green",
     "types": [
       "bug"
     ],
@@ -318,6 +342,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 12,
     "name": "Butterfree",
     "region": "Kanto",
+    "color": "white",
     "types": [
       "bug",
       "flying"
@@ -342,6 +367,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 13,
     "name": "Weedle",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "bug",
       "poison"
@@ -366,6 +392,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 14,
     "name": "Kakuna",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "bug",
       "poison"
@@ -390,6 +417,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 15,
     "name": "Beedrill",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "bug",
       "poison"
@@ -414,6 +442,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 16,
     "name": "Pidgey",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -438,6 +467,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 17,
     "name": "Pidgeotto",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -462,6 +492,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 18,
     "name": "Pidgeot",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -486,6 +517,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 19,
     "name": "Rattata",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "normal"
     ],
@@ -509,6 +541,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 20,
     "name": "Raticate",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -532,6 +565,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 21,
     "name": "Spearow",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -556,6 +590,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 22,
     "name": "Fearow",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -580,6 +615,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 23,
     "name": "Ekans",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "poison"
     ],
@@ -603,6 +639,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 24,
     "name": "Arbok",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "poison"
     ],
@@ -626,6 +663,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 25,
     "name": "Pikachu",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -649,6 +687,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 26,
     "name": "Raichu",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -672,6 +711,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 27,
     "name": "Sandshrew",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "ground"
     ],
@@ -695,6 +735,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 28,
     "name": "Sandslash",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "ground"
     ],
@@ -718,6 +759,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 29,
     "name": "Nidoran F",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "poison"
     ],
@@ -741,6 +783,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 30,
     "name": "Nidorina",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "poison"
     ],
@@ -764,6 +807,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 31,
     "name": "Nidoqueen",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "poison",
       "ground"
@@ -788,6 +832,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 32,
     "name": "Nidoran M",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "poison"
     ],
@@ -811,6 +856,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 33,
     "name": "Nidorino",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "poison"
     ],
@@ -834,6 +880,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 34,
     "name": "Nidoking",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "poison",
       "ground"
@@ -858,6 +905,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 35,
     "name": "Clefairy",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "fairy"
     ],
@@ -881,6 +929,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 36,
     "name": "Clefable",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "fairy"
     ],
@@ -904,6 +953,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 37,
     "name": "Vulpix",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "fire"
     ],
@@ -927,6 +977,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 38,
     "name": "Ninetales",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "fire"
     ],
@@ -950,6 +1001,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 39,
     "name": "Jigglypuff",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "normal",
       "fairy"
@@ -974,6 +1026,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 40,
     "name": "Wigglytuff",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "normal",
       "fairy"
@@ -998,6 +1051,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 41,
     "name": "Zubat",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "poison",
       "flying"
@@ -1022,6 +1076,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 42,
     "name": "Golbat",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "poison",
       "flying"
@@ -1046,6 +1101,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 43,
     "name": "Oddish",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "grass",
       "poison"
@@ -1070,6 +1126,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 44,
     "name": "Gloom",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "grass",
       "poison"
@@ -1094,6 +1151,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 45,
     "name": "Vileplume",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "grass",
       "poison"
@@ -1118,6 +1176,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 46,
     "name": "Paras",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "bug",
       "grass"
@@ -1142,6 +1201,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 47,
     "name": "Parasect",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "bug",
       "grass"
@@ -1166,6 +1226,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 48,
     "name": "Venonat",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "bug",
       "poison"
@@ -1190,6 +1251,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 49,
     "name": "Venomoth",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "bug",
       "poison"
@@ -1214,6 +1276,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 50,
     "name": "Diglett",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "ground"
     ],
@@ -1237,6 +1300,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 51,
     "name": "Dugtrio",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "ground"
     ],
@@ -1260,6 +1324,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 52,
     "name": "Meowth",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "normal"
     ],
@@ -1283,6 +1348,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 53,
     "name": "Persian",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "normal"
     ],
@@ -1306,6 +1372,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 54,
     "name": "Psyduck",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "water"
     ],
@@ -1329,6 +1396,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 55,
     "name": "Golduck",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -1352,6 +1420,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 56,
     "name": "Mankey",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "fighting"
     ],
@@ -1375,6 +1444,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 57,
     "name": "Primeape",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "fighting"
     ],
@@ -1398,6 +1468,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 58,
     "name": "Growlithe",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "fire"
     ],
@@ -1421,6 +1492,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 59,
     "name": "Arcanine",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "fire"
     ],
@@ -1444,6 +1516,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 60,
     "name": "Poliwag",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -1467,6 +1540,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 61,
     "name": "Poliwhirl",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -1490,6 +1564,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 62,
     "name": "Poliwrath",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water",
       "fighting"
@@ -1514,6 +1589,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 63,
     "name": "Abra",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "psychic"
     ],
@@ -1537,6 +1613,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 64,
     "name": "Kadabra",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "psychic"
     ],
@@ -1560,6 +1637,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 65,
     "name": "Alakazam",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "psychic"
     ],
@@ -1583,6 +1661,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 66,
     "name": "Machop",
     "region": "Kanto",
+    "color": "gray",
     "types": [
       "fighting"
     ],
@@ -1606,6 +1685,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 67,
     "name": "Machoke",
     "region": "Kanto",
+    "color": "gray",
     "types": [
       "fighting"
     ],
@@ -1629,6 +1709,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 68,
     "name": "Machamp",
     "region": "Kanto",
+    "color": "gray",
     "types": [
       "fighting"
     ],
@@ -1652,6 +1733,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 69,
     "name": "Bellsprout",
     "region": "Kanto",
+    "color": "green",
     "types": [
       "grass",
       "poison"
@@ -1676,6 +1758,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 70,
     "name": "Weepinbell",
     "region": "Kanto",
+    "color": "green",
     "types": [
       "grass",
       "poison"
@@ -1700,6 +1783,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 71,
     "name": "Victreebel",
     "region": "Kanto",
+    "color": "green",
     "types": [
       "grass",
       "poison"
@@ -1724,6 +1808,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 72,
     "name": "Tentacool",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water",
       "poison"
@@ -1748,6 +1833,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 73,
     "name": "Tentacruel",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water",
       "poison"
@@ -1772,6 +1858,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 74,
     "name": "Geodude",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "rock",
       "ground"
@@ -1796,6 +1883,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 75,
     "name": "Graveler",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "rock",
       "ground"
@@ -1820,6 +1908,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 76,
     "name": "Golem",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "rock",
       "ground"
@@ -1844,6 +1933,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 77,
     "name": "Ponyta",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "fire"
     ],
@@ -1867,6 +1957,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 78,
     "name": "Rapidash",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "fire"
     ],
@@ -1890,6 +1981,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 79,
     "name": "Slowpoke",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "water",
       "psychic"
@@ -1914,6 +2006,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 80,
     "name": "Slowbro",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "water",
       "psychic"
@@ -1938,6 +2031,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 81,
     "name": "Magnemite",
     "region": "Kanto",
+    "color": "gray",
     "types": [
       "electric",
       "steel"
@@ -1962,6 +2056,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 82,
     "name": "Magneton",
     "region": "Kanto",
+    "color": "gray",
     "types": [
       "electric",
       "steel"
@@ -1986,6 +2081,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 83,
     "name": "Farfetchd",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -2010,6 +2106,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 84,
     "name": "Doduo",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -2034,6 +2131,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 85,
     "name": "Dodrio",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -2058,6 +2156,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 86,
     "name": "Seel",
     "region": "Kanto",
+    "color": "white",
     "types": [
       "water"
     ],
@@ -2081,6 +2180,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 87,
     "name": "Dewgong",
     "region": "Kanto",
+    "color": "white",
     "types": [
       "water",
       "ice"
@@ -2105,6 +2205,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 88,
     "name": "Grimer",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "poison"
     ],
@@ -2128,6 +2229,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 89,
     "name": "Muk",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "poison"
     ],
@@ -2151,6 +2253,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 90,
     "name": "Shellder",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "water"
     ],
@@ -2174,6 +2277,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 91,
     "name": "Cloyster",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "water",
       "ice"
@@ -2198,6 +2302,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 92,
     "name": "Gastly",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "ghost",
       "poison"
@@ -2222,6 +2327,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 93,
     "name": "Haunter",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "ghost",
       "poison"
@@ -2246,6 +2352,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 94,
     "name": "Gengar",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "ghost",
       "poison"
@@ -2270,6 +2377,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 95,
     "name": "Onix",
     "region": "Kanto",
+    "color": "gray",
     "types": [
       "rock",
       "ground"
@@ -2294,6 +2402,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 96,
     "name": "Drowzee",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "psychic"
     ],
@@ -2317,6 +2426,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 97,
     "name": "Hypno",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "psychic"
     ],
@@ -2340,6 +2450,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 98,
     "name": "Krabby",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "water"
     ],
@@ -2363,6 +2474,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 99,
     "name": "Kingler",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "water"
     ],
@@ -2386,6 +2498,7 @@ const pokemonDataChunk1: Pokemon[] = [
     "id": 100,
     "name": "Voltorb",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "electric"
     ],
@@ -2412,6 +2525,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 101,
     "name": "Electrode",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "electric"
     ],
@@ -2435,6 +2549,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 102,
     "name": "Exeggcute",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "grass",
       "psychic"
@@ -2459,6 +2574,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 103,
     "name": "Exeggutor",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "grass",
       "psychic"
@@ -2483,6 +2599,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 104,
     "name": "Cubone",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "ground"
     ],
@@ -2506,6 +2623,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 105,
     "name": "Marowak",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "ground"
     ],
@@ -2529,6 +2647,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 106,
     "name": "Hitmonlee",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "fighting"
     ],
@@ -2552,6 +2671,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 107,
     "name": "Hitmonchan",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "fighting"
     ],
@@ -2575,6 +2695,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 108,
     "name": "Lickitung",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "normal"
     ],
@@ -2598,6 +2719,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 109,
     "name": "Koffing",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "poison"
     ],
@@ -2621,6 +2743,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 110,
     "name": "Weezing",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "poison"
     ],
@@ -2644,6 +2767,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 111,
     "name": "Rhyhorn",
     "region": "Kanto",
+    "color": "gray",
     "types": [
       "ground",
       "rock"
@@ -2668,6 +2792,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 112,
     "name": "Rhydon",
     "region": "Kanto",
+    "color": "gray",
     "types": [
       "ground",
       "rock"
@@ -2692,6 +2817,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 113,
     "name": "Chansey",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "normal"
     ],
@@ -2715,6 +2841,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 114,
     "name": "Tangela",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "grass"
     ],
@@ -2738,6 +2865,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 115,
     "name": "Kangaskhan",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -2761,6 +2889,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 116,
     "name": "Horsea",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -2784,6 +2913,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 117,
     "name": "Seadra",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -2807,6 +2937,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 118,
     "name": "Goldeen",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "water"
     ],
@@ -2830,6 +2961,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 119,
     "name": "Seaking",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "water"
     ],
@@ -2853,6 +2985,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 120,
     "name": "Staryu",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "water"
     ],
@@ -2876,6 +3009,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 121,
     "name": "Starmie",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "water",
       "psychic"
@@ -2900,6 +3034,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 122,
     "name": "Mr Mime",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "psychic",
       "fairy"
@@ -2924,6 +3059,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 123,
     "name": "Scyther",
     "region": "Kanto",
+    "color": "green",
     "types": [
       "bug",
       "flying"
@@ -2948,6 +3084,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 124,
     "name": "Jynx",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "ice",
       "psychic"
@@ -2972,6 +3109,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 125,
     "name": "Electabuzz",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -2995,6 +3133,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 126,
     "name": "Magmar",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -3018,6 +3157,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 127,
     "name": "Pinsir",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "bug"
     ],
@@ -3041,6 +3181,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 128,
     "name": "Tauros",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -3064,6 +3205,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 129,
     "name": "Magikarp",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "water"
     ],
@@ -3087,6 +3229,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 130,
     "name": "Gyarados",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water",
       "flying"
@@ -3111,6 +3254,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 131,
     "name": "Lapras",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water",
       "ice"
@@ -3135,6 +3279,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 132,
     "name": "Ditto",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "normal"
     ],
@@ -3158,6 +3303,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 133,
     "name": "Eevee",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -3181,6 +3327,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 134,
     "name": "Vaporeon",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -3204,6 +3351,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 135,
     "name": "Jolteon",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -3227,6 +3375,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 136,
     "name": "Flareon",
     "region": "Kanto",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -3250,6 +3399,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 137,
     "name": "Porygon",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "normal"
     ],
@@ -3273,6 +3423,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 138,
     "name": "Omanyte",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "rock",
       "water"
@@ -3297,6 +3448,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 139,
     "name": "Omastar",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "rock",
       "water"
@@ -3321,6 +3473,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 140,
     "name": "Kabuto",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "rock",
       "water"
@@ -3345,6 +3498,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 141,
     "name": "Kabutops",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "rock",
       "water"
@@ -3369,6 +3523,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 142,
     "name": "Aerodactyl",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "rock",
       "flying"
@@ -3393,6 +3548,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 143,
     "name": "Snorlax",
     "region": "Kanto",
+    "color": "black",
     "types": [
       "normal"
     ],
@@ -3416,6 +3572,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 144,
     "name": "Articuno",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "ice",
       "flying"
@@ -3440,6 +3597,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 145,
     "name": "Zapdos",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "electric",
       "flying"
@@ -3464,6 +3622,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 146,
     "name": "Moltres",
     "region": "Kanto",
+    "color": "yellow",
     "types": [
       "fire",
       "flying"
@@ -3488,6 +3647,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 147,
     "name": "Dratini",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "dragon"
     ],
@@ -3511,6 +3671,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 148,
     "name": "Dragonair",
     "region": "Kanto",
+    "color": "blue",
     "types": [
       "dragon"
     ],
@@ -3534,6 +3695,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 149,
     "name": "Dragonite",
     "region": "Kanto",
+    "color": "brown",
     "types": [
       "dragon",
       "flying"
@@ -3558,6 +3720,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 150,
     "name": "Mewtwo",
     "region": "Kanto",
+    "color": "purple",
     "types": [
       "psychic"
     ],
@@ -3581,6 +3744,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 151,
     "name": "Mew",
     "region": "Kanto",
+    "color": "pink",
     "types": [
       "psychic"
     ],
@@ -3604,6 +3768,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 152,
     "name": "Chikorita",
     "region": "Johto",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -3627,6 +3792,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 153,
     "name": "Bayleef",
     "region": "Johto",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -3650,6 +3816,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 154,
     "name": "Meganium",
     "region": "Johto",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -3673,6 +3840,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 155,
     "name": "Cyndaquil",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "fire"
     ],
@@ -3696,6 +3864,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 156,
     "name": "Quilava",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "fire"
     ],
@@ -3719,6 +3888,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 157,
     "name": "Typhlosion",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "fire"
     ],
@@ -3742,6 +3912,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 158,
     "name": "Totodile",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -3765,6 +3936,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 159,
     "name": "Croconaw",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -3788,6 +3960,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 160,
     "name": "Feraligatr",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -3811,6 +3984,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 161,
     "name": "Sentret",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -3834,6 +4008,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 162,
     "name": "Furret",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -3857,6 +4032,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 163,
     "name": "Hoothoot",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -3881,6 +4057,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 164,
     "name": "Noctowl",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -3905,6 +4082,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 165,
     "name": "Ledyba",
     "region": "Johto",
+    "color": "red",
     "types": [
       "bug",
       "flying"
@@ -3929,6 +4107,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 166,
     "name": "Ledian",
     "region": "Johto",
+    "color": "red",
     "types": [
       "bug",
       "flying"
@@ -3953,6 +4132,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 167,
     "name": "Spinarak",
     "region": "Johto",
+    "color": "green",
     "types": [
       "bug",
       "poison"
@@ -3977,6 +4157,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 168,
     "name": "Ariados",
     "region": "Johto",
+    "color": "red",
     "types": [
       "bug",
       "poison"
@@ -4001,6 +4182,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 169,
     "name": "Crobat",
     "region": "Johto",
+    "color": "purple",
     "types": [
       "poison",
       "flying"
@@ -4025,6 +4207,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 170,
     "name": "Chinchou",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "water",
       "electric"
@@ -4049,6 +4232,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 171,
     "name": "Lanturn",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "water",
       "electric"
@@ -4073,6 +4257,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 172,
     "name": "Pichu",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -4096,6 +4281,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 173,
     "name": "Cleffa",
     "region": "Johto",
+    "color": "pink",
     "types": [
       "fairy"
     ],
@@ -4119,6 +4305,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 174,
     "name": "Igglybuff",
     "region": "Johto",
+    "color": "pink",
     "types": [
       "normal",
       "fairy"
@@ -4143,6 +4330,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 175,
     "name": "Togepi",
     "region": "Johto",
+    "color": "white",
     "types": [
       "fairy"
     ],
@@ -4166,6 +4354,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 176,
     "name": "Togetic",
     "region": "Johto",
+    "color": "white",
     "types": [
       "fairy",
       "flying"
@@ -4190,6 +4379,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 177,
     "name": "Natu",
     "region": "Johto",
+    "color": "green",
     "types": [
       "psychic",
       "flying"
@@ -4214,6 +4404,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 178,
     "name": "Xatu",
     "region": "Johto",
+    "color": "green",
     "types": [
       "psychic",
       "flying"
@@ -4238,6 +4429,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 179,
     "name": "Mareep",
     "region": "Johto",
+    "color": "white",
     "types": [
       "electric"
     ],
@@ -4261,6 +4453,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 180,
     "name": "Flaaffy",
     "region": "Johto",
+    "color": "pink",
     "types": [
       "electric"
     ],
@@ -4284,6 +4477,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 181,
     "name": "Ampharos",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -4307,6 +4501,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 182,
     "name": "Bellossom",
     "region": "Johto",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -4330,6 +4525,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 183,
     "name": "Marill",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "water",
       "fairy"
@@ -4354,6 +4550,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 184,
     "name": "Azumarill",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "water",
       "fairy"
@@ -4378,6 +4575,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 185,
     "name": "Sudowoodo",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "rock"
     ],
@@ -4401,6 +4599,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 186,
     "name": "Politoed",
     "region": "Johto",
+    "color": "green",
     "types": [
       "water"
     ],
@@ -4424,6 +4623,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 187,
     "name": "Hoppip",
     "region": "Johto",
+    "color": "pink",
     "types": [
       "grass",
       "flying"
@@ -4448,6 +4648,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 188,
     "name": "Skiploom",
     "region": "Johto",
+    "color": "green",
     "types": [
       "grass",
       "flying"
@@ -4472,6 +4673,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 189,
     "name": "Jumpluff",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "grass",
       "flying"
@@ -4496,6 +4698,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 190,
     "name": "Aipom",
     "region": "Johto",
+    "color": "purple",
     "types": [
       "normal"
     ],
@@ -4519,6 +4722,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 191,
     "name": "Sunkern",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "grass"
     ],
@@ -4542,6 +4746,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 192,
     "name": "Sunflora",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "grass"
     ],
@@ -4565,6 +4770,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 193,
     "name": "Yanma",
     "region": "Johto",
+    "color": "red",
     "types": [
       "bug",
       "flying"
@@ -4589,6 +4795,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 194,
     "name": "Wooper",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "water",
       "ground"
@@ -4613,6 +4820,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 195,
     "name": "Quagsire",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "water",
       "ground"
@@ -4637,6 +4845,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 196,
     "name": "Espeon",
     "region": "Johto",
+    "color": "purple",
     "types": [
       "psychic"
     ],
@@ -4660,6 +4869,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 197,
     "name": "Umbreon",
     "region": "Johto",
+    "color": "black",
     "types": [
       "dark"
     ],
@@ -4683,6 +4893,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 198,
     "name": "Murkrow",
     "region": "Johto",
+    "color": "black",
     "types": [
       "dark",
       "flying"
@@ -4707,6 +4918,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 199,
     "name": "Slowking",
     "region": "Johto",
+    "color": "pink",
     "types": [
       "water",
       "psychic"
@@ -4731,6 +4943,7 @@ const pokemonDataChunk2: Pokemon[] = [
     "id": 200,
     "name": "Misdreavus",
     "region": "Johto",
+    "color": "gray",
     "types": [
       "ghost"
     ],
@@ -4757,6 +4970,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 201,
     "name": "Unown",
     "region": "Johto",
+    "color": "black",
     "types": [
       "psychic"
     ],
@@ -4780,6 +4994,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 202,
     "name": "Wobbuffet",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "psychic"
     ],
@@ -4803,6 +5018,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 203,
     "name": "Girafarig",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "normal",
       "psychic"
@@ -4827,6 +5043,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 204,
     "name": "Pineco",
     "region": "Johto",
+    "color": "gray",
     "types": [
       "bug"
     ],
@@ -4850,6 +5067,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 205,
     "name": "Forretress",
     "region": "Johto",
+    "color": "purple",
     "types": [
       "bug",
       "steel"
@@ -4874,6 +5092,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 206,
     "name": "Dunsparce",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "normal"
     ],
@@ -4897,6 +5116,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 207,
     "name": "Gligar",
     "region": "Johto",
+    "color": "purple",
     "types": [
       "ground",
       "flying"
@@ -4921,6 +5141,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 208,
     "name": "Steelix",
     "region": "Johto",
+    "color": "gray",
     "types": [
       "steel",
       "ground"
@@ -4945,6 +5166,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 209,
     "name": "Snubbull",
     "region": "Johto",
+    "color": "pink",
     "types": [
       "fairy"
     ],
@@ -4968,6 +5190,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 210,
     "name": "Granbull",
     "region": "Johto",
+    "color": "purple",
     "types": [
       "fairy"
     ],
@@ -4991,6 +5214,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 211,
     "name": "Qwilfish",
     "region": "Johto",
+    "color": "gray",
     "types": [
       "water",
       "poison"
@@ -5015,6 +5239,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 212,
     "name": "Scizor",
     "region": "Johto",
+    "color": "red",
     "types": [
       "bug",
       "steel"
@@ -5039,6 +5264,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 213,
     "name": "Shuckle",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "bug",
       "rock"
@@ -5063,6 +5289,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 214,
     "name": "Heracross",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "bug",
       "fighting"
@@ -5087,6 +5314,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 215,
     "name": "Sneasel",
     "region": "Johto",
+    "color": "black",
     "types": [
       "dark",
       "ice"
@@ -5111,6 +5339,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 216,
     "name": "Teddiursa",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -5134,6 +5363,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 217,
     "name": "Ursaring",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -5157,6 +5387,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 218,
     "name": "Slugma",
     "region": "Johto",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -5180,6 +5411,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 219,
     "name": "Magcargo",
     "region": "Johto",
+    "color": "red",
     "types": [
       "fire",
       "rock"
@@ -5204,6 +5436,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 220,
     "name": "Swinub",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "ice",
       "ground"
@@ -5228,6 +5461,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 221,
     "name": "Piloswine",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "ice",
       "ground"
@@ -5252,6 +5486,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 222,
     "name": "Corsola",
     "region": "Johto",
+    "color": "pink",
     "types": [
       "water",
       "rock"
@@ -5276,6 +5511,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 223,
     "name": "Remoraid",
     "region": "Johto",
+    "color": "gray",
     "types": [
       "water"
     ],
@@ -5299,6 +5535,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 224,
     "name": "Octillery",
     "region": "Johto",
+    "color": "red",
     "types": [
       "water"
     ],
@@ -5322,6 +5559,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 225,
     "name": "Delibird",
     "region": "Johto",
+    "color": "red",
     "types": [
       "ice",
       "flying"
@@ -5346,6 +5584,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 226,
     "name": "Mantine",
     "region": "Johto",
+    "color": "purple",
     "types": [
       "water",
       "flying"
@@ -5370,6 +5609,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 227,
     "name": "Skarmory",
     "region": "Johto",
+    "color": "gray",
     "types": [
       "steel",
       "flying"
@@ -5394,6 +5634,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 228,
     "name": "Houndour",
     "region": "Johto",
+    "color": "black",
     "types": [
       "dark",
       "fire"
@@ -5418,6 +5659,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 229,
     "name": "Houndoom",
     "region": "Johto",
+    "color": "black",
     "types": [
       "dark",
       "fire"
@@ -5442,6 +5684,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 230,
     "name": "Kingdra",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "water",
       "dragon"
@@ -5466,6 +5709,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 231,
     "name": "Phanpy",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "ground"
     ],
@@ -5489,6 +5733,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 232,
     "name": "Donphan",
     "region": "Johto",
+    "color": "gray",
     "types": [
       "ground"
     ],
@@ -5512,6 +5757,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 233,
     "name": "Porygon2",
     "region": "Johto",
+    "color": "red",
     "types": [
       "normal"
     ],
@@ -5535,6 +5781,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 234,
     "name": "Stantler",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -5558,6 +5805,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 235,
     "name": "Smeargle",
     "region": "Johto",
+    "color": "white",
     "types": [
       "normal"
     ],
@@ -5581,6 +5829,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 236,
     "name": "Tyrogue",
     "region": "Johto",
+    "color": "purple",
     "types": [
       "fighting"
     ],
@@ -5604,6 +5853,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 237,
     "name": "Hitmontop",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "fighting"
     ],
@@ -5627,6 +5877,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 238,
     "name": "Smoochum",
     "region": "Johto",
+    "color": "pink",
     "types": [
       "ice",
       "psychic"
@@ -5651,6 +5902,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 239,
     "name": "Elekid",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -5674,6 +5926,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 240,
     "name": "Magby",
     "region": "Johto",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -5697,6 +5950,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 241,
     "name": "Miltank",
     "region": "Johto",
+    "color": "pink",
     "types": [
       "normal"
     ],
@@ -5720,6 +5974,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 242,
     "name": "Blissey",
     "region": "Johto",
+    "color": "pink",
     "types": [
       "normal"
     ],
@@ -5743,6 +5998,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 243,
     "name": "Raikou",
     "region": "Johto",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -5766,6 +6022,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 244,
     "name": "Entei",
     "region": "Johto",
+    "color": "brown",
     "types": [
       "fire"
     ],
@@ -5789,6 +6046,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 245,
     "name": "Suicune",
     "region": "Johto",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -5812,6 +6070,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 246,
     "name": "Larvitar",
     "region": "Johto",
+    "color": "green",
     "types": [
       "rock",
       "ground"
@@ -5836,6 +6095,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 247,
     "name": "Pupitar",
     "region": "Johto",
+    "color": "gray",
     "types": [
       "rock",
       "ground"
@@ -5860,6 +6120,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 248,
     "name": "Tyranitar",
     "region": "Johto",
+    "color": "green",
     "types": [
       "rock",
       "dark"
@@ -5884,6 +6145,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 249,
     "name": "Lugia",
     "region": "Johto",
+    "color": "white",
     "types": [
       "psychic",
       "flying"
@@ -5908,6 +6170,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 250,
     "name": "Ho Oh",
     "region": "Johto",
+    "color": "red",
     "types": [
       "fire",
       "flying"
@@ -5932,6 +6195,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 251,
     "name": "Celebi",
     "region": "Johto",
+    "color": "green",
     "types": [
       "psychic",
       "grass"
@@ -5956,6 +6220,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 252,
     "name": "Treecko",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -5979,6 +6244,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 253,
     "name": "Grovyle",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -6002,6 +6268,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 254,
     "name": "Sceptile",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -6025,6 +6292,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 255,
     "name": "Torchic",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -6048,6 +6316,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 256,
     "name": "Combusken",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "fire",
       "fighting"
@@ -6072,6 +6341,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 257,
     "name": "Blaziken",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "fire",
       "fighting"
@@ -6096,6 +6366,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 258,
     "name": "Mudkip",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -6119,6 +6390,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 259,
     "name": "Marshtomp",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "water",
       "ground"
@@ -6143,6 +6415,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 260,
     "name": "Swampert",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "water",
       "ground"
@@ -6167,6 +6440,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 261,
     "name": "Poochyena",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "dark"
     ],
@@ -6190,6 +6464,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 262,
     "name": "Mightyena",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "dark"
     ],
@@ -6213,6 +6488,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 263,
     "name": "Zigzagoon",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -6236,6 +6512,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 264,
     "name": "Linoone",
     "region": "Hoenn",
+    "color": "white",
     "types": [
       "normal"
     ],
@@ -6259,6 +6536,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 265,
     "name": "Wurmple",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "bug"
     ],
@@ -6282,6 +6560,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 266,
     "name": "Silcoon",
     "region": "Hoenn",
+    "color": "white",
     "types": [
       "bug"
     ],
@@ -6305,6 +6584,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 267,
     "name": "Beautifly",
     "region": "Hoenn",
+    "color": "yellow",
     "types": [
       "bug",
       "flying"
@@ -6329,6 +6609,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 268,
     "name": "Cascoon",
     "region": "Hoenn",
+    "color": "purple",
     "types": [
       "bug"
     ],
@@ -6352,6 +6633,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 269,
     "name": "Dustox",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "bug",
       "poison"
@@ -6376,6 +6658,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 270,
     "name": "Lotad",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "water",
       "grass"
@@ -6400,6 +6683,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 271,
     "name": "Lombre",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "water",
       "grass"
@@ -6424,6 +6708,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 272,
     "name": "Ludicolo",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "water",
       "grass"
@@ -6448,6 +6733,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 273,
     "name": "Seedot",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "grass"
     ],
@@ -6471,6 +6757,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 274,
     "name": "Nuzleaf",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "grass",
       "dark"
@@ -6495,6 +6782,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 275,
     "name": "Shiftry",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "grass",
       "dark"
@@ -6519,6 +6807,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 276,
     "name": "Taillow",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "normal",
       "flying"
@@ -6543,6 +6832,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 277,
     "name": "Swellow",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "normal",
       "flying"
@@ -6567,6 +6857,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 278,
     "name": "Wingull",
     "region": "Hoenn",
+    "color": "white",
     "types": [
       "water",
       "flying"
@@ -6591,6 +6882,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 279,
     "name": "Pelipper",
     "region": "Hoenn",
+    "color": "yellow",
     "types": [
       "water",
       "flying"
@@ -6615,6 +6907,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 280,
     "name": "Ralts",
     "region": "Hoenn",
+    "color": "white",
     "types": [
       "psychic",
       "fairy"
@@ -6639,6 +6932,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 281,
     "name": "Kirlia",
     "region": "Hoenn",
+    "color": "white",
     "types": [
       "psychic",
       "fairy"
@@ -6663,6 +6957,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 282,
     "name": "Gardevoir",
     "region": "Hoenn",
+    "color": "white",
     "types": [
       "psychic",
       "fairy"
@@ -6687,6 +6982,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 283,
     "name": "Surskit",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "bug",
       "water"
@@ -6711,6 +7007,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 284,
     "name": "Masquerain",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "bug",
       "flying"
@@ -6735,6 +7032,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 285,
     "name": "Shroomish",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "grass"
     ],
@@ -6758,6 +7056,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 286,
     "name": "Breloom",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "grass",
       "fighting"
@@ -6782,6 +7081,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 287,
     "name": "Slakoth",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -6805,6 +7105,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 288,
     "name": "Vigoroth",
     "region": "Hoenn",
+    "color": "white",
     "types": [
       "normal"
     ],
@@ -6828,6 +7129,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 289,
     "name": "Slaking",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -6851,6 +7153,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 290,
     "name": "Nincada",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "bug",
       "ground"
@@ -6875,6 +7178,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 291,
     "name": "Ninjask",
     "region": "Hoenn",
+    "color": "yellow",
     "types": [
       "bug",
       "flying"
@@ -6899,6 +7203,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 292,
     "name": "Shedinja",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "bug",
       "ghost"
@@ -6923,6 +7228,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 293,
     "name": "Whismur",
     "region": "Hoenn",
+    "color": "pink",
     "types": [
       "normal"
     ],
@@ -6946,6 +7252,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 294,
     "name": "Loudred",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "normal"
     ],
@@ -6969,6 +7276,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 295,
     "name": "Exploud",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "normal"
     ],
@@ -6992,6 +7300,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 296,
     "name": "Makuhita",
     "region": "Hoenn",
+    "color": "yellow",
     "types": [
       "fighting"
     ],
@@ -7015,6 +7324,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 297,
     "name": "Hariyama",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "fighting"
     ],
@@ -7038,6 +7348,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 298,
     "name": "Azurill",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "normal",
       "fairy"
@@ -7062,6 +7373,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 299,
     "name": "Nosepass",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "rock"
     ],
@@ -7085,6 +7397,7 @@ const pokemonDataChunk3: Pokemon[] = [
     "id": 300,
     "name": "Skitty",
     "region": "Hoenn",
+    "color": "pink",
     "types": [
       "normal"
     ],
@@ -7111,6 +7424,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 301,
     "name": "Delcatty",
     "region": "Hoenn",
+    "color": "purple",
     "types": [
       "normal"
     ],
@@ -7134,6 +7448,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 302,
     "name": "Sableye",
     "region": "Hoenn",
+    "color": "purple",
     "types": [
       "dark",
       "ghost"
@@ -7158,6 +7473,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 303,
     "name": "Mawile",
     "region": "Hoenn",
+    "color": "black",
     "types": [
       "steel",
       "fairy"
@@ -7182,6 +7498,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 304,
     "name": "Aron",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "steel",
       "rock"
@@ -7206,6 +7523,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 305,
     "name": "Lairon",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "steel",
       "rock"
@@ -7230,6 +7548,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 306,
     "name": "Aggron",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "steel",
       "rock"
@@ -7254,6 +7573,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 307,
     "name": "Meditite",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "fighting",
       "psychic"
@@ -7278,6 +7598,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 308,
     "name": "Medicham",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "fighting",
       "psychic"
@@ -7302,6 +7623,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 309,
     "name": "Electrike",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "electric"
     ],
@@ -7325,6 +7647,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 310,
     "name": "Manectric",
     "region": "Hoenn",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -7348,6 +7671,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 311,
     "name": "Plusle",
     "region": "Hoenn",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -7371,6 +7695,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 312,
     "name": "Minun",
     "region": "Hoenn",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -7394,6 +7719,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 313,
     "name": "Volbeat",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "bug"
     ],
@@ -7417,6 +7743,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 314,
     "name": "Illumise",
     "region": "Hoenn",
+    "color": "purple",
     "types": [
       "bug"
     ],
@@ -7440,6 +7767,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 315,
     "name": "Roselia",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "grass",
       "poison"
@@ -7464,6 +7792,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 316,
     "name": "Gulpin",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "poison"
     ],
@@ -7487,6 +7816,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 317,
     "name": "Swalot",
     "region": "Hoenn",
+    "color": "purple",
     "types": [
       "poison"
     ],
@@ -7510,6 +7840,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 318,
     "name": "Carvanha",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "water",
       "dark"
@@ -7534,6 +7865,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 319,
     "name": "Sharpedo",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "water",
       "dark"
@@ -7558,6 +7890,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 320,
     "name": "Wailmer",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -7581,6 +7914,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 321,
     "name": "Wailord",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -7604,6 +7938,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 322,
     "name": "Numel",
     "region": "Hoenn",
+    "color": "yellow",
     "types": [
       "fire",
       "ground"
@@ -7628,6 +7963,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 323,
     "name": "Camerupt",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "fire",
       "ground"
@@ -7652,6 +7988,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 324,
     "name": "Torkoal",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "fire"
     ],
@@ -7675,6 +8012,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 325,
     "name": "Spoink",
     "region": "Hoenn",
+    "color": "black",
     "types": [
       "psychic"
     ],
@@ -7698,6 +8036,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 326,
     "name": "Grumpig",
     "region": "Hoenn",
+    "color": "purple",
     "types": [
       "psychic"
     ],
@@ -7721,6 +8060,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 327,
     "name": "Spinda",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -7744,6 +8084,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 328,
     "name": "Trapinch",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "ground"
     ],
@@ -7767,6 +8108,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 329,
     "name": "Vibrava",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "ground",
       "dragon"
@@ -7791,6 +8133,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 330,
     "name": "Flygon",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "ground",
       "dragon"
@@ -7815,6 +8158,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 331,
     "name": "Cacnea",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -7838,6 +8182,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 332,
     "name": "Cacturne",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "grass",
       "dark"
@@ -7862,6 +8207,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 333,
     "name": "Swablu",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "normal",
       "flying"
@@ -7886,6 +8232,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 334,
     "name": "Altaria",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "dragon",
       "flying"
@@ -7910,6 +8257,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 335,
     "name": "Zangoose",
     "region": "Hoenn",
+    "color": "white",
     "types": [
       "normal"
     ],
@@ -7933,6 +8281,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 336,
     "name": "Seviper",
     "region": "Hoenn",
+    "color": "black",
     "types": [
       "poison"
     ],
@@ -7956,6 +8305,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 337,
     "name": "Lunatone",
     "region": "Hoenn",
+    "color": "yellow",
     "types": [
       "rock",
       "psychic"
@@ -7980,6 +8330,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 338,
     "name": "Solrock",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "rock",
       "psychic"
@@ -8004,6 +8355,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 339,
     "name": "Barboach",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "water",
       "ground"
@@ -8028,6 +8380,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 340,
     "name": "Whiscash",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "water",
       "ground"
@@ -8052,6 +8405,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 341,
     "name": "Corphish",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "water"
     ],
@@ -8075,6 +8429,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 342,
     "name": "Crawdaunt",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "water",
       "dark"
@@ -8099,6 +8454,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 343,
     "name": "Baltoy",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "ground",
       "psychic"
@@ -8123,6 +8479,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 344,
     "name": "Claydol",
     "region": "Hoenn",
+    "color": "black",
     "types": [
       "ground",
       "psychic"
@@ -8147,6 +8504,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 345,
     "name": "Lileep",
     "region": "Hoenn",
+    "color": "purple",
     "types": [
       "rock",
       "grass"
@@ -8171,6 +8529,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 346,
     "name": "Cradily",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "rock",
       "grass"
@@ -8195,6 +8554,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 347,
     "name": "Anorith",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "rock",
       "bug"
@@ -8219,6 +8579,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 348,
     "name": "Armaldo",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "rock",
       "bug"
@@ -8243,6 +8604,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 349,
     "name": "Feebas",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "water"
     ],
@@ -8266,6 +8628,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 350,
     "name": "Milotic",
     "region": "Hoenn",
+    "color": "pink",
     "types": [
       "water"
     ],
@@ -8289,6 +8652,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 351,
     "name": "Castform",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "normal"
     ],
@@ -8312,6 +8676,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 352,
     "name": "Kecleon",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "normal"
     ],
@@ -8335,6 +8700,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 353,
     "name": "Shuppet",
     "region": "Hoenn",
+    "color": "black",
     "types": [
       "ghost"
     ],
@@ -8358,6 +8724,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 354,
     "name": "Banette",
     "region": "Hoenn",
+    "color": "black",
     "types": [
       "ghost"
     ],
@@ -8381,6 +8748,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 355,
     "name": "Duskull",
     "region": "Hoenn",
+    "color": "black",
     "types": [
       "ghost"
     ],
@@ -8404,6 +8772,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 356,
     "name": "Dusclops",
     "region": "Hoenn",
+    "color": "black",
     "types": [
       "ghost"
     ],
@@ -8427,6 +8796,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 357,
     "name": "Tropius",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "grass",
       "flying"
@@ -8451,6 +8821,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 358,
     "name": "Chimecho",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "psychic"
     ],
@@ -8474,6 +8845,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 359,
     "name": "Absol",
     "region": "Hoenn",
+    "color": "white",
     "types": [
       "dark"
     ],
@@ -8497,6 +8869,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 360,
     "name": "Wynaut",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "psychic"
     ],
@@ -8520,6 +8893,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 361,
     "name": "Snorunt",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "ice"
     ],
@@ -8543,6 +8917,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 362,
     "name": "Glalie",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "ice"
     ],
@@ -8566,6 +8941,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 363,
     "name": "Spheal",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "ice",
       "water"
@@ -8590,6 +8966,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 364,
     "name": "Sealeo",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "ice",
       "water"
@@ -8614,6 +8991,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 365,
     "name": "Walrein",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "ice",
       "water"
@@ -8638,6 +9016,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 366,
     "name": "Clamperl",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -8661,6 +9040,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 367,
     "name": "Huntail",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -8684,6 +9064,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 368,
     "name": "Gorebyss",
     "region": "Hoenn",
+    "color": "pink",
     "types": [
       "water"
     ],
@@ -8707,6 +9088,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 369,
     "name": "Relicanth",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "water",
       "rock"
@@ -8731,6 +9113,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 370,
     "name": "Luvdisc",
     "region": "Hoenn",
+    "color": "pink",
     "types": [
       "water"
     ],
@@ -8754,6 +9137,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 371,
     "name": "Bagon",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "dragon"
     ],
@@ -8777,6 +9161,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 372,
     "name": "Shelgon",
     "region": "Hoenn",
+    "color": "white",
     "types": [
       "dragon"
     ],
@@ -8800,6 +9185,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 373,
     "name": "Salamence",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "dragon",
       "flying"
@@ -8824,6 +9210,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 374,
     "name": "Beldum",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "steel",
       "psychic"
@@ -8848,6 +9235,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 375,
     "name": "Metang",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "steel",
       "psychic"
@@ -8872,6 +9260,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 376,
     "name": "Metagross",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "steel",
       "psychic"
@@ -8896,6 +9285,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 377,
     "name": "Regirock",
     "region": "Hoenn",
+    "color": "brown",
     "types": [
       "rock"
     ],
@@ -8919,6 +9309,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 378,
     "name": "Regice",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "ice"
     ],
@@ -8942,6 +9333,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 379,
     "name": "Registeel",
     "region": "Hoenn",
+    "color": "gray",
     "types": [
       "steel"
     ],
@@ -8965,6 +9357,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 380,
     "name": "Latias",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "dragon",
       "psychic"
@@ -8989,6 +9382,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 381,
     "name": "Latios",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "dragon",
       "psychic"
@@ -9013,6 +9407,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 382,
     "name": "Kyogre",
     "region": "Hoenn",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -9036,6 +9431,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 383,
     "name": "Groudon",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "ground"
     ],
@@ -9059,6 +9455,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 384,
     "name": "Rayquaza",
     "region": "Hoenn",
+    "color": "green",
     "types": [
       "dragon",
       "flying"
@@ -9083,6 +9480,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 385,
     "name": "Jirachi",
     "region": "Hoenn",
+    "color": "yellow",
     "types": [
       "steel",
       "psychic"
@@ -9107,6 +9505,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 386,
     "name": "Deoxys Normal",
     "region": "Hoenn",
+    "color": "red",
     "types": [
       "psychic"
     ],
@@ -9130,6 +9529,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 387,
     "name": "Turtwig",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -9153,6 +9553,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 388,
     "name": "Grotle",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -9176,6 +9577,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 389,
     "name": "Torterra",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "grass",
       "ground"
@@ -9200,6 +9602,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 390,
     "name": "Chimchar",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "fire"
     ],
@@ -9223,6 +9626,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 391,
     "name": "Monferno",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "fire",
       "fighting"
@@ -9247,6 +9651,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 392,
     "name": "Infernape",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "fire",
       "fighting"
@@ -9271,6 +9676,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 393,
     "name": "Piplup",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -9294,6 +9700,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 394,
     "name": "Prinplup",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -9317,6 +9724,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 395,
     "name": "Empoleon",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "water",
       "steel"
@@ -9341,6 +9749,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 396,
     "name": "Starly",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -9365,6 +9774,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 397,
     "name": "Staravia",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -9389,6 +9799,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 398,
     "name": "Staraptor",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "normal",
       "flying"
@@ -9413,6 +9824,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 399,
     "name": "Bidoof",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -9436,6 +9848,7 @@ const pokemonDataChunk4: Pokemon[] = [
     "id": 400,
     "name": "Bibarel",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "normal",
       "water"
@@ -9463,6 +9876,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 401,
     "name": "Kricketot",
     "region": "Sinnoh",
+    "color": "red",
     "types": [
       "bug"
     ],
@@ -9486,6 +9900,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 402,
     "name": "Kricketune",
     "region": "Sinnoh",
+    "color": "red",
     "types": [
       "bug"
     ],
@@ -9509,6 +9924,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 403,
     "name": "Shinx",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "electric"
     ],
@@ -9532,6 +9948,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 404,
     "name": "Luxio",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "electric"
     ],
@@ -9555,6 +9972,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 405,
     "name": "Luxray",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "electric"
     ],
@@ -9578,6 +9996,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 406,
     "name": "Budew",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "grass",
       "poison"
@@ -9602,6 +10021,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 407,
     "name": "Roserade",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "grass",
       "poison"
@@ -9626,6 +10046,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 408,
     "name": "Cranidos",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "rock"
     ],
@@ -9649,6 +10070,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 409,
     "name": "Rampardos",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "rock"
     ],
@@ -9672,6 +10094,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 410,
     "name": "Shieldon",
     "region": "Sinnoh",
+    "color": "gray",
     "types": [
       "rock",
       "steel"
@@ -9696,6 +10119,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 411,
     "name": "Bastiodon",
     "region": "Sinnoh",
+    "color": "gray",
     "types": [
       "rock",
       "steel"
@@ -9720,6 +10144,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 412,
     "name": "Burmy",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "bug"
     ],
@@ -9743,6 +10168,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 413,
     "name": "Wormadam Plant",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "bug",
       "grass"
@@ -9767,6 +10193,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 414,
     "name": "Mothim",
     "region": "Sinnoh",
+    "color": "yellow",
     "types": [
       "bug",
       "flying"
@@ -9791,6 +10218,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 415,
     "name": "Combee",
     "region": "Sinnoh",
+    "color": "yellow",
     "types": [
       "bug",
       "flying"
@@ -9815,6 +10243,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 416,
     "name": "Vespiquen",
     "region": "Sinnoh",
+    "color": "yellow",
     "types": [
       "bug",
       "flying"
@@ -9839,6 +10268,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 417,
     "name": "Pachirisu",
     "region": "Sinnoh",
+    "color": "white",
     "types": [
       "electric"
     ],
@@ -9862,6 +10292,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 418,
     "name": "Buizel",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "water"
     ],
@@ -9885,6 +10316,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 419,
     "name": "Floatzel",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "water"
     ],
@@ -9908,6 +10340,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 420,
     "name": "Cherubi",
     "region": "Sinnoh",
+    "color": "pink",
     "types": [
       "grass"
     ],
@@ -9931,6 +10364,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 421,
     "name": "Cherrim",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "grass"
     ],
@@ -9954,6 +10388,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 422,
     "name": "Shellos",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "water"
     ],
@@ -9977,6 +10412,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 423,
     "name": "Gastrodon",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "water",
       "ground"
@@ -10001,6 +10437,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 424,
     "name": "Ambipom",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "normal"
     ],
@@ -10024,6 +10461,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 425,
     "name": "Drifloon",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "ghost",
       "flying"
@@ -10048,6 +10486,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 426,
     "name": "Drifblim",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "ghost",
       "flying"
@@ -10072,6 +10511,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 427,
     "name": "Buneary",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -10095,6 +10535,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 428,
     "name": "Lopunny",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -10118,6 +10559,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 429,
     "name": "Mismagius",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "ghost"
     ],
@@ -10141,6 +10583,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 430,
     "name": "Honchkrow",
     "region": "Sinnoh",
+    "color": "black",
     "types": [
       "dark",
       "flying"
@@ -10165,6 +10608,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 431,
     "name": "Glameow",
     "region": "Sinnoh",
+    "color": "gray",
     "types": [
       "normal"
     ],
@@ -10188,6 +10632,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 432,
     "name": "Purugly",
     "region": "Sinnoh",
+    "color": "gray",
     "types": [
       "normal"
     ],
@@ -10211,6 +10656,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 433,
     "name": "Chingling",
     "region": "Sinnoh",
+    "color": "yellow",
     "types": [
       "psychic"
     ],
@@ -10234,6 +10680,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 434,
     "name": "Stunky",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "poison",
       "dark"
@@ -10258,6 +10705,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 435,
     "name": "Skuntank",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "poison",
       "dark"
@@ -10282,6 +10730,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 436,
     "name": "Bronzor",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "steel",
       "psychic"
@@ -10306,6 +10755,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 437,
     "name": "Bronzong",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "steel",
       "psychic"
@@ -10330,6 +10780,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 438,
     "name": "Bonsly",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "rock"
     ],
@@ -10353,6 +10804,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 439,
     "name": "Mime Jr",
     "region": "Sinnoh",
+    "color": "pink",
     "types": [
       "psychic",
       "fairy"
@@ -10377,6 +10829,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 440,
     "name": "Happiny",
     "region": "Sinnoh",
+    "color": "pink",
     "types": [
       "normal"
     ],
@@ -10400,6 +10853,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 441,
     "name": "Chatot",
     "region": "Sinnoh",
+    "color": "black",
     "types": [
       "normal",
       "flying"
@@ -10424,6 +10878,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 442,
     "name": "Spiritomb",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "ghost",
       "dark"
@@ -10448,6 +10903,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 443,
     "name": "Gible",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "dragon",
       "ground"
@@ -10472,6 +10928,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 444,
     "name": "Gabite",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "dragon",
       "ground"
@@ -10496,6 +10953,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 445,
     "name": "Garchomp",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "dragon",
       "ground"
@@ -10520,6 +10978,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 446,
     "name": "Munchlax",
     "region": "Sinnoh",
+    "color": "black",
     "types": [
       "normal"
     ],
@@ -10543,6 +11002,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 447,
     "name": "Riolu",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "fighting"
     ],
@@ -10566,6 +11026,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 448,
     "name": "Lucario",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "fighting",
       "steel"
@@ -10590,6 +11051,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 449,
     "name": "Hippopotas",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "ground"
     ],
@@ -10613,6 +11075,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 450,
     "name": "Hippowdon",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "ground"
     ],
@@ -10636,6 +11099,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 451,
     "name": "Skorupi",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "poison",
       "bug"
@@ -10660,6 +11124,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 452,
     "name": "Drapion",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "poison",
       "dark"
@@ -10684,6 +11149,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 453,
     "name": "Croagunk",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "poison",
       "fighting"
@@ -10708,6 +11174,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 454,
     "name": "Toxicroak",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "poison",
       "fighting"
@@ -10732,6 +11199,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 455,
     "name": "Carnivine",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -10755,6 +11223,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 456,
     "name": "Finneon",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -10778,6 +11247,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 457,
     "name": "Lumineon",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -10801,6 +11271,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 458,
     "name": "Mantyke",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "water",
       "flying"
@@ -10825,6 +11296,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 459,
     "name": "Snover",
     "region": "Sinnoh",
+    "color": "white",
     "types": [
       "grass",
       "ice"
@@ -10849,6 +11321,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 460,
     "name": "Abomasnow",
     "region": "Sinnoh",
+    "color": "white",
     "types": [
       "grass",
       "ice"
@@ -10873,6 +11346,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 461,
     "name": "Weavile",
     "region": "Sinnoh",
+    "color": "black",
     "types": [
       "dark",
       "ice"
@@ -10897,6 +11371,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 462,
     "name": "Magnezone",
     "region": "Sinnoh",
+    "color": "gray",
     "types": [
       "electric",
       "steel"
@@ -10921,6 +11396,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 463,
     "name": "Lickilicky",
     "region": "Sinnoh",
+    "color": "pink",
     "types": [
       "normal"
     ],
@@ -10944,6 +11420,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 464,
     "name": "Rhyperior",
     "region": "Sinnoh",
+    "color": "gray",
     "types": [
       "ground",
       "rock"
@@ -10968,6 +11445,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 465,
     "name": "Tangrowth",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "grass"
     ],
@@ -10991,6 +11469,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 466,
     "name": "Electivire",
     "region": "Sinnoh",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -11014,6 +11493,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 467,
     "name": "Magmortar",
     "region": "Sinnoh",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -11037,6 +11517,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 468,
     "name": "Togekiss",
     "region": "Sinnoh",
+    "color": "white",
     "types": [
       "fairy",
       "flying"
@@ -11061,6 +11542,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 469,
     "name": "Yanmega",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "bug",
       "flying"
@@ -11085,6 +11567,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 470,
     "name": "Leafeon",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -11108,6 +11591,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 471,
     "name": "Glaceon",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "ice"
     ],
@@ -11131,6 +11615,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 472,
     "name": "Gliscor",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "ground",
       "flying"
@@ -11155,6 +11640,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 473,
     "name": "Mamoswine",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "ice",
       "ground"
@@ -11179,6 +11665,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 474,
     "name": "Porygon Z",
     "region": "Sinnoh",
+    "color": "red",
     "types": [
       "normal"
     ],
@@ -11202,6 +11689,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 475,
     "name": "Gallade",
     "region": "Sinnoh",
+    "color": "white",
     "types": [
       "psychic",
       "fighting"
@@ -11226,6 +11714,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 476,
     "name": "Probopass",
     "region": "Sinnoh",
+    "color": "gray",
     "types": [
       "rock",
       "steel"
@@ -11250,6 +11739,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 477,
     "name": "Dusknoir",
     "region": "Sinnoh",
+    "color": "black",
     "types": [
       "ghost"
     ],
@@ -11273,6 +11763,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 478,
     "name": "Froslass",
     "region": "Sinnoh",
+    "color": "white",
     "types": [
       "ice",
       "ghost"
@@ -11297,6 +11788,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 479,
     "name": "Rotom",
     "region": "Sinnoh",
+    "color": "red",
     "types": [
       "electric",
       "ghost"
@@ -11321,6 +11813,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 480,
     "name": "Uxie",
     "region": "Sinnoh",
+    "color": "yellow",
     "types": [
       "psychic"
     ],
@@ -11344,6 +11837,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 481,
     "name": "Mesprit",
     "region": "Sinnoh",
+    "color": "pink",
     "types": [
       "psychic"
     ],
@@ -11367,6 +11861,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 482,
     "name": "Azelf",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "psychic"
     ],
@@ -11390,6 +11885,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 483,
     "name": "Dialga",
     "region": "Sinnoh",
+    "color": "white",
     "types": [
       "steel",
       "dragon"
@@ -11414,6 +11910,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 484,
     "name": "Palkia",
     "region": "Sinnoh",
+    "color": "purple",
     "types": [
       "water",
       "dragon"
@@ -11438,6 +11935,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 485,
     "name": "Heatran",
     "region": "Sinnoh",
+    "color": "brown",
     "types": [
       "fire",
       "steel"
@@ -11462,6 +11960,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 486,
     "name": "Regigigas",
     "region": "Sinnoh",
+    "color": "white",
     "types": [
       "normal"
     ],
@@ -11485,6 +11984,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 487,
     "name": "Giratina Altered",
     "region": "Sinnoh",
+    "color": "black",
     "types": [
       "ghost",
       "dragon"
@@ -11509,6 +12009,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 488,
     "name": "Cresselia",
     "region": "Sinnoh",
+    "color": "yellow",
     "types": [
       "psychic"
     ],
@@ -11532,6 +12033,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 489,
     "name": "Phione",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -11555,6 +12057,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 490,
     "name": "Manaphy",
     "region": "Sinnoh",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -11578,6 +12081,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 491,
     "name": "Darkrai",
     "region": "Sinnoh",
+    "color": "black",
     "types": [
       "dark"
     ],
@@ -11601,6 +12105,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 492,
     "name": "Shaymin Land",
     "region": "Sinnoh",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -11624,6 +12129,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 493,
     "name": "Arceus",
     "region": "Sinnoh",
+    "color": "white",
     "types": [
       "normal"
     ],
@@ -11647,6 +12153,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 494,
     "name": "Victini",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "psychic",
       "fire"
@@ -11671,6 +12178,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 495,
     "name": "Snivy",
     "region": "Unova",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -11694,6 +12202,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 496,
     "name": "Servine",
     "region": "Unova",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -11717,6 +12226,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 497,
     "name": "Serperior",
     "region": "Unova",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -11740,6 +12250,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 498,
     "name": "Tepig",
     "region": "Unova",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -11763,6 +12274,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 499,
     "name": "Pignite",
     "region": "Unova",
+    "color": "red",
     "types": [
       "fire",
       "fighting"
@@ -11787,6 +12299,7 @@ const pokemonDataChunk5: Pokemon[] = [
     "id": 500,
     "name": "Emboar",
     "region": "Unova",
+    "color": "red",
     "types": [
       "fire",
       "fighting"
@@ -11814,6 +12327,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 501,
     "name": "Oshawott",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -11837,6 +12351,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 502,
     "name": "Dewott",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -11860,6 +12375,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 503,
     "name": "Samurott",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -11883,6 +12399,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 504,
     "name": "Patrat",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -11906,6 +12423,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 505,
     "name": "Watchog",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -11929,6 +12447,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 506,
     "name": "Lillipup",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -11952,6 +12471,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 507,
     "name": "Herdier",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "normal"
     ],
@@ -11975,6 +12495,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 508,
     "name": "Stoutland",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "normal"
     ],
@@ -11998,6 +12519,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 509,
     "name": "Purrloin",
     "region": "Unova",
+    "color": "purple",
     "types": [
       "dark"
     ],
@@ -12021,6 +12543,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 510,
     "name": "Liepard",
     "region": "Unova",
+    "color": "purple",
     "types": [
       "dark"
     ],
@@ -12044,6 +12567,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 511,
     "name": "Pansage",
     "region": "Unova",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -12067,6 +12591,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 512,
     "name": "Simisage",
     "region": "Unova",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -12090,6 +12615,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 513,
     "name": "Pansear",
     "region": "Unova",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -12113,6 +12639,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 514,
     "name": "Simisear",
     "region": "Unova",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -12136,6 +12663,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 515,
     "name": "Panpour",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -12159,6 +12687,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 516,
     "name": "Simipour",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -12182,6 +12711,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 517,
     "name": "Munna",
     "region": "Unova",
+    "color": "pink",
     "types": [
       "psychic"
     ],
@@ -12205,6 +12735,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 518,
     "name": "Musharna",
     "region": "Unova",
+    "color": "pink",
     "types": [
       "psychic"
     ],
@@ -12228,6 +12759,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 519,
     "name": "Pidove",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "normal",
       "flying"
@@ -12252,6 +12784,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 520,
     "name": "Tranquill",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "normal",
       "flying"
@@ -12276,6 +12809,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 521,
     "name": "Unfezant",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "normal",
       "flying"
@@ -12300,6 +12834,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 522,
     "name": "Blitzle",
     "region": "Unova",
+    "color": "black",
     "types": [
       "electric"
     ],
@@ -12323,6 +12858,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 523,
     "name": "Zebstrika",
     "region": "Unova",
+    "color": "black",
     "types": [
       "electric"
     ],
@@ -12346,6 +12882,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 524,
     "name": "Roggenrola",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "rock"
     ],
@@ -12369,6 +12906,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 525,
     "name": "Boldore",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "rock"
     ],
@@ -12392,6 +12930,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 526,
     "name": "Gigalith",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "rock"
     ],
@@ -12415,6 +12954,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 527,
     "name": "Woobat",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "psychic",
       "flying"
@@ -12439,6 +12979,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 528,
     "name": "Swoobat",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "psychic",
       "flying"
@@ -12463,6 +13004,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 529,
     "name": "Drilbur",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "ground"
     ],
@@ -12486,6 +13028,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 530,
     "name": "Excadrill",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "ground",
       "steel"
@@ -12510,6 +13053,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 531,
     "name": "Audino",
     "region": "Unova",
+    "color": "pink",
     "types": [
       "normal"
     ],
@@ -12533,6 +13077,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 532,
     "name": "Timburr",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "fighting"
     ],
@@ -12556,6 +13101,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 533,
     "name": "Gurdurr",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "fighting"
     ],
@@ -12579,6 +13125,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 534,
     "name": "Conkeldurr",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "fighting"
     ],
@@ -12602,6 +13149,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 535,
     "name": "Tympole",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -12625,6 +13173,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 536,
     "name": "Palpitoad",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "water",
       "ground"
@@ -12649,6 +13198,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 537,
     "name": "Seismitoad",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "water",
       "ground"
@@ -12673,6 +13223,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 538,
     "name": "Throh",
     "region": "Unova",
+    "color": "red",
     "types": [
       "fighting"
     ],
@@ -12696,6 +13247,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 539,
     "name": "Sawk",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "fighting"
     ],
@@ -12719,6 +13271,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 540,
     "name": "Sewaddle",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "bug",
       "grass"
@@ -12743,6 +13296,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 541,
     "name": "Swadloon",
     "region": "Unova",
+    "color": "green",
     "types": [
       "bug",
       "grass"
@@ -12767,6 +13321,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 542,
     "name": "Leavanny",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "bug",
       "grass"
@@ -12791,6 +13346,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 543,
     "name": "Venipede",
     "region": "Unova",
+    "color": "red",
     "types": [
       "bug",
       "poison"
@@ -12815,6 +13371,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 544,
     "name": "Whirlipede",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "bug",
       "poison"
@@ -12839,6 +13396,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 545,
     "name": "Scolipede",
     "region": "Unova",
+    "color": "red",
     "types": [
       "bug",
       "poison"
@@ -12863,6 +13421,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 546,
     "name": "Cottonee",
     "region": "Unova",
+    "color": "green",
     "types": [
       "grass",
       "fairy"
@@ -12887,6 +13446,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 547,
     "name": "Whimsicott",
     "region": "Unova",
+    "color": "green",
     "types": [
       "grass",
       "fairy"
@@ -12911,6 +13471,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 548,
     "name": "Petilil",
     "region": "Unova",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -12934,6 +13495,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 549,
     "name": "Lilligant",
     "region": "Unova",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -12957,6 +13519,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 550,
     "name": "Basculin Red Striped",
     "region": "Unova",
+    "color": "green",
     "types": [
       "water"
     ],
@@ -12980,6 +13543,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 551,
     "name": "Sandile",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "ground",
       "dark"
@@ -13004,6 +13568,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 552,
     "name": "Krokorok",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "ground",
       "dark"
@@ -13028,6 +13593,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 553,
     "name": "Krookodile",
     "region": "Unova",
+    "color": "red",
     "types": [
       "ground",
       "dark"
@@ -13052,6 +13618,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 554,
     "name": "Darumaka",
     "region": "Unova",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -13075,6 +13642,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 555,
     "name": "Darmanitan Standard",
     "region": "Unova",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -13098,6 +13666,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 556,
     "name": "Maractus",
     "region": "Unova",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -13121,6 +13690,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 557,
     "name": "Dwebble",
     "region": "Unova",
+    "color": "red",
     "types": [
       "bug",
       "rock"
@@ -13145,6 +13715,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 558,
     "name": "Crustle",
     "region": "Unova",
+    "color": "red",
     "types": [
       "bug",
       "rock"
@@ -13169,6 +13740,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 559,
     "name": "Scraggy",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "dark",
       "fighting"
@@ -13193,6 +13765,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 560,
     "name": "Scrafty",
     "region": "Unova",
+    "color": "red",
     "types": [
       "dark",
       "fighting"
@@ -13217,6 +13790,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 561,
     "name": "Sigilyph",
     "region": "Unova",
+    "color": "black",
     "types": [
       "psychic",
       "flying"
@@ -13241,6 +13815,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 562,
     "name": "Yamask",
     "region": "Unova",
+    "color": "black",
     "types": [
       "ghost"
     ],
@@ -13264,6 +13839,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 563,
     "name": "Cofagrigus",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "ghost"
     ],
@@ -13287,6 +13863,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 564,
     "name": "Tirtouga",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "water",
       "rock"
@@ -13311,6 +13888,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 565,
     "name": "Carracosta",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "water",
       "rock"
@@ -13335,6 +13913,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 566,
     "name": "Archen",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "rock",
       "flying"
@@ -13359,6 +13938,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 567,
     "name": "Archeops",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "rock",
       "flying"
@@ -13383,6 +13963,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 568,
     "name": "Trubbish",
     "region": "Unova",
+    "color": "green",
     "types": [
       "poison"
     ],
@@ -13406,6 +13987,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 569,
     "name": "Garbodor",
     "region": "Unova",
+    "color": "green",
     "types": [
       "poison"
     ],
@@ -13429,6 +14011,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 570,
     "name": "Zorua",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "dark"
     ],
@@ -13452,6 +14035,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 571,
     "name": "Zoroark",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "dark"
     ],
@@ -13475,6 +14059,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 572,
     "name": "Minccino",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "normal"
     ],
@@ -13498,6 +14083,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 573,
     "name": "Cinccino",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "normal"
     ],
@@ -13521,6 +14107,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 574,
     "name": "Gothita",
     "region": "Unova",
+    "color": "purple",
     "types": [
       "psychic"
     ],
@@ -13544,6 +14131,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 575,
     "name": "Gothorita",
     "region": "Unova",
+    "color": "purple",
     "types": [
       "psychic"
     ],
@@ -13567,6 +14155,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 576,
     "name": "Gothitelle",
     "region": "Unova",
+    "color": "purple",
     "types": [
       "psychic"
     ],
@@ -13590,6 +14179,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 577,
     "name": "Solosis",
     "region": "Unova",
+    "color": "green",
     "types": [
       "psychic"
     ],
@@ -13613,6 +14203,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 578,
     "name": "Duosion",
     "region": "Unova",
+    "color": "green",
     "types": [
       "psychic"
     ],
@@ -13636,6 +14227,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 579,
     "name": "Reuniclus",
     "region": "Unova",
+    "color": "green",
     "types": [
       "psychic"
     ],
@@ -13659,6 +14251,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 580,
     "name": "Ducklett",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "water",
       "flying"
@@ -13683,6 +14276,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 581,
     "name": "Swanna",
     "region": "Unova",
+    "color": "white",
     "types": [
       "water",
       "flying"
@@ -13707,6 +14301,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 582,
     "name": "Vanillite",
     "region": "Unova",
+    "color": "white",
     "types": [
       "ice"
     ],
@@ -13730,6 +14325,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 583,
     "name": "Vanillish",
     "region": "Unova",
+    "color": "white",
     "types": [
       "ice"
     ],
@@ -13753,6 +14349,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 584,
     "name": "Vanilluxe",
     "region": "Unova",
+    "color": "white",
     "types": [
       "ice"
     ],
@@ -13776,6 +14373,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 585,
     "name": "Deerling",
     "region": "Unova",
+    "color": "pink",
     "types": [
       "normal",
       "grass"
@@ -13800,6 +14398,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 586,
     "name": "Sawsbuck",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "normal",
       "grass"
@@ -13824,6 +14423,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 587,
     "name": "Emolga",
     "region": "Unova",
+    "color": "white",
     "types": [
       "electric",
       "flying"
@@ -13848,6 +14448,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 588,
     "name": "Karrablast",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "bug"
     ],
@@ -13871,6 +14472,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 589,
     "name": "Escavalier",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "bug",
       "steel"
@@ -13895,6 +14497,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 590,
     "name": "Foongus",
     "region": "Unova",
+    "color": "white",
     "types": [
       "grass",
       "poison"
@@ -13919,6 +14522,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 591,
     "name": "Amoonguss",
     "region": "Unova",
+    "color": "white",
     "types": [
       "grass",
       "poison"
@@ -13943,6 +14547,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 592,
     "name": "Frillish Male",
     "region": "Unova",
+    "color": "white",
     "types": [
       "water",
       "ghost"
@@ -13967,6 +14572,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 593,
     "name": "Jellicent Male",
     "region": "Unova",
+    "color": "white",
     "types": [
       "water",
       "ghost"
@@ -13991,6 +14597,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 594,
     "name": "Alomomola",
     "region": "Unova",
+    "color": "pink",
     "types": [
       "water"
     ],
@@ -14014,6 +14621,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 595,
     "name": "Joltik",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "bug",
       "electric"
@@ -14038,6 +14646,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 596,
     "name": "Galvantula",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "bug",
       "electric"
@@ -14062,6 +14671,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 597,
     "name": "Ferroseed",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "grass",
       "steel"
@@ -14086,6 +14696,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 598,
     "name": "Ferrothorn",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "grass",
       "steel"
@@ -14110,6 +14721,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 599,
     "name": "Klink",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "steel"
     ],
@@ -14133,6 +14745,7 @@ const pokemonDataChunk6: Pokemon[] = [
     "id": 600,
     "name": "Klang",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "steel"
     ],
@@ -14159,6 +14772,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 601,
     "name": "Klinklang",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "steel"
     ],
@@ -14182,6 +14796,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 602,
     "name": "Tynamo",
     "region": "Unova",
+    "color": "white",
     "types": [
       "electric"
     ],
@@ -14205,6 +14820,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 603,
     "name": "Eelektrik",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "electric"
     ],
@@ -14228,6 +14844,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 604,
     "name": "Eelektross",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "electric"
     ],
@@ -14251,6 +14868,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 605,
     "name": "Elgyem",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "psychic"
     ],
@@ -14274,6 +14892,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 606,
     "name": "Beheeyem",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "psychic"
     ],
@@ -14297,6 +14916,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 607,
     "name": "Litwick",
     "region": "Unova",
+    "color": "white",
     "types": [
       "ghost",
       "fire"
@@ -14321,6 +14941,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 608,
     "name": "Lampent",
     "region": "Unova",
+    "color": "black",
     "types": [
       "ghost",
       "fire"
@@ -14345,6 +14966,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 609,
     "name": "Chandelure",
     "region": "Unova",
+    "color": "black",
     "types": [
       "ghost",
       "fire"
@@ -14369,6 +14991,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 610,
     "name": "Axew",
     "region": "Unova",
+    "color": "green",
     "types": [
       "dragon"
     ],
@@ -14392,6 +15015,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 611,
     "name": "Fraxure",
     "region": "Unova",
+    "color": "green",
     "types": [
       "dragon"
     ],
@@ -14415,6 +15039,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 612,
     "name": "Haxorus",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "dragon"
     ],
@@ -14438,6 +15063,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 613,
     "name": "Cubchoo",
     "region": "Unova",
+    "color": "white",
     "types": [
       "ice"
     ],
@@ -14461,6 +15087,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 614,
     "name": "Beartic",
     "region": "Unova",
+    "color": "white",
     "types": [
       "ice"
     ],
@@ -14484,6 +15111,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 615,
     "name": "Cryogonal",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "ice"
     ],
@@ -14507,6 +15135,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 616,
     "name": "Shelmet",
     "region": "Unova",
+    "color": "red",
     "types": [
       "bug"
     ],
@@ -14530,6 +15159,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 617,
     "name": "Accelgor",
     "region": "Unova",
+    "color": "red",
     "types": [
       "bug"
     ],
@@ -14553,6 +15183,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 618,
     "name": "Stunfisk",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "ground",
       "electric"
@@ -14577,6 +15208,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 619,
     "name": "Mienfoo",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "fighting"
     ],
@@ -14600,6 +15232,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 620,
     "name": "Mienshao",
     "region": "Unova",
+    "color": "purple",
     "types": [
       "fighting"
     ],
@@ -14623,6 +15256,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 621,
     "name": "Druddigon",
     "region": "Unova",
+    "color": "red",
     "types": [
       "dragon"
     ],
@@ -14646,6 +15280,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 622,
     "name": "Golett",
     "region": "Unova",
+    "color": "green",
     "types": [
       "ground",
       "ghost"
@@ -14670,6 +15305,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 623,
     "name": "Golurk",
     "region": "Unova",
+    "color": "green",
     "types": [
       "ground",
       "ghost"
@@ -14694,6 +15330,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 624,
     "name": "Pawniard",
     "region": "Unova",
+    "color": "red",
     "types": [
       "dark",
       "steel"
@@ -14718,6 +15355,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 625,
     "name": "Bisharp",
     "region": "Unova",
+    "color": "red",
     "types": [
       "dark",
       "steel"
@@ -14742,6 +15380,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 626,
     "name": "Bouffalant",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -14765,6 +15404,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 627,
     "name": "Rufflet",
     "region": "Unova",
+    "color": "white",
     "types": [
       "normal",
       "flying"
@@ -14789,6 +15429,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 628,
     "name": "Braviary",
     "region": "Unova",
+    "color": "red",
     "types": [
       "normal",
       "flying"
@@ -14813,6 +15454,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 629,
     "name": "Vullaby",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "dark",
       "flying"
@@ -14837,6 +15479,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 630,
     "name": "Mandibuzz",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "dark",
       "flying"
@@ -14861,6 +15504,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 631,
     "name": "Heatmor",
     "region": "Unova",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -14884,6 +15528,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 632,
     "name": "Durant",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "bug",
       "steel"
@@ -14908,6 +15553,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 633,
     "name": "Deino",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "dark",
       "dragon"
@@ -14932,6 +15578,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 634,
     "name": "Zweilous",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "dark",
       "dragon"
@@ -14956,6 +15603,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 635,
     "name": "Hydreigon",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "dark",
       "dragon"
@@ -14980,6 +15628,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 636,
     "name": "Larvesta",
     "region": "Unova",
+    "color": "white",
     "types": [
       "bug",
       "fire"
@@ -15004,6 +15653,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 637,
     "name": "Volcarona",
     "region": "Unova",
+    "color": "white",
     "types": [
       "bug",
       "fire"
@@ -15028,6 +15678,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 638,
     "name": "Cobalion",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "steel",
       "fighting"
@@ -15052,6 +15703,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 639,
     "name": "Terrakion",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "rock",
       "fighting"
@@ -15076,6 +15728,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 640,
     "name": "Virizion",
     "region": "Unova",
+    "color": "green",
     "types": [
       "grass",
       "fighting"
@@ -15100,6 +15753,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 641,
     "name": "Tornadus Incarnate",
     "region": "Unova",
+    "color": "green",
     "types": [
       "flying"
     ],
@@ -15123,6 +15777,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 642,
     "name": "Thundurus Incarnate",
     "region": "Unova",
+    "color": "blue",
     "types": [
       "electric",
       "flying"
@@ -15147,6 +15802,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 643,
     "name": "Reshiram",
     "region": "Unova",
+    "color": "white",
     "types": [
       "dragon",
       "fire"
@@ -15171,6 +15827,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 644,
     "name": "Zekrom",
     "region": "Unova",
+    "color": "black",
     "types": [
       "dragon",
       "electric"
@@ -15195,6 +15852,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 645,
     "name": "Landorus Incarnate",
     "region": "Unova",
+    "color": "brown",
     "types": [
       "ground",
       "flying"
@@ -15219,6 +15877,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 646,
     "name": "Kyurem",
     "region": "Unova",
+    "color": "gray",
     "types": [
       "dragon",
       "ice"
@@ -15243,6 +15902,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 647,
     "name": "Keldeo Ordinary",
     "region": "Unova",
+    "color": "yellow",
     "types": [
       "water",
       "fighting"
@@ -15267,6 +15927,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 648,
     "name": "Meloetta Aria",
     "region": "Unova",
+    "color": "white",
     "types": [
       "normal",
       "psychic"
@@ -15291,6 +15952,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 649,
     "name": "Genesect",
     "region": "Unova",
+    "color": "purple",
     "types": [
       "bug",
       "steel"
@@ -15315,6 +15977,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 650,
     "name": "Chespin",
     "region": "Kalos",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -15338,6 +16001,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 651,
     "name": "Quilladin",
     "region": "Kalos",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -15361,6 +16025,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 652,
     "name": "Chesnaught",
     "region": "Kalos",
+    "color": "green",
     "types": [
       "grass",
       "fighting"
@@ -15385,6 +16050,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 653,
     "name": "Fennekin",
     "region": "Kalos",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -15408,6 +16074,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 654,
     "name": "Braixen",
     "region": "Kalos",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -15431,6 +16098,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 655,
     "name": "Delphox",
     "region": "Kalos",
+    "color": "red",
     "types": [
       "fire",
       "psychic"
@@ -15455,6 +16123,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 656,
     "name": "Froakie",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -15478,6 +16147,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 657,
     "name": "Frogadier",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -15501,6 +16171,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 658,
     "name": "Greninja",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "water",
       "dark"
@@ -15525,6 +16196,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 659,
     "name": "Bunnelby",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -15548,6 +16220,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 660,
     "name": "Diggersby",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "normal",
       "ground"
@@ -15572,6 +16245,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 661,
     "name": "Fletchling",
     "region": "Kalos",
+    "color": "red",
     "types": [
       "normal",
       "flying"
@@ -15596,6 +16270,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 662,
     "name": "Fletchinder",
     "region": "Kalos",
+    "color": "red",
     "types": [
       "fire",
       "flying"
@@ -15620,6 +16295,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 663,
     "name": "Talonflame",
     "region": "Kalos",
+    "color": "red",
     "types": [
       "fire",
       "flying"
@@ -15644,6 +16320,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 664,
     "name": "Scatterbug",
     "region": "Kalos",
+    "color": "black",
     "types": [
       "bug"
     ],
@@ -15667,6 +16344,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 665,
     "name": "Spewpa",
     "region": "Kalos",
+    "color": "black",
     "types": [
       "bug"
     ],
@@ -15690,6 +16368,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 666,
     "name": "Vivillon",
     "region": "Kalos",
+    "color": "white",
     "types": [
       "bug",
       "flying"
@@ -15714,6 +16393,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 667,
     "name": "Litleo",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "fire",
       "normal"
@@ -15738,6 +16418,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 668,
     "name": "Pyroar Male",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "fire",
       "normal"
@@ -15762,6 +16443,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 669,
     "name": "Flabebe",
     "region": "Kalos",
+    "color": "white",
     "types": [
       "fairy"
     ],
@@ -15785,6 +16467,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 670,
     "name": "Floette",
     "region": "Kalos",
+    "color": "white",
     "types": [
       "fairy"
     ],
@@ -15808,6 +16491,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 671,
     "name": "Florges",
     "region": "Kalos",
+    "color": "white",
     "types": [
       "fairy"
     ],
@@ -15831,6 +16515,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 672,
     "name": "Skiddo",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "grass"
     ],
@@ -15854,6 +16539,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 673,
     "name": "Gogoat",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "grass"
     ],
@@ -15877,6 +16563,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 674,
     "name": "Pancham",
     "region": "Kalos",
+    "color": "white",
     "types": [
       "fighting"
     ],
@@ -15900,6 +16587,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 675,
     "name": "Pangoro",
     "region": "Kalos",
+    "color": "white",
     "types": [
       "fighting",
       "dark"
@@ -15924,6 +16612,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 676,
     "name": "Furfrou",
     "region": "Kalos",
+    "color": "white",
     "types": [
       "normal"
     ],
@@ -15947,6 +16636,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 677,
     "name": "Espurr",
     "region": "Kalos",
+    "color": "gray",
     "types": [
       "psychic"
     ],
@@ -15970,6 +16660,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 678,
     "name": "Meowstic Male",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "psychic"
     ],
@@ -15993,6 +16684,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 679,
     "name": "Honedge",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "steel",
       "ghost"
@@ -16017,6 +16709,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 680,
     "name": "Doublade",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "steel",
       "ghost"
@@ -16041,6 +16734,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 681,
     "name": "Aegislash Shield",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "steel",
       "ghost"
@@ -16065,6 +16759,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 682,
     "name": "Spritzee",
     "region": "Kalos",
+    "color": "pink",
     "types": [
       "fairy"
     ],
@@ -16088,6 +16783,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 683,
     "name": "Aromatisse",
     "region": "Kalos",
+    "color": "pink",
     "types": [
       "fairy"
     ],
@@ -16111,6 +16807,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 684,
     "name": "Swirlix",
     "region": "Kalos",
+    "color": "white",
     "types": [
       "fairy"
     ],
@@ -16134,6 +16831,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 685,
     "name": "Slurpuff",
     "region": "Kalos",
+    "color": "white",
     "types": [
       "fairy"
     ],
@@ -16157,6 +16855,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 686,
     "name": "Inkay",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "dark",
       "psychic"
@@ -16181,6 +16880,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 687,
     "name": "Malamar",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "dark",
       "psychic"
@@ -16205,6 +16905,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 688,
     "name": "Binacle",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "rock",
       "water"
@@ -16229,6 +16930,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 689,
     "name": "Barbaracle",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "rock",
       "water"
@@ -16253,6 +16955,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 690,
     "name": "Skrelp",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "poison",
       "water"
@@ -16277,6 +16980,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 691,
     "name": "Dragalge",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "poison",
       "dragon"
@@ -16301,6 +17005,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 692,
     "name": "Clauncher",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -16324,6 +17029,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 693,
     "name": "Clawitzer",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -16347,6 +17053,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 694,
     "name": "Helioptile",
     "region": "Kalos",
+    "color": "yellow",
     "types": [
       "electric",
       "normal"
@@ -16371,6 +17078,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 695,
     "name": "Heliolisk",
     "region": "Kalos",
+    "color": "yellow",
     "types": [
       "electric",
       "normal"
@@ -16395,6 +17103,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 696,
     "name": "Tyrunt",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "rock",
       "dragon"
@@ -16419,6 +17128,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 697,
     "name": "Tyrantrum",
     "region": "Kalos",
+    "color": "red",
     "types": [
       "rock",
       "dragon"
@@ -16443,6 +17153,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 698,
     "name": "Amaura",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "rock",
       "ice"
@@ -16467,6 +17178,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 699,
     "name": "Aurorus",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "rock",
       "ice"
@@ -16491,6 +17203,7 @@ const pokemonDataChunk7: Pokemon[] = [
     "id": 700,
     "name": "Sylveon",
     "region": "Kalos",
+    "color": "pink",
     "types": [
       "fairy"
     ],
@@ -16517,6 +17230,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 701,
     "name": "Hawlucha",
     "region": "Kalos",
+    "color": "green",
     "types": [
       "fighting",
       "flying"
@@ -16541,6 +17255,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 702,
     "name": "Dedenne",
     "region": "Kalos",
+    "color": "yellow",
     "types": [
       "electric",
       "fairy"
@@ -16565,6 +17280,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 703,
     "name": "Carbink",
     "region": "Kalos",
+    "color": "gray",
     "types": [
       "rock",
       "fairy"
@@ -16589,6 +17305,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 704,
     "name": "Goomy",
     "region": "Kalos",
+    "color": "purple",
     "types": [
       "dragon"
     ],
@@ -16612,6 +17329,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 705,
     "name": "Sliggoo",
     "region": "Kalos",
+    "color": "purple",
     "types": [
       "dragon"
     ],
@@ -16635,6 +17353,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 706,
     "name": "Goodra",
     "region": "Kalos",
+    "color": "purple",
     "types": [
       "dragon"
     ],
@@ -16658,6 +17377,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 707,
     "name": "Klefki",
     "region": "Kalos",
+    "color": "gray",
     "types": [
       "steel",
       "fairy"
@@ -16682,6 +17402,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 708,
     "name": "Phantump",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "ghost",
       "grass"
@@ -16706,6 +17427,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 709,
     "name": "Trevenant",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "ghost",
       "grass"
@@ -16730,6 +17452,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 710,
     "name": "Pumpkaboo Average",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "ghost",
       "grass"
@@ -16754,6 +17477,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 711,
     "name": "Gourgeist Average",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "ghost",
       "grass"
@@ -16778,6 +17502,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 712,
     "name": "Bergmite",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "ice"
     ],
@@ -16801,6 +17526,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 713,
     "name": "Avalugg",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "ice"
     ],
@@ -16824,6 +17550,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 714,
     "name": "Noibat",
     "region": "Kalos",
+    "color": "purple",
     "types": [
       "flying",
       "dragon"
@@ -16848,6 +17575,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 715,
     "name": "Noivern",
     "region": "Kalos",
+    "color": "purple",
     "types": [
       "flying",
       "dragon"
@@ -16872,6 +17600,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 716,
     "name": "Xerneas",
     "region": "Kalos",
+    "color": "blue",
     "types": [
       "fairy"
     ],
@@ -16895,6 +17624,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 717,
     "name": "Yveltal",
     "region": "Kalos",
+    "color": "red",
     "types": [
       "dark",
       "flying"
@@ -16919,6 +17649,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 718,
     "name": "Zygarde 50",
     "region": "Kalos",
+    "color": "green",
     "types": [
       "dragon",
       "ground"
@@ -16943,6 +17674,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 719,
     "name": "Diancie",
     "region": "Kalos",
+    "color": "pink",
     "types": [
       "rock",
       "fairy"
@@ -16967,6 +17699,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 720,
     "name": "Hoopa",
     "region": "Kalos",
+    "color": "purple",
     "types": [
       "psychic",
       "ghost"
@@ -16991,6 +17724,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 721,
     "name": "Volcanion",
     "region": "Kalos",
+    "color": "brown",
     "types": [
       "fire",
       "water"
@@ -17015,6 +17749,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 722,
     "name": "Rowlet",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "grass",
       "flying"
@@ -17039,6 +17774,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 723,
     "name": "Dartrix",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "grass",
       "flying"
@@ -17063,6 +17799,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 724,
     "name": "Decidueye",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "grass",
       "ghost"
@@ -17087,6 +17824,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 725,
     "name": "Litten",
     "region": "Alola",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -17110,6 +17848,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 726,
     "name": "Torracat",
     "region": "Alola",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -17133,6 +17872,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 727,
     "name": "Incineroar",
     "region": "Alola",
+    "color": "red",
     "types": [
       "fire",
       "dark"
@@ -17157,6 +17897,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 728,
     "name": "Popplio",
     "region": "Alola",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -17180,6 +17921,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 729,
     "name": "Brionne",
     "region": "Alola",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -17203,6 +17945,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 730,
     "name": "Primarina",
     "region": "Alola",
+    "color": "blue",
     "types": [
       "water",
       "fairy"
@@ -17227,6 +17970,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 731,
     "name": "Pikipek",
     "region": "Alola",
+    "color": "black",
     "types": [
       "normal",
       "flying"
@@ -17251,6 +17995,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 732,
     "name": "Trumbeak",
     "region": "Alola",
+    "color": "black",
     "types": [
       "normal",
       "flying"
@@ -17275,6 +18020,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 733,
     "name": "Toucannon",
     "region": "Alola",
+    "color": "black",
     "types": [
       "normal",
       "flying"
@@ -17299,6 +18045,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 734,
     "name": "Yungoos",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -17322,6 +18069,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 735,
     "name": "Gumshoos",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -17345,6 +18093,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 736,
     "name": "Grubbin",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "bug"
     ],
@@ -17368,6 +18117,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 737,
     "name": "Charjabug",
     "region": "Alola",
+    "color": "green",
     "types": [
       "bug",
       "electric"
@@ -17392,6 +18142,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 738,
     "name": "Vikavolt",
     "region": "Alola",
+    "color": "blue",
     "types": [
       "bug",
       "electric"
@@ -17416,6 +18167,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 739,
     "name": "Crabrawler",
     "region": "Alola",
+    "color": "purple",
     "types": [
       "fighting"
     ],
@@ -17439,6 +18191,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 740,
     "name": "Crabominable",
     "region": "Alola",
+    "color": "white",
     "types": [
       "fighting",
       "ice"
@@ -17463,6 +18216,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 741,
     "name": "Oricorio Baile",
     "region": "Alola",
+    "color": "red",
     "types": [
       "fire",
       "flying"
@@ -17487,6 +18241,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 742,
     "name": "Cutiefly",
     "region": "Alola",
+    "color": "yellow",
     "types": [
       "bug",
       "fairy"
@@ -17511,6 +18266,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 743,
     "name": "Ribombee",
     "region": "Alola",
+    "color": "yellow",
     "types": [
       "bug",
       "fairy"
@@ -17535,6 +18291,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 744,
     "name": "Rockruff",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "rock"
     ],
@@ -17558,6 +18315,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 745,
     "name": "Lycanroc Midday",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "rock"
     ],
@@ -17581,6 +18339,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 746,
     "name": "Wishiwashi Solo",
     "region": "Alola",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -17604,6 +18363,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 747,
     "name": "Mareanie",
     "region": "Alola",
+    "color": "blue",
     "types": [
       "poison",
       "water"
@@ -17628,6 +18388,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 748,
     "name": "Toxapex",
     "region": "Alola",
+    "color": "blue",
     "types": [
       "poison",
       "water"
@@ -17652,6 +18413,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 749,
     "name": "Mudbray",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "ground"
     ],
@@ -17675,6 +18437,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 750,
     "name": "Mudsdale",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "ground"
     ],
@@ -17698,6 +18461,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 751,
     "name": "Dewpider",
     "region": "Alola",
+    "color": "green",
     "types": [
       "water",
       "bug"
@@ -17722,6 +18486,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 752,
     "name": "Araquanid",
     "region": "Alola",
+    "color": "green",
     "types": [
       "water",
       "bug"
@@ -17746,6 +18511,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 753,
     "name": "Fomantis",
     "region": "Alola",
+    "color": "pink",
     "types": [
       "grass"
     ],
@@ -17769,6 +18535,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 754,
     "name": "Lurantis",
     "region": "Alola",
+    "color": "pink",
     "types": [
       "grass"
     ],
@@ -17792,6 +18559,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 755,
     "name": "Morelull",
     "region": "Alola",
+    "color": "purple",
     "types": [
       "grass",
       "fairy"
@@ -17816,6 +18584,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 756,
     "name": "Shiinotic",
     "region": "Alola",
+    "color": "purple",
     "types": [
       "grass",
       "fairy"
@@ -17840,6 +18609,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 757,
     "name": "Salandit",
     "region": "Alola",
+    "color": "black",
     "types": [
       "poison",
       "fire"
@@ -17864,6 +18634,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 758,
     "name": "Salazzle",
     "region": "Alola",
+    "color": "black",
     "types": [
       "poison",
       "fire"
@@ -17888,6 +18659,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 759,
     "name": "Stufful",
     "region": "Alola",
+    "color": "pink",
     "types": [
       "normal",
       "fighting"
@@ -17912,6 +18684,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 760,
     "name": "Bewear",
     "region": "Alola",
+    "color": "pink",
     "types": [
       "normal",
       "fighting"
@@ -17936,6 +18709,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 761,
     "name": "Bounsweet",
     "region": "Alola",
+    "color": "purple",
     "types": [
       "grass"
     ],
@@ -17959,6 +18733,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 762,
     "name": "Steenee",
     "region": "Alola",
+    "color": "purple",
     "types": [
       "grass"
     ],
@@ -17982,6 +18757,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 763,
     "name": "Tsareena",
     "region": "Alola",
+    "color": "purple",
     "types": [
       "grass"
     ],
@@ -18005,6 +18781,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 764,
     "name": "Comfey",
     "region": "Alola",
+    "color": "green",
     "types": [
       "fairy"
     ],
@@ -18028,6 +18805,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 765,
     "name": "Oranguru",
     "region": "Alola",
+    "color": "white",
     "types": [
       "normal",
       "psychic"
@@ -18052,6 +18830,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 766,
     "name": "Passimian",
     "region": "Alola",
+    "color": "white",
     "types": [
       "fighting"
     ],
@@ -18075,6 +18854,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 767,
     "name": "Wimpod",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "bug",
       "water"
@@ -18099,6 +18879,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 768,
     "name": "Golisopod",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "bug",
       "water"
@@ -18123,6 +18904,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 769,
     "name": "Sandygast",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "ghost",
       "ground"
@@ -18147,6 +18929,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 770,
     "name": "Palossand",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "ghost",
       "ground"
@@ -18171,6 +18954,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 771,
     "name": "Pyukumuku",
     "region": "Alola",
+    "color": "black",
     "types": [
       "water"
     ],
@@ -18194,6 +18978,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 772,
     "name": "Type Null",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "normal"
     ],
@@ -18217,6 +19002,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 773,
     "name": "Silvally",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "normal"
     ],
@@ -18240,6 +19026,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 774,
     "name": "Minior Red Meteor",
     "region": "Alola",
+    "color": "brown",
     "types": [
       "rock",
       "flying"
@@ -18264,6 +19051,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 775,
     "name": "Komala",
     "region": "Alola",
+    "color": "blue",
     "types": [
       "normal"
     ],
@@ -18287,6 +19075,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 776,
     "name": "Turtonator",
     "region": "Alola",
+    "color": "red",
     "types": [
       "fire",
       "dragon"
@@ -18311,6 +19100,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 777,
     "name": "Togedemaru",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "electric",
       "steel"
@@ -18335,6 +19125,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 778,
     "name": "Mimikyu Disguised",
     "region": "Alola",
+    "color": "yellow",
     "types": [
       "ghost",
       "fairy"
@@ -18359,6 +19150,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 779,
     "name": "Bruxish",
     "region": "Alola",
+    "color": "pink",
     "types": [
       "water",
       "psychic"
@@ -18383,6 +19175,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 780,
     "name": "Drampa",
     "region": "Alola",
+    "color": "white",
     "types": [
       "normal",
       "dragon"
@@ -18407,6 +19200,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 781,
     "name": "Dhelmise",
     "region": "Alola",
+    "color": "green",
     "types": [
       "ghost",
       "grass"
@@ -18431,6 +19225,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 782,
     "name": "Jangmo O",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "dragon"
     ],
@@ -18454,6 +19249,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 783,
     "name": "Hakamo O",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "dragon",
       "fighting"
@@ -18478,6 +19274,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 784,
     "name": "Kommo O",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "dragon",
       "fighting"
@@ -18502,6 +19299,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 785,
     "name": "Tapu Koko",
     "region": "Alola",
+    "color": "yellow",
     "types": [
       "electric",
       "fairy"
@@ -18526,6 +19324,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 786,
     "name": "Tapu Lele",
     "region": "Alola",
+    "color": "pink",
     "types": [
       "psychic",
       "fairy"
@@ -18550,6 +19349,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 787,
     "name": "Tapu Bulu",
     "region": "Alola",
+    "color": "red",
     "types": [
       "grass",
       "fairy"
@@ -18574,6 +19374,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 788,
     "name": "Tapu Fini",
     "region": "Alola",
+    "color": "purple",
     "types": [
       "water",
       "fairy"
@@ -18598,6 +19399,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 789,
     "name": "Cosmog",
     "region": "Alola",
+    "color": "blue",
     "types": [
       "psychic"
     ],
@@ -18621,6 +19423,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 790,
     "name": "Cosmoem",
     "region": "Alola",
+    "color": "blue",
     "types": [
       "psychic"
     ],
@@ -18644,6 +19447,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 791,
     "name": "Solgaleo",
     "region": "Alola",
+    "color": "white",
     "types": [
       "psychic",
       "steel"
@@ -18668,6 +19472,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 792,
     "name": "Lunala",
     "region": "Alola",
+    "color": "purple",
     "types": [
       "psychic",
       "ghost"
@@ -18692,6 +19497,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 793,
     "name": "Nihilego",
     "region": "Alola",
+    "color": "white",
     "types": [
       "rock",
       "poison"
@@ -18716,6 +19522,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 794,
     "name": "Buzzwole",
     "region": "Alola",
+    "color": "red",
     "types": [
       "bug",
       "fighting"
@@ -18740,6 +19547,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 795,
     "name": "Pheromosa",
     "region": "Alola",
+    "color": "white",
     "types": [
       "bug",
       "fighting"
@@ -18764,6 +19572,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 796,
     "name": "Xurkitree",
     "region": "Alola",
+    "color": "black",
     "types": [
       "electric"
     ],
@@ -18787,6 +19596,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 797,
     "name": "Celesteela",
     "region": "Alola",
+    "color": "green",
     "types": [
       "steel",
       "flying"
@@ -18811,6 +19621,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 798,
     "name": "Kartana",
     "region": "Alola",
+    "color": "white",
     "types": [
       "grass",
       "steel"
@@ -18835,6 +19646,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 799,
     "name": "Guzzlord",
     "region": "Alola",
+    "color": "black",
     "types": [
       "dark",
       "dragon"
@@ -18859,6 +19671,7 @@ const pokemonDataChunk8: Pokemon[] = [
     "id": 800,
     "name": "Necrozma",
     "region": "Alola",
+    "color": "black",
     "types": [
       "psychic"
     ],
@@ -18885,6 +19698,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 801,
     "name": "Magearna",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "steel",
       "fairy"
@@ -18909,6 +19723,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 802,
     "name": "Marshadow",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "fighting",
       "ghost"
@@ -18933,6 +19748,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 803,
     "name": "Poipole",
     "region": "Alola",
+    "color": "purple",
     "types": [
       "poison"
     ],
@@ -18956,6 +19772,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 804,
     "name": "Naganadel",
     "region": "Alola",
+    "color": "purple",
     "types": [
       "poison",
       "dragon"
@@ -18980,6 +19797,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 805,
     "name": "Stakataka",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "rock",
       "steel"
@@ -19004,6 +19822,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 806,
     "name": "Blacephalon",
     "region": "Alola",
+    "color": "white",
     "types": [
       "fire",
       "ghost"
@@ -19028,6 +19847,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 807,
     "name": "Zeraora",
     "region": "Alola",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -19051,6 +19871,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 808,
     "name": "Meltan",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "steel"
     ],
@@ -19074,6 +19895,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 809,
     "name": "Melmetal",
     "region": "Alola",
+    "color": "gray",
     "types": [
       "steel"
     ],
@@ -19097,6 +19919,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 810,
     "name": "Grookey",
     "region": "Galar",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -19120,6 +19943,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 811,
     "name": "Thwackey",
     "region": "Galar",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -19143,6 +19967,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 812,
     "name": "Rillaboom",
     "region": "Galar",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -19166,6 +19991,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 813,
     "name": "Scorbunny",
     "region": "Galar",
+    "color": "white",
     "types": [
       "fire"
     ],
@@ -19189,6 +20015,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 814,
     "name": "Raboot",
     "region": "Galar",
+    "color": "gray",
     "types": [
       "fire"
     ],
@@ -19212,6 +20039,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 815,
     "name": "Cinderace",
     "region": "Galar",
+    "color": "white",
     "types": [
       "fire"
     ],
@@ -19235,6 +20063,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 816,
     "name": "Sobble",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -19258,6 +20087,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 817,
     "name": "Drizzile",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -19281,6 +20111,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 818,
     "name": "Inteleon",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -19304,6 +20135,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 819,
     "name": "Skwovet",
     "region": "Galar",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -19327,6 +20159,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 820,
     "name": "Greedent",
     "region": "Galar",
+    "color": "brown",
     "types": [
       "normal"
     ],
@@ -19350,6 +20183,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 821,
     "name": "Rookidee",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "flying"
     ],
@@ -19373,6 +20207,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 822,
     "name": "Corvisquire",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "flying"
     ],
@@ -19396,6 +20231,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 823,
     "name": "Corviknight",
     "region": "Galar",
+    "color": "purple",
     "types": [
       "flying",
       "steel"
@@ -19420,6 +20256,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 824,
     "name": "Blipbug",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "bug"
     ],
@@ -19443,6 +20280,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 825,
     "name": "Dottler",
     "region": "Galar",
+    "color": "yellow",
     "types": [
       "bug",
       "psychic"
@@ -19467,6 +20305,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 826,
     "name": "Orbeetle",
     "region": "Galar",
+    "color": "red",
     "types": [
       "bug",
       "psychic"
@@ -19491,6 +20330,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 827,
     "name": "Nickit",
     "region": "Galar",
+    "color": "brown",
     "types": [
       "dark"
     ],
@@ -19514,6 +20354,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 828,
     "name": "Thievul",
     "region": "Galar",
+    "color": "brown",
     "types": [
       "dark"
     ],
@@ -19537,6 +20378,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 829,
     "name": "Gossifleur",
     "region": "Galar",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -19560,6 +20402,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 830,
     "name": "Eldegoss",
     "region": "Galar",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -19583,6 +20426,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 831,
     "name": "Wooloo",
     "region": "Galar",
+    "color": "white",
     "types": [
       "normal"
     ],
@@ -19606,6 +20450,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 832,
     "name": "Dubwool",
     "region": "Galar",
+    "color": "white",
     "types": [
       "normal"
     ],
@@ -19629,6 +20474,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 833,
     "name": "Chewtle",
     "region": "Galar",
+    "color": "green",
     "types": [
       "water"
     ],
@@ -19652,6 +20498,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 834,
     "name": "Drednaw",
     "region": "Galar",
+    "color": "green",
     "types": [
       "water",
       "rock"
@@ -19676,6 +20523,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 835,
     "name": "Yamper",
     "region": "Galar",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -19699,6 +20547,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 836,
     "name": "Boltund",
     "region": "Galar",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -19722,6 +20571,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 837,
     "name": "Rolycoly",
     "region": "Galar",
+    "color": "black",
     "types": [
       "rock"
     ],
@@ -19745,6 +20595,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 838,
     "name": "Carkol",
     "region": "Galar",
+    "color": "black",
     "types": [
       "rock",
       "fire"
@@ -19769,6 +20620,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 839,
     "name": "Coalossal",
     "region": "Galar",
+    "color": "black",
     "types": [
       "rock",
       "fire"
@@ -19793,6 +20645,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 840,
     "name": "Applin",
     "region": "Galar",
+    "color": "green",
     "types": [
       "grass",
       "dragon"
@@ -19817,6 +20670,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 841,
     "name": "Flapple",
     "region": "Galar",
+    "color": "green",
     "types": [
       "grass",
       "dragon"
@@ -19841,6 +20695,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 842,
     "name": "Appletun",
     "region": "Galar",
+    "color": "green",
     "types": [
       "grass",
       "dragon"
@@ -19865,6 +20720,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 843,
     "name": "Silicobra",
     "region": "Galar",
+    "color": "green",
     "types": [
       "ground"
     ],
@@ -19888,6 +20744,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 844,
     "name": "Sandaconda",
     "region": "Galar",
+    "color": "green",
     "types": [
       "ground"
     ],
@@ -19911,6 +20768,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 845,
     "name": "Cramorant",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "flying",
       "water"
@@ -19935,6 +20793,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 846,
     "name": "Arrokuda",
     "region": "Galar",
+    "color": "brown",
     "types": [
       "water"
     ],
@@ -19958,6 +20817,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 847,
     "name": "Barraskewda",
     "region": "Galar",
+    "color": "brown",
     "types": [
       "water"
     ],
@@ -19981,6 +20841,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 848,
     "name": "Toxel",
     "region": "Galar",
+    "color": "purple",
     "types": [
       "electric",
       "poison"
@@ -20005,6 +20866,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 849,
     "name": "Toxtricity Amped",
     "region": "Galar",
+    "color": "purple",
     "types": [
       "electric",
       "poison"
@@ -20029,6 +20891,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 850,
     "name": "Sizzlipede",
     "region": "Galar",
+    "color": "red",
     "types": [
       "fire",
       "bug"
@@ -20053,6 +20916,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 851,
     "name": "Centiskorch",
     "region": "Galar",
+    "color": "red",
     "types": [
       "fire",
       "bug"
@@ -20077,6 +20941,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 852,
     "name": "Clobbopus",
     "region": "Galar",
+    "color": "brown",
     "types": [
       "fighting"
     ],
@@ -20100,6 +20965,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 853,
     "name": "Grapploct",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "fighting"
     ],
@@ -20123,6 +20989,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 854,
     "name": "Sinistea",
     "region": "Galar",
+    "color": "purple",
     "types": [
       "ghost"
     ],
@@ -20146,6 +21013,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 855,
     "name": "Polteageist",
     "region": "Galar",
+    "color": "purple",
     "types": [
       "ghost"
     ],
@@ -20169,6 +21037,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 856,
     "name": "Hatenna",
     "region": "Galar",
+    "color": "pink",
     "types": [
       "psychic"
     ],
@@ -20192,6 +21061,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 857,
     "name": "Hattrem",
     "region": "Galar",
+    "color": "pink",
     "types": [
       "psychic"
     ],
@@ -20215,6 +21085,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 858,
     "name": "Hatterene",
     "region": "Galar",
+    "color": "pink",
     "types": [
       "psychic",
       "fairy"
@@ -20239,6 +21110,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 859,
     "name": "Impidimp",
     "region": "Galar",
+    "color": "pink",
     "types": [
       "dark",
       "fairy"
@@ -20263,6 +21135,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 860,
     "name": "Morgrem",
     "region": "Galar",
+    "color": "pink",
     "types": [
       "dark",
       "fairy"
@@ -20287,6 +21160,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 861,
     "name": "Grimmsnarl",
     "region": "Galar",
+    "color": "purple",
     "types": [
       "dark",
       "fairy"
@@ -20311,6 +21185,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 862,
     "name": "Obstagoon",
     "region": "Galar",
+    "color": "gray",
     "types": [
       "dark",
       "normal"
@@ -20335,6 +21210,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 863,
     "name": "Perrserker",
     "region": "Galar",
+    "color": "brown",
     "types": [
       "steel"
     ],
@@ -20358,6 +21234,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 864,
     "name": "Cursola",
     "region": "Galar",
+    "color": "white",
     "types": [
       "ghost"
     ],
@@ -20381,6 +21258,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 865,
     "name": "Sirfetchd",
     "region": "Galar",
+    "color": "white",
     "types": [
       "fighting"
     ],
@@ -20404,6 +21282,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 866,
     "name": "Mr Rime",
     "region": "Galar",
+    "color": "purple",
     "types": [
       "ice",
       "psychic"
@@ -20428,6 +21307,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 867,
     "name": "Runerigus",
     "region": "Galar",
+    "color": "gray",
     "types": [
       "ground",
       "ghost"
@@ -20452,6 +21332,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 868,
     "name": "Milcery",
     "region": "Galar",
+    "color": "white",
     "types": [
       "fairy"
     ],
@@ -20475,6 +21356,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 869,
     "name": "Alcremie",
     "region": "Galar",
+    "color": "white",
     "types": [
       "fairy"
     ],
@@ -20498,6 +21380,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 870,
     "name": "Falinks",
     "region": "Galar",
+    "color": "yellow",
     "types": [
       "fighting"
     ],
@@ -20521,6 +21404,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 871,
     "name": "Pincurchin",
     "region": "Galar",
+    "color": "purple",
     "types": [
       "electric"
     ],
@@ -20544,6 +21428,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 872,
     "name": "Snom",
     "region": "Galar",
+    "color": "white",
     "types": [
       "ice",
       "bug"
@@ -20568,6 +21453,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 873,
     "name": "Frosmoth",
     "region": "Galar",
+    "color": "white",
     "types": [
       "ice",
       "bug"
@@ -20592,6 +21478,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 874,
     "name": "Stonjourner",
     "region": "Galar",
+    "color": "gray",
     "types": [
       "rock"
     ],
@@ -20615,6 +21502,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 875,
     "name": "Eiscue Ice",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "ice"
     ],
@@ -20638,6 +21526,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 876,
     "name": "Indeedee Male",
     "region": "Galar",
+    "color": "purple",
     "types": [
       "psychic",
       "normal"
@@ -20662,6 +21551,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 877,
     "name": "Morpeko Full Belly",
     "region": "Galar",
+    "color": "yellow",
     "types": [
       "electric",
       "dark"
@@ -20686,6 +21576,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 878,
     "name": "Cufant",
     "region": "Galar",
+    "color": "yellow",
     "types": [
       "steel"
     ],
@@ -20709,6 +21600,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 879,
     "name": "Copperajah",
     "region": "Galar",
+    "color": "green",
     "types": [
       "steel"
     ],
@@ -20732,6 +21624,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 880,
     "name": "Dracozolt",
     "region": "Galar",
+    "color": "green",
     "types": [
       "electric",
       "dragon"
@@ -20756,6 +21649,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 881,
     "name": "Arctozolt",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "electric",
       "ice"
@@ -20780,6 +21674,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 882,
     "name": "Dracovish",
     "region": "Galar",
+    "color": "green",
     "types": [
       "water",
       "dragon"
@@ -20804,6 +21699,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 883,
     "name": "Arctovish",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "water",
       "ice"
@@ -20828,6 +21724,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 884,
     "name": "Duraludon",
     "region": "Galar",
+    "color": "white",
     "types": [
       "steel",
       "dragon"
@@ -20852,6 +21749,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 885,
     "name": "Dreepy",
     "region": "Galar",
+    "color": "green",
     "types": [
       "dragon",
       "ghost"
@@ -20876,6 +21774,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 886,
     "name": "Drakloak",
     "region": "Galar",
+    "color": "green",
     "types": [
       "dragon",
       "ghost"
@@ -20900,6 +21799,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 887,
     "name": "Dragapult",
     "region": "Galar",
+    "color": "green",
     "types": [
       "dragon",
       "ghost"
@@ -20924,6 +21824,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 888,
     "name": "Zacian",
     "region": "Galar",
+    "color": "blue",
     "types": [
       "fairy"
     ],
@@ -20947,6 +21848,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 889,
     "name": "Zamazenta",
     "region": "Galar",
+    "color": "red",
     "types": [
       "fighting"
     ],
@@ -20970,6 +21872,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 890,
     "name": "Eternatus",
     "region": "Galar",
+    "color": "purple",
     "types": [
       "poison",
       "dragon"
@@ -20994,6 +21897,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 891,
     "name": "Kubfu",
     "region": "Galar",
+    "color": "gray",
     "types": [
       "fighting"
     ],
@@ -21017,6 +21921,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 892,
     "name": "Urshifu Single Strike",
     "region": "Galar",
+    "color": "gray",
     "types": [
       "fighting",
       "dark"
@@ -21041,6 +21946,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 893,
     "name": "Zarude",
     "region": "Galar",
+    "color": "green",
     "types": [
       "dark",
       "grass"
@@ -21065,6 +21971,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 894,
     "name": "Regieleki",
     "region": "Galar",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -21088,6 +21995,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 895,
     "name": "Regidrago",
     "region": "Galar",
+    "color": "green",
     "types": [
       "dragon"
     ],
@@ -21111,6 +22019,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 896,
     "name": "Glastrier",
     "region": "Galar",
+    "color": "white",
     "types": [
       "ice"
     ],
@@ -21134,6 +22043,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 897,
     "name": "Spectrier",
     "region": "Galar",
+    "color": "black",
     "types": [
       "ghost"
     ],
@@ -21157,6 +22067,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 898,
     "name": "Calyrex",
     "region": "Galar",
+    "color": "green",
     "types": [
       "psychic",
       "grass"
@@ -21181,6 +22092,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 899,
     "name": "Wyrdeer",
     "region": "Hisui",
+    "color": "gray",
     "types": [
       "normal",
       "psychic"
@@ -21205,6 +22117,7 @@ const pokemonDataChunk9: Pokemon[] = [
     "id": 900,
     "name": "Kleavor",
     "region": "Hisui",
+    "color": "brown",
     "types": [
       "bug",
       "rock"
@@ -21232,6 +22145,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 901,
     "name": "Ursaluna",
     "region": "Hisui",
+    "color": "brown",
     "types": [
       "ground",
       "normal"
@@ -21256,6 +22170,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 902,
     "name": "Basculegion Male",
     "region": "Hisui",
+    "color": "green",
     "types": [
       "water",
       "ghost"
@@ -21280,6 +22195,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 903,
     "name": "Sneasler",
     "region": "Hisui",
+    "color": "gray",
     "types": [
       "fighting",
       "poison"
@@ -21304,6 +22220,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 904,
     "name": "Overqwil",
     "region": "Hisui",
+    "color": "black",
     "types": [
       "dark",
       "poison"
@@ -21328,6 +22245,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 905,
     "name": "Enamorus Incarnate",
     "region": "Hisui",
+    "color": "pink",
     "types": [
       "fairy",
       "flying"
@@ -21352,6 +22270,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 906,
     "name": "Sprigatito",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -21375,6 +22294,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 907,
     "name": "Floragato",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -21398,6 +22318,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 908,
     "name": "Meowscarada",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass",
       "dark"
@@ -21422,6 +22343,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 909,
     "name": "Fuecoco",
     "region": "Paldea",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -21445,6 +22367,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 910,
     "name": "Crocalor",
     "region": "Paldea",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -21468,6 +22391,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 911,
     "name": "Skeledirge",
     "region": "Paldea",
+    "color": "red",
     "types": [
       "fire",
       "ghost"
@@ -21492,6 +22416,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 912,
     "name": "Quaxly",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "water"
     ],
@@ -21515,6 +22440,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 913,
     "name": "Quaxwell",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -21538,6 +22464,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 914,
     "name": "Quaquaval",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "water",
       "fighting"
@@ -21562,6 +22489,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 915,
     "name": "Lechonk",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "normal"
     ],
@@ -21585,6 +22513,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 916,
     "name": "Oinkologne Male",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "normal"
     ],
@@ -21608,6 +22537,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 917,
     "name": "Tarountula",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "bug"
     ],
@@ -21631,6 +22561,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 918,
     "name": "Spidops",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "bug"
     ],
@@ -21654,6 +22585,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 919,
     "name": "Nymble",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "bug"
     ],
@@ -21677,6 +22609,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 920,
     "name": "Lokix",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "bug",
       "dark"
@@ -21701,6 +22634,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 921,
     "name": "Pawmi",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -21724,6 +22658,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 922,
     "name": "Pawmo",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "electric",
       "fighting"
@@ -21748,6 +22683,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 923,
     "name": "Pawmot",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "electric",
       "fighting"
@@ -21772,6 +22708,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 924,
     "name": "Tandemaus",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "normal"
     ],
@@ -21795,6 +22732,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 925,
     "name": "Maushold Family Of Four",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "normal"
     ],
@@ -21818,6 +22756,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 926,
     "name": "Fidough",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "fairy"
     ],
@@ -21841,6 +22780,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 927,
     "name": "Dachsbun",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "fairy"
     ],
@@ -21864,6 +22804,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 928,
     "name": "Smoliv",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass",
       "normal"
@@ -21888,6 +22829,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 929,
     "name": "Dolliv",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass",
       "normal"
@@ -21912,6 +22854,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 930,
     "name": "Arboliva",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass",
       "normal"
@@ -21936,6 +22879,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 931,
     "name": "Squawkabilly Green Plumage",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "normal",
       "flying"
@@ -21960,6 +22904,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 932,
     "name": "Nacli",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "rock"
     ],
@@ -21983,6 +22928,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 933,
     "name": "Naclstack",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "rock"
     ],
@@ -22006,6 +22952,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 934,
     "name": "Garganacl",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "rock"
     ],
@@ -22029,6 +22976,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 935,
     "name": "Charcadet",
     "region": "Paldea",
+    "color": "red",
     "types": [
       "fire"
     ],
@@ -22052,6 +23000,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 936,
     "name": "Armarouge",
     "region": "Paldea",
+    "color": "red",
     "types": [
       "fire",
       "psychic"
@@ -22076,6 +23025,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 937,
     "name": "Ceruledge",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "fire",
       "ghost"
@@ -22100,6 +23050,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 938,
     "name": "Tadbulb",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "electric"
     ],
@@ -22123,6 +23074,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 939,
     "name": "Bellibolt",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "electric"
     ],
@@ -22146,6 +23098,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 940,
     "name": "Wattrel",
     "region": "Paldea",
+    "color": "black",
     "types": [
       "electric",
       "flying"
@@ -22170,6 +23123,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 941,
     "name": "Kilowattrel",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "electric",
       "flying"
@@ -22194,6 +23148,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 942,
     "name": "Maschiff",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "dark"
     ],
@@ -22217,6 +23172,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 943,
     "name": "Mabosstiff",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "dark"
     ],
@@ -22240,6 +23196,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 944,
     "name": "Shroodle",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "poison",
       "normal"
@@ -22264,6 +23221,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 945,
     "name": "Grafaiai",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "poison",
       "normal"
@@ -22288,6 +23246,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 946,
     "name": "Bramblin",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "grass",
       "ghost"
@@ -22312,6 +23271,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 947,
     "name": "Brambleghast",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "grass",
       "ghost"
@@ -22336,6 +23296,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 948,
     "name": "Toedscool",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "ground",
       "grass"
@@ -22360,6 +23321,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 949,
     "name": "Toedscruel",
     "region": "Paldea",
+    "color": "black",
     "types": [
       "ground",
       "grass"
@@ -22384,6 +23346,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 950,
     "name": "Klawf",
     "region": "Paldea",
+    "color": "red",
     "types": [
       "rock"
     ],
@@ -22407,6 +23370,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 951,
     "name": "Capsakid",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -22430,6 +23394,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 952,
     "name": "Scovillain",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass",
       "fire"
@@ -22454,6 +23419,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 953,
     "name": "Rellor",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "bug"
     ],
@@ -22477,6 +23443,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 954,
     "name": "Rabsca",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "bug",
       "psychic"
@@ -22501,6 +23468,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 955,
     "name": "Flittle",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "psychic"
     ],
@@ -22524,6 +23492,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 956,
     "name": "Espathra",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "psychic"
     ],
@@ -22547,6 +23516,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 957,
     "name": "Tinkatink",
     "region": "Paldea",
+    "color": "pink",
     "types": [
       "fairy",
       "steel"
@@ -22571,6 +23541,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 958,
     "name": "Tinkatuff",
     "region": "Paldea",
+    "color": "pink",
     "types": [
       "fairy",
       "steel"
@@ -22595,6 +23566,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 959,
     "name": "Tinkaton",
     "region": "Paldea",
+    "color": "pink",
     "types": [
       "fairy",
       "steel"
@@ -22619,6 +23591,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 960,
     "name": "Wiglett",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "water"
     ],
@@ -22642,6 +23615,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 961,
     "name": "Wugtrio",
     "region": "Paldea",
+    "color": "red",
     "types": [
       "water"
     ],
@@ -22665,6 +23639,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 962,
     "name": "Bombirdier",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "flying",
       "dark"
@@ -22689,6 +23664,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 963,
     "name": "Finizen",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -22712,6 +23688,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 964,
     "name": "Palafin Zero",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -22735,6 +23712,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 965,
     "name": "Varoom",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "steel",
       "poison"
@@ -22759,6 +23737,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 966,
     "name": "Revavroom",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "steel",
       "poison"
@@ -22783,6 +23762,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 967,
     "name": "Cyclizar",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "dragon",
       "normal"
@@ -22807,6 +23787,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 968,
     "name": "Orthworm",
     "region": "Paldea",
+    "color": "pink",
     "types": [
       "steel"
     ],
@@ -22830,6 +23811,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 969,
     "name": "Glimmet",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "rock",
       "poison"
@@ -22854,6 +23836,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 970,
     "name": "Glimmora",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "rock",
       "poison"
@@ -22878,6 +23861,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 971,
     "name": "Greavard",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "ghost"
     ],
@@ -22901,6 +23885,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 972,
     "name": "Houndstone",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "ghost"
     ],
@@ -22924,6 +23909,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 973,
     "name": "Flamigo",
     "region": "Paldea",
+    "color": "pink",
     "types": [
       "flying",
       "fighting"
@@ -22948,6 +23934,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 974,
     "name": "Cetoddle",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "ice"
     ],
@@ -22971,6 +23958,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 975,
     "name": "Cetitan",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "ice"
     ],
@@ -22994,6 +23982,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 976,
     "name": "Veluza",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "water",
       "psychic"
@@ -23018,6 +24007,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 977,
     "name": "Dondozo",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "water"
     ],
@@ -23041,6 +24031,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 978,
     "name": "Tatsugiri Curly",
     "region": "Paldea",
+    "color": "pink",
     "types": [
       "dragon",
       "water"
@@ -23065,6 +24056,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 979,
     "name": "Annihilape",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "fighting",
       "ghost"
@@ -23089,6 +24081,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 980,
     "name": "Clodsire",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "poison",
       "ground"
@@ -23113,6 +24106,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 981,
     "name": "Farigiraf",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "normal",
       "psychic"
@@ -23137,6 +24131,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 982,
     "name": "Dudunsparce Two Segment",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "normal"
     ],
@@ -23160,6 +24155,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 983,
     "name": "Kingambit",
     "region": "Paldea",
+    "color": "black",
     "types": [
       "dark",
       "steel"
@@ -23184,6 +24180,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 984,
     "name": "Great Tusk",
     "region": "Paldea",
+    "color": "purple",
     "types": [
       "ground",
       "fighting"
@@ -23208,6 +24205,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 985,
     "name": "Scream Tail",
     "region": "Paldea",
+    "color": "pink",
     "types": [
       "fairy",
       "psychic"
@@ -23232,6 +24230,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 986,
     "name": "Brute Bonnet",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "grass",
       "dark"
@@ -23256,6 +24255,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 987,
     "name": "Flutter Mane",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "ghost",
       "fairy"
@@ -23280,6 +24280,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 988,
     "name": "Slither Wing",
     "region": "Paldea",
+    "color": "red",
     "types": [
       "bug",
       "fighting"
@@ -23304,6 +24305,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 989,
     "name": "Sandy Shocks",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "electric",
       "ground"
@@ -23328,6 +24330,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 990,
     "name": "Iron Treads",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "ground",
       "steel"
@@ -23352,6 +24355,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 991,
     "name": "Iron Bundle",
     "region": "Paldea",
+    "color": "red",
     "types": [
       "ice",
       "water"
@@ -23376,6 +24380,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 992,
     "name": "Iron Hands",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "fighting",
       "electric"
@@ -23400,6 +24405,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 993,
     "name": "Iron Jugulis",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "dark",
       "flying"
@@ -23424,6 +24430,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 994,
     "name": "Iron Moth",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "fire",
       "poison"
@@ -23448,6 +24455,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 995,
     "name": "Iron Thorns",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "rock",
       "electric"
@@ -23472,6 +24480,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 996,
     "name": "Frigibax",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "dragon",
       "ice"
@@ -23496,6 +24505,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 997,
     "name": "Arctibax",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "dragon",
       "ice"
@@ -23520,6 +24530,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 998,
     "name": "Baxcalibur",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "dragon",
       "ice"
@@ -23544,6 +24555,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 999,
     "name": "Gimmighoul",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "ghost"
     ],
@@ -23567,6 +24579,7 @@ const pokemonDataChunk10: Pokemon[] = [
     "id": 1000,
     "name": "Gholdengo",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "steel",
       "ghost"
@@ -23594,6 +24607,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1001,
     "name": "Wo Chien",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "dark",
       "grass"
@@ -23618,6 +24632,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1002,
     "name": "Chien Pao",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "dark",
       "ice"
@@ -23642,6 +24657,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1003,
     "name": "Ting Lu",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "dark",
       "ground"
@@ -23666,6 +24682,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1004,
     "name": "Chi Yu",
     "region": "Paldea",
+    "color": "red",
     "types": [
       "dark",
       "fire"
@@ -23690,6 +24707,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1005,
     "name": "Roaring Moon",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "dragon",
       "dark"
@@ -23714,6 +24732,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1006,
     "name": "Iron Valiant",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "fairy",
       "fighting"
@@ -23738,6 +24757,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1007,
     "name": "Koraidon",
     "region": "Paldea",
+    "color": "red",
     "types": [
       "fighting",
       "dragon"
@@ -23762,6 +24782,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1008,
     "name": "Miraidon",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "electric",
       "dragon"
@@ -23786,6 +24807,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1009,
     "name": "Walking Wake",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "water",
       "dragon"
@@ -23810,6 +24832,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1010,
     "name": "Iron Leaves",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass",
       "psychic"
@@ -23834,6 +24857,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1011,
     "name": "Dipplin",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass",
       "dragon"
@@ -23858,6 +24882,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1012,
     "name": "Poltchageist",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass",
       "ghost"
@@ -23882,6 +24907,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1013,
     "name": "Sinistcha",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass",
       "ghost"
@@ -23906,6 +24932,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1014,
     "name": "Okidogi",
     "region": "Paldea",
+    "color": "black",
     "types": [
       "poison",
       "fighting"
@@ -23930,6 +24957,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1015,
     "name": "Munkidori",
     "region": "Paldea",
+    "color": "black",
     "types": [
       "poison",
       "psychic"
@@ -23954,6 +24982,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1016,
     "name": "Fezandipiti",
     "region": "Paldea",
+    "color": "black",
     "types": [
       "poison",
       "fairy"
@@ -23978,6 +25007,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1017,
     "name": "Ogerpon",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass"
     ],
@@ -24001,6 +25031,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1018,
     "name": "Archaludon",
     "region": "Paldea",
+    "color": "white",
     "types": [
       "steel",
       "dragon"
@@ -24025,6 +25056,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1019,
     "name": "Hydrapple",
     "region": "Paldea",
+    "color": "green",
     "types": [
       "grass",
       "dragon"
@@ -24049,6 +25081,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1020,
     "name": "Gouging Fire",
     "region": "Paldea",
+    "color": "brown",
     "types": [
       "fire",
       "dragon"
@@ -24073,6 +25106,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1021,
     "name": "Raging Bolt",
     "region": "Paldea",
+    "color": "yellow",
     "types": [
       "electric",
       "dragon"
@@ -24097,6 +25131,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1022,
     "name": "Iron Boulder",
     "region": "Paldea",
+    "color": "gray",
     "types": [
       "rock",
       "psychic"
@@ -24121,6 +25156,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1023,
     "name": "Iron Crown",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "steel",
       "psychic"
@@ -24145,6 +25181,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1024,
     "name": "Terapagos",
     "region": "Paldea",
+    "color": "blue",
     "types": [
       "normal"
     ],
@@ -24168,6 +25205,7 @@ const pokemonDataChunk11: Pokemon[] = [
     "id": 1025,
     "name": "Pecharunt",
     "region": "Paldea",
+    "color": "purple",
     "types": [
       "poison",
       "ghost"

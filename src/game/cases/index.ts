@@ -1,7 +1,7 @@
 import type { Case, CaseDifficulty, CaseSolution } from '../caseModel'
 import type { PokemonRegion, PokemonType } from '../../data/pokemon'
 import { getPokemonById } from '../suspectCaseFile'
-import { generateCaseEvidence, generateCaseLineup, generateCaseLocations, type CaseLineupOptions } from '../caseGeneration'
+import { generateCaseEvidence, generateCaseLineup, generateCaseLocations, getCaseEvidenceTemplates, type CaseLineupOptions } from '../caseGeneration'
 import { applyCaseTheme, createCaseTheme } from '../caseTheme'
 import { createBaseCase, createSuspect, hydrateCaseConfig, type CaseConfig, type RawCaseConfig } from './shared'
 import { cases as casesRaw } from './cases'
@@ -17,11 +17,11 @@ export const pickRandomCaseDifficulty = (): CaseDifficulty => (
 const getLineupOptions = (difficulty: CaseDifficulty): CaseLineupOptions => {
   switch (difficulty) {
     case 'hard':
-      return { suspectCount: 9, similarity: 'similar' }
+      return { difficulty, suspectCount: 9, similarity: 'similar' }
     case 'medium':
-      return { suspectCount: 6, similarity: 'similar' }
+      return { difficulty, suspectCount: 6, similarity: 'similar' }
     case 'easy':
-      return { suspectCount: 6, similarity: 'mixed' }
+      return { difficulty, suspectCount: 6, similarity: 'mixed' }
   }
 }
 
@@ -114,14 +114,16 @@ export const rebuildFullCase = (
     }),
   }))
 
-  const { generatedEvidence, typeClueSlots: resolvedTypeClueSlots, typeClueGroups: resolvedTypeClueGroups, regionClueGroups: resolvedRegionClueGroups } = generateCaseEvidence(culprit, baseCase.evidence, config.evidenceOverrides, typeClueSlots, typeClueGroups, regionClueGroups)
-  const generatedLocations = generateCaseLocations(culprit, overriddenLocations, config.evidenceOverrides, resolvedTypeClueSlots, resolvedTypeClueGroups, resolvedRegionClueGroups)
+  const difficulty = difficultyOverride ?? baseCase.difficulty
+  const availableEvidenceTemplates = getCaseEvidenceTemplates(difficulty)
+  const { generatedEvidence, typeClueSlots: resolvedTypeClueSlots, typeClueGroups: resolvedTypeClueGroups, regionClueGroups: resolvedRegionClueGroups } = generateCaseEvidence(culprit, baseCase.evidence, config.evidenceOverrides, typeClueSlots, typeClueGroups, regionClueGroups, availableEvidenceTemplates)
+  const generatedLocations = generateCaseLocations(culprit, overriddenLocations, config.evidenceOverrides, resolvedTypeClueSlots, resolvedTypeClueGroups, resolvedRegionClueGroups, availableEvidenceTemplates)
 
   const suspects = addSuspectCaseNotes(suspectPokemonIds.map((id) => createSuspect(id, suspectShinyMap[id])), config)
 
   return applyCaseTheme({
     ...baseCase,
-    difficulty: difficultyOverride ?? baseCase.difficulty,
+    difficulty,
     culpritPokemonId,
     typeClueSlots: resolvedTypeClueSlots,
     typeClueGroups: resolvedTypeClueGroups,

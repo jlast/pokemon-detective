@@ -12,6 +12,7 @@ const evidenceMetaById: Record<string, { icon: string; title: string }> = {
   'region-clue-a': { icon: '🗺️', title: 'Region Clue' },
   'region-clue-b': { icon: '🗺️', title: 'Region Clue' },
   'region-clue-c': { icon: '🗺️', title: 'Region Clue' },
+  'color-clue': { icon: '🎨', title: 'Color Clue' },
   'evolution-chain-clue': { icon: '🔁', title: 'Evolution Clue' },
 }
 

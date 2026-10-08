@@ -28,6 +28,8 @@ const regionByGeneration = {
 
 const supportedRegions = new Set(['Kanto', 'Johto', 'Hoenn', 'Sinnoh', 'Unova', 'Kalos', 'Alola', 'Galar', 'Hisui', 'Paldea'])
 
+const supportedColors = new Set(['black', 'blue', 'brown', 'gray', 'green', 'pink', 'purple', 'red', 'white', 'yellow'])
+
 const supportedTypes = new Set([
   'bug',
   'dark',
@@ -158,6 +160,7 @@ const visitEvolutionNode = (node, stage, chainMap) => {
 const serializeDataFile = (pokemonEntries) => {
   const typeUnion = [...new Set(pokemonEntries.flatMap((entry) => entry.types))].sort()
   const regionUnion = [...new Set(pokemonEntries.map((entry) => entry.region))].sort()
+  const colorUnion = [...new Set(pokemonEntries.map((entry) => entry.color))].sort()
   const chunkSize = 100
   const chunks = Array.from(
     { length: Math.ceil(pokemonEntries.length / chunkSize) },
@@ -172,7 +175,9 @@ const serializeDataFile = (pokemonEntries) => {
     .map((type) => `  | '${type}'`)
     .join('\n')}\n\nexport type PokemonRegion =\n${regionUnion
     .map((region) => `  | '${region}'`)
-    .join('\n')}\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite?: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`/sprites/shiny/\${pokemonId}.png\`\n\n${serializedChunks}\n\nexport const pokemonData: Pokemon[] = [${chunkNames}].flat()\n`
+    .join('\n')}\n\nexport type PokemonColor =\n${colorUnion
+    .map((color) => `  | '${color}'`)
+    .join('\n')}\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  color: PokemonColor\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite?: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`/sprites/shiny/\${pokemonId}.png\`\n\n${serializedChunks}\n\nexport const pokemonData: Pokemon[] = [${chunkNames}].flat()\n`
 }
 
 const main = async () => {
@@ -236,10 +241,16 @@ const main = async () => {
       throw new Error(`Unsupported region '${resolvedRegion}' for Pokemon ${pokemon.name}`)
     }
 
+    const color = species.color?.name
+    if (!supportedColors.has(color)) {
+      throw new Error(`Unsupported color '${color}' for Pokemon ${pokemon.name}`)
+    }
+
     return {
       id,
       name: toTitleCase(pokemon.name),
       region: resolvedRegion,
+      color,
       types,
       heightM: pokemon.height / 10,
       weightKg: pokemon.weight / 10,

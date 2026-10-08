@@ -1,4 +1,4 @@
-import { pokemonData, type Pokemon, type PokemonRegion, type PokemonType } from '../data/pokemon'
+import { pokemonData, type Pokemon, type PokemonColor, type PokemonRegion, type PokemonType } from '../data/pokemon'
 import { getSolutionClueBadgesFromEvidence, type CaseDifficulty, type CaseEvidenceExplanation, type ClearedSuspectExplanation, type ClueRule, type Evidence, type EvidenceBadgeData, type EvidenceObservation, type Location, type LocationAction } from './caseModel'
 import { previewForEvidenceId } from './cases/shared'
 import { getPokemonById } from './suspectCaseFile'
@@ -8,7 +8,8 @@ type HeightBucket = 'short' | 'medium' | 'tall'
 type WeightBucket = 'light' | 'medium' | 'heavy'
 type EvolutionChainStage = 'stage1' | 'stage2' | 'stage3' | 'noEvolutionChain'
 type EvolutionPotential = 'canEvolve' | 'cannotEvolve'
-type EvidenceCategory = 'height' | 'weight' | 'typeResidue' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'typeAffectedness' | 'region' | 'evolutionChain'
+type EvidenceCategory = 'height' | 'weight' | 'typeResidue' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'typeAffectedness' | 'region' | 'color' | 'evolutionChain'
+type ColorGroup = 'warm' | 'cool' | 'neutral'
 type TypeAffectedness = 'weak' | 'strong'
 type TypeAffectednessCandidate = { affectedness: TypeAffectedness; attackType: PokemonType }
 type TypeClueSlot = 'primary' | 'secondary'
@@ -65,6 +66,8 @@ type PokemonCaseProfile = {
   affectednessValue: string
   region: PokemonRegion
   regionGroup: PokemonRegion[]
+  color: PokemonColor
+  colorGroup: ColorGroup
   evolutionChainStage: EvolutionChainStage
   evolutionPotential: EvolutionPotential
   values: Record<string, string>
@@ -156,6 +159,13 @@ const evidenceTemplates: EvidenceTemplate[] = [
     endTemplate: 'The scene held details associated with the {regionGroup} regions.',
   },
   {
+    id: 'color-clue',
+    category: 'color',
+    titleTemplate: 'Color Trace',
+    clueTemplate: 'A visual trace pointed to a {colorGroupLabel}: {colorGroupDescription}.',
+    endTemplate: 'A visual trace pointed to a {colorGroupLabel}: {colorGroupDescription}.',
+  },
+  {
     id: 'evolution-chain-clue',
     category: 'evolutionChain',
     titleTemplate: 'Evolution Trace',
@@ -173,6 +183,16 @@ const legacyRegionTemplate: EvidenceTemplate = {
 }
 
 const evidenceTemplateById = new Map([...evidenceTemplates, legacyRegionTemplate].map((template) => [template.id, template]))
+
+export const getCaseEvidenceTemplates = (difficulty: CaseDifficulty | undefined): EvidenceTemplate[] => (
+  difficulty === 'hard'
+    ? evidenceTemplates
+    : evidenceTemplates.filter((template) => template.id !== 'color-clue')
+)
+
+const getRequiredEvidenceIds = (difficulty: CaseDifficulty | undefined): string[] => (
+  difficulty === 'hard' ? ['color-clue'] : []
+)
 
 const strongestStatPriority: StatName[] = ['speed', 'attack', 'specialAttack', 'defense', 'specialDefense', 'hp']
 const weakestStatPriority: StatName[] = ['hp', 'defense', 'specialDefense', 'attack', 'specialAttack', 'speed']
@@ -441,6 +461,22 @@ const getEvolutionChainBadgeLabel = (potential: EvolutionPotential): string => {
 
 const pokemonRegions: PokemonRegion[] = [...new Set(pokemonData.map((pokemon) => pokemon.region))]
 
+const colorGroupColors: Record<ColorGroup, PokemonColor[]> = {
+  warm: ['red', 'yellow', 'pink'],
+  cool: ['blue', 'green', 'purple'],
+  neutral: ['black', 'white', 'gray', 'brown'],
+}
+
+const getColorGroup = (color: PokemonColor): ColorGroup => {
+  if (colorGroupColors.warm.includes(color)) return 'warm'
+  if (colorGroupColors.cool.includes(color)) return 'cool'
+  return 'neutral'
+}
+
+const getColorGroupLabel = (group: ColorGroup): string => `${formatLabel(group)} colors`
+
+const getColorGroupDescription = (group: ColorGroup): string => formatList(colorGroupColors[group])
+
 const regionClueEvidenceIds = ['region-clue-a', 'region-clue-b', 'region-clue-c'] as const
 
 const normalizeRegionEvidenceId = (evidenceId: string): string => (
@@ -483,6 +519,7 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
   const regionGroup = activeEvidenceId
     ? resolvedRegionClueGroups[normalizeRegionEvidenceId(activeEvidenceId)] ?? createRegionGroup(pokemon.region, pokemon.id)
     : createRegionGroup(pokemon.region, pokemon.id)
+  const colorGroup = getColorGroup(pokemon.color)
 
   return {
     height,
@@ -501,6 +538,8 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
     affectednessValue: getTypeAffectednessValue(affectedness, affectednessType),
     region: pokemon.region,
     regionGroup,
+    color: pokemon.color,
+    colorGroup,
     evolutionChainStage,
     evolutionPotential,
     values: {
@@ -514,6 +553,10 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
       affectednessRequirement: affectednessLabel,
       region: pokemon.region,
       regionGroup: formatList(regionGroup),
+      color: formatLabel(pokemon.color),
+      colorGroup: colorGroup,
+      colorGroupLabel: getColorGroupLabel(colorGroup),
+      colorGroupDescription: getColorGroupDescription(colorGroup),
       evolutionChainLabel: getEvolutionChainLabel(evolutionPotential),
       evolutionChainBadgeLabel: getEvolutionChainBadgeLabel(evolutionPotential),
       profileLabel,
@@ -569,6 +612,8 @@ const getClueRule = (clue: EvidenceClue, profile: PokemonCaseProfile): ClueRule 
       return { axis: 'typeAffectedness', precision: 'exact', matchingValues: [profile.affectednessValue] }
     case 'region':
       return { axis: 'region', precision: 'grouped', matchingValues: getRegionClueGroup(profile, clue.evidenceId) }
+    case 'color':
+      return { axis: 'color', precision: 'grouped', matchingValues: [profile.colorGroup] }
     case 'evolutionChain':
       return { axis: 'evolutionChain', precision: 'grouped', matchingValues: [profile.evolutionPotential] }
   }
@@ -596,6 +641,8 @@ const getClueRuleValue = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, clue: 
       return getPokemonAffectednessRuleValue(pokemon, clueProfile?.affectednessType ?? getTypeAffectedness(pokemon).attackType)
     case 'region':
       return pokemon.region
+    case 'color':
+      return getColorGroup(pokemon.color)
     case 'evolutionChain':
       return getEvolutionPotential(pokemon)
   }
@@ -630,12 +677,14 @@ const getEvidenceBadges = (clue: EvidenceClue, profile: PokemonCaseProfile): Evi
       return [{ text: `${profile.typeAffectedness === 'weak' ? 'Weak' : 'Strong'} to ${formatLabel(profile.affectednessType)}`, type: profile.affectednessType }]
     case 'region':
       return [{ text: `Region: ${formatList(getRegionClueGroup(profile, clue.evidenceId))}` }]
+    case 'color':
+      return [{ text: `Color: ${formatLabel(profile.colorGroup)}` }]
     case 'evolutionChain':
       return [{ text: `Evolution: ${getEvolutionChainBadgeLabel(profile.evolutionPotential)}` }]
   }
 }
 
-const getRelevantClues = (_pokemon: Pokemon): EvidenceClue[] => evidenceTemplates.map((template) => ({
+const getRelevantClues = (_pokemon: Pokemon, templates: EvidenceTemplate[] = evidenceTemplates): EvidenceClue[] => templates.map((template) => ({
   evidenceId: template.id,
   category: template.category,
 }))
@@ -655,6 +704,15 @@ const getLocationChoiceAxis = (category: EvidenceCategory): EvidenceCategory | '
 
 const hasDistinctLocationChoiceAxes = (evidenceIds: string[]): boolean => {
   const axes = evidenceIds.map((evidenceId) => getLocationChoiceAxis(getEvidenceClue(evidenceId).category))
+  return new Set(axes).size === axes.length
+}
+
+const getSingleUseCaseAxis = (evidenceId: string): string | null => (
+  getEvidenceClue(evidenceId).category === 'region' ? 'region' : null
+)
+
+const hasDistinctSingleUseCaseAxes = (evidenceIds: string[]): boolean => {
+  const axes = evidenceIds.map(getSingleUseCaseAxis).filter((axis): axis is string => Boolean(axis))
   return new Set(axes).size === axes.length
 }
 
@@ -731,11 +789,18 @@ const pickSolvableLocationEvidenceIds = (
   locationCount: number,
   scoreAgainstProfile: ScorePokemonAgainstProfile = scorePokemonAgainstProfile,
   regionClueGroups?: RegionClueGroups,
+  availableEvidenceTemplates: EvidenceTemplate[] = evidenceTemplates,
+  requiredEvidenceIds: string[] = [],
 ): string[] | null => {
-  const evidenceIds = evidenceTemplates.map((template) => template.id)
-  const candidateSets = shuffle(getCombinations(evidenceIds, Math.min(locationCount, evidenceIds.length)))
+  const evidenceIds = availableEvidenceTemplates.map((template) => template.id)
+  const uniqueRequiredEvidenceIds = [...new Set(requiredEvidenceIds.filter((evidenceId) => evidenceIds.includes(evidenceId)))]
+  const optionalEvidenceIds = evidenceIds.filter((evidenceId) => !uniqueRequiredEvidenceIds.includes(evidenceId))
+  const optionalChoiceCount = Math.min(locationCount, evidenceIds.length) - uniqueRequiredEvidenceIds.length
+  if (optionalChoiceCount < 0) return null
+  const candidateSets = shuffle(getCombinations(optionalEvidenceIds, optionalChoiceCount).map((candidateSet) => [...uniqueRequiredEvidenceIds, ...candidateSet]))
 
   return candidateSets.find((candidateSet) => (
+    hasDistinctSingleUseCaseAxes(candidateSet) &&
     isEvidenceSetSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, candidateSet, scoreAgainstProfile, regionClueGroups)
   )) ?? null
 }
@@ -749,8 +814,9 @@ const createSolvableLocationEvidenceChoices = (
   baseEvidenceIds: string[],
   scoreAgainstProfile: ScorePokemonAgainstProfile = scorePokemonAgainstProfile,
   regionClueGroups?: RegionClueGroups,
+  availableEvidenceTemplates: EvidenceTemplate[] = evidenceTemplates,
 ): string[][] | null => {
-  const allEvidenceIds = evidenceTemplates.map((template) => template.id)
+  const allEvidenceIds = availableEvidenceTemplates.map((template) => template.id)
   const locationEvidenceChoices = shuffle(baseEvidenceIds).map((evidenceId) => [evidenceId])
 
   for (const [locationIndex, location] of locations.entries()) {
@@ -767,6 +833,8 @@ const createSolvableLocationEvidenceChoices = (
         const nextChoices = locationEvidenceChoices.map((locationChoices, index) => (
           index === locationIndex ? nextLocationChoices : locationChoices
         ))
+
+        if (!hasDistinctSingleUseCaseAxes(nextChoices.flat())) return false
 
         return areLocationEvidenceChoicesSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, nextChoices, scoreAgainstProfile, regionClueGroups)
       })
@@ -828,6 +896,8 @@ const getCategoryConclusionFragment = (clue: EvidenceClue, profile: PokemonCaseP
       return `${profile.values.affectednessRequirement} in type matchups`
     case 'region':
       return `from ${formatList(getRegionClueGroup(profile, clue.evidenceId))}`
+    case 'color':
+      return `in the ${profile.values.colorGroupLabel}`
     case 'evolutionChain':
       return profile.values.evolutionChainLabel
   }
@@ -853,6 +923,8 @@ const getCategoryDeductionText = (clue: EvidenceClue, profile: PokemonCaseProfil
       return `This suggested the culprit was ${profile.values.affectednessRequirement}.`
     case 'region':
       return `This pointed toward a Pokemon from ${formatList(getRegionClueGroup(profile, clue.evidenceId))}.`
+    case 'color':
+      return `This color clue pointed to the ${profile.values.colorGroupLabel}: ${profile.values.colorGroupDescription}.`
     case 'evolutionChain':
       return `This suggested the culprit ${profile.values.evolutionChainLabel}.`
   }
@@ -922,6 +994,12 @@ const getEvidenceObservation = (clue: EvidenceClue, profile: PokemonCaseProfile,
         observation: `Regional traces at the scene pointed toward ${formatList(getRegionClueGroup(profile, clue.evidenceId))}.`,
         interpretation: `That points toward a suspect first discovered in one of those regions.`,
       }
+    case 'color':
+      return {
+        title,
+        observation: `A visual trace matched the ${profile.values.colorGroupLabel}.`,
+        interpretation: `That means ${profile.values.colorGroupDescription}.`,
+      }
     case 'evolutionChain':
       return {
         title,
@@ -984,11 +1062,13 @@ export const generateCaseEvidence = (
   typeClueSlots: TypeClueSlots = createTypeClueSlots(culprit),
   typeClueGroups: TypeClueGroups = createTypeClueGroups(culprit, typeClueSlots),
   regionClueGroups: RegionClueGroups = createRegionClueGroups(culprit),
+  availableEvidenceTemplates: EvidenceTemplate[] = evidenceTemplates,
 ) => {
   const generatedEvidenceById = new Map<string, GeneratedEvidence>()
   const profile = getPokemonCaseProfile(culprit, typeClueSlots, typeClueGroups, regionClueGroups)
+  const availableEvidenceIds = new Set(availableEvidenceTemplates.map((template) => template.id))
 
-  const generatedEvidence = baseEvidence.map((evidenceItem) => {
+  const generatedEvidence = baseEvidence.filter((evidenceItem) => availableEvidenceIds.has(evidenceItem.id)).map((evidenceItem) => {
     const generated = buildEvidenceFromTemplate(evidenceItem.id, culprit, typeClueSlots, typeClueGroups, regionClueGroups)
     generatedEvidenceById.set(evidenceItem.id, generated)
     const override = evidenceOverrides?.[evidenceItem.id]
@@ -1013,10 +1093,11 @@ export const generateCaseLocations = (
   typeClueSlots: TypeClueSlots = createTypeClueSlots(culprit),
   typeClueGroups: TypeClueGroups = createTypeClueGroups(culprit, typeClueSlots),
   regionClueGroups: RegionClueGroups = createRegionClueGroups(culprit),
+  availableEvidenceTemplates: EvidenceTemplate[] = evidenceTemplates,
 ) => {
   const profile = getPokemonCaseProfile(culprit, typeClueSlots, typeClueGroups, regionClueGroups)
   const generatedEvidence = new Map(
-    evidenceTemplates.map((template) => {
+    availableEvidenceTemplates.map((template) => {
       const evidenceId = template.id
       const generated = buildEvidenceFromTemplate(evidenceId, culprit, typeClueSlots, typeClueGroups, regionClueGroups)
       const override = evidenceOverrides?.[evidenceId]
@@ -1073,6 +1154,8 @@ const getMismatchReason = (suspectId: number, culpritProfile: PokemonCaseProfile
       return `Did not fit the ${culpritProfile.values.affectednessRequirement} type reaction.`
     case 'region':
       return `Did not match the ${formatList(getRegionClueGroup(culpritProfile, missingClue.evidenceId))} region clue.`
+    case 'color':
+      return `Did not match the ${culpritProfile.values.colorGroupLabel} color clue.`
     case 'evolutionChain':
       return `Did not match ${culpritProfile.values.evolutionChainLabel}.`
     default:
@@ -1105,6 +1188,8 @@ const getMismatchEvidenceLabel = (suspectId: number, culpritProfile: PokemonCase
       return `Type reaction mismatch: needed ${culpritProfile.values.affectednessRequirement}`
     case 'region':
       return `Region mismatch: expected ${formatList(getRegionClueGroup(culpritProfile, missingClue.evidenceId))}`
+    case 'color':
+      return `Color mismatch: expected ${culpritProfile.values.colorGroupLabel}`
     case 'evolutionChain':
       return `Evolution mismatch: needed ${culpritProfile.values.evolutionChainBadgeLabel}`
     default:
@@ -1184,6 +1269,8 @@ export const generateCaseLineup = (
 ) => {
   const suspectCount = options.suspectCount ?? 6
   const distractorCount = suspectCount - 1
+  const availableEvidenceTemplates = getCaseEvidenceTemplates(options.difficulty)
+  const requiredEvidenceIds = getRequiredEvidenceIds(options.difficulty)
 
   for (let attempt = 0; attempt < 1000; attempt += 1) {
     const culprit = pokemonData[Math.floor(Math.random() * pokemonData.length)]
@@ -1191,7 +1278,7 @@ export const generateCaseLineup = (
     const typeClueGroups = createTypeClueGroups(culprit, typeClueSlots)
     const regionClueGroups = createRegionClueGroups(culprit)
     const culpritProfile = getPokemonCaseProfile(culprit, typeClueSlots, typeClueGroups, regionClueGroups)
-    const relevantClues = getRelevantClues(culprit)
+    const relevantClues = getRelevantClues(culprit, availableEvidenceTemplates)
     const scoreCache = new Map<string, number>()
     const scoreAgainstProfile: ScorePokemonAgainstProfile = (pokemonId, profile, clues) => {
       const clueKey = clues.map((clue) => clue.evidenceId).sort().join('|')
@@ -1256,6 +1343,8 @@ export const generateCaseLineup = (
       locations.length,
       scoreAgainstProfile,
       regionClueGroups,
+      availableEvidenceTemplates,
+      requiredEvidenceIds,
     )
 
     if (!solvableLocationEvidenceIds) {
@@ -1271,6 +1360,7 @@ export const generateCaseLineup = (
       solvableLocationEvidenceIds,
       scoreAgainstProfile,
       regionClueGroups,
+      availableEvidenceTemplates,
     )
 
     if (!locationEvidenceChoices) {
@@ -1278,8 +1368,8 @@ export const generateCaseLineup = (
     }
 
     const randomizedLocations = assignLocationEvidence(locations, locationEvidenceChoices)
-    const { generatedEvidence, generatedEvidenceById } = generateCaseEvidence(culprit, evidence, evidenceOverrides, typeClueSlots, typeClueGroups, regionClueGroups)
-    const generatedLocations = generateCaseLocations(culprit, randomizedLocations, evidenceOverrides, typeClueSlots, typeClueGroups, regionClueGroups)
+    const { generatedEvidence, generatedEvidenceById } = generateCaseEvidence(culprit, evidence, evidenceOverrides, typeClueSlots, typeClueGroups, regionClueGroups, availableEvidenceTemplates)
+    const generatedLocations = generateCaseLocations(culprit, randomizedLocations, evidenceOverrides, typeClueSlots, typeClueGroups, regionClueGroups, availableEvidenceTemplates)
     const solutionClues = getEvidenceClues([...new Set(locationEvidenceChoices.flat())])
 
     return {

@@ -36,6 +36,7 @@ const statLabels = {
 
 type StatName = keyof typeof statLabels
 type EvolutionPotential = 'canEvolve' | 'cannotEvolve'
+type ColorGroup = 'warm' | 'cool' | 'neutral'
 
 const highestStatPriority: StatName[] = ['speed', 'attack', 'specialAttack', 'defense', 'specialDefense', 'hp']
 const lowestStatPriority: StatName[] = ['hp', 'defense', 'specialDefense', 'attack', 'specialAttack', 'speed']
@@ -97,6 +98,22 @@ const formatList = (values: string[]): string => {
 
 const formatHeightBucket = (value: string) => value === 'short' ? 'Small' : toTitle(value)
 
+const colorGroupColors: Record<ColorGroup, string[]> = {
+  warm: ['red', 'yellow', 'pink'],
+  cool: ['blue', 'green', 'purple'],
+  neutral: ['black', 'white', 'gray', 'brown'],
+}
+
+const getColorGroup = (color: string): ColorGroup => {
+  if (colorGroupColors.warm.includes(color)) return 'warm'
+  if (colorGroupColors.cool.includes(color)) return 'cool'
+  return 'neutral'
+}
+
+const formatColorGroup = (value: string) => `${toTitle(value)} colors`
+
+const getColorGroupDescription = (value: string) => formatList(colorGroupColors[value as ColorGroup]?.map(toTitle) ?? [value])
+
 const formatAffectednessValue = (value: string) => {
   const [affectedness, attackType] = value.split(':')
   if (!affectedness || !attackType) return value
@@ -138,6 +155,8 @@ const formatRuleValue = (rule: ClueRule, value: string) => {
       return formatAffectednessValue(value)
     case 'region':
       return value
+    case 'color':
+      return formatColorGroup(value)
     case 'evolutionChain':
       return formatEvolutionPotential(value)
     case 'scene':
@@ -164,6 +183,8 @@ const getTraitLabelForRule = (rule: ClueRule) => {
       return 'defensive matchup'
     case 'region':
       return 'region'
+    case 'color':
+      return 'color group'
     case 'evolutionChain':
       return 'evolution potential'
     case 'scene':
@@ -235,6 +256,13 @@ const formatEvaluationInterpretation = (pokemon: Pokemon, evidence: Evidence, su
       return compatible
         ? `This suspect is from ${actual}, matching the regional trace.`
         : `This suspect is from ${actual}, but the clue points to ${formatList(expected)}.`
+    case 'color': {
+      const exactColor = toTitle(pokemon.color)
+      const expectedGroup = evidence.rule.matchingValues[0] ?? ''
+      return compatible
+        ? `This suspect is ${exactColor}, which fits the ${formatColorGroup(expectedGroup).toLowerCase()}: ${getColorGroupDescription(expectedGroup)}.`
+        : `This suspect is ${exactColor}, but the clue points to ${formatColorGroup(expectedGroup).toLowerCase()}: ${getColorGroupDescription(expectedGroup)}.`
+    }
     case 'evolutionChain':
       return compatible
         ? `This suspect's evolution potential matches the clue.`
@@ -289,6 +317,8 @@ const getSuspectRuleValue = (pokemon: Pokemon, rule: ClueRule): string => {
     }
     case 'region':
       return pokemon.region
+    case 'color':
+      return getColorGroup(pokemon.color)
     case 'evolutionChain':
       return getEvolutionPotential(pokemon)
     case 'scene':

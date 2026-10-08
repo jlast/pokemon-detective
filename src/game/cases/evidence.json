@@ -60,6 +60,11 @@
     "clueText": ""
   },
   {
+    "id": "color-clue",
+    "title": "Color Clue",
+    "clueText": ""
+  },
+  {
     "id": "evolution-chain-clue",
     "title": "Evolution Clue",
     "clueText": ""

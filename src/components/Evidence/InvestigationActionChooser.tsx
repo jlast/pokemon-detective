@@ -71,6 +71,7 @@ const getClueChoiceDescription = (clueLabel: string, clueSubtitle?: string) => {
 
   if (normalizedLabel.includes('entry')) return 'Look for signs of how it began.'
   if (normalizedLabel.includes('evolution')) return 'Check where evolution traits point.'
+  if (normalizedLabel.includes('color')) return 'Check visual details left behind.'
   if (normalizedLabel.includes('trace') || normalizedLabel.includes('ground')) return 'Study the marks left behind.'
   if (normalizedLabel.includes('witness') || normalizedLabel.includes('noticed')) return 'Ask what someone noticed nearby.'
   if (normalizedLabel.includes('residue') || normalizedLabel.includes('type')) return 'Inspect what was left on the scene.'
