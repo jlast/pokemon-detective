@@ -473,7 +473,7 @@ const getColorGroup = (color: PokemonColor): ColorGroup => {
   return 'neutral'
 }
 
-const getColorGroupLabel = (group: ColorGroup): string => `${group} colors`
+const getColorGroupLabel = (group: ColorGroup): string => `${formatLabel(group)} colors`
 
 const getColorGroupDescription = (group: ColorGroup): string => formatList(colorGroupColors[group])
 

@@ -31,6 +31,15 @@ const getBadgeClueType = (text: string, clueType?: ClueAxis | string | null): st
   return null
 }
 
+const getColorGroupClass = (text: string): string | null => {
+  if (!text.startsWith('Color:')) return null
+  const normalizedText = text.toLowerCase()
+  if (normalizedText.includes('warm colors')) return 'evidence-badge--color-warm'
+  if (normalizedText.includes('cool colors')) return 'evidence-badge--color-cool'
+  if (normalizedText.includes('neutral colors')) return 'evidence-badge--color-neutral'
+  return null
+}
+
 export function EvidenceBadge({ text, type, clueType, fallback }: EvidenceBadgeProps) {
   const badgeText = text ?? fallback
   if (!badgeText) return null
@@ -39,9 +48,10 @@ export function EvidenceBadge({ text, type, clueType, fallback }: EvidenceBadgeP
   const badgeLabel = separatorIndex > 0 ? badgeText.slice(0, separatorIndex) : null
   const badgeValue = badgeLabel ? badgeText.slice(separatorIndex + 1).trim() : badgeText
   const clueTypeClass = getBadgeClueType(badgeText, clueType)
+  const colorGroupClass = getColorGroupClass(badgeText)
 
   return (
-    <span className={`evidence-badge ${clueTypeClass ? `evidence-badge--clue-${clueTypeClass}` : ''} ${type ? `evidence-badge--type-${type}` : ''}`}>
+    <span className={`evidence-badge ${clueTypeClass ? `evidence-badge--clue-${clueTypeClass}` : ''} ${colorGroupClass ?? ''} ${type ? `evidence-badge--type-${type}` : ''}`}>
       {type ? (
         <img
           className="evidence-badge-type-sprite"
