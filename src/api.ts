@@ -144,12 +144,21 @@ export interface AdminProgressPlayer {
   investigatedLocations: AdminProgressInvestigation[]
 }
 
+export interface AdminCaseClue {
+  evidenceId: string
+  clueType: string
+  eliminatedSuspects: number
+  suspectCount: number
+  eliminationRate: number
+}
+
 export interface AdminCaseProgressCase {
   caseId: string
   difficulty: string
   caseTitle: string
   culpritPokemonId: number
   culpritPokemonName: string
+  clues?: AdminCaseClue[]
   players: AdminProgressPlayer[]
 }
 

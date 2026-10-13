@@ -790,15 +790,37 @@
   box-shadow: 0 8px 18px rgba(47, 35, 21, 0.06);
 }
 
+.admin-clue-usage-stack {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.admin-clue-usage__title {
+  margin: 0 0 0.55rem;
+  color: #203250;
+  font-size: 1rem;
+}
+
+.admin-clue-usage__note {
+  margin: 0.65rem 0 0;
+  color: #68758a;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
 .admin-clue-usage__row {
   display: grid;
-  grid-template-columns: minmax(9rem, 1fr) repeat(3, minmax(4.5rem, 0.35fr));
+  grid-template-columns: minmax(9rem, 1fr) repeat(4, minmax(4.5rem, 0.35fr));
   gap: 0.75rem;
   align-items: center;
   padding: 0.8rem 1rem;
   color: #203250;
   font-size: 0.92rem;
   font-weight: 800;
+}
+
+.admin-clue-usage--effectiveness .admin-clue-usage__row {
+  grid-template-columns: minmax(9rem, 1fr) repeat(6, minmax(4.5rem, 0.35fr));
 }
 
 .admin-clue-usage__row + .admin-clue-usage__row {
@@ -1011,10 +1033,14 @@
   }
 
   .admin-clue-usage__row {
-    grid-template-columns: minmax(6rem, 1fr) repeat(3, minmax(2.5rem, auto));
+    grid-template-columns: minmax(6rem, 1fr) repeat(4, minmax(2.5rem, auto));
     gap: 0.5rem;
     padding: 0.75rem;
     font-size: 0.82rem;
+  }
+
+  .admin-clue-usage--effectiveness .admin-clue-usage__row {
+    grid-template-columns: minmax(6rem, 1fr) repeat(6, minmax(2.5rem, auto));
   }
 
   .admin-case-section__summary {

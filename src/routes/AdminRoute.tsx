@@ -53,9 +53,27 @@ const getPlayerClueBadgeGroups = (player: AdminProgressPlayer) => (
 interface ClueUsageRow {
   clueType: string
   easy: number
+  medium: number
   hard: number
   total: number
 }
+
+interface OverallClueUsageRow extends ClueUsageRow {
+  averageEliminated: number
+  averageEliminationRate: number
+}
+
+const createClueCounts = () => ({ easy: 0, medium: 0, hard: 0 })
+
+const isTrackedDifficulty = (difficulty: string): difficulty is 'easy' | 'medium' | 'hard' => (
+  difficulty === 'easy' || difficulty === 'medium' || difficulty === 'hard'
+)
+
+const formatAverage = (value: number): string => value.toLocaleString(undefined, {
+  maximumFractionDigits: 1,
+})
+
+const formatPercent = (value: number): string => `${Math.round(value * 100)}%`
 
 const getCaseStats = (adminCase: AdminCaseProgressCase) => ({
   total: adminCase.players.length,
@@ -121,15 +139,46 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
     }
   }, [progress])
 
-  const clueUsageRows = useMemo<ClueUsageRow[]>(() => {
-    const counts = new Map<string, { easy: number; hard: number }>()
+  const overallClueUsageRows = useMemo<OverallClueUsageRow[]>(() => {
+    const counts = new Map<string, { easy: number; medium: number; hard: number; eliminatedTotal: number; eliminationRateTotal: number }>()
 
     for (const adminCase of progress?.cases ?? []) {
-      if (adminCase.difficulty !== 'easy' && adminCase.difficulty !== 'hard') continue
+      if (!isTrackedDifficulty(adminCase.difficulty)) continue
+
+      for (const clue of adminCase.clues ?? []) {
+        const current = counts.get(clue.clueType) ?? { ...createClueCounts(), eliminatedTotal: 0, eliminationRateTotal: 0 }
+        current[adminCase.difficulty] += 1
+        current.eliminatedTotal += clue.eliminatedSuspects
+        current.eliminationRateTotal += clue.eliminationRate
+        counts.set(clue.clueType, current)
+      }
+    }
+
+    return [...counts.entries()]
+      .map(([clueType, count]) => {
+        const total = count.easy + count.medium + count.hard
+        return {
+          clueType,
+          easy: count.easy,
+          medium: count.medium,
+          hard: count.hard,
+          total,
+          averageEliminated: total > 0 ? count.eliminatedTotal / total : 0,
+          averageEliminationRate: total > 0 ? count.eliminationRateTotal / total : 0,
+        }
+      })
+      .sort((left, right) => right.total - left.total || right.averageEliminated - left.averageEliminated || left.clueType.localeCompare(right.clueType))
+  }, [progress])
+
+  const clueUsageRows = useMemo<ClueUsageRow[]>(() => {
+    const counts = new Map<string, { easy: number; medium: number; hard: number }>()
+
+    for (const adminCase of progress?.cases ?? []) {
+      if (!isTrackedDifficulty(adminCase.difficulty)) continue
 
       for (const player of adminCase.players) {
         for (const group of getPlayerClueBadgeGroups(player)) {
-          const current = counts.get(group.hintType) ?? { easy: 0, hard: 0 }
+          const current = counts.get(group.hintType) ?? createClueCounts()
           current[adminCase.difficulty] += 1
           counts.set(group.hintType, current)
         }
@@ -140,8 +189,9 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
       .map(([clueType, count]) => ({
         clueType,
         easy: count.easy,
+        medium: count.medium,
         hard: count.hard,
-        total: count.easy + count.hard,
+        total: count.easy + count.medium + count.hard,
       }))
       .sort((left, right) => right.total - left.total || left.clueType.localeCompare(right.clueType))
   }, [progress])
@@ -203,7 +253,7 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
               {activeTab === 'mailing'
                 ? 'Send a plain news email to users who allow news and update emails.'
                 : activeTab === 'clues'
-                  ? 'See how often each clue type was used, split between easy and hard puzzles.'
+                  ? 'See generated and collected clue usage by difficulty, including average clue effectiveness.'
                   : 'Open every recorded player puzzle for a selected UTC date.'}
             </p>
           </div>
@@ -326,28 +376,67 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
           <>
             <div className="admin-page__summary" aria-label="Clue usage summary">
               <span>{progress.date} UTC</span>
-              <span>{clueUsageRows.reduce((sum, row) => sum + row.easy, 0)} easy clues</span>
-              <span>{clueUsageRows.reduce((sum, row) => sum + row.hard, 0)} hard clues</span>
+              <span>{overallClueUsageRows.reduce((sum, row) => sum + row.easy, 0)} easy case clues</span>
+              <span>{overallClueUsageRows.reduce((sum, row) => sum + row.medium, 0)} medium case clues</span>
+              <span>{overallClueUsageRows.reduce((sum, row) => sum + row.hard, 0)} hard case clues</span>
             </div>
 
-            {clueUsageRows.length === 0 ? (
-              <p className="placeholder-page">No clue usage has been recorded for this date.</p>
+            {overallClueUsageRows.length === 0 ? (
+              <p className="placeholder-page">No clue usage is available for this date.</p>
             ) : (
-              <div className="admin-clue-usage" role="table" aria-label="Clue usage by difficulty">
-                <div className="admin-clue-usage__row admin-clue-usage__row--header" role="row">
-                  <span role="columnheader">Clue type</span>
-                  <span role="columnheader">Easy</span>
-                  <span role="columnheader">Hard</span>
-                  <span role="columnheader">Total</span>
-                </div>
-                {clueUsageRows.map((row) => (
-                  <div key={row.clueType} className="admin-clue-usage__row" role="row">
-                    <span role="cell">{row.clueType}</span>
-                    <span role="cell">{row.easy}</span>
-                    <span role="cell">{row.hard}</span>
-                    <span role="cell">{row.total}</span>
+              <div className="admin-clue-usage-stack">
+                <div>
+                  <h3 className="admin-clue-usage__title">Overall clue usage</h3>
+                  <div className="admin-clue-usage admin-clue-usage--effectiveness" role="table" aria-label="Overall clue usage by difficulty">
+                    <div className="admin-clue-usage__row admin-clue-usage__row--header" role="row">
+                      <span role="columnheader">Clue type</span>
+                      <span role="columnheader">Easy</span>
+                      <span role="columnheader">Medium</span>
+                      <span role="columnheader">Hard</span>
+                      <span role="columnheader">Total</span>
+                      <span role="columnheader">Avg elim.</span>
+                      <span role="columnheader">Avg %</span>
+                    </div>
+                    {overallClueUsageRows.map((row) => (
+                      <div key={row.clueType} className="admin-clue-usage__row" role="row">
+                        <span role="cell">{row.clueType}</span>
+                        <span role="cell">{row.easy}</span>
+                        <span role="cell">{row.medium}</span>
+                        <span role="cell">{row.hard}</span>
+                        <span role="cell">{row.total}</span>
+                        <span role="cell">{formatAverage(row.averageEliminated)}</span>
+                        <span role="cell">{formatPercent(row.averageEliminationRate)}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+
+                <div>
+                  <h3 className="admin-clue-usage__title">Player-collected clue usage</h3>
+                  {clueUsageRows.length === 0 ? (
+                    <p className="placeholder-page">No player clue usage has been recorded for this date.</p>
+                  ) : (
+                    <div className="admin-clue-usage" role="table" aria-label="Player-collected clue usage by difficulty">
+                      <div className="admin-clue-usage__row admin-clue-usage__row--header" role="row">
+                        <span role="columnheader">Clue type</span>
+                        <span role="columnheader">Easy</span>
+                        <span role="columnheader">Medium</span>
+                        <span role="columnheader">Hard</span>
+                        <span role="columnheader">Total</span>
+                      </div>
+                      {clueUsageRows.map((row) => (
+                        <div key={row.clueType} className="admin-clue-usage__row" role="row">
+                          <span role="cell">{row.clueType}</span>
+                          <span role="cell">{row.easy}</span>
+                          <span role="cell">{row.medium}</span>
+                          <span role="cell">{row.hard}</span>
+                          <span role="cell">{row.total}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <p className="admin-clue-usage__note">Average elimination is measured against non-culprit suspects in each generated case.</p>
+                </div>
               </div>
             )}
           </>

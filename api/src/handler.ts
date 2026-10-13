@@ -5,7 +5,7 @@ import { allCases, createCaseById, rebuildFullCase } from '../../src/game/cases/
 import { getCaseThemeTitle } from '../../src/game/caseTheme'
 import { getSolutionClueBadgesFromEvidence, getSolutionClueHintType, type Case, type CaseDifficulty, type CaseSolution, type CaseStatus, type EvidenceBadgeData, type LocationCardVariant, type LocationAction } from '../../src/game/caseModel'
 import { getShinySpriteUrl, pokemonData, type PokemonRegion, type PokemonType } from '../../src/data/pokemon'
-import { getPokemonById } from '../../src/game/suspectCaseFile'
+import { getPokemonById, getSuspectEvidenceEvaluations } from '../../src/game/suspectCaseFile'
 import { batchGetCaseData, getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseDataRecord, type CaseStats } from './caseDataDb'
 import { publishFeedbackCommentAlert, publishGeneralFeedbackAlert } from './feedbackAlert'
 import { putCaseFeedback, putGeneralFeedback } from './feedbackDb'
@@ -144,6 +144,14 @@ interface AdminProgressPlayer {
   accusationsRemaining: number
   accusationHistory: AdminProgressAccusation[]
   investigatedLocations: AdminProgressInvestigation[]
+}
+
+interface AdminCaseClue {
+  evidenceId: string
+  clueType: string
+  eliminatedSuspects: number
+  suspectCount: number
+  eliminationRate: number
 }
 
 interface CaseStatsResponse extends CaseStats {
@@ -1084,6 +1092,30 @@ const buildAdminProgressPlayer = (fullCase: Case, progress: PlayerProgressRecord
   }
 }
 
+const buildAdminCaseClues = (fullCase: Case): AdminCaseClue[] => {
+  const nonCulpritSuspects = fullCase.suspects.filter((suspect) => suspect.pokemonId !== fullCase.culpritPokemonId)
+  const evidenceById = new Map(fullCase.evidence.map((evidence) => [evidence.id, evidence]))
+
+  return fullCase.locations.flatMap((location) => location.actions.flatMap((action) => {
+    if (!action.evidenceId) return []
+    const evidence = evidenceById.get(action.evidenceId)
+    if (!evidence) return []
+
+    const clueType = getSolutionClueHintType(evidence.rule.axis) ?? evidence.title
+    const eliminatedSuspects = nonCulpritSuspects.filter((suspect) => (
+      getSuspectEvidenceEvaluations(getPokemonById(suspect.pokemonId), [evidence])[0]?.result === 'conflict'
+    )).length
+
+    return {
+      evidenceId: evidence.id,
+      clueType,
+      eliminatedSuspects,
+      suspectCount: nonCulpritSuspects.length,
+      eliminationRate: nonCulpritSuspects.length > 0 ? eliminatedSuspects / nonCulpritSuspects.length : 0,
+    }
+  }))
+}
+
 const handleGetAdminSession = async (event: ApiGatewayEvent): Promise<ApiGatewayResult> => {
   const admin = await requireAdmin(event)
   if (isApiResult(admin)) return admin
@@ -1128,6 +1160,7 @@ const handleGetAdminCaseProgress = async (
       caseTitle: fullCase.title,
       culpritPokemonId: fullCase.culpritPokemonId,
       culpritPokemonName: getPokemonName(fullCase.culpritPokemonId),
+      clues: buildAdminCaseClues(fullCase),
       players,
     }
   }
