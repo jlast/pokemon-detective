@@ -65,6 +65,11 @@
     "clueText": ""
   },
   {
+    "id": "capture-clue",
+    "title": "Capture Clue",
+    "clueText": ""
+  },
+  {
     "id": "evolution-chain-clue",
     "title": "Evolution Clue",
     "clueText": ""

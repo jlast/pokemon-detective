@@ -111,6 +111,9 @@ const cluePreviewByEvidenceId: Record<string, CluePreview> = {
   'color-clue': {
     label: 'Color clue',
   },
+  'capture-clue': {
+    label: 'Capture clue',
+  },
   'evolution-chain-clue': {
     label: 'Evolution clue',
   },

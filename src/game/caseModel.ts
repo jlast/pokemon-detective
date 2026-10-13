@@ -55,7 +55,7 @@ export interface LocationActionPresentation {
   witnessPromptTemplates?: string[]
 }
 
-export type ClueAxis = 'height' | 'weight' | 'type' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'typeAffectedness' | 'region' | 'color' | 'evolutionChain' | 'scene'
+export type ClueAxis = 'height' | 'weight' | 'type' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'typeAffectedness' | 'region' | 'color' | 'capture' | 'evolutionChain' | 'scene'
 
 export type CluePrecision = 'exact' | 'grouped' | 'none'
 
@@ -267,6 +267,8 @@ export const getClueHintType = (axis: ClueAxis): string | undefined => {
       return 'Region clue'
     case 'color':
       return 'Color clue'
+    case 'capture':
+      return 'Capture clue'
     case 'evolutionChain':
       return 'Evolution clue'
     case 'scene':
@@ -298,6 +300,8 @@ export const getSolutionClueHintType = (axis: ClueAxis): string | undefined => {
       return 'Region'
     case 'color':
       return 'Color'
+    case 'capture':
+      return 'Capture'
     case 'evolutionChain':
       return 'Evolution'
     case 'scene':
@@ -332,6 +336,8 @@ const getSolutionClueHintTypeFromEvidenceId = (evidenceId: string | undefined): 
       return 'Region'
     case 'color-clue':
       return 'Color'
+    case 'capture-clue':
+      return 'Capture'
     case 'evolution-chain-clue':
       return 'Evolution'
     default:
@@ -392,6 +398,8 @@ const normalizeSolutionHintType = (hintType: string): string => {
       return 'Region'
     case 'Color clue':
       return 'Color'
+    case 'Capture clue':
+      return 'Capture'
     case 'Evolution clue':
       return 'Evolution'
     default:
@@ -410,6 +418,7 @@ const inferClueHintType = (badge: EvidenceBadgeData): string => {
   if (badge.text.startsWith('Weak to') || badge.text.startsWith('Strong to')) return 'Reaction'
   if (badge.text.startsWith('Region:')) return 'Region'
   if (badge.text.startsWith('Color:')) return 'Color'
+  if (badge.text.startsWith('Capture:')) return 'Capture'
   if (badge.text.startsWith('Evolution:')) return 'Evolution'
   return badge.type ? 'Type clue' : 'Solution'
 }

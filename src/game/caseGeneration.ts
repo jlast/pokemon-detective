@@ -8,7 +8,8 @@ type HeightBucket = 'short' | 'medium' | 'tall'
 type WeightBucket = 'light' | 'medium' | 'heavy'
 type EvolutionChainStage = 'stage1' | 'stage2' | 'stage3' | 'noEvolutionChain'
 type EvolutionPotential = 'canEvolve' | 'cannotEvolve'
-type EvidenceCategory = 'height' | 'weight' | 'typeResidue' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'typeAffectedness' | 'region' | 'color' | 'evolutionChain'
+type CaptureGroup = 'elusive' | 'guarded' | 'easygoing'
+type EvidenceCategory = 'height' | 'weight' | 'typeResidue' | 'groundTrace' | 'force' | 'witness' | 'highestStat' | 'lowestStat' | 'typeAffectedness' | 'region' | 'color' | 'capture' | 'evolutionChain'
 type ColorGroup = 'warm' | 'cool' | 'neutral'
 type TypeAffectedness = 'weak' | 'strong'
 type TypeAffectednessCandidate = { affectedness: TypeAffectedness; attackType: PokemonType }
@@ -68,6 +69,7 @@ type PokemonCaseProfile = {
   regionGroup: PokemonRegion[]
   color: PokemonColor
   colorGroup: ColorGroup
+  captureGroup: CaptureGroup
   evolutionChainStage: EvolutionChainStage
   evolutionPotential: EvolutionPotential
   values: Record<string, string>
@@ -164,6 +166,13 @@ const evidenceTemplates: EvidenceTemplate[] = [
     titleTemplate: 'Color Trace',
     clueTemplate: 'A visual trace pointed to the {colorGroupLabel}: {colorGroupDescription}.',
     endTemplate: 'A visual trace pointed to the {colorGroupLabel}: {colorGroupDescription}.',
+  },
+  {
+    id: 'capture-clue',
+    category: 'capture',
+    titleTemplate: 'Capture Record',
+    clueTemplate: 'Ranger records placed the culprit in the {captureGroupLabel} capture group.',
+    endTemplate: 'Ranger records placed the culprit in the {captureGroupLabel} capture group.',
   },
   {
     id: 'evolution-chain-clue',
@@ -480,6 +489,34 @@ const getColorGroupLabel = (group: ColorGroup): string => `${formatLabel(group)}
 
 const getColorGroupDescription = (group: ColorGroup): string => formatList(colorGroupColors[group])
 
+const getCaptureGroup = (captureRate: number): CaptureGroup => {
+  if (captureRate <= 45) return 'elusive'
+  if (captureRate <= 120) return 'guarded'
+  return 'easygoing'
+}
+
+const getCaptureGroupLabel = (group: CaptureGroup): string => {
+  switch (group) {
+    case 'elusive':
+      return 'Elusive'
+    case 'guarded':
+      return 'Guarded'
+    case 'easygoing':
+      return 'Easygoing'
+  }
+}
+
+const getCaptureGroupDescription = (group: CaptureGroup): string => {
+  switch (group) {
+    case 'elusive':
+      return 'hard to catch'
+    case 'guarded':
+      return 'moderately difficult to catch'
+    case 'easygoing':
+      return 'easy to catch'
+  }
+}
+
 const regionClueEvidenceIds = ['region-clue-a', 'region-clue-b', 'region-clue-c'] as const
 
 const normalizeRegionEvidenceId = (evidenceId: string): string => (
@@ -523,6 +560,7 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
     ? resolvedRegionClueGroups[normalizeRegionEvidenceId(activeEvidenceId)] ?? createRegionGroup(pokemon.region, pokemon.id)
     : createRegionGroup(pokemon.region, pokemon.id)
   const colorGroup = getColorGroup(pokemon.color)
+  const captureGroup = getCaptureGroup(pokemon.captureRate)
 
   return {
     height,
@@ -543,6 +581,7 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
     regionGroup,
     color: pokemon.color,
     colorGroup,
+    captureGroup,
     evolutionChainStage,
     evolutionPotential,
     values: {
@@ -560,6 +599,9 @@ const getPokemonCaseProfile = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, t
       colorGroup: colorGroup,
       colorGroupLabel: getColorGroupLabel(colorGroup),
       colorGroupDescription: getColorGroupDescription(colorGroup),
+      captureGroup: captureGroup,
+      captureGroupLabel: getCaptureGroupLabel(captureGroup),
+      captureGroupDescription: getCaptureGroupDescription(captureGroup),
       evolutionChainLabel: getEvolutionChainLabel(evolutionPotential),
       evolutionChainBadgeLabel: getEvolutionChainBadgeLabel(evolutionPotential),
       profileLabel,
@@ -617,6 +659,8 @@ const getClueRule = (clue: EvidenceClue, profile: PokemonCaseProfile): ClueRule 
       return { axis: 'region', precision: 'grouped', matchingValues: getRegionClueGroup(profile, clue.evidenceId) }
     case 'color':
       return { axis: 'color', precision: 'grouped', matchingValues: [profile.colorGroup] }
+    case 'capture':
+      return { axis: 'capture', precision: 'grouped', matchingValues: [profile.captureGroup] }
     case 'evolutionChain':
       return { axis: 'evolutionChain', precision: 'grouped', matchingValues: [profile.evolutionPotential] }
   }
@@ -646,6 +690,8 @@ const getClueRuleValue = (pokemon: Pokemon, typeClueSlots: TypeClueSlots, clue: 
       return pokemon.region
     case 'color':
       return getColorGroup(pokemon.color)
+    case 'capture':
+      return getCaptureGroup(pokemon.captureRate)
     case 'evolutionChain':
       return getEvolutionPotential(pokemon)
   }
@@ -682,6 +728,8 @@ const getEvidenceBadges = (clue: EvidenceClue, profile: PokemonCaseProfile): Evi
       return [{ text: `Region: ${formatList(getRegionClueGroup(profile, clue.evidenceId))}` }]
     case 'color':
       return [{ text: `Color: ${getColorGroupLabel(profile.colorGroup)} (${getColorGroupDescription(profile.colorGroup)})` }]
+    case 'capture':
+      return [{ text: `Capture: ${profile.values.captureGroupLabel} (${profile.values.captureGroupDescription})` }]
     case 'evolutionChain':
       return [{ text: `Evolution: ${getEvolutionChainBadgeLabel(profile.evolutionPotential)}` }]
   }
@@ -912,6 +960,8 @@ const getCategoryConclusionFragment = (clue: EvidenceClue, profile: PokemonCaseP
       return `from ${formatList(getRegionClueGroup(profile, clue.evidenceId))}`
     case 'color':
       return `in the ${profile.values.colorGroupLabel}`
+    case 'capture':
+      return `in the ${profile.values.captureGroupLabel} capture group`
     case 'evolutionChain':
       return profile.values.evolutionChainLabel
   }
@@ -939,6 +989,8 @@ const getCategoryDeductionText = (clue: EvidenceClue, profile: PokemonCaseProfil
       return `This pointed toward a Pokemon from ${formatList(getRegionClueGroup(profile, clue.evidenceId))}.`
     case 'color':
       return `This color clue pointed to the ${profile.values.colorGroupLabel}: ${profile.values.colorGroupDescription}.`
+    case 'capture':
+      return `This capture clue pointed to a Pokemon that is ${profile.values.captureGroupDescription}.`
     case 'evolutionChain':
       return `This suggested the culprit ${profile.values.evolutionChainLabel}.`
   }
@@ -1013,6 +1065,12 @@ const getEvidenceObservation = (clue: EvidenceClue, profile: PokemonCaseProfile,
         title,
         observation: `A visual trace matched the ${profile.values.colorGroupLabel}.`,
         interpretation: `That means ${profile.values.colorGroupDescription}.`,
+      }
+    case 'capture':
+      return {
+        title,
+        observation: `Ranger records placed the culprit in the ${profile.values.captureGroupLabel} capture group.`,
+        interpretation: `That points toward a Pokemon that is ${profile.values.captureGroupDescription}.`,
       }
     case 'evolutionChain':
       return {
@@ -1170,6 +1228,8 @@ const getMismatchReason = (suspectId: number, culpritProfile: PokemonCaseProfile
       return `Did not match the ${formatList(getRegionClueGroup(culpritProfile, missingClue.evidenceId))} region clue.`
     case 'color':
       return `Did not match the ${culpritProfile.values.colorGroupLabel} color clue.`
+    case 'capture':
+      return `Did not match the ${culpritProfile.values.captureGroupLabel} capture clue.`
     case 'evolutionChain':
       return `Did not match ${culpritProfile.values.evolutionChainLabel}.`
     default:
@@ -1204,6 +1264,8 @@ const getMismatchEvidenceLabel = (suspectId: number, culpritProfile: PokemonCase
       return `Region mismatch: expected ${formatList(getRegionClueGroup(culpritProfile, missingClue.evidenceId))}`
     case 'color':
       return `Color mismatch: expected ${culpritProfile.values.colorGroupLabel}`
+    case 'capture':
+      return `Capture mismatch: expected ${culpritProfile.values.captureGroupLabel}`
     case 'evolutionChain':
       return `Evolution mismatch: needed ${culpritProfile.values.evolutionChainBadgeLabel}`
     default:

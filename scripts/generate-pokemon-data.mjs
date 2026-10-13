@@ -177,7 +177,7 @@ const serializeDataFile = (pokemonEntries) => {
     .map((region) => `  | '${region}'`)
     .join('\n')}\n\nexport type PokemonColor =\n${colorUnion
     .map((color) => `  | '${color}'`)
-    .join('\n')}\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  color: PokemonColor\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite?: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`/sprites/shiny/\${pokemonId}.png\`\n\n${serializedChunks}\n\nexport const pokemonData: Pokemon[] = [${chunkNames}].flat()\n`
+    .join('\n')}\n\nexport interface Pokemon {\n  id: number\n  name: string\n  region: PokemonRegion\n  color: PokemonColor\n  captureRate: number\n  types: PokemonType[]\n  heightM: number\n  weightKg: number\n  hp: number\n  attack: number\n  defense: number\n  specialAttack: number\n  specialDefense: number\n  speed: number\n  evolutionStage: 1 | 2 | 3\n  evolutionLineStages: 1 | 2 | 3\n  evolvesByStone: boolean\n  isStarter: boolean\n  isLegendary: boolean\n  isMythical: boolean\n  sprite: string\n  shinySprite?: string\n}\n\nexport const getShinySpriteUrl = (pokemonId: number): string =>\n  \`/sprites/shiny/\${pokemonId}.png\`\n\n${serializedChunks}\n\nexport const pokemonData: Pokemon[] = [${chunkNames}].flat()\n`
 }
 
 const main = async () => {
@@ -251,6 +251,7 @@ const main = async () => {
       name: toTitleCase(pokemon.name),
       region: resolvedRegion,
       color,
+      captureRate: species.capture_rate,
       types,
       heightM: pokemon.height / 10,
       weightKg: pokemon.weight / 10,

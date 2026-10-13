@@ -37,6 +37,7 @@ const statLabels = {
 type StatName = keyof typeof statLabels
 type EvolutionPotential = 'canEvolve' | 'cannotEvolve'
 type ColorGroup = 'warm' | 'cool' | 'neutral'
+type CaptureGroup = 'elusive' | 'guarded' | 'easygoing'
 
 const highestStatPriority: StatName[] = ['speed', 'attack', 'specialAttack', 'defense', 'specialDefense', 'hp']
 const lowestStatPriority: StatName[] = ['hp', 'defense', 'specialDefense', 'attack', 'specialAttack', 'speed']
@@ -114,6 +115,38 @@ const formatColorGroup = (value: string) => `${toTitle(value)} colors`
 
 const getColorGroupDescription = (value: string) => formatList(colorGroupColors[value as ColorGroup]?.map(toTitle) ?? [value])
 
+const getCaptureGroup = (captureRate: number): CaptureGroup => {
+  if (captureRate <= 45) return 'elusive'
+  if (captureRate <= 120) return 'guarded'
+  return 'easygoing'
+}
+
+const formatCaptureGroup = (value: string) => {
+  switch (value) {
+    case 'elusive':
+      return 'Elusive'
+    case 'guarded':
+      return 'Guarded'
+    case 'easygoing':
+      return 'Easygoing'
+    default:
+      return value
+  }
+}
+
+const getCaptureGroupDescription = (value: string) => {
+  switch (value) {
+    case 'elusive':
+      return 'hard to catch'
+    case 'guarded':
+      return 'moderately difficult to catch'
+    case 'easygoing':
+      return 'easy to catch'
+    default:
+      return value
+  }
+}
+
 const formatAffectednessValue = (value: string) => {
   const [affectedness, attackType] = value.split(':')
   if (!affectedness || !attackType) return value
@@ -157,6 +190,8 @@ const formatRuleValue = (rule: ClueRule, value: string) => {
       return value
     case 'color':
       return formatColorGroup(value)
+    case 'capture':
+      return formatCaptureGroup(value)
     case 'evolutionChain':
       return formatEvolutionPotential(value)
     case 'scene':
@@ -185,6 +220,8 @@ const getTraitLabelForRule = (rule: ClueRule) => {
       return 'region'
     case 'color':
       return 'color group'
+    case 'capture':
+      return 'capture group'
     case 'evolutionChain':
       return 'evolution potential'
     case 'scene':
@@ -263,6 +300,10 @@ const formatEvaluationInterpretation = (pokemon: Pokemon, evidence: Evidence, su
         ? `This suspect is ${exactColor}, which fits the ${formatColorGroup(expectedGroup).toLowerCase()}: ${getColorGroupDescription(expectedGroup)}.`
         : `This suspect is ${exactColor}, but the clue points to ${formatColorGroup(expectedGroup).toLowerCase()}: ${getColorGroupDescription(expectedGroup)}.`
     }
+    case 'capture':
+      return compatible
+        ? `This suspect is ${getCaptureGroupDescription(suspectValue)}, matching the capture record.`
+        : `This suspect is ${getCaptureGroupDescription(suspectValue)}, but the clue points to ${formatList(expected).toLowerCase()}.`
     case 'evolutionChain':
       return compatible
         ? `This suspect's evolution potential matches the clue.`
@@ -319,6 +360,8 @@ const getSuspectRuleValue = (pokemon: Pokemon, rule: ClueRule): string => {
       return pokemon.region
     case 'color':
       return getColorGroup(pokemon.color)
+    case 'capture':
+      return getCaptureGroup(pokemon.captureRate)
     case 'evolutionChain':
       return getEvolutionPotential(pokemon)
     case 'scene':
@@ -380,6 +423,7 @@ export const buildInvestigativeProfile = (pokemon: Pokemon): DetectiveProfileRow
   { label: 'Weight', value: `${pokemon.weightKg} kg · ${toTitle(getWeightBucket(pokemon))}` },
   { label: 'Type', value: '', badges: pokemon.types.map((type) => ({ text: toTitle(type), type })) },
   { label: 'Region', value: pokemon.region },
+  { label: 'Capture', value: `${formatCaptureGroup(getCaptureGroup(pokemon.captureRate))} · ${getCaptureGroupDescription(getCaptureGroup(pokemon.captureRate))}` },
   { label: 'Evolution', value: formatEvolutionPotential(getEvolutionPotential(pokemon)) },
   { label: 'Highest stat', value: statLabels[pickStatKey(pokemon, highestStatPriority, 'highest')] },
   { label: 'Lowest stat', value: statLabels[pickStatKey(pokemon, lowestStatPriority, 'lowest')] },
