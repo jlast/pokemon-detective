@@ -1099,19 +1099,28 @@ const buildAdminCaseClues = (fullCase: Case): AdminCaseClue[] => {
   return fullCase.locations.flatMap((location) => location.actions.flatMap((action) => {
     if (!action.evidenceId) return []
     const evidence = evidenceById.get(action.evidenceId)
-    if (!evidence) return []
+    if (!evidence?.rule) return []
 
-    const clueType = getSolutionClueHintType(evidence.rule.axis) ?? evidence.title
-    const eliminatedSuspects = nonCulpritSuspects.filter((suspect) => (
-      getSuspectEvidenceEvaluations(getPokemonById(suspect.pokemonId), [evidence])[0]?.result === 'conflict'
-    )).length
+    try {
+      const clueType = getSolutionClueHintType(evidence.rule.axis) ?? evidence.title
+      const eliminatedSuspects = nonCulpritSuspects.filter((suspect) => (
+        getSuspectEvidenceEvaluations(getPokemonById(suspect.pokemonId), [evidence])[0]?.result === 'conflict'
+      )).length
 
-    return {
-      evidenceId: evidence.id,
-      clueType,
-      eliminatedSuspects,
-      suspectCount: nonCulpritSuspects.length,
-      eliminationRate: nonCulpritSuspects.length > 0 ? eliminatedSuspects / nonCulpritSuspects.length : 0,
+      return {
+        evidenceId: evidence.id,
+        clueType,
+        eliminatedSuspects,
+        suspectCount: nonCulpritSuspects.length,
+        eliminationRate: nonCulpritSuspects.length > 0 ? eliminatedSuspects / nonCulpritSuspects.length : 0,
+      }
+    } catch (error) {
+      console.error('Failed to calculate admin clue effectiveness:', {
+        caseId: fullCase.id,
+        evidenceId: evidence.id,
+        error,
+      })
+      return []
     }
   }))
 }
