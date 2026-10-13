@@ -27,6 +27,7 @@ const getBadgeClueType = (text: string, clueType?: ClueAxis | string | null): st
   if (text.startsWith('Weak to') || text.startsWith('Strong to')) return 'type-affectedness'
   if (text.startsWith('Region:')) return 'region'
   if (text.startsWith('Color:')) return 'color'
+  if (text.startsWith('Capture:')) return 'capture'
   if (text.startsWith('Evolution:')) return 'evolution-chain'
   return null
 }

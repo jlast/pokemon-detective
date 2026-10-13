@@ -4204,6 +4204,7 @@
 .evidence-badge--clue-type-affectedness { background: #d8e3f5; color: #243d68; }
 .evidence-badge--clue-region { background: #d5eadb; color: #255237; }
 .evidence-badge--clue-color { color: #1f2430; }
+.evidence-badge--clue-capture { background: #f4d1c3; color: #6a2f1d; }
 .evidence-badge--clue-evolution-chain { background: #eadbd2; color: #5b3324; }
 
 .evidence-badge--color-warm {
