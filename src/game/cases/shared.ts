@@ -119,10 +119,6 @@ const cluePreviewByEvidenceId: Record<string, CluePreview> = {
   },
 }
 
-const scenePreview = (label = 'Scene context'): CluePreview => ({
-  label,
-})
-
 const presentationByActionId: Record<string, LocationActionPresentation> = {
   'search-scene-traces': {
     kind: 'search',
@@ -253,9 +249,18 @@ const getPresentation = (id: string, fallback: LocationActionPresentation): Loca
   presentationByActionId[id] ?? fallback
 )
 
-export const previewForEvidenceId = (evidenceId?: string | null): CluePreview => (
-  evidenceId ? cluePreviewByEvidenceId[evidenceId] ?? scenePreview('Scene context') : scenePreview('Scene context')
-)
+export const previewForEvidenceId = (evidenceId?: string | null): CluePreview => {
+  if (!evidenceId) {
+    throw new Error('Location action is missing an evidence ID.')
+  }
+
+  const preview = cluePreviewByEvidenceId[evidenceId]
+  if (!preview) {
+    throw new Error(`No clue preview configured for evidence ID "${evidenceId}".`)
+  }
+
+  return preview
+}
 
 const location = (
   id: string,
