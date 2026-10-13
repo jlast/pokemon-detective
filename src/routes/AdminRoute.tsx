@@ -377,7 +377,6 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
             <div className="admin-page__summary" aria-label="Clue usage summary">
               <span>{progress.date} UTC</span>
               <span>{overallClueUsageRows.reduce((sum, row) => sum + row.easy, 0)} easy case clues</span>
-              <span>{overallClueUsageRows.reduce((sum, row) => sum + row.medium, 0)} medium case clues</span>
               <span>{overallClueUsageRows.reduce((sum, row) => sum + row.hard, 0)} hard case clues</span>
             </div>
 
@@ -391,7 +390,6 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
                     <div className="admin-clue-usage__row admin-clue-usage__row--header" role="row">
                       <span role="columnheader">Clue type</span>
                       <span role="columnheader">Easy</span>
-                      <span role="columnheader">Medium</span>
                       <span role="columnheader">Hard</span>
                       <span role="columnheader">Total</span>
                       <span role="columnheader">Avg elim.</span>
@@ -401,7 +399,6 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
                       <div key={row.clueType} className="admin-clue-usage__row" role="row">
                         <span role="cell">{row.clueType}</span>
                         <span role="cell">{row.easy}</span>
-                        <span role="cell">{row.medium}</span>
                         <span role="cell">{row.hard}</span>
                         <span role="cell">{row.total}</span>
                         <span role="cell">{formatAverage(row.averageEliminated)}</span>
@@ -420,7 +417,6 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
                       <div className="admin-clue-usage__row admin-clue-usage__row--header" role="row">
                         <span role="columnheader">Clue type</span>
                         <span role="columnheader">Easy</span>
-                        <span role="columnheader">Medium</span>
                         <span role="columnheader">Hard</span>
                         <span role="columnheader">Total</span>
                       </div>
@@ -428,7 +424,6 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
                         <div key={row.clueType} className="admin-clue-usage__row" role="row">
                           <span role="cell">{row.clueType}</span>
                           <span role="cell">{row.easy}</span>
-                          <span role="cell">{row.medium}</span>
                           <span role="cell">{row.hard}</span>
                           <span role="cell">{row.total}</span>
                         </div>

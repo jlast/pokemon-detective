@@ -753,6 +753,11 @@ const getLocationChoiceAxis = (category: EvidenceCategory): EvidenceCategory | '
   return category
 }
 
+const getEvidenceCollectionKey = (evidenceId: string): string => {
+  const preview = previewForEvidenceId(evidenceId)
+  return preview.subtitle ? `${preview.label}:${preview.subtitle}` : preview.label
+}
+
 const hasDistinctLocationChoiceAxes = (evidenceIds: string[]): boolean => {
   const axes = evidenceIds.map((evidenceId) => getLocationChoiceAxis(getEvidenceClue(evidenceId).category))
   return new Set(axes).size === axes.length
@@ -798,21 +803,21 @@ export const areLocationEvidenceChoicesSolvable = (
 ): boolean => {
   if (locationEvidenceChoices.length === 0 || locationEvidenceChoices.some((choices) => choices.length === 0)) return false
 
-  const visit = (locationIndex: number, selectedEvidenceIds: string[], selectedChoiceAxes: Set<string>): boolean => {
+  const visit = (locationIndex: number, selectedEvidenceIds: string[], selectedCollectionKeys: Set<string>): boolean => {
     if (locationIndex >= locationEvidenceChoices.length) {
       return isEvidenceSetSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, selectedEvidenceIds, scoreAgainstProfile, regionClueGroups)
     }
 
     const enabledChoices = locationEvidenceChoices[locationIndex]!.filter((evidenceId) => {
-      const choiceAxis = getLocationChoiceAxis(getEvidenceClue(evidenceId).category)
-      return !selectedChoiceAxes.has(choiceAxis)
+      const collectionKey = getEvidenceCollectionKey(evidenceId)
+      return !selectedCollectionKeys.has(collectionKey)
     })
 
-    if (enabledChoices.length === 0) return visit(locationIndex + 1, selectedEvidenceIds, selectedChoiceAxes)
+    if (enabledChoices.length === 0) return visit(locationIndex + 1, selectedEvidenceIds, selectedCollectionKeys)
 
     return enabledChoices.every((evidenceId) => {
-      const choiceAxis = getLocationChoiceAxis(getEvidenceClue(evidenceId).category)
-      return visit(locationIndex + 1, [...selectedEvidenceIds, evidenceId], new Set([...selectedChoiceAxes, choiceAxis]))
+      const collectionKey = getEvidenceCollectionKey(evidenceId)
+      return visit(locationIndex + 1, [...selectedEvidenceIds, evidenceId], new Set([...selectedCollectionKeys, collectionKey]))
     })
   }
 

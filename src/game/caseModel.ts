@@ -107,7 +107,7 @@ export interface LocationAction {
 }
 
 export const getClueCollectionKey = (action: Pick<LocationAction, 'id' | 'presentation' | 'cluePreview'>): string => (
-  action.cluePreview.label
+  action.cluePreview.subtitle ? `${action.cluePreview.label}:${action.cluePreview.subtitle}` : action.cluePreview.label
 )
 
 export type LocationCardVariant = 'detective-note' | 'clipboard' | 'map-fragment'
