@@ -750,17 +750,25 @@ export const areLocationEvidenceChoicesSolvable = (
 ): boolean => {
   if (locationEvidenceChoices.length === 0 || locationEvidenceChoices.some((choices) => choices.length === 0)) return false
 
-  const visit = (locationIndex: number, selectedEvidenceIds: string[]): boolean => {
+  const visit = (locationIndex: number, selectedEvidenceIds: string[], selectedChoiceAxes: Set<string>): boolean => {
     if (locationIndex >= locationEvidenceChoices.length) {
       return isEvidenceSetSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, selectedEvidenceIds, scoreAgainstProfile, regionClueGroups)
     }
 
-    return locationEvidenceChoices[locationIndex]!.every((evidenceId) => (
-      visit(locationIndex + 1, [...selectedEvidenceIds, evidenceId])
-    ))
+    const enabledChoices = locationEvidenceChoices[locationIndex]!.filter((evidenceId) => {
+      const choiceAxis = getLocationChoiceAxis(getEvidenceClue(evidenceId).category)
+      return !selectedChoiceAxes.has(choiceAxis)
+    })
+
+    if (enabledChoices.length === 0) return visit(locationIndex + 1, selectedEvidenceIds, selectedChoiceAxes)
+
+    return enabledChoices.every((evidenceId) => {
+      const choiceAxis = getLocationChoiceAxis(getEvidenceClue(evidenceId).category)
+      return visit(locationIndex + 1, [...selectedEvidenceIds, evidenceId], new Set([...selectedChoiceAxes, choiceAxis]))
+    })
   }
 
-  return visit(0, [])
+  return visit(0, [], new Set())
 }
 
 const getCombinations = <T,>(items: T[], size: number): T[][] => {
