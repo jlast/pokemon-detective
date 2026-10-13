@@ -373,7 +373,7 @@ const getDefensiveMultiplier = (pokemon: Pokemon, attackType: PokemonType): numb
 
 const getTypeAffectednessValue = (affectedness: TypeAffectedness, attackType: PokemonType): string => `${affectedness}:${attackType}`
 
-const getPokemonAffectednessCandidates = (pokemon: Pokemon): TypeAffectednessCandidate[] => pokemonTypes.flatMap((attackType): TypeAffectednessCandidate[] => {
+const getPokemonAffectednessCandidates = (pokemon: Pokemon): TypeAffectednessCandidate[] => pokemonTypes.filter((attackType) => attackType !== 'dragon').flatMap((attackType): TypeAffectednessCandidate[] => {
   const multiplier = getDefensiveMultiplier(pokemon, attackType)
   if (multiplier > 1) return [{ affectedness: 'weak', attackType }]
   if (multiplier < 1) return [{ affectedness: 'strong', attackType }]
@@ -382,7 +382,10 @@ const getPokemonAffectednessCandidates = (pokemon: Pokemon): TypeAffectednessCan
 
 const getTypeAffectedness = (pokemon: Pokemon): TypeAffectednessCandidate => {
   const candidates = getPokemonAffectednessCandidates(pokemon)
-  return candidates.find((candidate) => candidate.affectedness === 'weak') ?? candidates[0] ?? { affectedness: 'weak' as const, attackType: 'normal' as const }
+  const weaknesses = candidates.filter((candidate) => candidate.affectedness === 'weak')
+  if (weaknesses.length > 0) return weaknesses[Math.floor(Math.random() * weaknesses.length)]!
+  if (candidates.length > 0) return candidates[Math.floor(Math.random() * candidates.length)]!
+  return { affectedness: 'weak' as const, attackType: 'normal' as const }
 }
 
 const getPokemonAffectednessRuleValue = (pokemon: Pokemon, attackType: PokemonType): string => {
