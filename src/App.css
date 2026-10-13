@@ -2728,6 +2728,10 @@
   padding: 1rem;
 }
 
+.evidence-board--pinboard {
+  padding: 0;
+}
+
 .current-clue {
   margin-top: 1rem;
   border-radius: 16px;

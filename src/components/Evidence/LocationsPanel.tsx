@@ -73,7 +73,7 @@ export function LocationsPanel({
 
   return (
     <section
-      className={`notebook-card evidence-board mobile-section ${isEvidenceTab ? 'is-active' : ''}`}
+      className={`evidence-board evidence-board--pinboard mobile-section ${isEvidenceTab ? 'is-active' : ''}`}
     >
       <div className="investigation-pinboard">
         <div className="string-layer" aria-hidden="true">
