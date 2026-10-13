@@ -802,26 +802,49 @@ export const areLocationEvidenceChoicesSolvable = (
   regionClueGroups?: RegionClueGroups,
 ): boolean => {
   if (locationEvidenceChoices.length === 0 || locationEvidenceChoices.some((choices) => choices.length === 0)) return false
+  const memo = new Map<string, boolean>()
 
-  const visit = (locationIndex: number, selectedEvidenceIds: string[], selectedCollectionKeys: Set<string>): boolean => {
-    if (locationIndex >= locationEvidenceChoices.length) {
+  const visit = (remainingLocationIndexes: number[], selectedEvidenceIds: string[], selectedCollectionKeys: Set<string>): boolean => {
+    if (remainingLocationIndexes.length === 0) {
       return isEvidenceSetSolvable(culpritId, suspectIds, typeClueSlots, typeClueGroups, selectedEvidenceIds, scoreAgainstProfile, regionClueGroups)
     }
 
-    const enabledChoices = locationEvidenceChoices[locationIndex]!.filter((evidenceId) => {
-      const collectionKey = getEvidenceCollectionKey(evidenceId)
-      return !selectedCollectionKeys.has(collectionKey)
+    const memoKey = `${remainingLocationIndexes.join(',')}|${[...selectedEvidenceIds].sort().join(',')}|${[...selectedCollectionKeys].sort().join(',')}`
+    const cached = memo.get(memoKey)
+    if (cached !== undefined) return cached
+
+    const enabledChoicesByLocation = new Map<number, string[]>()
+    for (const locationIndex of remainingLocationIndexes) {
+      const enabledChoices = locationEvidenceChoices[locationIndex]!.filter((evidenceId) => {
+        const collectionKey = getEvidenceCollectionKey(evidenceId)
+        return !selectedCollectionKeys.has(collectionKey)
+      })
+
+      if (enabledChoices.length === 0) {
+        memo.set(memoKey, false)
+        return false
+      }
+
+      enabledChoicesByLocation.set(locationIndex, enabledChoices)
+    }
+
+    const isSolvable = remainingLocationIndexes.every((locationIndex) => {
+      const nextRemainingLocationIndexes = remainingLocationIndexes.filter((index) => index !== locationIndex)
+      return enabledChoicesByLocation.get(locationIndex)!.every((evidenceId) => {
+        const collectionKey = getEvidenceCollectionKey(evidenceId)
+        return visit(
+          nextRemainingLocationIndexes,
+          [...selectedEvidenceIds, evidenceId],
+          new Set([...selectedCollectionKeys, collectionKey]),
+        )
+      })
     })
 
-    if (enabledChoices.length === 0) return visit(locationIndex + 1, selectedEvidenceIds, selectedCollectionKeys)
-
-    return enabledChoices.every((evidenceId) => {
-      const collectionKey = getEvidenceCollectionKey(evidenceId)
-      return visit(locationIndex + 1, [...selectedEvidenceIds, evidenceId], new Set([...selectedCollectionKeys, collectionKey]))
-    })
+    memo.set(memoKey, isSolvable)
+    return isSolvable
   }
 
-  return visit(0, [], new Set())
+  return visit(locationEvidenceChoices.map((_, index) => index), [], new Set())
 }
 
 const getCombinations = <T,>(items: T[], size: number): T[][] => {
