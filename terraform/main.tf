@@ -492,6 +492,7 @@ resource "aws_iam_role_policy" "cron_dynamodb" {
         Effect = "Allow"
         Action = [
           "dynamodb:PutItem",
+          "dynamodb:GetItem",
         ]
         Resource = aws_dynamodb_table.case_data.arn
       },

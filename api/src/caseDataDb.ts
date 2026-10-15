@@ -45,8 +45,8 @@ export interface CaseStats {
 
 const TABLE = process.env.CASE_DATA_TABLE ?? 'CaseData'
 
-export const getCaseData = async (caseId: string): Promise<CaseDataRecord | null> => {
-  const result = await doc.send(new GetCommand({ TableName: TABLE, Key: { caseId } }))
+export const getCaseData = async (caseId: string, consistentRead = false): Promise<CaseDataRecord | null> => {
+  const result = await doc.send(new GetCommand({ TableName: TABLE, Key: { caseId }, ConsistentRead: consistentRead }))
   return (result.Item as CaseDataRecord) ?? null
 }
 
@@ -72,6 +72,20 @@ export const batchGetCaseData = async (caseIds: string[]): Promise<CaseDataRecor
 
 export const putCaseData = async (record: CaseDataRecord): Promise<void> => {
   await doc.send(new PutCommand({ TableName: TABLE, Item: record }))
+}
+
+export const createCaseData = async (record: CaseDataRecord): Promise<boolean> => {
+  try {
+    await doc.send(new PutCommand({
+      TableName: TABLE,
+      Item: record,
+      ConditionExpression: 'attribute_not_exists(caseId)',
+    }))
+    return true
+  } catch (error) {
+    if (error instanceof Error && error.name === 'ConditionalCheckFailedException') return false
+    throw error
+  }
 }
 
 export const getCaseStats = (record: CaseDataRecord | null): CaseStats => ({

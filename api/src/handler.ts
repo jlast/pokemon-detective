@@ -1,16 +1,16 @@
 import { CognitoIdentityProviderClient, ListUsersCommand } from '@aws-sdk/client-cognito-identity-provider'
 import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2'
 import { createRemoteJWKSet, jwtVerify } from 'jose'
-import { allCases, createCaseById, rebuildFullCase } from '../../src/game/cases/index'
+import { allCases, rebuildFullCase } from '../../src/game/cases/index'
 import { getCaseThemeTitle } from '../../src/game/caseTheme'
 import { getSolutionClueBadgesFromEvidence, getSolutionClueHintType, type Case, type CaseDifficulty, type CaseSolution, type CaseStatus, type EvidenceBadgeData, type LocationCardVariant, type LocationAction } from '../../src/game/caseModel'
 import { getShinySpriteUrl, pokemonData, type PokemonRegion, type PokemonType } from '../../src/data/pokemon'
 import { getPokemonById, getSuspectEvidenceEvaluations } from '../../src/game/suspectCaseFile'
-import { batchGetCaseData, getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseDataRecord, type CaseStats } from './caseDataDb'
+import { batchGetCaseData, createCaseData, getCaseData, getCaseStats, putCaseData, recordCaseCompletion, type CaseDataRecord, type CaseStats } from './caseDataDb'
 import { publishFeedbackCommentAlert, publishGeneralFeedbackAlert } from './feedbackAlert'
 import { putCaseFeedback, putGeneralFeedback } from './feedbackDb'
 import { getReminderSubscription, listReminderSubscriptions, putReminderSubscription } from './reminderSubscriptionDb'
-import { validateGeneratedCase } from './validateGeneratedCase'
+import { createValidatedCase } from './createValidatedCase'
 import {
   getProgress,
   batchGetProgress,
@@ -839,8 +839,8 @@ const getStoredDifficulty = (record: Awaited<ReturnType<typeof getCaseData>>): C
   return record.suspectPokemonIds.length >= 9 ? 'hard' : 'easy'
 }
 
-const loadCase = async (caseId: string) => {
-  const record = await getCaseData(caseId)
+const loadCase = async (caseId: string, storedRecord?: CaseDataRecord) => {
+  const record = storedRecord ?? await getCaseData(caseId)
   if (!record) return null
   const storedTypeClueSlots = getStoredTypeClueSlots(record)
   const storedTypeClueGroups = getStoredTypeClueGroups(record)
@@ -901,12 +901,9 @@ const loadCase = async (caseId: string) => {
 }
 
 const generateAndStoreCase = async (caseId: string) => {
-  const config = allCases[Math.floor(Math.random() * allCases.length)]
-  if (!config) return null
   const difficulty = getCaseIdDifficulty(caseId) ?? 'easy'
-  const gameCase = createCaseById(config.id, difficulty)
-  if (!gameCase) return null
-  validateGeneratedCase(gameCase)
+  console.info('Generating missing case on demand', { caseId, difficulty })
+  const gameCase = createValidatedCase(difficulty)
 
   const actionEvidenceMap: Record<string, string> = {}
   for (const location of gameCase.locations) {
@@ -929,7 +926,7 @@ const generateAndStoreCase = async (caseId: string) => {
   const locationCardVariantMap = createLocationCardVariantMap(gameCase.locations)
   const locationCardTiltMap = createLocationCardTiltMap(gameCase.locations)
 
-  await putCaseData({
+  const created = await createCaseData({
     caseId,
     configId: gameCase.id,
     difficulty: gameCase.difficulty,
@@ -955,6 +952,12 @@ const generateAndStoreCase = async (caseId: string) => {
     ttl: getCaseDataTtl(),
   })
 
+  if (!created) {
+    const existing = await getCaseData(caseId, true)
+    if (!existing) throw new Error(`Case disappeared after concurrent generation: ${caseId}`)
+    return loadCase(caseId, existing)
+  }
+
   return applyLocationCardVariants(assignWitnessPokemonToActions(gameCase, witnessPokemonIdMap), locationCardVariantMap, locationCardTiltMap)
 }
 
@@ -970,7 +973,7 @@ const handleGetCase = async (event: ApiGatewayEvent, requestedCaseId = getDefaul
   let fullCase: Case | null = null
 
   if (record) {
-    fullCase = await loadCase(caseId)
+    fullCase = await loadCase(caseId, record)
   }
 
   if (!fullCase && isToday && getCaseIdDifficulty(caseId)) {

@@ -392,8 +392,10 @@ const getPokemonAffectednessCandidates = (pokemon: Pokemon): TypeAffectednessCan
 const getTypeAffectedness = (pokemon: Pokemon): TypeAffectednessCandidate => {
   const candidates = getPokemonAffectednessCandidates(pokemon)
   const weaknesses = candidates.filter((candidate) => candidate.affectedness === 'weak')
-  if (weaknesses.length > 0) return weaknesses[Math.floor(Math.random() * weaknesses.length)]!
-  if (candidates.length > 0) return candidates[Math.floor(Math.random() * candidates.length)]!
+  // Profiles are rebuilt during scoring, validation and loading. The reaction
+  // must remain identical across those calls, including on another Lambda.
+  if (weaknesses.length > 0) return weaknesses[pokemon.id % weaknesses.length]!
+  if (candidates.length > 0) return candidates[pokemon.id % candidates.length]!
   return { affectedness: 'weak' as const, attackType: 'normal' as const }
 }
 

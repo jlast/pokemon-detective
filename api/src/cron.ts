@@ -1,8 +1,7 @@
 import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2'
-import { allCases, createCaseById } from '../../src/game/cases/index'
 import { pokemonData } from '../../src/data/pokemon'
 import type { Case, CaseDifficulty, LocationCardVariant } from '../../src/game/caseModel'
-import { putCaseData } from './caseDataDb'
+import { createCaseData, getCaseData, putCaseData } from './caseDataDb'
 import { deleteProgressByCaseId, getProgress } from './playerDb'
 import {
   listDailyReminderSubscriptions,
@@ -11,7 +10,7 @@ import {
   markUnfinishedCaseReminderSent,
   type ReminderSubscriptionRecord,
 } from './reminderSubscriptionDb'
-import { validateGeneratedCase } from './validateGeneratedCase'
+import { createValidatedCase } from './createValidatedCase'
 
 const ses = new SESv2Client({})
 const REMINDER_EMAIL_FROM = process.env.REMINDER_EMAIL_FROM ?? ''
@@ -321,14 +320,12 @@ const sendUnfinishedCaseReminders = async (caseId: string): Promise<{ sent: numb
   return { sent, skipped, failed }
 }
 
-const generateAndStoreDailyCase = async (caseId: string, difficulty: CaseDifficulty): Promise<{ configId: string; difficulty: CaseDifficulty }> => {
-  const configIndex = Math.floor(Math.random() * allCases.length)
-  const config = allCases[configIndex]
-  if (!config) throw new Error('No case configs available')
-
-  const gameCase = createCaseById(config.id, difficulty)
-  if (!gameCase) throw new Error(`Failed to generate case for config: ${config.id}`)
-  validateGeneratedCase(gameCase)
+const generateAndStoreDailyCase = async (caseId: string, difficulty: CaseDifficulty, overwrite = true): Promise<{ configId: string; difficulty: CaseDifficulty }> => {
+  if (!overwrite) {
+    const existing = await getCaseData(caseId, true)
+    if (existing) return { configId: existing.configId, difficulty: existing.difficulty ?? difficulty }
+  }
+  const gameCase = createValidatedCase(difficulty)
 
   const actionEvidenceMap: Record<string, string> = {}
   for (const location of gameCase.locations) {
@@ -351,7 +348,7 @@ const generateAndStoreDailyCase = async (caseId: string, difficulty: CaseDifficu
   const locationCardVariantMap = createLocationCardVariantMap(gameCase.locations)
   const locationCardTiltMap = createLocationCardTiltMap(gameCase.locations)
 
-  await putCaseData({
+  const record = {
     caseId,
     configId: gameCase.id,
     difficulty: gameCase.difficulty,
@@ -375,9 +372,16 @@ const generateAndStoreDailyCase = async (caseId: string, difficulty: CaseDifficu
       clearedSuspects: gameCase.solution?.clearedSuspects ?? [],
     },
     ttl: Math.floor(Date.now() / 1000) + CASE_DATA_TTL_DAYS * 86400,
-  })
+  }
+  if (overwrite) {
+    await putCaseData(record)
+  } else if (!await createCaseData(record)) {
+    const existing = await getCaseData(caseId, true)
+    if (!existing) throw new Error(`Case disappeared after concurrent generation: ${caseId}`)
+    return { configId: existing.configId, difficulty: existing.difficulty ?? difficulty }
+  }
 
-  return { configId: config.id, difficulty: gameCase.difficulty }
+  return { configId: gameCase.id, difficulty: gameCase.difficulty }
 }
 
 interface CloudWatchEvent {
@@ -395,11 +399,12 @@ interface CloudWatchEvent {
 export const regenerateDailyCases = async (
   date = getTodayUtc(),
   difficulties: readonly CaseDifficulty[] = DAILY_DIFFICULTIES,
+  overwrite = true,
 ): Promise<Array<{ caseId: string; configId: string; difficulty: CaseDifficulty }>> => (
   Promise.all(difficulties.map(async (difficulty) => {
     const caseId = getDailyCaseId(date, difficulty as typeof DAILY_DIFFICULTIES[number])
-    const generated = await generateAndStoreDailyCase(caseId, difficulty)
-    console.log(`Generated daily case ${caseId} using config "${generated.configId}" at ${generated.difficulty} difficulty`)
+    const generated = await generateAndStoreDailyCase(caseId, difficulty, overwrite)
+    console.log(`Daily case ready ${caseId} using config "${generated.configId}" at ${generated.difficulty} difficulty`)
     return { caseId, ...generated }
   }))
 )
@@ -421,7 +426,7 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
       return { statusCode: 200, body: JSON.stringify({ caseId: date, reminders }) }
     }
 
-    const cases = await regenerateDailyCases(date)
+    const cases = await regenerateDailyCases(date, DAILY_DIFFICULTIES, false)
 
     const reminders = await sendDailyReminders(date)
 
@@ -429,6 +434,6 @@ export const handler = async (_event?: CloudWatchEvent): Promise<{ statusCode: n
     return { statusCode: 200, body: JSON.stringify({ caseId: date, cases, reminders }) }
   } catch (error) {
     console.error('Cron handler error:', error)
-    return { statusCode: 500, body: JSON.stringify({ error: 'Failed to generate daily case' }) }
+    throw error
   }
 }
