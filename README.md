@@ -1,124 +1,88 @@
-# React + TypeScript + Vite
+# PokeMystery
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Daily Pokemon detective game built with React, TypeScript, Vite, and a bundled Node API.
+
+Players investigate locations, collect clues, compare suspects, and accuse the culprit. Daily cases are generated and stored per difficulty.
 
 ## Local Development
 
-Run the API and frontend in separate terminals:
+Copy `.env.example` to `.env.local` and fill the test Cognito/AWS values from Terraform outputs.
+
+Run API and frontend in separate terminals:
 
 ```sh
 npm run dev:api
 npm run dev
 ```
 
-Local development is wired for the test environment. Copy `.env.example` to `.env.local` and fill the test Cognito values from Terraform outputs before starting the API.
-
-Google Analytics page tracking uses `VITE_GA_MEASUREMENT_ID`. Leave it blank to disable tracking for a local build.
-
-To clear test case and player progress data, run:
-
-```sh
-npm --prefix api run db:clear:test
-```
-
-The cleanup script loads `.env.local` and refuses to run unless `CASE_DATA_TABLE` and `PLAYER_PROGRESS_TABLE` both target tables ending in `Test`.
-
-The frontend expects the API at `http://localhost:3001` by default. If that port is already in use, start the API on another port and point Vite at it:
+The frontend expects the API at `http://localhost:3001` by default. If needed:
 
 ```sh
 PORT=3002 npm run dev:api
 VITE_API_TARGET=http://localhost:3002 npm run dev
 ```
 
-The frontend uses `localhost:5173` for local auth redirects. If that port is already in use, stop the existing Vite process rather than letting the app move to another port.
+Use `localhost:5173` for local auth redirects. If Vite tries another port, stop the existing process instead.
 
-The local API loads `.env.local` and verifies Cognito tokens against `USER_POOL_ID`. Override it for another environment with:
+## Commands
 
 ```sh
-USER_POOL_ID=us-east-1_example npm run dev:api
+npm run lint
+npm run build
+npm run generate:data
+npm --prefix api run build:handler
+npm --prefix api run build:cron
+npm --prefix api run cases:regenerate:today -- --date=YYYY-MM-DD --difficulty=easy
+npm --prefix api run db:clear:test
 ```
+
+`db:clear:test` loads `.env.local` and refuses to run unless `CASE_DATA_TABLE` and `PLAYER_PROGRESS_TABLE` end in `Test`.
 
 ## Environments
 
-Production is not deployed automatically. Pushes to `main` deploy to the GitHub `test` environment only. Deploy production manually from the `Deploy` workflow with `environment=prod`.
+Pushes to `main` deploy to the GitHub `test` environment. Production is deployed manually from the `Deploy` workflow with `environment=prod`.
 
-The deploy workflow uses repository secrets; GitHub Environments are not required. Test deploys prefer `TEST_AWS_ACCESS_KEY_ID`, `TEST_AWS_SECRET_ACCESS_KEY`, `TEST_AWS_REGION`, `TEST_S3_BUCKET_NAME`, `TEST_CLOUDFRONT_DISTRIBUTION_ID`, and `TEST_VITE_COGNITO_CLIENT_ID`, then fall back to the unprefixed production-era secret names. Test Cognito defaults to `pokemon-detective-test` unless `TEST_COGNITO_DOMAIN` is set. Test analytics is disabled unless `TEST_VITE_GA_MEASUREMENT_ID` is set. Production deploys prefer `PROD_...` secrets, then fall back to unprefixed secrets.
+Test deploys use `TEST_...` repository secrets when present, falling back to unprefixed names. Production deploys prefer `PROD_...` secrets.
 
-Use separate Terraform variables per environment. Start test from `terraform/test.tfvars.example`; it configures `https://test.pokemysterygame.com`, creates DNS records in the parent `pokemysterygame.com` hosted zone, and uses separate DynamoDB tables: `CaseDataTest`, `PlayerProgressTest`, `PokedexTest`, and `CaseFeedbackTest`.
+Terraform test config starts from `terraform/test.tfvars.example` and targets `https://test.pokemysterygame.com` with separate DynamoDB tables such as `CaseDataTest`, `PlayerProgressTest`, `PokedexTest`, and `CaseFeedbackTest`.
 
-## Case Hierarchy
+## Case Generation Notes
 
-### `src/game/caseModel.ts`
+Core files:
 
-```mermaid
-flowchart TD
-  A[Case] --> B[Suspects]
-  A --> C[Locations]
-  A --> D[Evidence]
-  A --> E[Solution]
+- `src/game/caseGeneration.ts`: clue rules, scoring, solvability, case lineup generation.
+- `src/game/cases/shared.ts`: base locations/actions and clue previews.
+- `src/game/caseModel.ts`: shared case/evidence/clue types and clue grouping helpers.
+- `src/game/suspectCaseFile.ts`: suspect-vs-clue evaluation.
+- `api/src/validateGeneratedCase.ts`: server-side generated case validation.
 
-  C --> F[Location]
-  F --> G[LocationAction]
+Important rules:
 
-  D --> H[Evidence shape]
+- Generated cases must never deadlock. Every possible player investigation order and lead choice path must leave every unopened location with at least one enabled clue option.
+- Locations may offer at most one Type clue option.
+- Different Type clue variants are independently collectible: `Residue`, `Ground marks`, `Entry marks`, and `Witness report`.
+- Duplicate exact clue collection keys are disabled once collected.
+- Do not allow empty/generic clue previews. Missing evidence previews should fail loudly during generation/building.
+- Region clue is case-level single-use.
+- Color clue is hard-only.
+- Capture clue uses three groups: `elusive` for `captureRate <= 45`, `guarded` for `<= 120`, and `easygoing` otherwise.
+
+## Data Generation
+
+Pokemon data lives in `src/data/pokemon.ts` and is generated by `scripts/generate-pokemon-data.mjs` from PokeAPI and Pokedoku helper data.
+
+Regenerate after changing Pokemon fields:
+
+```sh
+npm run generate:data
 ```
 
-### `src/game/cases/`
+## Admin
 
-```mermaid
-flowchart TD
-  A[CaseConfig] --> B[Case metadata]
-  A --> C[Locations]
-  A --> D[Evidence templates]
-  A --> E[evidenceOverrides]
+The admin page includes clue usage analytics:
 
-  C --> F[Location]
-  F --> G[LocationAction]
-  G --> H[Evidence id + narrative text]
+- Overall generated clue usage by difficulty.
+- Player-collected clue usage by difficulty.
+- Average clue effectiveness, measured as non-culprit suspects eliminated by each generated clue.
 
-  D --> I[Base evidence list]
-```
-
-### `src/game/caseGeneration.ts`
-
-```mermaid
-flowchart TD
-  A[Pokemon data] --> B[CaseTrait rules]
-  B --> C[evidenceTraitById]
-  B --> D[getPokemonCaseTraits]
-  C --> E[actionEvidencePools]
-  E --> F[LocationAction evidenceId]
-  D --> G[Evidence matching]
-  C --> H[Deduction text]
-```
-
-This is the authored content shape to keep in mind when adding a new case.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Admin API response shape is defined in `src/api.ts` and populated by `api/src/handler.ts`.
