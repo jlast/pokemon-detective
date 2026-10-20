@@ -96,14 +96,14 @@ export function InvestigationLocationCard({
           </>
         )}
       </div>
-      <button
+      {!isComplete ? <button
         type="button"
-        className={`pin-location-button ${isComplete ? 'is-review' : ''}`}
+        className="pin-location-button"
         onClick={(e) => { e.stopPropagation(); openPanel(location.id) }}
         disabled={isSearching || (!isComplete && pointsLeft <= 0)}
       >
-        {isSearching ? 'Following lead…' : isComplete ? 'Read clue →' : pointsLeft <= 0 ? 'Locked' : 'Investigate →'}
-      </button>
+        {isSearching ? 'Following lead…' : pointsLeft <= 0 ? 'Locked' : 'Investigate →'}
+      </button> : null}
     </article>
   )
 }

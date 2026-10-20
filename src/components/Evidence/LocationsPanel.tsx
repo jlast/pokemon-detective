@@ -2,7 +2,6 @@ import { useEffect, type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { getDiscoveredEvidence, type Case, type LocationCardVariant } from '../../game/caseModel'
 import { getCaseThemeExhibitLabel } from '../../game/caseTheme'
-import { getEvidenceIcon } from '../../game/evidenceMeta'
 import { InvestigationLocationCard } from './InvestigationLocationCard'
 
 const placeholderSceneImage = '/case-scenes/placeholder.svg'
@@ -11,44 +10,6 @@ const locationCardVariants: LocationCardVariant[] = ['detective-note', 'clipboar
 const getPublicAssetUrl = (path: string) => {
   if (/^(https?:)?\/\//.test(path)) return path
   return `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
-}
-
-const getWorkingTheoryCopy = (evidenceCount: number, remainingActions: number, suspectCount: number) => {
-  if (remainingActions <= 0) {
-    return 'Final notes are in order. The remaining pattern is ready to test.'
-  }
-  if (evidenceCount === 0) {
-    return 'No clear pattern yet. Continue searching for common clues.'
-  }
-  if (evidenceCount === 1) {
-    return 'One clue marks the first thread. Trace where it leads next.'
-  }
-  if (evidenceCount === 2) {
-    return 'Two clues now point in the same direction. Movement through the scene is taking shape.'
-  }
-  if (evidenceCount === 3) {
-    return 'Several marks begin to agree. The suspect profile is narrowing.'
-  }
-  if (evidenceCount === 4) {
-    return `Only a few suspects still match the notes. Check the remaining ${Math.min(suspectCount, 3)} closely.`
-  }
-  return 'Evidence points to a narrow path. The final accusation is close.'
-}
-
-const getEvidenceBoardCopy = (evidenceCount: number, maxInvestigations: number) => {
-  if (evidenceCount <= 0) {
-    return 'No evidence pinned.'
-  }
-  if (evidenceCount >= maxInvestigations) {
-    return 'Evidence board complete. Ready for final accusation.'
-  }
-  if (evidenceCount === 1) {
-    return '1 item pinned.'
-  }
-  if (evidenceCount >= 3) {
-    return `${evidenceCount} pieces of evidence pinned. Patterns beginning to emerge.`
-  }
-  return `${evidenceCount} pieces of evidence pinned.`
 }
 
 export function LocationsPanel({
@@ -81,8 +42,6 @@ export function LocationsPanel({
   const actionsUsed = investigatedCount
   const maxInvestigations = currentCase.maxInvestigations
   const pointsLeft = Math.max(maxInvestigations - actionsUsed, 0)
-  const workingTheoryCopy = getWorkingTheoryCopy(evidenceCollectedCount, pointsLeft, currentCase.suspects.length)
-  const evidenceBoardCopy = getEvidenceBoardCopy(evidenceCollectedCount, maxInvestigations)
   const exhibitImage = getPublicAssetUrl(currentCase.theme?.image ?? currentCase.sceneImage ?? placeholderSceneImage)
   const exhibitAlt = currentCase.theme?.alt ?? currentCase.sceneImageAlt ?? `Scene photo for ${currentCase.title}`
   const exhibitLabel = getCaseThemeExhibitLabel(currentCase.theme)
@@ -95,7 +54,7 @@ export function LocationsPanel({
       <p className="sr-only" role="status" aria-live="polite">{pinnedLocationId
         ? `New clue pinned from ${currentCase.locations.find(location => location.id === pinnedLocationId)?.name ?? 'this location'}. Open the note to review your evidence.`
         : ''}</p>
-      <div className="investigation-pinboard">
+      <div className="investigation-pinboard investigation-pinboard--focused">
         <div className="string-layer" aria-hidden="true">
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="string-svg">
             <line x1="15%" y1="5%" x2="85%" y2="20%" stroke="#b8894e" strokeWidth="0.3" opacity="0.3" />
@@ -105,13 +64,13 @@ export function LocationsPanel({
           </svg>
         </div>
 
-        <div className="pinboard-card board-progress-card" style={{ gridArea: 'stats' }}>
+        <div className="pinboard-card board-progress-card">
           <span>Evidence {evidenceCollectedCount}</span>
           <span>Locations {investigatedCount} / {currentCase.locations.length}</span>
           <span>Actions {pointsLeft} left</span>
         </div>
 
-        <div className="pinboard-card case-scene-card" style={{ gridArea: 'budget' }}>
+        <div className="pinboard-card case-scene-card">
           <div className="case-scene-card__pin" aria-hidden="true" />
           <div className={`case-scene-card__image-frame ${currentCase.theme ? 'case-scene-card__image-frame--sprite' : ''}`}>
             <img
@@ -126,31 +85,7 @@ export function LocationsPanel({
           </div>
         </div>
 
-        <div className="pinboard-card evidence-card" style={{ gridArea: 'evidence' }}>
-          <strong className="evidence-card-title">Evidence Board</strong>
-          {discoveredEvidence.length > 0 ? (
-            <ul className="evidence-card-list">
-              {discoveredEvidence.slice(0, 5).map((item) => (
-                <li key={item.id} className="evidence-card-item">
-                  <span aria-hidden="true">{getEvidenceIcon(item.id, item.title, '📎')}</span>
-                  <span>{item.title}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="evidence-card-empty">No confirmed evidence.</p>
-          )}
-          <p className="pinboard-card-meta">{evidenceBoardCopy}</p>
-        </div>
-
-        <div className="pinboard-card theory-card" style={{ gridArea: 'theory' }}>
-          <strong className="theory-card-title">Working Theory</strong>
-          <p className="theory-card-text">{workingTheoryCopy}</p>
-        </div>
-
         {currentCase.locations.map((location, index) => {
-          const gridAreas = ['pantry', 'kitchen', 'storage', 'photo', 'counter']
-          const area = gridAreas[index] ?? `loc-${index}`
           return (
             <InvestigationLocationCard
               key={location.id}
@@ -162,7 +97,6 @@ export function LocationsPanel({
               openPanel={openLocation}
               variant={location.cardVariant ?? locationCardVariants[index % locationCardVariants.length]}
               evidenceNumber={index + 1}
-              style={{ gridArea: area }}
             />
           )
         })}
