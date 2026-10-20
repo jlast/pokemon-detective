@@ -11,7 +11,11 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "prune": "ts-prune"
+    "prune": "ts-prune",
+    "preview:prepare": "node scripts/generate-preview-cases.mjs",
+    "dev:codex": "npm run preview:prepare && vite --mode codex-preview --host 0.0.0.0",
+    "build:codex-preview": "npm run preview:prepare && tsc -b && vite build --mode codex-preview",
+    "test:codex-preview": "npm run preview:prepare && node scripts/test-codex-preview.mjs"
   },
   "dependencies": {
     "react": "^19.2.7",

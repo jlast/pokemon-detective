@@ -66,3 +66,6 @@ img {
   max-width: 1200px;
   margin: 0 auto;
 }
+
+.codex-preview-notice { display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; padding: 10px 16px; background: #302541; color: #fff7df; font: 13px/1.5 system-ui, sans-serif; }
+.codex-preview-notice button { background: #fff7df; color: #302541; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font: inherit; }

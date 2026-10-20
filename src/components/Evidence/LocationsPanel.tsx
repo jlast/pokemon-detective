@@ -1,3 +1,5 @@
+import { useEffect, type ReactNode } from 'react'
+import { useLocation } from 'react-router-dom'
 import { getDiscoveredEvidence, type Case, type LocationCardVariant } from '../../game/caseModel'
 import { getCaseThemeExhibitLabel } from '../../game/caseTheme'
 import { getEvidenceIcon } from '../../game/evidenceMeta'
@@ -53,11 +55,26 @@ export function LocationsPanel({
   currentCase,
   isEvidenceTab,
   openLocation,
+  children,
 }: {
   currentCase: Case
   isEvidenceTab: boolean
   openLocation: (locationId: string) => void
+  children?: ReactNode
 }) {
+  const routeLocation = useLocation()
+  const navigationState = routeLocation.state as { pinnedLocationId?: string; focusLocationId?: string } | null
+  const pinnedLocationId = navigationState?.pinnedLocationId
+  const focusLocationId = pinnedLocationId ?? navigationState?.focusLocationId
+  useEffect(() => {
+    if (!focusLocationId) return
+    const frame = requestAnimationFrame(() => {
+      const note = document.getElementById(`board-location-${focusLocationId}`)
+      note?.focus({ preventScroll: true })
+      note?.scrollIntoView({ block: 'nearest', behavior: 'instant' })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [focusLocationId])
   const investigatedCount = currentCase.locations.filter((location) => location.investigated).length
   const discoveredEvidence = getDiscoveredEvidence(currentCase)
   const evidenceCollectedCount = discoveredEvidence.length
@@ -75,6 +92,9 @@ export function LocationsPanel({
     <section
       className={`evidence-board evidence-board--pinboard mobile-section ${isEvidenceTab ? 'is-active' : ''}`}
     >
+      <p className="sr-only" role="status" aria-live="polite">{pinnedLocationId
+        ? `New clue pinned from ${currentCase.locations.find(location => location.id === pinnedLocationId)?.name ?? 'this location'}. Open the note to review your evidence.`
+        : ''}</p>
       <div className="investigation-pinboard">
         <div className="string-layer" aria-hidden="true">
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="string-svg">
@@ -137,7 +157,7 @@ export function LocationsPanel({
               location={location}
               isActiveLocation={false}
               isSearching={false}
-              isNewEvidence={false}
+              isNewEvidence={pinnedLocationId === location.id}
               pointsLeft={pointsLeft}
               openPanel={openLocation}
               variant={location.cardVariant ?? locationCardVariants[index % locationCardVariants.length]}
@@ -147,6 +167,7 @@ export function LocationsPanel({
           )
         })}
       </div>
+      {children}
     </section>
   )
 }

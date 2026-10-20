@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { InvestigationLocationPage } from '../components/Evidence/InvestigationLocationPage'
 import { getClueCollectionKey, type Case } from '../game/caseModel'
 import { TODAY_INVESTIGATION_PATH } from '../paths'
+import { BoardLocationDialog } from '../components/Evidence/BoardLocationDialog'
 import { InvestigationRouteFrame } from './InvestigationRouteFrame'
 
 interface InvestigationLocationRouteProps {
@@ -19,6 +20,7 @@ export function InvestigationLocationRoute({
   openLocation,
   selectedLocationId,
 }: InvestigationLocationRouteProps) {
+  const pendingPin = useRef(false)
   const [searchingLocationId, setSearchingLocationId] = useState<string | null>(null)
   const selectedLocation =
     currentCase.locations.find((location) => location.id === selectedLocationId) ?? null
@@ -40,6 +42,7 @@ export function InvestigationLocationRoute({
   const chooseAction = (locationId: string, actionId: string, witnessPokemonId?: number) => {
     if (searchingLocationId !== null) return
 
+    pendingPin.current = true
     setSearchingLocationId(locationId)
     void (async () => {
       try {
@@ -54,25 +57,36 @@ export function InvestigationLocationRoute({
   const routeLocation = useLocation()
   const investigationPath = `${TODAY_INVESTIGATION_PATH}${routeLocation.search}`
 
+  useEffect(() => {
+    if (!pendingPin.current || !selectedLocation?.investigated) return
+    pendingPin.current = false
+    navigate(investigationPath, { replace: true, state: { pinnedLocationId: selectedLocation.id } })
+  }, [selectedLocation?.investigated, selectedLocation?.id, navigate, investigationPath])
+
+  const closeLocation = () => navigate(investigationPath, {
+    state: { focusLocationId: selectedLocationId },
+  })
+
   return (
     <InvestigationRouteFrame
-      layout="none"
+      layout="locations"
       currentCase={currentCase}
       openLocation={openLocation}
-      showCaseFlowNav={false}
+      showCaseFlowNav
     >
-      <div className="detail-back-link" onClick={() => navigate(investigationPath)}>← Back to Investigation Board</div>
-      <InvestigationLocationPage
-        location={selectedLocation}
-        pointsLeft={pointsLeft}
-        resolvedCount={actionsUsed}
-        totalLocations={currentCase.locations.length}
-        isSearching={searchingLocationId === selectedLocationId}
-        interviewedWitnessPokemonIds={currentCase.locations.flatMap((location) => location.witnessPokemonId ? [location.witnessPokemonId] : [])}
-        collectedEvidenceIds={collectedEvidenceIds}
-        collectedClueLabels={collectedClueLabels}
-        chooseAction={chooseAction}
-      />
+      <BoardLocationDialog title={selectedLocation?.name ?? 'Location'} onClose={closeLocation}>
+        <InvestigationLocationPage
+          location={selectedLocation}
+          pointsLeft={pointsLeft}
+          resolvedCount={actionsUsed}
+          totalLocations={currentCase.locations.length}
+          isSearching={searchingLocationId === selectedLocationId}
+          interviewedWitnessPokemonIds={currentCase.locations.flatMap((location) => location.witnessPokemonId ? [location.witnessPokemonId] : [])}
+          collectedEvidenceIds={collectedEvidenceIds}
+          collectedClueLabels={collectedClueLabels}
+          chooseAction={chooseAction}
+        />
+      </BoardLocationDialog>
     </InvestigationRouteFrame>
   )
 }
