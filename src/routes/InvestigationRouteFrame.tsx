@@ -26,11 +26,11 @@ export function InvestigationRouteFrame({
           isEvidenceTab
           currentCase={currentCase}
           openLocation={openLocation ?? (() => {})}
-        />
+        >
+          {children}
+        </LocationsPanel>
       ) : null}
       {layout === 'none' ? children : null}
-
-      {layout !== 'none' ? children : null}
     </div>
   )
 }

@@ -8890,3 +8890,42 @@
     font-size: 0.7rem;
   }
 }
+
+/* A location opens over the corkboard, then becomes a pinned clue in place. */
+.board-location-dialog { border: 0; padding: 0; background: transparent; color: var(--ink); width: min(860px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); overflow: auto; border-radius: 16px; box-shadow: 0 28px 100px #25170966; }
+.board-location-dialog::backdrop { background: #291b104d; backdrop-filter: blur(2px); animation: board-backdrop-in 220ms ease-out both; }
+.board-location-dialog__paper { background: var(--paper); padding: clamp(16px, 3vw, 30px); }
+.board-location-dialog[open] { animation: board-paper-open 300ms cubic-bezier(.2,.8,.25,1) both; }
+.board-location-dialog__heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.board-location-dialog__heading h2 { margin: 3px 0 0; font-size: 1.4rem; }
+.board-location-dialog__eyebrow { font-size: .65rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.board-location-dialog__close { flex: 0 0 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; background: #fffaf0; font: 24px/1 system-ui; color: var(--ink); cursor: pointer; }
+.board-location-dialog .investigation-location-page { padding: 0; margin: 0; border: 0; box-shadow: none; background: transparent; }
+.board-location-dialog .location-title-row h2 { display: none; }
+.board-location-dialog .active-investigation-location { margin-bottom: 16px; }
+.investigation-location-card.is-complete { background: #fff7d7; opacity: 1; }
+.investigation-location-card.is-complete .location-document { align-content: start; gap: 6px; }
+.pinned-clue__source { font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: #78613c; }
+.pinned-clue__category { font-size: .73rem; font-weight: 800; color: #795726; }
+.pinned-clue__subtitle { font-size: .65rem; color: #78694f; }
+.pinned-clue__value { margin: 2px 0; font-size: 1.1rem; line-height: 1.25; color: #342a1e; overflow-wrap: anywhere; }
+.pinned-clue__observation { margin: 0; font-size: .72rem; line-height: 1.45; color: #5b4e3c; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.pinned-clue__new { font-size: .6rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: #3c744f; }
+.investigation-location-card.is-new-evidence { animation: board-clue-pin 650ms cubic-bezier(.2,.7,.25,1) both; z-index: 3; }
+.investigation-location-card.is-new-evidence::before { animation: board-pin-drop 650ms ease-out both; }
+.investigation-location-card:focus-visible { outline: 3px solid #294769; outline-offset: 5px; }
+@keyframes board-paper-open { from { opacity: 0; transform: translateY(20px) scale(.96) rotate(-1deg); } to { opacity: 1; transform: none; } }
+@keyframes board-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes board-clue-pin { 0% { opacity: 0; transform: translateY(-32px) scale(1.12) rotate(-6deg); box-shadow: 0 24px 35px #35200e44; } 55% { opacity: 1; transform: translateY(3px) scale(.98) rotate(2deg); } 78% { transform: translateY(-2px) scale(1.01) rotate(-1deg); } 100% { opacity: 1; transform: rotate(var(--tilt, 0deg)); } }
+@keyframes board-pin-drop { 0%, 38% { opacity: 0; transform: translate(-50%, -24px) scale(1.6); } 65% { opacity: 1; transform: translate(-50%, 2px) scale(.9); } 100% { opacity: 1; transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .board-location-dialog[open], .board-location-dialog::backdrop, .investigation-location-card.is-new-evidence, .investigation-location-card.is-new-evidence::before { animation: none; } }
+
+.overview-evidence { padding: 20px; border: 1px solid var(--border); border-radius: 12px; background: #fffaf0; }
+.overview-evidence__heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; }
+.overview-evidence__heading h3 { margin: 0; font-size: 1rem; }
+.overview-evidence__heading > span, .overview-evidence__empty, .overview-evidence__footer > span { font-size: .8rem; color: var(--muted); }
+.overview-evidence__groups { display: flex; flex-wrap: wrap; gap: 12px; }
+.overview-evidence__group { display: flex; align-items: center; }
+.overview-evidence__footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding-top: 8px; }
+.pinned-clue__badges { justify-content: center; flex-wrap: wrap; max-width: 100%; }
+.pinned-clue__badges .evidence-badge { white-space: normal; text-align: left; }

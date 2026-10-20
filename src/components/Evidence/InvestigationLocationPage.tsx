@@ -57,7 +57,7 @@ export function InvestigationLocationPage({
   }
 
   const selectedAction = location.actions.find((action) => action.id === location.selectedActionId) ?? null
-  const statusLabel = location.investigated ? 'Complete' : 'Not searched'
+  const statusLabel = location.investigated ? 'Pinned' : 'Choose a lead'
   const hasEvidence = !!location.evidenceId
   const allLocationsInvestigated = resolvedCount >= totalLocations
   const evidenceTitle = hasEvidence
@@ -153,10 +153,10 @@ export function InvestigationLocationPage({
           {hasEvidence ? (
             <section className="investigation-result-card">
               <div className="result-complete-header">
-                <span className="result-complete-check" aria-hidden="true">✓</span>
+                <span className="result-complete-check" aria-hidden="true">📌</span>
                 <div>
                   <h3>{location.name}</h3>
-                  <p>Completed</p>
+                  <p>Pinned to your evidence board</p>
                 </div>
               </div>
 
@@ -165,7 +165,7 @@ export function InvestigationLocationPage({
                   <div className="evidence-hero-icon" aria-hidden="true">
                     {evidenceIcon}
                   </div>
-                  <span className="result-status-pill">New evidence</span>
+                  <span className="result-status-pill">Pinned evidence</span>
                 </div>
                 <div className="evidence-hero-copy">
                   <span className="evidence-category-badge">{evidenceCategory}</span>

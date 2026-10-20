@@ -96,6 +96,7 @@ export const getUserProfile = (): UserProfile | null => {
 }
 
 export const isAuthenticated = (): boolean => {
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') return false
   const token = getToken()
   if (!token) return false
 
@@ -144,6 +145,7 @@ export const refreshSession = async (): Promise<boolean> => {
 }
 
 export const ensureValidSession = async (): Promise<boolean> => {
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') return false
   const token = getToken()
   if (!token) return false
   if (!shouldRefreshToken(token)) return true
@@ -164,6 +166,10 @@ const hasAuthConfig = (): boolean => {
 }
 
 const login = async (identityProvider?: 'Google' | 'COGNITO'): Promise<void> => {
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') {
+    window.alert('Sign-in is unavailable in this preview. Play as a guest; your progress stays in this browser.')
+    return
+  }
   if (!hasAuthConfig()) {
     window.alert('Missing VITE_COGNITO_CLIENT_ID. Add it to .env.local and restart npm run dev.')
     return

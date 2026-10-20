@@ -2,6 +2,13 @@ import { ensureValidSession, getPlayerSessionId, getToken } from './auth'
 import type { UserProfile } from './auth'
 import type { Case, EvidenceBadgeData } from './game/caseModel'
 
+const apiFetch = async (input: string, init?: RequestInit): Promise<Response> => {
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') {
+    return (await import('./preview/api')).previewFetch(input, init)
+  }
+  return fetch(input, init)
+}
+
 const BASE = import.meta.env.VITE_API_BASE ?? ''
 
 export interface SessionResponse {
@@ -181,55 +188,55 @@ const adminAuthHeaders = async (): Promise<Record<string, string>> => {
 const enc = encodeURIComponent
 
 export const getCurrentCase = async (): Promise<SessionResponse> => {
-  const res = await fetch(`${BASE}/api/cases/current`, { headers: await authHeaders() })
+  const res = await apiFetch(`${BASE}/api/cases/current`, { headers: await authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }
 
 export const getCase = async (caseId: string): Promise<SessionResponse> => {
-  const res = await fetch(`${BASE}/api/cases/${enc(caseId)}`, { headers: await authHeaders() })
+  const res = await apiFetch(`${BASE}/api/cases/${enc(caseId)}`, { headers: await authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }
 
 export const getPokedex = async (): Promise<PokedexResponse> => {
-  const res = await fetch(`${BASE}/api/pokedex`, { headers: await authHeaders() })
+  const res = await apiFetch(`${BASE}/api/pokedex`, { headers: await authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }
 
 export const getPuzzleHistory = async (): Promise<PuzzleHistoryResponse> => {
-  const res = await fetch(`${BASE}/api/history`, { headers: await authHeaders() })
+  const res = await apiFetch(`${BASE}/api/history`, { headers: await authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }
 
 export const backfillPuzzleHistory = async (): Promise<{ generatedCaseIds: string[]; complete: boolean }> => {
-  const res = await fetch(`${BASE}/api/history/backfill`, { method: 'POST', headers: await authHeaders() })
+  const res = await apiFetch(`${BASE}/api/history/backfill`, { method: 'POST', headers: await authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }
 
 export const getReminderPreferences = async (): Promise<ReminderPreferencesResponse> => {
-  const res = await fetch(`${BASE}/api/reminder-preferences`, { headers: await authHeaders() })
+  const res = await apiFetch(`${BASE}/api/reminder-preferences`, { headers: await authHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }
 
 export const getAdminSession = async (): Promise<AdminSessionResponse> => {
-  const res = await fetch(`${BASE}/api/admin/session`, { headers: await adminAuthHeaders() })
+  const res = await apiFetch(`${BASE}/api/admin/session`, { headers: await adminAuthHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }
 
 export const getAdminCaseProgress = async (caseId: string): Promise<AdminCaseProgressResponse> => {
-  const res = await fetch(`${BASE}/api/admin/cases/${enc(caseId)}/progress`, { headers: await adminAuthHeaders() })
+  const res = await apiFetch(`${BASE}/api/admin/cases/${enc(caseId)}/progress`, { headers: await adminAuthHeaders() })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   return res.json()
 }
 
 export const sendAdminMailing = async (payload: AdminMailingPayload): Promise<AdminMailingResponse> => {
-  const res = await fetch(
+  const res = await apiFetch(
     `${BASE}/api/admin/mailing`,
     {
       method: 'POST',
@@ -244,7 +251,7 @@ export const sendAdminMailing = async (payload: AdminMailingPayload): Promise<Ad
 export const updateReminderPreferences = async (
   preferences: ReminderPreferencesResponse,
 ): Promise<ReminderPreferencesResponse> => {
-  const res = await fetch(
+  const res = await apiFetch(
     `${BASE}/api/reminder-preferences`,
     {
       method: 'POST',
@@ -262,7 +269,7 @@ export const investigate = async (
   actionId: string,
   witnessPokemonId?: number,
 ): Promise<InvestigationResponse> => {
-  const res = await fetch(
+  const res = await apiFetch(
     `${BASE}/api/cases/${enc(caseId)}/investigate/${enc(locationId)}/${enc(actionId)}`,
     {
       method: 'POST',
@@ -279,7 +286,7 @@ export const clearSuspect = async (
   suspectId: number,
   cleared: boolean,
 ): Promise<SessionResponse> => {
-  const res = await fetch(
+  const res = await apiFetch(
     `${BASE}/api/cases/${enc(caseId)}/suspects/${suspectId}/clear`,
     { method: 'POST', headers: { 'Content-Type': 'application/json', ...await authHeaders() }, body: JSON.stringify({ cleared }) },
   )
@@ -292,7 +299,7 @@ export const accuse = async (
   suspectId: number,
   progress?: { accusationHistory: number[], accusationsRemaining: number },
 ): Promise<SessionResponse> => {
-  const res = await fetch(
+  const res = await apiFetch(
     `${BASE}/api/cases/${enc(caseId)}/accuse/${suspectId}`,
     {
       method: 'POST',
@@ -308,7 +315,7 @@ export const submitCaseFeedback = async (
   caseId: string,
   payload: CaseFeedbackPayload,
 ): Promise<{ submitted: true }> => {
-  const res = await fetch(
+  const res = await apiFetch(
     `${BASE}/api/cases/${enc(caseId)}/feedback`,
     {
       method: 'POST',
@@ -323,7 +330,7 @@ export const submitCaseFeedback = async (
 export const submitGeneralFeedback = async (
   payload: GeneralFeedbackPayload,
 ): Promise<{ submitted: true }> => {
-  const res = await fetch(
+  const res = await apiFetch(
     `${BASE}/api/feedback`,
     {
       method: 'POST',

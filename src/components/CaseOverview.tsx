@@ -1,8 +1,6 @@
-import { LinedOverview } from './LinedOverview'
-import { PostIt } from './PostIt'
 import { MugShot } from './Suspects/MugShot'
-import type { Case } from '../game/caseModel'
-import { getCaseThemeNote } from '../game/caseTheme'
+import { getDiscoveredEvidence, type Case } from '../game/caseModel'
+import { EvidenceBadgeList } from './Evidence/EvidenceBadge'
 
 interface CaseOverviewProps {
   gameCase: Case
@@ -17,6 +15,8 @@ export function CaseOverview({
   startInvestigation,
   onSelectSuspect,
 }: CaseOverviewProps) {
+  const evidence = getDiscoveredEvidence(selectedCase)
+  const investigatedCount = selectedCase.locations.filter(location => location.investigated).length
   const suspectBoardStyles = [
     'is-tilted-left has-tape',
     'is-tilted-right',
@@ -57,45 +57,27 @@ export function CaseOverview({
             ))}
           </div>
         </div>
-        <div className="overview-meta-grid">
-          <LinedOverview title="Case details">
-            <div className="case-detail-row">
-              <span className="case-detail-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" className="case-detail-icon-svg" focusable="false">
-                  <path
-                    d="M12 2.5l2.8 5.67 6.26.91-4.53 4.42 1.07 6.25L12 16.77 6.4 19.75l1.07-6.25L2.94 9.08l6.26-.91L12 2.5z"
-                    fill="currentColor"
-                  />
-                </svg>
-              </span>
-              <span className="case-detail-label">Difficulty</span>
-              <span className="case-detail-value">{selectedCase.difficulty}</span>
+        <section className="overview-evidence" aria-labelledby="overview-evidence-title">
+          <div className="overview-evidence__heading">
+            <h3 id="overview-evidence-title">Collected clues</h3>
+            <span>{evidence.length} collected</span>
+          </div>
+          {evidence.length ? (
+            <div className="overview-evidence__groups">
+              {evidence.map(item => (
+                <div className="overview-evidence__group" key={item.id}>
+                  <EvidenceBadgeList badges={item.badges} clueType={item.rule.axis} />
+                </div>
+              ))}
             </div>
-            <div className="case-detail-row">
-              <span className="case-detail-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" className="case-detail-icon-svg" focusable="false">
-                  <path
-                    d="M12 20.2l-1.2-1.08C6.12 14.88 3 12.05 3 8.58 3 5.9 5.08 4 7.7 4c1.5 0 2.94.7 3.86 1.82C12.48 4.7 13.92 4 15.42 4 18.04 4 20.12 5.9 20.12 8.58c0 3.47-3.12 6.3-7.8 10.56L12 20.2z"
-                    fill="currentColor"
-                  />
-                </svg>
-              </span>
-              <span className="case-detail-label">Accusations left</span>
-              <span className="case-detail-value">{attemptsLeft ?? 0}</span>
-            </div>
-          </LinedOverview>
-          <PostIt title="Known scene notes">
-            <span>INITIAL REPORT</span>
-            <span>{getCaseThemeNote(selectedCase)}</span>
-          </PostIt>
+          ) : <p className="overview-evidence__empty">Investigate a location to collect your first clue.</p>}
+        </section>
+        <div className="overview-evidence__footer">
+          <span>{selectedCase.difficulty} · {attemptsLeft} accusations left</span>
           {startInvestigation ? (
-            <div className="case-overview-cta">
-              <p className="case-overview-cta-lead">WORKING THEORY</p>
-              <p className="case-overview-cta-copy">The culprit must have left evidence at the scene.</p>
-              <button type="button" className="primary-button case-overview-cta-button" onClick={startInvestigation}>
-                Begin the Investigation
-              </button>
-            </div>
+            <button type="button" className="primary-button" onClick={startInvestigation}>
+              {investigatedCount > 0 ? 'Continue investigation' : 'Begin investigation'}
+            </button>
           ) : null}
         </div>
       </div>
