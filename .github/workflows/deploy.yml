@@ -104,6 +104,11 @@ jobs:
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # Code deploys do not run Terraform. Keep the required case-table read
+      # permission in sync before publishing code that depends on it.
+      - name: Ensure cron case-table access
+        run: node api/scripts/ensure-cron-case-access.mjs
+
       # ── Deploy client to S3 ──
       # Hashed Vite assets can be cached for a long time, but index.html must
       # always revalidate so clients pick up the newest asset filenames.
