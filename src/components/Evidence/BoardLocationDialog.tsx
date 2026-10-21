@@ -1,11 +1,14 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
 
-export function BoardLocationDialog({ title, subtitle, onClose, children }: {
+export function BoardLocationDialog({ title, subtitle, onClose, children, closeLabel = 'Close location and return to board', className = '' }: {
   title: string
+  closeLabel?: string
+  className?: string
   subtitle?: string
   onClose: () => void
   children: ReactNode
 }) {
+  const titleId = useId()
   const dialog = useRef<HTMLDialogElement>(null)
   const close = useRef<HTMLButtonElement>(null)
   useEffect(() => {
@@ -19,17 +22,17 @@ export function BoardLocationDialog({ title, subtitle, onClose, children }: {
       document.body.style.overflow = previousOverflow
     }
   }, [])
+  useEffect(() => { if (dialog.current) dialog.current.scrollTop = 0 }, [title])
   return (
-    <dialog ref={dialog} className="board-location-dialog" aria-labelledby="board-location-title"
+    <dialog ref={dialog} className={`board-location-dialog ${className}`} aria-labelledby={titleId}
       onCancel={event => { event.preventDefault(); onClose() }}
       onClick={event => { if (event.target === event.currentTarget) onClose() }}>
       <div className="board-location-dialog__paper">
         <div className="board-location-dialog__heading">
-          <div><span className="board-location-dialog__eyebrow">Location file</span>
-            <h2 id="board-location-title">{title}</h2>
+          <div>            <h2 id={titleId}>{title}</h2>
             {subtitle ? <p className="board-location-dialog__meta">{subtitle}</p> : null}</div>
           <button ref={close} type="button" className="board-location-dialog__close" onClick={onClose}
-            aria-label="Close location and return to board">×</button>
+            aria-label={closeLabel}>×</button>
         </div>
         {children}
       </div>

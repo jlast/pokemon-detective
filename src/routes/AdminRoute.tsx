@@ -233,8 +233,7 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
     return (
       <div className="main-layout-single">
         <section className="notebook-card admin-page admin-page--signed-out">
-          <p className="eyebrow">Admin desk</p>
-          <h2>Sign in required</h2>
+                    <h2>Sign in required</h2>
           <p className="subtle-text">Admin puzzle details require a Cognito account in the admins group.</p>
           <button type="button" className="primary-button" onClick={onLogin}>Sign in to continue</button>
         </section>
@@ -247,8 +246,7 @@ export function AdminRoute({ authed, onLogin }: AdminRouteProps) {
       <section className="notebook-card admin-page">
         <div className="admin-page__header">
           <div>
-            <p className="eyebrow">Admin desk</p>
-            <h2>{activeTab === 'mailing' ? 'Mailing' : activeTab === 'clues' ? 'Clue usage' : 'User puzzle details'}</h2>
+                        <h2>{activeTab === 'mailing' ? 'Mailing' : activeTab === 'clues' ? 'Clue usage' : 'User puzzle details'}</h2>
             <p className="subtle-text">
               {activeTab === 'mailing'
                 ? 'Send a plain news email to users who allow news and update emails.'

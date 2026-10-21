@@ -1,4 +1,6 @@
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { BoardLocationDialog } from '../components/Evidence/BoardLocationDialog'
+import { SuspectsRoute } from './SuspectsRoute'
 import { SelectedSuspectCaseFile } from '../components/Suspects/SelectedSuspectCaseFile'
 import type { Case, Suspect, SuspectNoteStatus } from '../game/caseModel'
 import { suspectPath, TODAY_SUSPECTS_PATH } from '../paths'
@@ -22,6 +24,7 @@ export function SuspectFileRoute({
   openAccusation,
   attemptsLeft,
 }: SuspectFileRouteProps) {
+  const navigate = useNavigate()
   const { id } = useParams()
   const routeLocation = useLocation()
   const withSearch = (path: string) => `${path}${routeLocation.search}`
@@ -55,11 +58,11 @@ export function SuspectFileRoute({
     )
   }
 
-  return (
+  const dossier = (
     <section className="suspect-file-page">
-      <Link to={withSearch(backLinkTo)} className="subtle-link suspect-file-back-link">
+      {selectedSuspectOverride ? <Link to={withSearch(backLinkTo)} className="subtle-link suspect-file-back-link">
         ← Back to Suspects Lineup
-      </Link>
+      </Link> : null}
 
       <nav className="suspect-file-adjacent-nav" aria-label="Adjacent suspects">
         {previousSuspect ? (
@@ -89,4 +92,16 @@ export function SuspectFileRoute({
       </div>
     </section>
   )
+  // Accusation confirmation retains its existing page and confirmation overlay.
+  if (selectedSuspectOverride) return dossier
+  return <SuspectsRoute currentCase={currentCase} wrongAccusationIds={wrongAccusationIds}
+    attemptsLeft={attemptsLeft} setSuspectNoteStatus={setSuspectNoteStatus}
+    inspectSuspect={id => navigate(withSearch(suspectPath(id)))}>
+    <BoardLocationDialog title={selectedSuspect.name}
+      subtitle={`Case file ${String(selectedSuspectIndex + 1).padStart(2, '0')} · ${selectedSuspectIndex + 1} of ${currentCase.suspects.length}`}
+      className="suspect-dossier-dialog" closeLabel="Close dossier and return to suspects lineup"
+      onClose={() => navigate(withSearch(backLinkTo), { state: { focusSuspectId: selectedSuspect.pokemonId } })}>
+      {dossier}
+    </BoardLocationDialog>
+  </SuspectsRoute>
 }

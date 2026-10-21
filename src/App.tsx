@@ -466,7 +466,7 @@ function App() {
       return {
         ...s,
         noteStatus: notes.noteStatus,
-        manuallyRuledOut: s.manuallyRuledOut || notes.noteStatus === 'ruled-out',
+        manuallyRuledOut: notes.noteStatus === 'ruled-out',
       }
     })
     return c
@@ -1000,7 +1000,7 @@ function App() {
     },
     suspectFile: {
       url: TODAY_SUSPECT_FILE_ROUTE,
-      title: dynamicCaseTitle('suspect-file', 'Suspect Dossier'),
+      title: 'Suspect Lineup',
       outlet: currentCase ? (
         <SuspectFileRoute
           currentCase={currentCase}
@@ -1182,9 +1182,6 @@ function App() {
           <header className="app-header notebook-card loading-case-header" aria-hidden="true">
             <div className="brand-lockup">
               <div className="loading-case-header__copy">
-                <p className="eyebrow">
-                  <span className="skeleton-line skeleton-line--eyebrow" />
-                </p>
                 <h1>
                   <span className="skeleton-line skeleton-line--title" />
                 </h1>

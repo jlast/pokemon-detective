@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { SuspectsPanel } from '../components/Suspects/SuspectsPanel'
-import type { Case } from '../game/caseModel'
+import type { Case, SuspectNoteStatus } from '../game/caseModel'
 import { InvestigationRouteFrame } from './InvestigationRouteFrame'
 
 interface SuspectsRouteProps {
@@ -8,6 +8,7 @@ interface SuspectsRouteProps {
   currentCase: Case
   wrongAccusationIds: number[]
   inspectSuspect: (suspectId: number) => void
+  setSuspectNoteStatus: (suspectId: number, status: SuspectNoteStatus) => void
   children?: ReactNode
 }
 
@@ -15,6 +16,7 @@ export function SuspectsRoute({
   currentCase,
   wrongAccusationIds,
   inspectSuspect,
+  setSuspectNoteStatus,
   children,
 }: SuspectsRouteProps) {
   return (
@@ -26,6 +28,7 @@ export function SuspectsRoute({
         currentCase={currentCase}
         wrongAccusationIds={wrongAccusationIds}
         inspectSuspect={inspectSuspect}
+        setSuspectNoteStatus={setSuspectNoteStatus}
       />
       {children}
     </InvestigationRouteFrame>

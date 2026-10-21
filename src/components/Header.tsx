@@ -56,8 +56,7 @@ export function Header({
         {!hideTitle ? (
           <div className="brand-lockup">
             <div>
-              <p className="eyebrow">PokéMystery</p>
-              <h1>{headerTitle}</h1>
+                            <h1>{headerTitle}</h1>
               {headerSubtitle ? <p className="subtle-text">{headerSubtitle}</p> : null}
             </div>
           </div>

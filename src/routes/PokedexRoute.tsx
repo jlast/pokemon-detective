@@ -52,8 +52,7 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
     return (
       <div className="main-layout-single">
         <section className="notebook-card pokedex-page pokedex-empty-state">
-          <p className="eyebrow">Pokédex archive</p>
-          <h2>Sign in to track your discoveries</h2>
+                    <h2>Sign in to track your discoveries</h2>
           <p className="subtle-text">
             Pokemon are marked seen or unlocked only after completed cases, so your Pokédex needs an account.
           </p>
@@ -99,8 +98,7 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
       <section className="notebook-card pokedex-page">
         <div className="pokedex-header">
           <div>
-            <p className="eyebrow">Pokédex archive</p>
-            <h2>Case discoveries</h2>
+                        <h2>Case discoveries</h2>
             <p className="subtle-text">
               Failed cases mark Pokemon as seen. Solved cases unlock their full records.
             </p>

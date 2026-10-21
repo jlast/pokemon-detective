@@ -6,8 +6,7 @@ export function PuzzleLoading({ archived = false }: { archived?: boolean }) {
         <b>CONFIDENTIAL</b></div>
       <img src="/clue-sprites/wide-lens.png" alt="" width="80" height="80" />
     </div>
-    <span className="puzzle-loading__eyebrow">PokéMystery investigation bureau</span>
-    <h2 id="puzzle-loading-title">{archived ? 'Reopening the case file' : 'A new mystery awaits'}</h2>
+        <h2 id="puzzle-loading-title">{archived ? 'Reopening the case file' : 'A new mystery awaits'}</h2>
     <p className="puzzle-loading__description">Gathering the report. Lining up the suspects.</p>
     <div className="puzzle-loading__status" role="status">
       <span className="puzzle-loading__dots" aria-hidden="true"><i /><i /><i /></span>

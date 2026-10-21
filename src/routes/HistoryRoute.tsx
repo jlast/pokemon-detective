@@ -123,8 +123,7 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
     return (
       <div className="main-layout-single">
         <section className="notebook-card history-page history-empty-state">
-          <p className="eyebrow">Case archive</p>
-          <h2>Sign in to save puzzle history</h2>
+                    <h2>Sign in to save puzzle history</h2>
           <p className="subtle-text">
             Completed cases are linked to your detective profile so you can review your solve record later.
           </p>
@@ -143,8 +142,7 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
       <section className="notebook-card history-page">
         <div className="history-header">
           <div>
-            <p className="eyebrow">Case archive</p>
-            <h2>Puzzle history</h2>
+                        <h2>Puzzle history</h2>
             <p className="subtle-text">
               Review previous daily puzzles saved to your detective profile.
             </p>

@@ -51,8 +51,7 @@ export function FeedbackRoute() {
       <section className="notebook-card feedback-page">
         <div className="feedback-page__header">
           <div>
-            <p className="eyebrow">Detective dispatch</p>
-            <h2>Bugs & ideas</h2>
+                        <h2>Bugs & ideas</h2>
             <p className="subtle-text">Send a bug report or feature idea directly to the case desk.</p>
           </div>
           <span className="feedback-page__stamp" aria-hidden="true">Open file</span>

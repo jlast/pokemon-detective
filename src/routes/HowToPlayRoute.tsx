@@ -31,8 +31,7 @@ export function HowToPlayRoute() {
       <section className="notebook-card how-to-play-page">
         <div className="how-to-play-hero">
           <div>
-            <p className="eyebrow">Field manual</p>
-            <h2>How to play</h2>
+                        <h2>How to play</h2>
             <p className="subtle-text">
               PokéMystery is a daily deduction case. Search the scene, cross-check clues, and identify the culprit before your accusation attempts run out.
             </p>
@@ -59,8 +58,7 @@ export function HowToPlayRoute() {
 
         <div className="how-to-play-tips">
           <div>
-            <p className="eyebrow">Detective habits</p>
-            <h3>How to solve more cases</h3>
+                        <h3>How to solve more cases</h3>
           </div>
           <ul>
             {detectiveTips.map((tip) => (

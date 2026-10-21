@@ -1,7 +1,7 @@
+import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { EvidenceBadgeList } from '../Evidence/EvidenceBadge'
-import { getEvidenceIcon } from '../../game/evidenceMeta'
-import { getDiscoveredEvidence, getSolutionClueHintType, type Case } from '../../game/caseModel'
+import { getDiscoveredEvidence, type Case, type SuspectNoteStatus } from '../../game/caseModel'
 import { TODAY_INVESTIGATION_PATH } from '../../paths'
 import { SuspectCard } from './SuspectCard'
 
@@ -9,73 +9,49 @@ interface SuspectsProps {
   currentCase: Case
   wrongAccusationIds: number[]
   inspectSuspect: (suspectId: number) => void
+  setSuspectNoteStatus: (suspectId: number, status: SuspectNoteStatus) => void
 }
 
 export function SuspectsPanel({
   currentCase,
   wrongAccusationIds,
   inspectSuspect,
+  setSuspectNoteStatus,
 }: SuspectsProps) {
   const routeLocation = useLocation()
   const discoveredEvidence = getDiscoveredEvidence(currentCase)
 
+  const isCleared = (id: number, status: string) => status === 'ruled-out' || wrongAccusationIds.includes(id)
+  const remaining = currentCase.suspects.filter(suspect => !isCleared(suspect.pokemonId, suspect.noteStatus)).length
+  const focusSuspectId = (routeLocation.state as { focusSuspectId?: number } | null)?.focusSuspectId
+  useEffect(() => {
+    if (!focusSuspectId) return
+    const frame = requestAnimationFrame(() => document.getElementById(`lineup-suspect-${focusSuspectId}`)?.focus({ preventScroll: true }))
+    return () => cancelAnimationFrame(frame)
+  }, [focusSuspectId])
+
+
   return (
-    <section className="notebook-card evidence-board mobile-section is-active">
-      <div className="section-heading">
-        <div>
-          <h2>Suspects Lineup</h2>
-        </div>
+    <section className="notebook-card evidence-board mobile-section is-active suspects-lineup">
+      <div className="lineup-desk-notes">
+        <section className="lineup-clues" aria-label="Collected evidence">
+          <h2 className="lineup-clues__label">Your clues{discoveredEvidence.length ? <span>{discoveredEvidence.length}</span> : null}</h2>
+          {discoveredEvidence.length ? <div className="lineup-clues__badges">
+            {discoveredEvidence.map(evidence => <EvidenceBadgeList key={evidence.id} badges={evidence.badges}
+              fallback={evidence.clueText} clueType={evidence.rule.axis} />)}
+          </div> : <Link to={`${TODAY_INVESTIGATION_PATH}${routeLocation.search}`} className="lineup-clues__empty">
+            <img src="/clue-sprites/wide-lens.png" alt="" width="40" height="40" />
+            <span>Find your first clue <span aria-hidden="true">↗</span></span>
+          </Link>}
+        </section>
+        <div className="lineup-heading__count" role="status"><strong>{remaining}</strong><span>still in play</span></div>
       </div>
-
-      <section className="suspect-evidence-strip suspect-evidence-board inspect-item">
-        <div className="suspect-evidence-board-header">
-          <strong>📎 Evidence Collected</strong>
-        </div>
-
-        {discoveredEvidence.length > 0 ? (
-          <div className="suspect-evidence-list suspect-evidence-board-list">
-            {discoveredEvidence.map((evidenceItem) => {
-              const clueTitle = getSolutionClueHintType(evidenceItem.rule.axis) ?? evidenceItem.title
-
-              return (
-                <article key={evidenceItem.id} className="suspect-evidence-tag evidence-note-card">
-                  <span className="suspect-evidence-tag-icon" aria-hidden="true">
-                    {getEvidenceIcon(evidenceItem.id, evidenceItem.title, '📎')}
-                  </span>
-                  <div className="suspect-evidence-tag-copy">
-                    <strong>{clueTitle}</strong>
-                  </div>
-                  <EvidenceBadgeList
-                    badges={evidenceItem.badges}
-                    fallback={evidenceItem.clueText}
-                    clueType={evidenceItem.rule.axis}
-                    className="suspect-evidence-tag-badges"
-                  />
-                </article>
-              )
-            })}
-          </div>
-        ) : (
-          <div className="suspect-evidence-empty">
-            <p className="overview-section-hook">Start at the locations board to collect your first clue.</p>
-            <Link to={`${TODAY_INVESTIGATION_PATH}${routeLocation.search}`} className="primary-button suspect-evidence-cta">
-              Investigate locations
-            </Link>
-          </div>
-        )}
-      </section>
-
       <div className="suspect-grid suspect-grid-lineup">
-        {currentCase.suspects.map((suspect, index) => (
-          <SuspectCard
-            key={suspect.pokemonId}
-            suspect={suspect}
-            inspectSuspect={inspectSuspect}
-            suspectIndex={index}
-            isSelected={false}
-            hasWrongAccusation={wrongAccusationIds.includes(suspect.pokemonId)}
-          />
-        ))}
+        {currentCase.suspects.map((suspect, suspectIndex) => <SuspectCard key={suspect.pokemonId} suspect={suspect}
+          suspectIndex={suspectIndex}
+          inspectSuspect={inspectSuspect} setSuspectNoteStatus={setSuspectNoteStatus}
+          isSelected={false} hasWrongAccusation={wrongAccusationIds.includes(suspect.pokemonId)}
+          disabled={currentCase.status !== 'active'} />)}
       </div>
 
     </section>

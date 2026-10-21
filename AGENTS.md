@@ -71,3 +71,6 @@ Keep the API response defensive around legacy/malformed evidence so admin pages 
 
 - The investigation corkboard is the card. Do not wrap `LocationsPanel` in an extra `notebook-card`.
 - Capture clue badge color is defined by `.evidence-badge--clue-capture`.
+
+- Do not use eyebrow labels (small labels above headings) anywhere in the UI. This is an explicit user design preference.
+- Use handwritten fonts only for decorative document content, never game components such as clue badges. Keep game components in the standard UI font, including inside handwritten documents.

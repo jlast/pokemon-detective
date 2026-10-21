@@ -21,8 +21,7 @@ export function SettingsRoute({
     return (
       <div className="main-layout-single">
         <section className="notebook-card settings-page settings-page--signed-out">
-          <p className="eyebrow">Detective settings</p>
-          <h2>Email reminders</h2>
+                    <h2>Email reminders</h2>
           <p className="subtle-text">Sign in to manage case reminder emails.</p>
           <button type="button" className="primary-button" onClick={onLogin}>Sign in to continue</button>
         </section>
@@ -35,8 +34,7 @@ export function SettingsRoute({
       <section className="notebook-card settings-page">
         <div className="settings-page__header">
           <div>
-            <p className="eyebrow">Detective settings</p>
-            <h2>Email reminders</h2>
+                        <h2>Email reminders</h2>
             <p className="subtle-text">Choose which PokeMystery emails arrive in your inbox.</p>
           </div>
           <span className="settings-page__stamp" aria-hidden="true">Mail desk</span>
