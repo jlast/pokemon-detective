@@ -1,3 +1,4 @@
+import { CloseIcon } from '../CloseIcon'
 import type { Suspect } from "../../game/caseModel";
 
 interface AccusationsPanelProps {
@@ -26,10 +27,13 @@ export function AccusationsPanel({
     >
       <div className="overlay-backdrop" onClick={closeAccusation} />
       <section className="crime-scene-sheet notebook-card">
-        <div className="section-heading">
+        <div className="section-heading popup-heading">
           <div>
             <h2 id="accusation-title">Accuse {accusationTarget.name}?</h2>
           </div>
+          <button type="button" className="popup-close" aria-label="Close accusation" onClick={closeAccusation}>
+            <CloseIcon />
+          </button>
         </div>
 
         <div className="inspect-list">

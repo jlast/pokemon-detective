@@ -9307,3 +9307,63 @@
 @media (max-width: 900px) { .case-brief { grid-template-columns: 1fr; gap: 24px; } .case-brief__photo { width: min(100%, 330px); justify-self: center; transform: rotate(2deg); } .case-brief__photo canvas { max-height: 150px; } }
 @media (max-width: 540px) { .case-landing { padding: 22px 14px; gap: 20px; } .case-brief { padding: 23px 18px; gap: 22px; } .case-brief__copy h1 { font-size: 1.65rem; margin-bottom: 12px; } .case-brief__story { font-size: .98rem; line-height: 1.6; } .case-brief__action { margin-top: 18px; } .case-brief__action .primary-button { width: 100%; justify-content: center; } .case-brief__action { justify-items: stretch; } .case-landing__suspects { flex-direction: column; gap: 16px; padding-bottom: 5px; } .case-brief__photo { max-width: 270px; } }
 @media (prefers-reduced-motion: reduce) { .case-landing__snapshot:hover:not(:disabled), .case-landing__snapshot:focus-visible { transform: none; } }
+
+/* Clue notes and suspect photos share the same framed board. */
+.suspect-grid-lineup > .lineup-desk-notes {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin: 0 3px 12px;
+}
+
+/* Keep a compact reference to the notes while browsing further down the board. */
+.suspects-pinboard > .lineup-desk-notes { min-width: 0; margin: 0 3px 30px; }
+.suspects-pinboard > .suspect-grid-lineup { padding: 0; border: 0; }
+.lineup-clue-dock { position: sticky; top: 12px; z-index: 12; height: 0; }
+.lineup-clue-dock__paper { border: 1px solid #c9af79; border-radius: 3px; background: repeating-linear-gradient(0deg, transparent 0 27px, #9aafba1a 27px 28px), #fbf3dc; box-shadow: 1px 5px 15px #482c2259; }
+.lineup-clue-dock__toggle { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 48px; padding: 10px 16px; border: 0; border-radius: 3px; background: transparent; color: #68513a; cursor: pointer; text-align: left; }
+.lineup-clue-dock__toggle:focus-visible { outline: 2px solid #815b32; outline-offset: 3px; }
+.lineup-clue-dock__title { font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', cursive; font-size: 1.1rem; font-weight: 700; }
+.lineup-clue-dock__title > span { margin-left: 6px; color: #9b7c52; font-size: .9rem; }
+.lineup-clue-dock__action { font-family: Inter, system-ui, sans-serif; font-size: .75rem; font-weight: 700; color: #856642; }
+.lineup-clue-dock__action > span { margin-left: 6px; font-size: 1rem; }
+.lineup-clue-dock__content { max-height: min(45dvh, 360px); overflow-y: auto; overscroll-behavior: contain; padding: 0 14px 14px; }
+.lineup-clue-dock__content .lineup-clues__empty { display: inline-flex; align-items: center; gap: 8px; }
+@media (max-width: 700px) { .suspects-pinboard > .lineup-desk-notes { margin-bottom: 28px; } }
+
+/* Use one chevron shape for both disclosure states. */
+.lineup-clue-dock__action { display: inline-flex; align-items: center; gap: 6px; }
+.lineup-clue-dock__chevron { display: block; flex: 0 0 18px; transform-origin: center; }
+.lineup-clue-dock__toggle[aria-expanded=true] .lineup-clue-dock__chevron { transform: rotate(180deg); }
+/* Popup dismissal stays visible as the document scrolls. */
+.popup-close { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border: 1px solid #d9cdb7; border-radius: 50%; background: #fffaf0; color: #685943; cursor: pointer; }
+.popup-close svg { display: block; }
+.popup-close:hover { background: #eee3cc; }
+.popup-close:focus-visible { outline: 3px solid #466f8b; outline-offset: 3px; }
+.board-location-dialog .board-location-dialog__heading { position: sticky; top: 0; z-index: 20; }
+.board-location-dialog__heading > div { min-width: 0; }
+.board-location-dialog__close { flex-basis: 44px; height: 44px; }
+.crime-scene-sheet { max-height: calc(100dvh - 24px); overflow-y: auto; }
+.crime-scene-sheet > .popup-heading { position: sticky; top: -1rem; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -1rem -1rem 0; padding: 1rem; background: var(--card); border-bottom: 1px solid var(--border); }
+.case-feedback-popover { padding-top: 3.4rem; }
+.case-feedback-popover__close { position: absolute; top: 5px; right: 5px; }
+
+/* Dossier content scrolls between a persistent close control and mobile actions. */
+.board-location-dialog--with-footer[open] { display: flex; flex-direction: column; overflow: hidden; }
+.board-location-dialog--with-footer .board-location-dialog__paper { display: flex; flex-direction: column; min-height: 0; max-height: inherit; width: 100%; }
+.board-location-dialog--with-footer .board-location-dialog__heading { flex: 0 0 auto; }
+.board-location-dialog--with-footer .board-location-dialog__body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.board-location-dialog__footer { flex: 0 0 auto; }
+.suspect-dialog-actions { display: none; }
+@media (max-width: 900px) {
+  .suspect-dialog-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 10px 16px max(10px, env(safe-area-inset-bottom)); border-top: 1px solid #d0ba8d; background: #eee2c7; box-shadow: 0 -3px 10px #593d1912; }
+  .suspect-dialog-actions button { width: 100%; min-height: 44px; padding: 10px; border-radius: 6px; font-size: .85rem; }
+  .suspect-dialog-actions .suspect-verdict-accuse-button { margin: 0; }
+}
+
+/* Suspect navigation shares the persistent popup header with its close button. */
+.suspect-dossier-dialog .board-location-dialog__heading { align-items: center; gap: 12px; }
+.suspect-dossier-dialog .board-location-dialog__heading-copy { flex: 1; }
+.suspect-dossier-dialog .suspect-file-adjacent-nav { margin: 0; padding: 0; border: 0; gap: 8px; }
+.suspect-dossier-dialog .suspect-file-arrow-link { width: 100%; min-height: 44px; justify-content: center; padding: 8px; border-radius: 6px; font-size: .78rem; }
+.suspect-file-arrow-link svg { display: block; flex: 0 0 16px; }
+@media (max-width: 540px) { .suspect-dossier-dialog .board-location-dialog__heading { padding-left: 14px; padding-right: 14px; gap: 8px; } }

@@ -1,3 +1,4 @@
+import { CloseIcon } from './CloseIcon'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { getPuzzleHistory, submitCaseFeedback, type CaseStatsResponse } from '../api'
@@ -286,6 +287,8 @@ export function EndingScreen({
 
             {enjoymentRating !== null ? (
               <div className="case-feedback-popover" role="dialog" aria-label="Feedback details">
+                <button type="button" className="popup-close case-feedback-popover__close" aria-label="Close feedback details"
+                  onClick={() => setEnjoymentRating(null)}><CloseIcon /></button>
                 {feedbackStatus === 'submitted' ? (
                   <p className="case-feedback-thanks">Thanks. Your notes help tune future cases.</p>
                 ) : (

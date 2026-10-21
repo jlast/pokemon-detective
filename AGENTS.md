@@ -74,3 +74,4 @@ Keep the API response defensive around legacy/malformed evidence so admin pages 
 
 - Do not use eyebrow labels (small labels above headings) anywhere in the UI. This is an explicit user design preference.
 - Use handwritten fonts only for decorative document content, never game components such as clue badges. Keep game components in the standard UI font, including inside handwritten documents.
+- Every popup must have a clearly visible X close button that remains available while its content scrolls.

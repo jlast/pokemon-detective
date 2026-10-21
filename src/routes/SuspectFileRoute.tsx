@@ -1,3 +1,4 @@
+import { SuspectActions } from '../components/Suspects/SuspectActions'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { BoardLocationDialog } from '../components/Evidence/BoardLocationDialog'
 import { SuspectsRoute } from './SuspectsRoute'
@@ -58,26 +59,30 @@ export function SuspectFileRoute({
     )
   }
 
+  const suspectNavigation = (
+    <nav className="suspect-file-adjacent-nav" aria-label="Adjacent suspects">
+        {previousSuspect ? (
+          <Link to={withSearch(suspectPath(previousSuspect.pokemonId))} className="suspect-file-arrow-link suspect-file-arrow-link-left" aria-label={`Previous suspect: ${previousSuspect.name}`}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+            <span>Previous</span>
+          </Link>
+        ) : <span />}
+        {nextSuspect ? (
+          <Link to={withSearch(suspectPath(nextSuspect.pokemonId))} className="suspect-file-arrow-link suspect-file-arrow-link-right" aria-label={`Next suspect: ${nextSuspect.name}`}>
+            <span>Next</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
+          </Link>
+        ) : <span />}
+      </nav>
+  )
+
   const dossier = (
     <section className="suspect-file-page">
       {selectedSuspectOverride ? <Link to={withSearch(backLinkTo)} className="subtle-link suspect-file-back-link">
         ← Back to Suspects Lineup
       </Link> : null}
 
-      <nav className="suspect-file-adjacent-nav" aria-label="Adjacent suspects">
-        {previousSuspect ? (
-          <Link to={withSearch(suspectPath(previousSuspect.pokemonId))} className="suspect-file-arrow-link suspect-file-arrow-link-left">
-            <span aria-hidden="true">←</span>
-            <span>Previous suspect</span>
-          </Link>
-        ) : <span />}
-        {nextSuspect ? (
-          <Link to={withSearch(suspectPath(nextSuspect.pokemonId))} className="suspect-file-arrow-link suspect-file-arrow-link-right">
-            <span>Next suspect</span>
-            <span aria-hidden="true">→</span>
-          </Link>
-        ) : <span />}
-      </nav>
+      {selectedSuspectOverride ? suspectNavigation : null}
 
       <div className="dossier-shell">
         <span className="dossier-shell-tab">Suspect Dossier</span>
@@ -88,6 +93,7 @@ export function SuspectFileRoute({
           setSuspectNoteStatus={setSuspectNoteStatus}
           openAccusation={openAccusation}
           attemptsLeft={attemptsLeft}
+          showMobileActions={Boolean(selectedSuspectOverride)}
         />
       </div>
     </section>
@@ -98,7 +104,10 @@ export function SuspectFileRoute({
     attemptsLeft={attemptsLeft} setSuspectNoteStatus={setSuspectNoteStatus}
     inspectSuspect={id => navigate(withSearch(suspectPath(id)))}>
     <BoardLocationDialog title={selectedSuspect.name}
-      subtitle={`Case file ${String(selectedSuspectIndex + 1).padStart(2, '0')} · ${selectedSuspectIndex + 1} of ${currentCase.suspects.length}`}
+      headerNavigation={suspectNavigation}
+      footer={<SuspectActions suspect={selectedSuspect} caseStatus={currentCase.status}
+        isFalseLead={wrongAccusationIds.includes(selectedSuspect.pokemonId)} attemptsLeft={attemptsLeft}
+        setSuspectNoteStatus={setSuspectNoteStatus} openAccusation={openAccusation} className="suspect-dialog-actions" />}
       className="suspect-dossier-dialog" closeLabel="Close dossier and return to suspects lineup"
       onClose={() => navigate(withSearch(backLinkTo), { state: { focusSuspectId: selectedSuspect.pokemonId } })}>
       {dossier}

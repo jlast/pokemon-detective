@@ -1,3 +1,4 @@
+import { SuspectActions } from './SuspectActions'
 import { getDiscoveredEvidence, type Case, type Suspect, type SuspectNoteStatus } from '../../game/caseModel'
 import { getDetectiveProfile } from '../../game/suspectCaseFile'
 import { DetectiveProfile } from './DetectiveProfile'
@@ -12,6 +13,7 @@ interface SelectedSuspectCaseFileProps {
   setSuspectNoteStatus: (suspectId: number, noteStatus: SuspectNoteStatus) => void
   openAccusation: (suspectId: number) => void
   attemptsLeft: number
+  showMobileActions?: boolean
 }
 
 export function SelectedSuspectCaseFile({
@@ -21,6 +23,7 @@ export function SelectedSuspectCaseFile({
   setSuspectNoteStatus,
   openAccusation,
   attemptsLeft,
+  showMobileActions = true,
 }: SelectedSuspectCaseFileProps) {
   if (!selectedSuspect) {
     return (
@@ -46,7 +49,6 @@ export function SelectedSuspectCaseFile({
   const caseFileNumber = String(selectedSuspect.caseFileNumber ?? suspectIndex + 1).padStart(2, '0')
   const discoveredEvidence = getDiscoveredEvidence(currentCase)
   const detectiveProfile = getDetectiveProfile(selectedSuspect.pokemonId)
-  const isSuspect = selectedSuspect.noteStatus !== 'ruled-out'
   const verdictDisabled = currentCase.status !== 'active'
   const accuseDisabled = verdictDisabled || attemptsLeft <= 0 || selectedSuspect.noteStatus === 'ruled-out' || isFalseLead
   const showDetectiveProfile = currentCase.difficulty !== 'hard'
@@ -55,24 +57,9 @@ export function SelectedSuspectCaseFile({
     <div className="suspect-notebook-shell">
       <section className="selected-suspect-casefile dossier-panel notebook-card">
         <div className="suspect-notebook-body">
-          <div className="suspect-mobile-action-strip" aria-label={`Your theory about ${selectedSuspect.name}`}>
-            <button
-              type="button"
-              className={`suspect-verdict-toggle ${isSuspect ? 'is-cleared' : 'is-suspect'} is-selected`}
-              onClick={() => setSuspectNoteStatus(selectedSuspect.pokemonId, isSuspect ? 'ruled-out' : 'suspect')}
-              disabled={verdictDisabled || isFalseLead}
-            >
-              {isSuspect ? 'Clear' : 'Mark Suspect'}
-            </button>
-            <button
-              type="button"
-              className="primary-button suspect-verdict-accuse-button"
-              onClick={() => openAccusation(selectedSuspect.pokemonId)}
-              disabled={accuseDisabled}
-            >
-              Accuse
-            </button>
-          </div>
+          {showMobileActions ? <SuspectActions suspect={selectedSuspect} caseStatus={currentCase.status}
+            isFalseLead={isFalseLead} attemptsLeft={attemptsLeft} setSuspectNoteStatus={setSuspectNoteStatus}
+            openAccusation={openAccusation} /> : null}
 
           <footer className="suspect-dossier-footer">
             <div>
