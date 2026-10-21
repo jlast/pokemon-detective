@@ -74,7 +74,9 @@ export function InvestigationLocationRoute({
       openLocation={openLocation}
       showCaseFlowNav
     >
-      <BoardLocationDialog title={selectedLocation?.name ?? 'Location'} onClose={closeLocation}>
+      <BoardLocationDialog title={selectedLocation?.name ?? 'Location'}
+        subtitle={selectedLocation?.investigated ? 'Evidence filed' : `${pointsLeft} actions remaining · One lead per location`}
+        onClose={closeLocation}>
         <InvestigationLocationPage
           location={selectedLocation}
           pointsLeft={pointsLeft}

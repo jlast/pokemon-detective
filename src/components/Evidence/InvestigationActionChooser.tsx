@@ -1,25 +1,14 @@
-import { getClueCollectionKey, type InvestigationLeadKind, type LeadPaperStyle, type LeadVisualType, type LocationAction } from '../../game/caseModel'
+import { getClueCollectionKey, type LeadPaperStyle, type LeadVisualType, type LocationAction } from '../../game/caseModel'
 import { pokemonData, type Pokemon } from '../../data/pokemon'
-import { LeadVisualIcon } from './leadVisualIcons'
-
-const leadKindLabels: Record<InvestigationLeadKind, string> = {
-  search: 'Search',
-  inspect: 'Inspect',
-  question: 'Question',
-}
-
-const fillWitnessPrompt = (template: string, pokemonName: string, witnessRole: string): string => (
-  template
-    .replaceAll('{pokemonName}', pokemonName)
-    .replaceAll('{witnessRole}', witnessRole)
-)
+import { MugShot } from '../Suspects/MugShot'
+import { getCluePresentation } from './cluePresentation'
 
 interface EvidenceLeadCardProps {
   visualType: LeadVisualType
   paperStyle: LeadPaperStyle
-  label: string
-  description: string
   clueLabel: string
+  sprite: string
+  flavor: string
   clueSubtitle?: string
   onFollow: () => void
   disabled?: boolean
@@ -30,16 +19,16 @@ interface EvidenceLeadCardProps {
 function EvidenceLeadCard({
   visualType,
   paperStyle,
-  label,
-  description,
   clueLabel,
+  sprite,
+  flavor,
   clueSubtitle,
   onFollow,
   disabled = false,
   isFollowed = false,
   isAlreadyCollected = false,
 }: EvidenceLeadCardProps) {
-  const statusText = isAlreadyCollected ? 'Known clue' : isFollowed ? 'Complete' : 'Investigate'
+  const statusText = isAlreadyCollected ? 'Known clue' : isFollowed ? 'Collected' : 'Investigate →'
 
   return (
     <button
@@ -48,35 +37,19 @@ function EvidenceLeadCard({
       onClick={onFollow}
       disabled={disabled}
     >
-      <div className="evidence-lead-card__visual" aria-hidden="true">
-        <LeadVisualIcon visualType={visualType} />
+      <div className="evidence-lead-card__visual clue-sprite-stage" aria-hidden="true">
+        <img className="clue-item-sprite" src={`/clue-sprites/${sprite}.png`} alt="" width="72" height="72" />
       </div>
 
       <div className="evidence-lead-card__content">
-        <span className="lead-value-pill">
-          <strong>{clueLabel}</strong>
-        </span>
+        <strong className="clue-choice-title">{clueLabel}</strong>
         {clueSubtitle ? <span className="evidence-lead-card__subtitle">{clueSubtitle}</span> : null}
-        <span className="evidence-lead-card__label">{label}</span>
-        <p className="lead-flavor">{description}</p>
+        <p className="clue-choice-flavor">{flavor}</p>
       </div>
 
       <span className="evidence-lead-card__cta">{statusText}</span>
     </button>
   )
-}
-
-const getClueChoiceDescription = (clueLabel: string, clueSubtitle?: string) => {
-  const normalizedLabel = `${clueLabel} ${clueSubtitle ?? ''}`.toLowerCase()
-
-  if (normalizedLabel.includes('entry')) return 'Look for signs of how it began.'
-  if (normalizedLabel.includes('evolution')) return 'Check where evolution traits point.'
-  if (normalizedLabel.includes('color')) return 'Check visual details left behind.'
-  if (normalizedLabel.includes('trace') || normalizedLabel.includes('ground')) return 'Study the marks left behind.'
-  if (normalizedLabel.includes('witness') || normalizedLabel.includes('noticed')) return 'Ask what someone noticed nearby.'
-  if (normalizedLabel.includes('residue') || normalizedLabel.includes('type')) return 'Inspect what was left on the scene.'
-
-  return 'Follow this clue in the case file.'
 }
 
 interface InvestigationActionChooserProps {
@@ -108,7 +81,6 @@ export function InvestigationActionChooser({
     <div className="investigation-action-chooser">
       <div className="investigation-action-header">
         <h3>Which clue will you follow?</h3>
-        <p className="investigation-action-hint">Choose one lead to investigate.</p>
         {noActionsRemaining ? <p className="investigation-action-hint">No actions remaining.</p> : null}
       </div>
       <div className="location-leads">
@@ -116,6 +88,7 @@ export function InvestigationActionChooser({
           const { presentation } = action
           const leadKind = presentation.kind
           const cluePreview = action.cluePreview
+          const cardPresentation = getCluePresentation(action)
           const isFollowed = action.id === followedActionId
           const clueCollectionKey = getClueCollectionKey(action)
           const isAlreadyCollected = Boolean(
@@ -138,22 +111,14 @@ export function InvestigationActionChooser({
                   className={`lead-option lead-option--${leadKind} ${isFollowed ? 'is-followed' : ''} ${isAlreadyCollected ? 'is-already-collected' : ''}`}
                   disabled
                 >
-                  <span className="lead-option__type">
-                    <span className="lead-option__icon" aria-hidden="true">{presentation.icon}</span>
-                    {leadKindLabels[leadKind]}
-                  </span>
+                  <strong className="clue-choice-title">{cluePreview.label}</strong>
+                  {cluePreview.subtitle ? <span className="evidence-lead-card__subtitle">{cluePreview.subtitle}</span> : null}
                   <span className="lead-option__title">No witnesses available</span>
-                  <span className="lead-option__description">Every available witness has already been interviewed.</span>
                 </button>
               )
             }
 
-            return witnessPokemon.map((pokemon, index) => {
-              const witnessRoles = presentation.witnessRoles ?? [presentation.witnessRole ?? 'witness']
-              const witnessPromptTemplates = presentation.witnessPromptTemplates ?? [presentation.teaser]
-              const witnessRole = witnessRoles[index % witnessRoles.length] ?? 'witness'
-              const witnessPromptTemplate = witnessPromptTemplates[index % witnessPromptTemplates.length] ?? presentation.teaser
-
+            return witnessPokemon.map((pokemon) => {
               return (
                 <button
                   key={`${action.id}-${pokemon.id}`}
@@ -162,25 +127,20 @@ export function InvestigationActionChooser({
                   onClick={() => chooseAction(action.id, pokemon.id)}
                   disabled={disabled || isFollowed || isAlreadyCollected}
                 >
-                  <span className="lead-option__type">
-                    <span className="lead-option__icon" aria-hidden="true">{presentation.icon}</span>
-                    {leadKindLabels[leadKind]}
-                  </span>
-                  <span className="lead-option__title">Question {witnessRole}: {pokemon.name}</span>
-                  <span className="lead-value-pill">
-                    <strong>{cluePreview.label}</strong>
-                  </span>
-                  {cluePreview.subtitle ? <span className="lead-option__description">{cluePreview.subtitle}</span> : null}
                   <span className="lead-option__pokemon-preview" aria-label="Available witness Pokemon">
                     <span className="lead-option__pokemon">
-                      <span className="lead-option__pokemon-frame">
-                        <img src={pokemon.sprite} alt="" className="lead-option__pokemon-sprite" />
+                      <span className="witness-mugshot">
+                        <MugShot suspect={{ pokemonId: pokemon.id, name: pokemon.name,
+                          sprite: pokemon.sprite, isShiny: false,
+                          manuallyRuledOut: false, noteStatus: 'suspect' }} />
                       </span>
-                      <span>{pokemon.name}</span>
+                      <span className="clue-sprite-caption">Witness · {pokemon.name}</span>
                     </span>
                   </span>
-                  <span className="lead-flavor">{fillWitnessPrompt(witnessPromptTemplate, pokemon.name, witnessRole)}</span>
-                  <span className="lead-option__cta">{isAlreadyCollected ? 'You already know this clue' : isFollowed ? 'Complete' : 'Click to investigate'}</span>
+                  <strong className="clue-choice-title">{cluePreview.label}</strong>
+                  {cluePreview.subtitle ? <span className="evidence-lead-card__subtitle">{cluePreview.subtitle}</span> : null}
+                  <span className="clue-choice-flavor">{cardPresentation.flavor}</span>
+                  <span className="lead-option__cta">{isAlreadyCollected ? 'Known clue' : isFollowed ? 'Collected' : 'Investigate →'}</span>
                 </button>
               )
             })
@@ -191,10 +151,10 @@ export function InvestigationActionChooser({
               key={action.id}
               visualType={presentation.visualType}
               paperStyle={presentation.paperStyle}
-              label={presentation.displayLabel}
-              description={getClueChoiceDescription(cluePreview.label, cluePreview.subtitle)}
               clueSubtitle={cluePreview.subtitle}
               clueLabel={cluePreview.label}
+              sprite={cardPresentation.sprite}
+              flavor={cardPresentation.flavor}
               onFollow={() => chooseAction(action.id)}
               disabled={disabled || isFollowed || isAlreadyCollected}
               isFollowed={isFollowed}

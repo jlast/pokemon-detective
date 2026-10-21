@@ -8936,3 +8936,126 @@
 @media (max-width: 600px) { .investigation-pinboard--focused { grid-template-columns: minmax(0, 1fr); } }
 
 .investigation-location-card.is-complete { grid-template-rows: 1fr; }
+
+/* Location files: a quiet paper dossier with clear, consistent lead choices. */
+.board-location-dialog { width: min(920px, calc(100vw - 32px)); border-radius: 20px; border: 1px solid #e8ddc9; box-shadow: 0 30px 100px #1d201c66, 0 4px 18px #1d201c22; }
+.board-location-dialog__paper { padding: 0; background: #f8f4e9; }
+.board-location-dialog__heading { margin: 0; padding: 26px 30px 22px; border-top: 5px solid #d8b853; border-bottom: 1px solid #e1d7c4; background: #fffcf4; align-items: flex-start; }
+.board-location-dialog__eyebrow { color: #8a723f; font-weight: 800; font-size: .62rem; letter-spacing: .2em; }
+.board-location-dialog__heading h2 { margin-top: 7px; font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 800; line-height: 1.18; letter-spacing: -.035em; }
+.board-location-dialog__meta { margin: 9px 0 0; color: #778079; font-size: .75rem; }
+.board-location-dialog__close { background: #f6f1e6; border-color: #e5dccb; color: #6c705f; transition: background 150ms ease, transform 150ms ease; }
+.board-location-dialog__close:hover { background: #eae1cf; transform: rotate(6deg); }
+.board-location-dialog .investigation-location-page { padding: 24px 30px 30px; }
+.board-location-dialog .active-investigation-location { align-items: center; gap: 12px; margin: 0 0 24px; padding: 14px 16px; background: #eee8d9; border: 1px solid #e3dbc9; border-radius: 12px; }
+.board-location-dialog .active-investigation-location .location-icon { width: 38px; height: 38px; min-width: 38px; border: 0; border-radius: 10px; background: #fffcf4; font-size: 1.25rem; }
+.board-location-dialog .location-title-row { display: none; }
+.board-location-dialog .location-description { margin: 0; font-size: .84rem; line-height: 1.6; color: #666b5d; }
+.board-location-dialog .investigation-action-chooser { border: 0; padding-top: 0; gap: 24px; }
+.board-location-dialog .investigation-action-header h3 { font-size: 1.08rem; letter-spacing: -.02em; }
+.board-location-dialog .investigation-action-hint { margin-top: 4px; font-size: .78rem; color: #7d8179; }
+.board-location-dialog .location-leads { gap: 16px; align-items: stretch; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.board-location-dialog .evidence-lead-card, .board-location-dialog .lead-option { padding: 22px 16px 16px; min-height: 270px; border: 1px solid #e0d7c6; border-radius: 13px; background: #fffdf7; transform: none; box-shadow: 0 3px 8px #44351d08; gap: 14px; transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+.board-location-dialog .evidence-lead-card::before, .board-location-dialog .evidence-lead-card::after, .board-location-dialog .evidence-lead-card__visual::after { display: none; }
+.board-location-dialog .evidence-lead-card__visual { width: 68px; height: 68px; margin: 0 auto 2px; border-radius: 18px; background: #f1ecdf; border: 1px solid #e9e1d0; box-shadow: none; transform: none; }
+.board-location-dialog .evidence-lead-card__visual svg { width: 42px; height: 42px; }
+.board-location-dialog .evidence-lead-card__content { gap: 9px; align-content: start; }
+.board-location-dialog .lead-value-pill { background: #f4edda; border-color: #e6d8b4; color: #64512b; box-shadow: none; font-size: .8rem; }
+.board-location-dialog .evidence-lead-card__label { font-size: .67rem; letter-spacing: .07em; color: #535c62; line-height: 1.4; }
+.board-location-dialog .evidence-lead-card__subtitle { font-size: .65rem; color: #8b7d60; }
+.board-location-dialog .lead-flavor { font-size: .76rem; font-weight: 400; line-height: 1.55; color: #7a8078; }
+.board-location-dialog .evidence-lead-card__cta, .board-location-dialog .lead-option__cta { display: block; align-self: stretch; text-align: center; margin-top: auto; padding: 10px 12px; border-radius: 8px; border: 1px solid #e5d5a7; background: #f7edcd; color: #5b4922; box-shadow: none; font-size: .68rem; letter-spacing: .07em; }
+.board-location-dialog .evidence-lead-card:hover:not(:disabled), .board-location-dialog .lead-option:hover:not(:disabled) { transform: translateY(-4px); border-color: #bc9c4f; box-shadow: 0 10px 20px #6a572617; }
+.board-location-dialog .evidence-lead-card:focus-visible, .board-location-dialog .lead-option:focus-visible, .board-location-dialog__close:focus-visible { outline: 3px solid #466f8b; outline-offset: 4px; }
+.board-location-dialog .evidence-lead-card:disabled, .board-location-dialog .lead-option:disabled { opacity: .5; box-shadow: none; }
+.board-location-dialog .active-investigation-resolving { padding: 12px; border-radius: 8px; background: #eee8d9; text-align: center; font-size: .8rem; }
+@media (max-width: 700px) { .board-location-dialog .location-leads { grid-template-columns: 1fr; } .board-location-dialog__heading { padding: 20px; } .board-location-dialog .investigation-location-page { padding: 18px 20px 24px; } .board-location-dialog .evidence-lead-card, .board-location-dialog .lead-option { min-height: 0; padding: 18px; gap: 12px; } .board-location-dialog .evidence-lead-card { display: grid; grid-template-columns: 54px 1fr; align-items: start; text-align: left; } .board-location-dialog .evidence-lead-card__visual { width: 54px; height: 54px; margin: 0; border-radius: 13px; } .board-location-dialog .evidence-lead-card__visual svg { width: 34px; height: 34px; } .board-location-dialog .evidence-lead-card__content { justify-items: start; } .board-location-dialog .evidence-lead-card__cta { grid-column: 1 / -1; } }
+@media (prefers-reduced-motion: reduce) { .board-location-dialog .evidence-lead-card, .board-location-dialog .lead-option, .board-location-dialog__close { transition: none; } .board-location-dialog .evidence-lead-card:hover:not(:disabled), .board-location-dialog .lead-option:hover:not(:disabled), .board-location-dialog__close:hover { transform: none; } }
+
+.board-location-dialog .clue-choice-title { display: block; font-size: 1.1rem; font-weight: 800; line-height: 1.25; letter-spacing: -.02em; color: var(--ink); }
+.board-location-dialog .evidence-lead-card, .board-location-dialog .lead-option { min-height: 220px; }
+.board-location-dialog .lead-option { align-items: center; text-align: center; }
+.board-location-dialog .lead-option__pokemon-preview { margin: 0; }
+@media (max-width: 700px) { .board-location-dialog .evidence-lead-card, .board-location-dialog .lead-option { min-height: 0; } }
+
+/* Pixel-art game items keep clue cards expressive without adding copy. */
+.board-location-dialog .evidence-lead-card__visual.clue-sprite-stage,
+.board-location-dialog .lead-option__pokemon-frame { display: grid; place-items: center; width: 104px; height: 96px; min-width: 104px; margin: 0 auto; overflow: visible; border: 1px solid #e2d5b8; border-radius: 16px; background: radial-gradient(ellipse at 50% 80%, #c1a47433 0 22%, transparent 24%), repeating-linear-gradient(0deg, transparent 0 15px, #b8a4810d 15px 16px), #f4eddd; box-shadow: inset 0 1px 0 #ffffffaa; }
+.board-location-dialog .clue-item-sprite { display: block; width: 72px; height: 72px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 3px 1px #705c3822); transition: transform 180ms ease; }
+.board-location-dialog .clue-sprite-caption { display: block; font-size: .65rem; color: #8a806c; }
+.board-location-dialog .lead-option__pokemon { display: grid; gap: 8px; justify-items: center; }
+.board-location-dialog .evidence-lead-card, .board-location-dialog .lead-option { gap: 14px; }
+.board-location-dialog .evidence-lead-card:hover:not(:disabled) .clue-item-sprite,
+.board-location-dialog .lead-option:hover:not(:disabled) .clue-item-sprite { transform: translateY(-3px) rotate(-5deg); }
+@media (max-width: 700px) { .board-location-dialog .evidence-lead-card { grid-template-columns: 76px 1fr; column-gap: 18px; align-items: center; } .board-location-dialog .evidence-lead-card__visual.clue-sprite-stage { width: 76px; height: 76px; min-width: 76px; border-radius: 12px; } .board-location-dialog .clue-item-sprite { width: 64px; height: 64px; } .board-location-dialog .evidence-lead-card__content { grid-column: 2; } }
+@media (prefers-reduced-motion: reduce) { .board-location-dialog .clue-item-sprite { transition: none; transform: none !important; } }
+
+.board-location-dialog .clue-choice-flavor { margin: 6px 0 0; color: #706853; font-size: .78rem; font-weight: 450; line-height: 1.6; text-wrap: pretty; }
+.board-location-dialog .evidence-lead-card, .board-location-dialog .lead-option { min-height: 300px; }
+.board-location-dialog .evidence-lead-card__content { gap: 6px; }
+.board-location-dialog .evidence-lead-card__subtitle { font-size: .62rem; letter-spacing: .07em; }
+@media (max-width: 700px) { .board-location-dialog .evidence-lead-card, .board-location-dialog .lead-option { min-height: 0; } .board-location-dialog .evidence-lead-card { align-items: start; } .board-location-dialog .clue-choice-flavor { font-size: .75rem; line-height: 1.5; } }
+
+.location-game-art { position: relative; width: 100%; max-width: 240px; margin: 4px auto; padding: 5px; background: #fffdf5; border: 1px solid #dfd5bd; box-shadow: 0 3px 7px #4230191a; transform: rotate(-1deg); }
+.location-game-art canvas { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; image-rendering: pixelated; }
+.location-game-art__error { position: absolute; inset: 0; display: grid; place-items: center; background: #eee6d5; font-size: .7rem; }
+.investigation-location-card .location-document--compact::before, .investigation-location-card .location-document--compact::after { display: none; }
+.investigation-location-card.is-complete .location-game-art { max-width: 180px; }
+.case-scene-card > .location-game-art { max-width: 100%; }
+.board-location-dialog .witness-mugshot { display: block; }
+.board-location-dialog .witness-mugshot .suspect-sprite { image-rendering: pixelated; }
+
+.location-game-art canvas { aspect-ratio: 15 / 7; }
+
+/* Close-up dioramas: furniture silhouettes with original game-item sprites. */
+.location-vignette { --wall: #e7d7b8; --wood: #af8155; --edge: #765233; position: relative; width: 100%; aspect-ratio: 15 / 7; overflow: hidden; background: var(--wall); image-rendering: pixelated; }
+.location-vignette--lab { --wall: #d5e8e7; --wood: #a7c3c5; --edge: #55787f; }
+.location-vignette--garden { --wall: #dce3bf; --wood: #ad8c55; --edge: #6e633d; }
+.location-vignette--stone { --wall: #d7d7d0; --wood: #aaa99d; --edge: #6f716b; }
+.location-vignette__wall { position: absolute; inset: 0 0 32%; background: repeating-linear-gradient(0deg, transparent 0 15px, #ffffff20 15px 17px); border-bottom: 4px solid var(--edge); }
+.location-vignette__furniture { position: absolute; inset: 65% 0 0; border-top: 5px solid var(--edge); background: repeating-linear-gradient(90deg, transparent 0 40px, #68492322 40px 43px), var(--wood); box-shadow: inset 0 5px 0 #ffffff30; }
+.location-vignette__prop { position: absolute; z-index: 2; width: 27%; height: auto; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 3px 0 #463b2925); }
+.location-vignette__prop--0 { left: 13%; bottom: 26%; }
+.location-vignette__prop--1 { left: 41%; bottom: 26%; }
+.location-vignette__prop--2 { left: 68%; bottom: 26%; }
+.location-vignette--jar .location-vignette__prop--0 { width: 40%; left: 20%; bottom: 18%; }
+.location-vignette--jar .location-vignette__prop--1 { width: 24%; left: 56%; bottom: 15%; transform: rotate(12deg); }
+.location-vignette--jar .location-vignette__prop--2 { width: 22%; left: 67%; bottom: 11%; transform: rotate(-14deg); }
+.location-vignette__crumbs { position: absolute; z-index: 3; left: 64%; bottom: 16%; width: 3px; height: 3px; background: #806141; box-shadow: -8px 4px #806141, 12px -2px #806141, 8px 7px #806141, -3px -5px #806141; }
+.location-vignette--shelf .location-vignette__furniture { inset: 13% 8% 12%; background: transparent; border: 5px solid var(--edge); box-shadow: inset 0 0 0 3px var(--wood); }
+.location-vignette--shelf .location-vignette__furniture i { position: absolute; left: 0; right: 0; top: 57%; height: 6px; background: var(--wood); border-bottom: 3px solid var(--edge); }
+.location-vignette--shelf .location-vignette__prop { bottom: 39%; }
+.location-vignette--cabinet .location-vignette__furniture { inset: 8% 16% 6%; background: var(--wood); border: 5px solid var(--edge); }
+.location-vignette--cabinet .location-vignette__furniture::after { content: ''; position: absolute; inset: 8%; border: 3px solid #ffffff55; background: #e7f5ef66; }
+.location-vignette--cabinet .location-vignette__prop { bottom: 24%; width: 23%; }
+.location-vignette--box .location-vignette__furniture { inset: 39% 18% 14%; border: 4px solid var(--edge); background: var(--wood); }
+.location-vignette--box .location-vignette__furniture::before { content: ''; position: absolute; inset: -28px -4px auto; height: 22px; border: 4px solid var(--edge); background: var(--wood); transform: skewX(-12deg); transform-origin: bottom; }
+.location-vignette--box .location-vignette__prop { width: 22%; bottom: 27%; }
+.location-vignette--box .location-vignette__prop--0 { left: 22%; }
+.location-vignette--box .location-vignette__prop--2 { left: 60%; }
+.location-vignette--console .location-vignette__furniture { inset: 24% 10% 12%; border: 5px solid var(--edge); background: #8eaaaa; }
+.location-vignette--console .location-vignette__furniture i { display: block; width: 24%; height: 16%; margin: 8px; background: #394e54; box-shadow: 38px 0 #c9e0a1, 74px 0 #cfb972; }
+.location-vignette--display .location-vignette__furniture { inset: 12% 9% 9%; border: 4px solid var(--edge); border-bottom-width: 12px; background: #ecf8f855; box-shadow: inset 0 0 0 3px #ffffff55; }
+
+.location-vignette--tracks { background: radial-gradient(circle at 16% 65%, #9c855b 0 1px, transparent 2px), radial-gradient(circle at 70% 81%, #9c855b 0 2px, transparent 3px), radial-gradient(circle at 45% 21%, #ead8ae 0 2px, transparent 3px), linear-gradient(135deg, #829d62 0 16%, #ceb78b 16% 82%, #829d62 82%); }
+.location-vignette--tracks .location-vignette__wall, .location-vignette--tracks .location-vignette__furniture { display: none; }
+.location-vignette__tracks { position: absolute; inset: 0; }
+.location-vignette__footprint { position: absolute; display: block; width: 32px; height: 32px; overflow: hidden; transform: rotate(35deg); mix-blend-mode: multiply; }
+.location-vignette__footprint img { display: block; width: 32px; height: 32px; max-width: none; image-rendering: pixelated; mix-blend-mode: multiply; opacity: .65; }
+.location-vignette__footprint--0 { left: 17%; bottom: 8%; opacity: .65; }
+.location-vignette__footprint--1 { left: 33%; bottom: 26%; opacity: .9; }
+.location-vignette__footprint--2 { left: 49%; bottom: 43%; }
+.location-vignette__footprint--3 { left: 65%; bottom: 59%; opacity: .75; }
+
+.location-vignette__footprint--1, .location-vignette__footprint--3 { transform: rotate(35deg) scaleX(-1); }
+
+/* One shared scene, using the same footprint as other location illustrations. */
+.case-witness-scene { position: relative; width: 100%; aspect-ratio: 15 / 7; overflow: hidden; background: #e3ddc5; }
+.case-witness-scene__backdrop { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 38px, #8d765b15 38px 40px), linear-gradient(180deg, #e8e2cd 0 58%, #9b8665 58% 62%, #b3a077 62% 66%, #c6b18c 66%); }
+.case-witness-scene__group { position: absolute; inset: 4% 0 0; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4%; }
+.case-witness-scene__pokemon { position: relative; flex: 0 0 40%; min-width: 0; margin: 0 -6%; }
+
+.case-witness-scene__pokemon img { position: relative; display: block; width: 100%; height: auto; image-rendering: pixelated; }
+.case-witness-scene__pokemon:nth-child(1) { transform: translateY(3%) rotate(5deg); z-index: 2; }
+.case-witness-scene__pokemon:nth-child(2) { transform: translateY(-12%) rotate(-4deg); z-index: 1; }
+.case-witness-scene__pokemon:nth-child(3) { transform: translateY(6%) rotate(-6deg); z-index: 3; }

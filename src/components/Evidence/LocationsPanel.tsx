@@ -1,16 +1,11 @@
 import { useEffect, type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { getDiscoveredEvidence, type Case, type LocationCardVariant } from '../../game/caseModel'
-import { getCaseThemeExhibitLabel } from '../../game/caseTheme'
+import { assignLocationScenes, chooseLocationScene } from './locationArtworkSelection'
+import { LocationArtwork } from './LocationArtwork'
 import { InvestigationLocationCard } from './InvestigationLocationCard'
 
-const placeholderSceneImage = '/case-scenes/placeholder.svg'
 const locationCardVariants: LocationCardVariant[] = ['detective-note', 'clipboard', 'map-fragment']
-
-const getPublicAssetUrl = (path: string) => {
-  if (/^(https?:)?\/\//.test(path)) return path
-  return `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
-}
 
 export function LocationsPanel({
   currentCase,
@@ -36,16 +31,15 @@ export function LocationsPanel({
     })
     return () => cancelAnimationFrame(frame)
   }, [focusLocationId])
+  const heroScene = chooseLocationScene(currentCase.locations[0]?.name ?? currentCase.title, currentCase.id)
+  const artworkScenes = assignLocationScenes(currentCase.locations)
   const investigatedCount = currentCase.locations.filter((location) => location.investigated).length
   const discoveredEvidence = getDiscoveredEvidence(currentCase)
   const evidenceCollectedCount = discoveredEvidence.length
   const actionsUsed = investigatedCount
   const maxInvestigations = currentCase.maxInvestigations
   const pointsLeft = Math.max(maxInvestigations - actionsUsed, 0)
-  const exhibitImage = getPublicAssetUrl(currentCase.theme?.image ?? currentCase.sceneImage ?? placeholderSceneImage)
-  const exhibitAlt = currentCase.theme?.alt ?? currentCase.sceneImageAlt ?? `Scene photo for ${currentCase.title}`
-  const exhibitLabel = getCaseThemeExhibitLabel(currentCase.theme)
-  const exhibitTitle = currentCase.theme?.name ?? currentCase.title
+
 
   return (
     <section
@@ -72,16 +66,10 @@ export function LocationsPanel({
 
         <div className="pinboard-card case-scene-card">
           <div className="case-scene-card__pin" aria-hidden="true" />
-          <div className={`case-scene-card__image-frame ${currentCase.theme ? 'case-scene-card__image-frame--sprite' : ''}`}>
-            <img
-              className="case-scene-card__image"
-              src={exhibitImage}
-              alt={exhibitAlt}
-            />
-          </div>
+          <LocationArtwork name={currentCase.locations[0]?.name ?? currentCase.title} context={currentCase.id} scene={heroScene} />
           <div className="case-scene-card__caption">
-            <strong>{exhibitLabel}</strong>
-            <span>{exhibitTitle}</span>
+            <strong>Crime scene</strong>
+            <span>{currentCase.title}</span>
           </div>
         </div>
 
@@ -90,6 +78,8 @@ export function LocationsPanel({
             <InvestigationLocationCard
               key={location.id}
               location={location}
+              witnessPokemonIds={currentCase.witnessPokemonIds}
+              artworkScene={artworkScenes[location.id]}
               isActiveLocation={false}
               isSearching={false}
               isNewEvidence={pinnedLocationId === location.id}
