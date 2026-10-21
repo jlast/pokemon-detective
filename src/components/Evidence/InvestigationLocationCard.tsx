@@ -55,17 +55,14 @@ export function InvestigationLocationCard({
 
   const tiltAngle = location.cardTiltDegrees ?? getStableFallbackTilt(location.id)
 
-  const actionable = !isSearching && !(!isComplete && pointsLeft <= 0)
+  const actionable = !isComplete && !isSearching && pointsLeft > 0
   const isActionAvailable = actionable && !isComplete
 
   const variantClassName = `investigation-location-card--${variant}`
   const paperToneClassName = `investigation-location-card--tone-${evidenceNumber % 3}`
   const selectedAction = location.actions.find(action => action.id === location.selectedActionId)
   const clueLabel = selectedAction?.cluePreview.label ?? location.evidenceTitle
-  const clueValue = location.evidenceBadges?.map(badge => {
-    const separator = badge.text.indexOf(':')
-    return separator >= 0 ? badge.text.slice(separator + 1).trim() : badge.text
-  }).join(' / ')
+
 
   return (
     <article
@@ -74,9 +71,9 @@ export function InvestigationLocationCard({
       style={{ ...style, '--tilt': `${tiltAngle}deg` } as React.CSSProperties}
       onClick={() => actionable && openPanel(location.id)}
       onKeyDown={(e) => { if (actionable && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openPanel(location.id) } }}
-      role="button"
+      role={isComplete ? undefined : 'button'}
       tabIndex={actionable ? 0 : -1}
-      aria-label={isComplete ? `Review clue from ${location.name}: ${clueValue ?? clueLabel ?? 'Investigation notes'}` : `Investigate ${location.name}`}
+      aria-label={isComplete ? `Clue from ${location.name}` : `Investigate ${location.name}`}
     >
       <span className="pin-location-dot" aria-hidden="true" />
       <span className="sr-only">{statusLabel}</span>

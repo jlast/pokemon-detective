@@ -46,9 +46,9 @@ export function LocationsPanel({
       className={`evidence-board evidence-board--pinboard mobile-section ${isEvidenceTab ? 'is-active' : ''}`}
     >
       <p className="sr-only" role="status" aria-live="polite">{pinnedLocationId
-        ? `New clue pinned from ${currentCase.locations.find(location => location.id === pinnedLocationId)?.name ?? 'this location'}. Open the note to review your evidence.`
+        ? `New clue pinned from ${currentCase.locations.find(location => location.id === pinnedLocationId)?.name ?? 'this location'}.`
         : ''}</p>
-      <div className="investigation-pinboard investigation-pinboard--focused">
+      <div className="investigation-pinboard investigation-pinboard--focused corkboard-surface">
         <div className="string-layer" aria-hidden="true">
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="string-svg">
             <line x1="15%" y1="5%" x2="85%" y2="20%" stroke="#b8894e" strokeWidth="0.3" opacity="0.3" />

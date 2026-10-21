@@ -1227,7 +1227,7 @@ function App() {
           userProfile={userProfile}
           isAdmin={isAdmin}
           isMenuOpen={isMobileMenuOpen}
-          hideTitle={!currentRoute.startsWith(TODAY_PATH)}
+          hideTitle={currentRoute === TODAY_PATH || !currentRoute.startsWith(TODAY_PATH)}
           onToggleMenu={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
           onSelectCase={() => navigateAndCloseMenu(TODAY_PATH)}
           onSelectPokedex={() => navigateAndCloseMenu(POKEDEX_PATH)}

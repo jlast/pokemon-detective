@@ -41,13 +41,48 @@ const getColorGroupClass = (text: string): string | null => {
   return null
 }
 
+// Explain partitions when rendering so saved cases receive the same definitions.
+const partitionDefinitions: Record<string, Record<string, string>> = {
+  Capture: {
+    Elusive: '≤45 Catch Rate',
+    Guarded: '>45–120 Catch Rate',
+    Easygoing: '>120 Catch Rate',
+  },
+  Height: {
+    Small: '≤0.6 m',
+    Short: '≤0.6 m',
+    Medium: '>0.6 m and <1.4 m',
+    Tall: '≥1.4 m',
+  },
+  Weight: {
+    Light: '≤12 kg',
+    Medium: '>12 kg and <45 kg',
+    Heavy: '≥45 kg',
+  },
+  Color: {
+    'Warm colors': 'red, yellow, pink',
+    'Cool colors': 'blue, green, purple',
+    'Neutral colors': 'black, white, gray, brown',
+  },
+}
+
+function explainPartitionedClue(text: string): string {
+  const match = /^([^:]+):\s*([^()]+?)(?:\s*\([^)]*\))?$/.exec(text)
+  if (!match) return text
+  const [, label, value] = match
+  const definition = partitionDefinitions[label]?.[value.trim()]
+  return definition ? `${label}: ${value.trim()} (${definition})` : text
+}
+
 export function EvidenceBadge({ text, type, clueType, fallback }: EvidenceBadgeProps) {
-  const badgeText = text ?? fallback
-  if (!badgeText) return null
+  const rawText = text ?? fallback
+  if (!rawText) return null
+  const badgeText = explainPartitionedClue(rawText)
 
   const separatorIndex = badgeText.indexOf(':')
   const badgeLabel = separatorIndex > 0 ? badgeText.slice(0, separatorIndex) : null
   const badgeValue = badgeLabel ? badgeText.slice(separatorIndex + 1).trim() : badgeText
+  const partitionValue = /^(.+?)\s+(\([^)]*\))$/.exec(badgeValue)
   const clueTypeClass = getBadgeClueType(badgeText, clueType)
   const colorGroupClass = getColorGroupClass(badgeText)
 
@@ -62,7 +97,7 @@ export function EvidenceBadge({ text, type, clueType, fallback }: EvidenceBadgeP
         />
       ) : null}
       {badgeLabel ? <span className="evidence-badge__label">{badgeLabel}</span> : null}
-      <span className="evidence-badge__value">{badgeValue}</span>
+      <span className="evidence-badge__value">{partitionValue ? <>{partitionValue[1]} <em className="evidence-badge__definition">{partitionValue[2]}</em></> : badgeValue}</span>
     </span>
   )
 }

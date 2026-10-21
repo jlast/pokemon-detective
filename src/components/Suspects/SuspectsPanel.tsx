@@ -37,8 +37,9 @@ export function SuspectsPanel({
         <section className="lineup-clues" aria-label="Collected evidence">
           <h2 className="lineup-clues__label">Your clues{discoveredEvidence.length ? <span>{discoveredEvidence.length}</span> : null}</h2>
           {discoveredEvidence.length ? <div className="lineup-clues__badges">
-            {discoveredEvidence.map(evidence => <EvidenceBadgeList key={evidence.id} badges={evidence.badges}
-              fallback={evidence.clueText} clueType={evidence.rule.axis} />)}
+            {discoveredEvidence.map((evidence, index) => <div key={evidence.id} className="lineup-clues__group" role="group" aria-label={`Clue ${index + 1}`}>
+              <EvidenceBadgeList badges={evidence.badges} fallback={evidence.clueText} clueType={evidence.rule.axis} />
+            </div>)}
           </div> : <Link to={`${TODAY_INVESTIGATION_PATH}${routeLocation.search}`} className="lineup-clues__empty">
             <img src="/clue-sprites/wide-lens.png" alt="" width="40" height="40" />
             <span>Find your first clue <span aria-hidden="true">↗</span></span>
@@ -46,7 +47,7 @@ export function SuspectsPanel({
         </section>
         <div className="lineup-heading__count" role="status"><strong>{remaining}</strong><span>still in play</span></div>
       </div>
-      <div className="suspect-grid suspect-grid-lineup">
+      <div className="suspect-grid suspect-grid-lineup corkboard-surface">
         {currentCase.suspects.map((suspect, suspectIndex) => <SuspectCard key={suspect.pokemonId} suspect={suspect}
           suspectIndex={suspectIndex}
           inspectSuspect={inspectSuspect} setSuspectNoteStatus={setSuspectNoteStatus}
