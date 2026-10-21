@@ -5,7 +5,7 @@ export function LocationVignette({ name, composition, className = '' }: {
 }) {
   const footprint = /gravel|quarry/i.test(name) ? 'claw-print' : 'paw-print'
   return <div className={`location-game-art ${className}`}>
-    <div className={`location-vignette location-vignette--${composition.layout} location-vignette--${composition.palette}`}
+    <div className={`location-vignette location-vignette--${composition.layout} location-vignette--${composition.palette} location-vignette--props-${composition.sprites.length}`}
       role="img" aria-label={`Close-up illustration of ${name}`}>
       <div className="location-vignette__wall" aria-hidden="true" />
       <div className="location-vignette__furniture" aria-hidden="true"><i /><i /><i /></div>

@@ -9087,3 +9087,7 @@
 @keyframes loading-dot-pulse { 0%, 70%, 100% { opacity: .3; } 35% { opacity: 1; } }
 @keyframes loading-file-shimmer { to { background-position: -200% 0; } }
 @media (prefers-reduced-motion: reduce) { .puzzle-loading__paper, .puzzle-loading__dots i, .puzzle-loading__file i { animation: none; } }
+
+.location-vignette--props-2 .location-vignette__prop--0 { left: 20%; }
+.location-vignette--props-2 .location-vignette__prop--1 { left: 58%; }
+.location-vignette--props-2.location-vignette--console .location-vignette__prop { bottom: 18%; }
