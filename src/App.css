@@ -9059,3 +9059,31 @@
 .case-witness-scene__pokemon:nth-child(1) { transform: translateY(3%) rotate(5deg); z-index: 2; }
 .case-witness-scene__pokemon:nth-child(2) { transform: translateY(-12%) rotate(-4deg); z-index: 1; }
 .case-witness-scene__pokemon:nth-child(3) { transform: translateY(6%) rotate(-6deg); z-index: 3; }
+
+/* A case file being prepared, rather than a bare loading message. */
+.puzzle-loading { position: relative; display: flex; flex-direction: column; align-items: center; padding: clamp(32px, 6vw, 64px) 24px 28px; overflow: hidden; text-align: center; background: radial-gradient(ellipse at 50% 20%, #f8edcc 0, transparent 60%), #fffcf4; border: 1px solid #e3d8c2; }
+.puzzle-loading__illustration { position: relative; width: 180px; height: 148px; margin: 0 0 24px; }
+.puzzle-loading__folder { position: absolute; inset: 34px 2px 0; border: 2px solid #c2a155; border-radius: 4px 12px 10px 10px; background: #dec584; transform: rotate(-7deg); }
+.puzzle-loading__folder::before { content: ''; position: absolute; left: -2px; top: -15px; width: 66px; height: 16px; border: 2px solid #c2a155; border-bottom: 0; border-radius: 6px 8px 0 0; background: #dec584; }
+.puzzle-loading__paper { position: absolute; left: 30px; right: 15px; top: 4px; bottom: 7px; padding: 18px 14px; background: #fffef9; border: 1px solid #ded4bd; border-radius: 3px; box-shadow: 0 8px 12px #7961391a; transform: rotate(5deg); animation: loading-paper-drift 3s ease-in-out infinite; text-align: left; }
+.puzzle-loading__paper > span { display: block; margin-bottom: 12px; color: #887448; font-size: 9px; font-weight: 850; letter-spacing: 2px; }
+.puzzle-loading__paper i { display: block; height: 4px; margin: 7px 0; border-radius: 2px; background: #e8e1d2; }
+.puzzle-loading__paper i:nth-of-type(2) { width: 70%; }
+.puzzle-loading__paper b { position: absolute; bottom: 13px; left: 9px; padding: 3px 5px; border: 1px solid #ba675c88; color: #ad6a5e; font-size: 8px; letter-spacing: 1px; transform: rotate(-12deg); }
+.puzzle-loading__illustration img { position: absolute; right: -19px; bottom: -12px; width: 80px; height: 80px; image-rendering: pixelated; transform: rotate(-10deg); }
+.puzzle-loading__eyebrow { color: #9b8454; font-size: .6rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+.puzzle-loading h2 { margin: 12px 0 8px; font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -.04em; text-transform: none; color: #364238; }
+.puzzle-loading__description { margin: 0; color: #8c8777; font-size: .85rem; line-height: 1.6; }
+.puzzle-loading__status { display: inline-flex; align-items: center; gap: 10px; margin-top: 24px; font-size: .75rem; font-weight: 650; color: #796739; }
+.puzzle-loading__dots { display: flex; gap: 4px; }
+.puzzle-loading__dots i { width: 4px; height: 4px; border-radius: 50%; background: #b69649; animation: loading-dot-pulse 1.2s ease-in-out infinite; }
+.puzzle-loading__dots i:nth-child(2) { animation-delay: .15s; }.puzzle-loading__dots i:nth-child(3) { animation-delay: .3s; }
+.puzzle-loading__files { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(100%, 440px); gap: 14px; margin-top: 36px; padding-top: 24px; border-top: 1px solid #e8e0cd; }
+.puzzle-loading__file { padding: 14px; border: 1px solid #e9e2d2; border-radius: 8px; background: #faf7ef; }
+.puzzle-loading__file > span { display: block; width: 34px; height: 34px; margin: 0 auto 12px; border-radius: 7px; background: #e9e4d7; }
+.puzzle-loading__file i { display: block; height: 5px; margin: 7px auto; border-radius: 3px; background: linear-gradient(100deg, #e9e4d7 20%, #f7f3ea 50%, #e9e4d7 80%); background-size: 200% 100%; animation: loading-file-shimmer 2s linear infinite; }
+.puzzle-loading__file i:last-child { width: 65%; }
+@keyframes loading-paper-drift { 0%, 100% { transform: translateY(0) rotate(5deg); } 50% { transform: translateY(-4px) rotate(3deg); } }
+@keyframes loading-dot-pulse { 0%, 70%, 100% { opacity: .3; } 35% { opacity: 1; } }
+@keyframes loading-file-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .puzzle-loading__paper, .puzzle-loading__dots i, .puzzle-loading__file i { animation: none; } }

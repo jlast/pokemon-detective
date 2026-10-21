@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import './App.css'
 import { DesktopSidebar } from './components/DesktopSidebar'
+import { PuzzleLoading } from './components/PuzzleLoading'
 import { Header } from './components/Header'
 import { AccuseRoute } from './routes/AccuseRoute'
 import { AdminRoute } from './routes/AdminRoute'
@@ -1159,7 +1160,7 @@ function App() {
     )
   }
 
-  if (loading || !currentCase) {
+  if (loading || !currentCase || (import.meta.env.VITE_CODEX_PREVIEW === 'true' && searchParams.get('previewLoading') === '1')) {
     return (
       <main className="app-shell">
         <DesktopSidebar
@@ -1194,9 +1195,7 @@ function App() {
             </div>
           </header>
           <div className="main-layout-single">
-            <section className="notebook-card loading-puzzle-card" aria-busy="true">
-              <p className="placeholder-page">{isArchivedCase ? 'Loading archived puzzle...' : "Loading today's puzzle..."}</p>
-            </section>
+            <PuzzleLoading archived={isArchivedCase} />
           </div>
           <AppFooter />
         </div>
