@@ -2,6 +2,7 @@ import type { Case } from '../game/caseModel'
 import { getClueCollectionKey } from '../game/caseModel'
 import type { SessionResponse } from '../api'
 
+const PREFERENCES_KEY = 'pokemystery:codex-preview:reminder-preferences:v1'
 const STORAGE_KEY = 'pokemystery:codex-preview:v1'
 let fixtures: Promise<Record<string, Case>> | undefined
 const visibleSession = (session: SessionResponse): SessionResponse => {
@@ -31,6 +32,19 @@ export async function previewFetch(input: string, init?: RequestInit): Promise<R
   const method = init?.method ?? 'GET'
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Record<string, SessionResponse>
   const persist = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
+  if (path === '/api/history/backfill' && method === 'POST') {
+    return response({ generatedCaseIds: [], complete: true })
+  }
+  if (path === '/api/reminder-preferences') {
+    const defaults = { dailyReminderEmails: false, unfinishedCaseReminderEmails: false, newsAndUpdatesEmails: false }
+    if (method === 'GET') return response(JSON.parse(localStorage.getItem(PREFERENCES_KEY) ?? JSON.stringify(defaults)))
+    if (method !== 'POST') return response({ error: 'Method not allowed' }, 405)
+    const body = JSON.parse(typeof init?.body === 'string' ? init.body : '{}') as Record<string, unknown>
+    if (Object.keys(defaults).some(key => typeof body[key] !== 'boolean')) return response({ error: 'Invalid preferences' }, 400)
+    const preferences = { dailyReminderEmails: body.dailyReminderEmails, unfinishedCaseReminderEmails: body.unfinishedCaseReminderEmails, newsAndUpdatesEmails: body.newsAndUpdatesEmails }
+    localStorage.setItem(PREFERENCES_KEY, JSON.stringify(preferences))
+    return response(preferences)
+  }
   if (path === '/api/pokedex') {
     const games = Object.values(saved)
     return response({

@@ -15,7 +15,8 @@
     "preview:prepare": "node scripts/generate-preview-cases.mjs",
     "dev:codex": "npm run preview:prepare && vite --mode codex-preview --host 0.0.0.0",
     "build:codex-preview": "npm run preview:prepare && tsc -b && vite build --mode codex-preview",
-    "test:codex-preview": "npm run preview:prepare && node scripts/test-codex-preview.mjs"
+    "test:codex-preview": "npm run preview:prepare && node scripts/test-codex-preview.mjs",
+    "test:codex-preview-auth": "node scripts/test-codex-preview-auth.mjs"
   },
   "dependencies": {
     "react": "^19.2.7",

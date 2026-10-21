@@ -5,6 +5,8 @@ const COGNITO_URL = COGNITO_DOMAIN.includes('.')
   ? `https://${COGNITO_DOMAIN}`
   : `https://${COGNITO_DOMAIN}.auth.${COGNITO_REGION}.amazoncognito.com`
 
+const PREVIEW_ACCOUNT_KEY = 'pokemystery:codex-preview:account:v1'
+
 const TOKEN_KEY = 'cognito-id-token'
 const ACCESS_TOKEN_KEY = 'cognito-access-token'
 const REFRESH_TOKEN_KEY = 'cognito-refresh-token'
@@ -74,6 +76,7 @@ const saveTokens = (tokens: TokenResponse): void => {
 }
 
 export const getToken = (): string | null => {
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') return null
   return localStorage.getItem(TOKEN_KEY)
 }
 
@@ -87,16 +90,28 @@ export const getPlayerSessionId = (): string => {
 }
 
 export const getAccessToken = (): string | null => {
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') return null
   return localStorage.getItem(ACCESS_TOKEN_KEY)
 }
 
+export const startPreviewSession = (): boolean => {
+  if (import.meta.env.VITE_CODEX_PREVIEW !== 'true') return false
+  localStorage.setItem(PREVIEW_ACCOUNT_KEY, 'signed-in')
+  return true
+}
+
 export const getUserProfile = (): UserProfile | null => {
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') {
+    return localStorage.getItem(PREVIEW_ACCOUNT_KEY) === 'signed-in'
+      ? { sub: 'codex-preview-detective', name: 'Preview Detective', email: 'detective@preview.invalid' }
+      : null
+  }
   const raw = localStorage.getItem(PROFILE_KEY)
   return raw ? (JSON.parse(raw) as UserProfile) : null
 }
 
 export const isAuthenticated = (): boolean => {
-  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') return false
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') return getUserProfile() !== null
   const token = getToken()
   if (!token) return false
 
@@ -120,6 +135,7 @@ const shouldRefreshToken = (token: string): boolean => {
 }
 
 export const refreshSession = async (): Promise<boolean> => {
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') return isAuthenticated()
   const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
   if (!refreshToken) return false
 
@@ -145,7 +161,7 @@ export const refreshSession = async (): Promise<boolean> => {
 }
 
 export const ensureValidSession = async (): Promise<boolean> => {
-  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') return false
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') return getUserProfile() !== null
   const token = getToken()
   if (!token) return false
   if (!shouldRefreshToken(token)) return true
@@ -153,6 +169,7 @@ export const ensureValidSession = async (): Promise<boolean> => {
 }
 
 export const clearAuth = (): void => {
+  localStorage.removeItem(PREVIEW_ACCOUNT_KEY)
   localStorage.removeItem(TOKEN_KEY)
   localStorage.removeItem(ACCESS_TOKEN_KEY)
   localStorage.removeItem(REFRESH_TOKEN_KEY)
@@ -167,7 +184,7 @@ const hasAuthConfig = (): boolean => {
 
 const login = async (identityProvider?: 'Google' | 'COGNITO'): Promise<void> => {
   if (import.meta.env.VITE_CODEX_PREVIEW === 'true') {
-    window.alert('Sign-in is unavailable in this preview. Play as a guest; your progress stays in this browser.')
+    window.location.href = '/login'
     return
   }
   if (!hasAuthConfig()) {
@@ -201,6 +218,7 @@ export const loginWithEmail = async (): Promise<void> => login('COGNITO')
 
 export const logout = (): void => {
   clearAuth()
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') return
   if (!hasAuthConfig()) return
 
   const params = new URLSearchParams({
@@ -211,6 +229,7 @@ export const logout = (): void => {
 }
 
 export const handleCallback = async (): Promise<boolean> => {
+  if (import.meta.env.VITE_CODEX_PREVIEW === 'true') return false
   if (!hasAuthConfig()) return false
 
   const params = new URLSearchParams(window.location.search)

@@ -35,7 +35,7 @@ export function SettingsRoute({
         <div className="settings-page__header">
           <div>
                         <h2>Email reminders</h2>
-            <p className="subtle-text">Choose which PokeMystery emails arrive in your inbox.</p>
+            <p className="subtle-text">{import.meta.env.VITE_CODEX_PREVIEW === 'true' ? 'Preview preferences stay in this browser. No reminder emails are sent.' : 'Choose which PokeMystery emails arrive in your inbox.'}</p>
           </div>
           <span className="settings-page__stamp" aria-hidden="true">Mail desk</span>
         </div>

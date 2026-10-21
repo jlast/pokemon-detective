@@ -70,6 +70,7 @@ import {
 } from './paths'
 import {
   isAuthenticated,
+  startPreviewSession,
   loginWithEmail,
   loginWithGoogle,
   logout as authLogout,
@@ -401,6 +402,8 @@ function App() {
 
   const handleLogout = useCallback(() => {
     authLogout()
+    setAuthed(false)
+    setUserProfile(null)
     setIsAdmin(false)
     setReminderPreferences(DEFAULT_REMINDER_PREFERENCES)
     setReminderStatus('idle')
@@ -952,6 +955,13 @@ function App() {
     currentRoute.startsWith(TODAY_PATH) &&
     !currentRoute.startsWith(TODAY_ENDING_PATH)
 
+  const handlePreviewLogin = () => {
+    if (!startPreviewSession()) return
+    setAuthed(true)
+    setUserProfile(getUserProfile())
+    navigate(withActiveCase(TODAY_PATH), { replace: true })
+  }
+
   const routeConfig = {
     root: {
       url: ROOT_PATH,
@@ -1050,7 +1060,8 @@ function App() {
     login: {
       url: LOGIN_PATH,
       title: 'Login',
-      outlet: <LoginRoute onGoogleLogin={loginWithGoogle} onEmailLogin={loginWithEmail} />,
+      outlet: <LoginRoute onGoogleLogin={loginWithGoogle} onEmailLogin={loginWithEmail}
+        onPreviewLogin={import.meta.env.VITE_CODEX_PREVIEW === 'true' ? handlePreviewLogin : undefined} />,
     },
     pokedex: {
       url: POKEDEX_PATH,
@@ -1220,6 +1231,9 @@ function App() {
       />
 
       <div className="app-content">
+        {import.meta.env.VITE_CODEX_PREVIEW === 'true' && authed ? <p className="preview-account-notice" role="status">
+          Preview Detective · Progress stays in this browser.
+        </p> : null}
         <Header
           currentCase={currentCase}
           activeSection={activeSidebarSection}

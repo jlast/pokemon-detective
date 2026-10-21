@@ -93,8 +93,11 @@ Use `npm run dev:codex` for a Vite preview of workspace changes. This generates
 sample easy/hard cases using the existing game generator and runs without AWS,
 Cognito, or the deployed test API. Progress is stored in browser local storage;
 use **Reset preview** in the banner to replay. Cases are samples, not the daily
-cases on the test site. Sign-in, email, admin, and feedback submission require
-the deployed backend and are unavailable in this mode.
+cases on the test site. Open `/login` and choose **Continue as Preview Detective**
+to explore the signed-in screens with a local demo account. This session survives
+reloads; signing out preserves local case progress. Reminder preferences are
+stored locally and do not send emails. Real Google/email sign-in, admin actions,
+and feedback submission require the deployed backend.
 
 For a standalone static preview, run `npm run build:codex-preview` and serve the
 `dist/` directory with SPA fallback to `index.html`. The private Sites preview
@@ -102,7 +105,9 @@ is a snapshot: rebuild and republish it after source changes. It does not
 update automatically when workspace files change.
 
 Run `npm run test:codex-preview` to exercise investigations, witnesses, browser
-persistence, accusation limits, and win/loss behavior. Regular `npm run dev`
+persistence, accusation limits, and win/loss behavior. Run
+`npm run test:codex-preview-auth` for demo sessions, logout, reminder preferences,
+and production authentication isolation. Regular `npm run dev`
 and `npm run build` retain their existing API behavior. Preview assets are
 regenerated locally and are not tracked in Git. Install both frontend and API
 dependencies (`npm ci` and `npm --prefix api ci`) in a fresh checkout.

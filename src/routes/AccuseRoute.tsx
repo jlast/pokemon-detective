@@ -1,7 +1,8 @@
+import { useLocation, useNavigate } from 'react-router-dom'
 import { AccusationsPanel } from '../components/Suspects/AccusationsPanel'
 import type { Case, Suspect, SuspectNoteStatus } from '../game/caseModel'
-import { TODAY_SUSPECTS_PATH } from '../paths'
-import { SuspectFileRoute } from './SuspectFileRoute'
+import { suspectPath } from '../paths'
+import { SuspectsRoute } from './SuspectsRoute'
 
 interface AccuseRouteProps {
   attemptsLeft: number
@@ -9,7 +10,6 @@ interface AccuseRouteProps {
   accusationTarget: Suspect
   wrongAccusationIds: number[]
   setSuspectNoteStatus: (suspectId: number, noteStatus: SuspectNoteStatus) => void
-  openAccusation: (suspectId: number) => void
   closeAccusation: () => void
   confirmAccusation: () => void
 }
@@ -20,27 +20,17 @@ export function AccuseRoute({
   accusationTarget,
   wrongAccusationIds,
   setSuspectNoteStatus,
-  openAccusation,
   closeAccusation,
   confirmAccusation,
 }: AccuseRouteProps) {
+  const navigate = useNavigate()
+  const location = useLocation()
   return (
-    <>
-      <SuspectFileRoute
-        currentCase={currentCase}
-        selectedSuspectOverride={accusationTarget}
-        backLinkTo={TODAY_SUSPECTS_PATH}
-        wrongAccusationIds={wrongAccusationIds}
-        setSuspectNoteStatus={setSuspectNoteStatus}
-        openAccusation={openAccusation}
-        attemptsLeft={attemptsLeft}
-      />
-        <AccusationsPanel
-          closeAccusation={closeAccusation}
-          confirmAccusation={confirmAccusation}
-          accusationTarget={accusationTarget}
-          attemptsLeft={attemptsLeft}
-        />
-    </>
+    <SuspectsRoute currentCase={currentCase} wrongAccusationIds={wrongAccusationIds}
+      attemptsLeft={attemptsLeft} setSuspectNoteStatus={setSuspectNoteStatus}
+      inspectSuspect={id => navigate(`${suspectPath(id)}${location.search}`)}>
+      <AccusationsPanel closeAccusation={closeAccusation} confirmAccusation={confirmAccusation}
+        accusationTarget={accusationTarget} attemptsLeft={attemptsLeft} />
+    </SuspectsRoute>
   )
 }

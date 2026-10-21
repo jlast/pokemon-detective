@@ -1,19 +1,23 @@
 interface LoginRouteProps {
   onGoogleLogin: () => void
   onEmailLogin: () => void
+  onPreviewLogin?: () => void
 }
 
-export function LoginRoute({ onGoogleLogin, onEmailLogin }: LoginRouteProps) {
+export function LoginRoute({ onGoogleLogin, onEmailLogin, onPreviewLogin }: LoginRouteProps) {
   return (
     <div className="login-page">
       <div className="login-shell">
         <div className="login-note-card">
           <div className="login-note-card__tape" aria-hidden="true"></div>
-          <h2 className="login-note-card__title">Save your detective progress</h2>
+          <h2 className="login-note-card__title">{onPreviewLogin ? 'Try your detective profile' : 'Save your detective progress'}</h2>
           <p className="login-note-card__desc">
-            Sign in to keep your investigation available across devices.
+            {onPreviewLogin ? 'Use a demo account to explore signed-in features. Progress stays in this browser.' : 'Sign in to keep your investigation available across devices.'}
           </p>
 
+          {onPreviewLogin ? <button type="button" className="primary-button preview-login-button" onClick={onPreviewLogin}>
+            Continue as Preview Detective
+          </button> : <>
           <button type="button" className="google-login-button" onClick={onGoogleLogin}>
             <svg className="google-login-logo" viewBox="0 0 48 48" aria-hidden="true">
               <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
@@ -27,16 +31,17 @@ export function LoginRoute({ onGoogleLogin, onEmailLogin }: LoginRouteProps) {
           <button type="button" className="email-login-button" onClick={onEmailLogin}>
             Sign in with email
           </button>
+          </>}
 
           <p className="login-security-note">
             <svg className="login-security-lock" width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="2" fill="none" />
               <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="2" fill="none" />
             </svg>
-            Your progress is securely linked to your account.
+            {onPreviewLogin ? 'Demo sign-in. No password or Google account needed.' : 'Your progress is securely linked to your account.'}
           </p>
 
-          <div className="login-note-card__watermark" aria-hidden="true">CASE NO. 2024-001</div>
+          <div className="login-note-card__watermark" aria-hidden="true">{onPreviewLogin ? 'PREVIEW ACCOUNT' : 'CASE NO. 2024-001'}</div>
         </div>
 
         <aside className="login-benefits-note">
