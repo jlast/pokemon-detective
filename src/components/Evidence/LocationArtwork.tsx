@@ -28,10 +28,10 @@ function loadScene(scene: string) {
   return asset
 }
 
-export function LocationArtwork({ name, context = '', scene, className = '' }: {
-  name: string; context?: string; scene?: LocationSceneId; className?: string
+export function LocationArtwork({ name, context = '', scene, framing = 'detail', className = '' }: {
+  name: string; context?: string; scene?: LocationSceneId; framing?: 'wide' | 'detail'; className?: string
 }) {
-  const composition = getLocationVignette(name, context)
+  const composition = framing === 'wide' ? null : getLocationVignette(name, context)
   const isComposition = composition !== null
   const slug = scene ?? chooseLocationScene(name, context)
   const source = locationSceneNames[slug]
@@ -45,8 +45,14 @@ export function LocationArtwork({ name, context = '', scene, className = '' }: {
       if (cancelled) return
       const ctx = canvas.current?.getContext('2d')
       if (!ctx) return
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.clearRect(0, 0, 240, 112)
       ctx.imageSmoothingEnabled = false
+      if (framing === 'detail') {
+        // A close-up of the setting, distinct from the wide crime-scene photograph.
+        ctx.scale(2, 2)
+        ctx.translate(-60, -28)
+      }
       const columns = image.width / 8
       // The actual scene is rows 3–16; rows 0–2 and 17–19 are the game title frame.
       for (let y = 3; y < 17; y++) for (let x = 0; x < 30; x++) {
@@ -63,7 +69,7 @@ export function LocationArtwork({ name, context = '', scene, className = '' }: {
       if (!cancelled) { console.error(error); setFailed(true) }
     })
     return () => { cancelled = true }
-  }, [slug, isComposition])
+  }, [slug, isComposition, framing])
   if (composition) return <LocationVignette name={name} composition={composition} className={className} />
   return <div className={`location-game-art ${className}`} title={`${source} · Pokémon FireRed/LeafGreen`}>
     <canvas ref={canvas} width="240" height="112" role="img" aria-label={`Location illustration for ${name}: ${source}`} />

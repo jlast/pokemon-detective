@@ -66,7 +66,7 @@ export function LocationsPanel({
 
         <div className="pinboard-card case-scene-card">
           <div className="case-scene-card__pin" aria-hidden="true" />
-          <LocationArtwork name={currentCase.locations[0]?.name ?? currentCase.title} context={currentCase.id} scene={heroScene} />
+          <LocationArtwork name={currentCase.title} context={currentCase.id} scene={heroScene} framing="wide" />
           <div className="case-scene-card__caption">
             <strong>Crime scene</strong>
             <span>{currentCase.title}</span>
