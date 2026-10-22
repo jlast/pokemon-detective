@@ -31,7 +31,7 @@ export function BoardLocationDialog({ title, subtitle, onClose, children, footer
     if (body.current) body.current.scrollTop = 0
   }, [title])
   return (
-    <dialog ref={dialog} className={`board-location-dialog ${footer ? 'board-location-dialog--with-footer' : ''} ${className}`} aria-labelledby={titleId}
+    <dialog ref={dialog} className={`board-location-dialog ${className}`} aria-labelledby={titleId}
       onCancel={event => { event.preventDefault(); onClose() }}
       onClick={event => { if (event.target === event.currentTarget) onClose() }}>
       <div className="board-location-dialog__paper">
