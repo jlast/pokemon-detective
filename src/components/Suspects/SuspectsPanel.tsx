@@ -20,7 +20,7 @@ export function SuspectsPanel({
 }: SuspectsProps) {
   const routeLocation = useLocation()
   const discoveredEvidence = getDiscoveredEvidence(currentCase)
-  const clueNote = useRef<HTMLDivElement>(null)
+  const clueNote = useRef<HTMLElement>(null)
   const dockToggle = useRef<HTMLButtonElement>(null)
   const dockContentId = useId()
   const [isDocked, setIsDocked] = useState(false)
@@ -32,7 +32,8 @@ export function SuspectsPanel({
     let frame = 0
     const updatePosition = () => {
       frame = 0
-      const pastNote = note.getBoundingClientRect().bottom <= 12
+      // Keep the dock visible while only the final 20px of the note remains.
+      const pastNote = note.getBoundingClientRect().bottom <= 20
       setIsDocked(pastNote)
       if (!pastNote) setIsExpanded(false)
     }
@@ -75,8 +76,8 @@ export function SuspectsPanel({
   return (
     <section className="notebook-card evidence-board mobile-section is-active suspects-lineup">
       <div className="suspects-pinboard corkboard-surface">
-        <div ref={clueNote} className="lineup-desk-notes">
-          <section className="lineup-clues" aria-label="Collected evidence">
+        <div className="lineup-desk-notes">
+          <section ref={clueNote} className="lineup-clues" aria-label="Collected evidence">
             <h2 className="lineup-clues__label">Your clues{discoveredEvidence.length ? <span>{discoveredEvidence.length}</span> : null}</h2>
             {clueContent}
           </section>

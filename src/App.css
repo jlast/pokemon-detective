@@ -9438,3 +9438,5 @@
 @media (max-width: 350px) { .pokedex-binder .pokedex-grid { grid-template-columns: 1fr; } }
 
 @media (max-width: 540px) { .pokedex-binder__filters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; } .pokedex-binder__filters button { font-size: .82rem; } }
+
+@media (max-width: 700px) { .suspects-pinboard > .lineup-desk-notes > .lineup-heading__count { display: none; } }
