@@ -115,6 +115,7 @@ export function EndingScreen({
   const otherCaseId = getDailyCaseId(getCaseDate(caseId), otherDifficulty)
   const [hasSolvedOtherCase, setHasSolvedOtherCase] = useState(false)
   const displayCaseStats = getDisplayCaseStats(caseStats, isSolved, playerGuessCount)
+  const correctGuessRatePercent = getCorrectGuessRatePercent(displayCaseStats)
   const solution = currentCase.solution
   const culpritName = culpritSuspect?.name ?? 'The culprit'
   const solutionClueBadgeGroups = getSolutionClueBadgeGroups(solution)
@@ -127,7 +128,6 @@ export function EndingScreen({
     return Number(rightDiscovered) - Number(leftDiscovered)
   })
   const clearedSuspects = solution?.clearedSuspects ?? []
-  const correctGuessRatePercent = getCorrectGuessRatePercent(displayCaseStats)
   const nonCulpritSuspects = currentCase.suspects.filter(
     (suspect) => suspect.pokemonId !== currentCase.culpritPokemonId,
   )
@@ -227,7 +227,7 @@ export function EndingScreen({
   }
 
   return (
-    <section className={`notebook-card ending-screen solved-case-screen ${isSolved ? 'victory-screen' : 'failed-case-screen'}`}>
+    <section className={`ending-screen ending-pinboard corkboard-surface solved-case-screen ${isSolved ? 'victory-screen' : 'failed-case-screen'}`}>
       <section className="case-closed-hero culprit-reveal-card">
         <ShareResultButton
           caseId={caseId}
@@ -237,16 +237,23 @@ export function EndingScreen({
         />
 
         <div className="ending-hero-copy">
-          <h2>{isSolved ? 'Case solved' : 'Investigation failed'}</h2>
-          <strong className="ending-culprit-name">{culpritName}</strong>
-          <p>{culpritName} was the culprit.</p>
+          <h2 className="ending-result-stamp">{isSolved ? 'Case solved' : 'Case unsolved'}</h2>
+          <h3 className="ending-case-title">{currentCase.title}</h3>
+          <p>{isSolved ? 'You caught the culprit.' : `${culpritName} slipped away this time.`}</p>
+          <p className="ending-result-note">{isSolved
+            ? playerGuessCount != null ? `Solved in ${playerGuessCount} ${playerGuessCount === 1 ? 'guess' : 'guesses'}. A good day’s detective work.` : 'A good day’s detective work.'
+            : 'The evidence is all here. See how the clues fit together below.'}</p>
         </div>
 
         <div className="ending-culprit-visuals">
           {culpritSuspect ? (
-            <div className="ending-mugshot-frame mugshot-frame">
-              <MugShot suspect={culpritSuspect} />
-            </div>
+            <figure className="ending-culprit-photo">
+              <div className="ending-culprit-photo__image">
+                <img src={culpritSuspect.sprite} alt={culpritSuspect.name} />
+                {culpritSuspect.isShiny ? <span className="shiny-stamp" aria-label="Shiny Pokémon">✨</span> : null}
+              </div>
+              <figcaption>{culpritName}</figcaption>
+            </figure>
           ) : null}
         </div>
       </section>
@@ -354,48 +361,42 @@ export function EndingScreen({
       ) : null}
 
       <section className="case-result-stats" aria-label="Case summary">
-        <section className="case-result-stat-group" aria-labelledby="community-results-label">
-          <p id="community-results-label" className="case-result-stat-group-label">Community results</p>
-          <div className="case-result-stat-items">
-            <div className="case-result-stat case-result-stat--progress">
-              <span>Correct guess rate</span>
-              <div
-                className="case-result-progress"
-                role="progressbar"
-                aria-label="Correct guess rate"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={correctGuessRatePercent ?? 0}
-              >
-                <span className="case-result-progress__fill" style={{ width: `${correctGuessRatePercent ?? 0}%` }}></span>
-              </div>
-              <small>{formatCorrectGuessRate(displayCaseStats)}</small>
+        <div className="case-result-stat case-result-stat--graph">
+          <span>Correct guess rate · all players</span>
+          <strong>{formatCorrectGuessRate(displayCaseStats)}</strong>
+          <div className="guess-rate-chart" role="img" aria-label={correctGuessRatePercent === null
+            ? 'No guesses recorded yet'
+            : `${correctGuessRatePercent}% correct guesses, ${100 - correctGuessRatePercent}% incorrect guesses`}>
+            <div className={`guess-rate-chart__bar${correctGuessRatePercent === null ? ' is-empty' : ''}`}>
+              <span className="guess-rate-chart__correct" style={{ width: `${correctGuessRatePercent ?? 0}%` }} />
             </div>
+            <div className="guess-rate-chart__scale" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
           </div>
-        </section>
-
-        <section className="case-result-stat-group case-result-stat-group--personal" aria-labelledby="your-progress-label">
-          <p id="your-progress-label" className="case-result-stat-group-label">Your progress</p>
-          <div className="case-result-stat-items">
-            <div className="case-result-stat">
-              <span>Current streak</span>
-              <strong>{caseStreak > 0 ? <span aria-hidden="true">🔥 </span> : null}{caseStreak}</strong>
+          {correctGuessRatePercent === null ? <small>No guesses yet</small> : (
+            <div className="guess-rate-chart__legend" aria-hidden="true">
+              <span><i className="guess-rate-chart__key--correct" />Correct</span>
+              <span><i className="guess-rate-chart__key--incorrect" />Incorrect</span>
             </div>
-            <div className="case-result-stat next-case-timer" title="Daily at 00:00 UTC" aria-label="Next case refreshes daily at 00:00 UTC">
-              <span>Next case</span>
-              <strong className="next-case-timer__time" aria-live="polite">
-                {timeUntilNextCase > 0 ? formatCountdown(timeUntilNextCase) : 'Available now'}
-              </strong>
-            </div>
-          </div>
-        </section>
+          )}
+        </div>
+        <div className="case-result-stat">
+          <span>Your streak</span>
+          <strong>{caseStreak} {caseStreak === 1 ? 'day' : 'days'}</strong>
+        </div>
+        <div className="case-result-stat next-case-timer" title="Daily at 00:00 UTC">
+          <span>Next case in</span>
+          <strong className="next-case-timer__time">
+            {timeUntilNextCase > 0 ? formatCountdown(timeUntilNextCase) : 'Available now'}
+          </strong>
+        </div>
       </section>
 
       <section className="case-explanation-section" aria-labelledby="case-explanation-title">
         <h3 id="case-explanation-title">How the case worked</h3>
         <div className="ending-details-grid">
           <section className="compact-result-panel evidence-used-panel">
-            <strong>Case clues</strong>
+            <h4>Case clues</h4>
+            <p className="ending-evidence-key">✓ Collected · × Not collected</p>
             <div className="case-clue-list">
               {sortedSolutionClueBadgeGroups.map((group) => {
                 const discovered = group.evidenceId ? discoveredEvidenceIds.has(group.evidenceId) : false
@@ -415,7 +416,7 @@ export function EndingScreen({
           </section>
 
           <section className="compact-result-panel suspects-ruled-out-panel">
-            <strong>Suspects ruled out</strong>
+            <h4>Why the others didn’t fit</h4>
             <div className="cleared-suspect-list">
               {nonCulpritSuspects.map(renderSuspectRow)}
             </div>

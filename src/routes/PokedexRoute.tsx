@@ -5,7 +5,7 @@ import { EvidenceBadgeList } from '../components/Evidence/EvidenceBadge'
 import { getShinySpriteUrl, pokemonData } from '../data/pokemon'
 import { TODAY_PATH } from '../paths'
 
-type PokedexFilter = 'seen' | 'unlocked' | 'shiny'
+type PokedexFilter = 'unlocked' | 'shiny'
 
 interface PokedexRouteProps {
   authed: boolean
@@ -19,7 +19,7 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
   const [loading, setLoading] = useState(authed)
   const [error, setError] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const [activeFilter, setActiveFilter] = useState<PokedexFilter | null>('seen')
+  const [activeFilter, setActiveFilter] = useState<PokedexFilter | null>(null)
   const [retry, setRetry] = useState(0)
 
   useEffect(() => {
@@ -57,9 +57,8 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
   const registeredPokemon = pokemonData.filter(pokemon => seenIds.has(pokemon.id) || unlockedIds.has(pokemon.id)
     || seenShinyIds.has(pokemon.id) || unlockedShinyIds.has(pokemon.id))
   const shinyCount = new Set([...seenShinyIds, ...unlockedShinyIds]).size
-  const counts = { seen: seenIds.size, unlocked: unlockedIds.size, shiny: shinyCount }
-  const statFilteredPokemon = activeFilter === 'seen' ? registeredPokemon.filter(pokemon => seenIds.has(pokemon.id))
-    : activeFilter === 'unlocked' ? registeredPokemon.filter(pokemon => unlockedIds.has(pokemon.id))
+  const counts = { unlocked: unlockedIds.size, shiny: shinyCount }
+  const statFilteredPokemon = activeFilter === 'unlocked' ? registeredPokemon.filter(pokemon => unlockedIds.has(pokemon.id))
     : activeFilter === 'shiny' ? registeredPokemon.filter(pokemon => seenShinyIds.has(pokemon.id) || unlockedShinyIds.has(pokemon.id))
     : registeredPokemon
   const normalizedSearchTerm = searchTerm.trim().toLowerCase()
@@ -77,7 +76,7 @@ export function PokedexRoute({ authed, onLogin }: PokedexRouteProps) {
       <div className="pokedex-binder__toolbar">
         <div className="pokedex-binder__filters" role="group" aria-label="Filter Pokédex records">
           <button type="button" data-filter="all" aria-pressed={activeFilter === null} onClick={() => setActiveFilter(null)}>All <span>{registeredPokemon.length}</span></button>
-          {(['seen', 'unlocked', 'shiny'] as const).map(filter => <button key={filter} type="button" data-filter={filter}
+          {(['unlocked', 'shiny'] as const).map(filter => <button key={filter} type="button" data-filter={filter}
             aria-pressed={activeFilter === filter} onClick={() => setActiveFilter(filter)}>
             {filter[0].toUpperCase() + filter.slice(1)} <span>{counts[filter]}</span>
           </button>)}

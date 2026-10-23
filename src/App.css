@@ -9395,9 +9395,8 @@
 .pokedex-binder__header h2, .pokedex-binder__empty h2 { margin: 0; font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', cursive; color: #5b4933; font-size: 1.8rem; line-height: 1.2; }
 .pokedex-binder__header > span { color: #89765c; font-size: .75rem; }
 .pokedex-binder__toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; padding: 0 28px 18px 44px; border-bottom: 1px solid #d9ceb7; }
-.pokedex-binder__filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; flex: 1 0 100%; width: 100%; }
+.pokedex-binder__filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; flex: 1 0 100%; width: 100%; }
 .pokedex-binder__filters button { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; padding: 10px 12px; border: 1px solid #b9a98b; border-bottom: 3px solid #b9a98b; border-radius: 6px 8px 0 0; background: #e5dccb; color: #69573f; font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; }
-.pokedex-binder__filters button[data-filter=seen] { background: #dce4e0; }
 .pokedex-binder__filters button[data-filter=unlocked] { background: #e0e5cf; }
 .pokedex-binder__filters button[data-filter=shiny] { background: #f0e1ae; }
 .pokedex-binder__filters button:hover { border-color: #846944; color: #3e3020; }
@@ -9437,6 +9436,168 @@
 @media (max-width: 700px) { .pokedex-binder { border-left-width: 15px; border-width: 6px 6px 6px 15px; } .pokedex-binder__rings { left: -13px; width: 27px; top: 90px; bottom: 80px; } .pokedex-binder__rings > span { width: 27px; height: 12px; } .pokedex-binder__header { padding: 22px 14px 16px 27px; } .pokedex-binder__toolbar { padding: 0 14px 16px 27px; gap: 10px; } .pokedex-binder__filters { gap: 6px; } .pokedex-binder__filters button { padding: 10px 8px; gap: 5px; font-size: .78rem; } .pokedex-binder__filters button[aria-pressed=true] { padding: 9px 7px; } .pokedex-binder .pokedex-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 10px; padding: 20px 12px 26px 26px; } .pokedex-binder__pocket { padding: 7px; } .pokedex-binder .pokedex-card { padding: 5px 5px 13px; } .pokedex-binder .pokedex-card h3 { font-size: 1rem; } .pokedex-binder .pokedex-card__body { padding-left: 1px; padding-right: 1px; } .pokedex-binder__empty { margin-left: 20px; margin-right: 8px; padding-left: 12px; padding-right: 12px; } }
 @media (max-width: 350px) { .pokedex-binder .pokedex-grid { grid-template-columns: 1fr; } }
 
-@media (max-width: 540px) { .pokedex-binder__filters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; } .pokedex-binder__filters button { font-size: .82rem; } }
+@media (max-width: 540px) { .pokedex-binder__filters { gap: 7px; } .pokedex-binder__filters button { flex-direction: column; justify-content: center; font-size: .82rem; } }
 
 @media (max-width: 700px) { .suspects-pinboard > .lineup-desk-notes > .lineup-heading__count { display: none; } }
+
+/* A closed case file, pinned beside the evidence. */
+.ending-pinboard { min-width: 0; }
+.ending-pinboard > * { min-width: 0; }
+.ending-pinboard .culprit-reveal-card {
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 24px;
+  padding: 36px;
+  border: 1px solid #d7c49e;
+  border-radius: 3px 6px 2px 3px;
+  background: repeating-linear-gradient(0deg, transparent 0 31px, #9aacb710 31px 32px), #fff9e9;
+  box-shadow: 2px 5px 9px #55301130;
+}
+.ending-pinboard .culprit-reveal-card::before,
+.ending-pinboard .compact-result-panel::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 25px;
+  width: 57px;
+  height: 19px;
+  border: 1px solid #c4ab6f40;
+  background: #e3cf9c99;
+  transform: rotate(-5deg);
+}
+.ending-pinboard .ending-hero-copy { gap: 17px; justify-items: start; }
+.ending-pinboard .ending-result-stamp {
+  display: inline-block;
+  padding: 9px 14px;
+  border: 3px double currentColor;
+  border-radius: 3px;
+  color: #4e7256;
+  font-size: clamp(1.45rem, 3.5vw, 2.35rem);
+  font-weight: 900;
+  letter-spacing: .035em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+}
+.failed-case-screen .ending-result-stamp { color: #9a5146; }
+.ending-pinboard .ending-case-title {
+  margin: 4px 0 0;
+  color: #544433;
+  font: 600 clamp(1.65rem, 4vw, 2.5rem)/1.2 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', cursive;
+  overflow-wrap: anywhere;
+}
+.ending-pinboard .ending-hero-copy p { color: #544e42; }
+.ending-pinboard .ending-result-note { max-width: 38ch; font-size: .9rem; line-height: 1.65; color: #82735d; }
+.ending-pinboard .ending-culprit-visuals { padding: 28px 0 10px; }
+.ending-culprit-photo {
+  position: relative;
+  width: 100%;
+  max-width: 220px;
+  margin: 0;
+  padding: 10px 10px 16px;
+  background: #fffdf5;
+  border: 1px solid #e0d0aa;
+  box-shadow: 3px 5px 7px #55301130;
+  transform: rotate(5deg);
+}
+.ending-culprit-photo::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: -7px;
+  left: calc(50% - 6px);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f49c87, #b8473b 60%, #7c2c25);
+  box-shadow: 1px 3px 3px #45251660;
+}
+.ending-culprit-photo__image {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid #96a18e;
+  background: repeating-linear-gradient(0deg, transparent 0 28px, #71857940 28px 29px), #b4c4b4;
+}
+.ending-culprit-photo img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+.ending-culprit-photo figcaption { margin-top: 12px; text-align: center; color: #544433; font: 600 1.35rem/1.2 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', cursive; }
+.ending-pinboard .case-share-button { top: 12px; right: 12px; width: 44px; min-height: 44px; border-radius: 4px; background: #fffdf5; box-shadow: 1px 2px 3px #55301115; }
+.ending-pinboard .case-share-status { grid-column: 1 / -1; }
+.ending-pinboard .post-hero-utility-row { display: flex; flex-wrap: wrap; align-items: stretch; gap: 20px; }
+.ending-pinboard .post-game-next { flex: 1 1 320px; min-width: 0; }
+.ending-pinboard .another-case-cta__text { overflow-wrap: anywhere; }
+.ending-pinboard .another-case-cta { width: 100%; height: auto; min-height: 84px; border-radius: 3px; background: #fff4d4; box-shadow: 2px 3px 5px #55301120; }
+.ending-pinboard .another-case-cta__icon { width: 80px; min-width: 80px; border-radius: 2px 0 0 2px; }
+.ending-pinboard .another-case-cta__sprite { width: 76px; height: 76px; transform: none; filter: none; }
+.ending-pinboard .case-feedback-card { flex: 1 1 240px; min-width: 0; width: auto; max-width: 100%; justify-content: center; padding: 16px; background: #f9e7ac; border: 1px solid #d8bd76; border-radius: 2px; box-shadow: 2px 3px 5px #55301120; }
+.ending-pinboard .case-feedback-heading { width: auto; }
+.ending-pinboard .feedback-rating-button { width: 32px; min-height: 44px; }
+.ending-pinboard .case-feedback-popover { position: relative; top: auto; right: auto; flex-basis: 100%; width: 100%; margin-top: 8px; }
+.ending-pinboard .login-incentive-card--ending { border-radius: 3px; background: #fff9e9; box-shadow: 2px 3px 5px #55301120; }
+.ending-pinboard .case-result-stats {
+  grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid #d3bf99;
+  border-radius: 2px;
+  background: #f4e7c7;
+  box-shadow: 2px 3px 5px #55301120;
+}
+.ending-pinboard .case-result-stat { gap: 9px; }
+.ending-pinboard .case-result-stat + .case-result-stat { border-left: 1px dashed #c4ac82; padding-left: 16px; }
+.ending-pinboard .case-result-stat > strong { font-size: clamp(1rem, 2.5vw, 1.5rem); color: #544433; }
+.ending-pinboard .case-explanation-section { margin: 0; gap: 20px; }
+.ending-pinboard .case-explanation-section > h3 { justify-self: start; padding: 10px 18px; background: #f4df8e; box-shadow: 2px 3px 3px #55301120; color: #544433; font: 600 1.4rem/1.2 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', cursive; transform: rotate(-1deg); }
+.ending-pinboard .ending-details-grid { min-width: 0; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+.ending-pinboard .compact-result-panel { position: relative; min-width: 0; gap: 14px; padding: 24px 18px 18px; border: 1px solid #ddcba7; border-radius: 2px; background: #fffbee; box-shadow: 2px 4px 6px #55301125; }
+.ending-pinboard .compact-result-panel h4 { margin: 0; color: #544433; font: 600 1.3rem/1.3 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', cursive; }
+.ending-evidence-key { margin: -6px 0 0; font-size: .75rem; color: #82735d; }
+.ending-pinboard .solution-clue-badge-group { border-radius: 3px; background: #f7f0dc; box-shadow: none; gap: 9px; padding: 12px; }
+.ending-pinboard .solution-clue-badge-group__label { flex-wrap: wrap; font-size: .8rem; }
+.ending-pinboard .cleared-suspect-row { border: 0; border-bottom: 1px solid #dccfb4; border-radius: 0; padding: 9px 0; background: transparent; }
+.ending-pinboard .cleared-suspect-copy { min-width: 0; }
+.ending-pinboard .cleared-suspect-copy > strong { font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', cursive; color: #544433; }
+.ending-pinboard .cleared-suspect-copy > span { font-size: .8rem; line-height: 1.5; }
+@media (max-width: 700px) {
+  .ending-pinboard .culprit-reveal-card { grid-template-columns: minmax(0, 1fr); padding: 26px 20px; gap: 8px; }
+  .ending-pinboard .ending-hero-copy { padding-top: 28px; gap: 14px; }
+  .ending-pinboard .ending-culprit-visuals { padding-top: 12px; }
+  .ending-culprit-photo { max-width: 190px; transform: rotate(3deg); }
+  .ending-pinboard .case-explanation-section { min-width: 0; margin-top: 12px; gap: 28px; }
+  .ending-pinboard .case-explanation-section > h3 { max-width: 100%; padding: 14px 18px; line-height: 1.4; transform: none; }
+  .ending-pinboard .ending-details-grid { min-width: 0; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .ending-pinboard .compact-result-panel { gap: 18px; padding: 28px 14px 20px; }
+  .ending-pinboard .case-clue-list { gap: 12px; }
+  .ending-pinboard .solution-clue-badge-group { gap: 12px; }
+  .ending-pinboard .solution-clue-badge-group__label { line-height: 1.5; }
+  .ending-pinboard .cleared-suspect-row { padding-block: 14px; }
+  .ending-pinboard .case-feedback-card { width: 100%; justify-self: stretch; }
+  .ending-pinboard .case-result-stats { padding: 16px 12px; gap: 8px; }
+  .ending-pinboard .case-result-stat + .case-result-stat { padding-left: 8px; }
+  .ending-pinboard .case-result-stat > span { font-size: .65rem; }
+  .ending-pinboard .case-result-stat > strong { font-size: .95rem; }
+}
+
+/* Community guesses, drawn on the case summary note. */
+.ending-pinboard .case-result-stat { align-content: start; }
+.guess-rate-chart { width: 100%; }
+.guess-rate-chart__bar { height: 22px; overflow: hidden; border: 1px solid #9c8065; border-radius: 2px; background: #c39583; }
+.guess-rate-chart__correct { display: block; height: 100%; background: repeating-linear-gradient(-45deg, #ffffff12 0 3px, transparent 3px 7px), #557c5c; }
+.guess-rate-chart__bar.is-empty { background: #e4d6b9; border-style: dashed; }
+.guess-rate-chart__scale { display: flex; justify-content: space-between; margin-top: 5px; color: #75654f; font-size: .65rem; font-variant-numeric: tabular-nums; }
+.guess-rate-chart__legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: .7rem; color: #63533e; }
+.guess-rate-chart__legend > span { display: inline-flex; align-items: center; gap: 5px; }
+.guess-rate-chart__legend i { width: 9px; height: 9px; border-radius: 1px; }
+.guess-rate-chart__key--correct { background: #557c5c; }
+.guess-rate-chart__key--incorrect { background: #c39583; }
+@media (max-width: 700px) {
+  .ending-pinboard .case-result-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .ending-pinboard .case-result-stat--graph { grid-column: 1 / -1; padding-bottom: 16px; border-bottom: 1px dashed #c4ac82; }
+  .ending-pinboard .case-result-stat--graph + .case-result-stat { border-left: 0; padding-left: 0; }
+}
+
+@media (min-width: 1000px) {
+  .ending-pinboard .ending-details-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 24px; }
+}
