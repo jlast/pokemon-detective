@@ -686,7 +686,6 @@ function App() {
         setAccusationHistory(data.accusationHistory ?? [])
         setAccusationsRemaining(data.accusationsRemaining ?? MAX_ACCUSATIONS)
         setCaseStats(data.caseStats ?? null)
-        setAccusationTargetId(null)
 
         updateSuspectNote(accusationTarget.pokemonId, (prev) => ({
           ...prev,
@@ -725,7 +724,7 @@ function App() {
           resetTransientUi()
           navigate(withActiveCase(endingPath('failed')))
         } else {
-          navigate(withActiveCase(suspectPath(accusationTarget.pokemonId)))
+          navigate(withActiveCase(TODAY_SUSPECTS_PATH), { state: { wrongAccusationId: accusationTarget.pokemonId } })
         }
       } catch (err) {
         console.error('Accusation failed:', err)
@@ -751,7 +750,6 @@ function App() {
         console.error('Accusation failed:', err)
         return
       }
-      setAccusationTargetId(null)
 
       updateSuspectNote(accusationTarget.pokemonId, (prev) => ({
         ...prev,
@@ -790,7 +788,7 @@ function App() {
         resetTransientUi()
         navigate(withActiveCase(endingPath('failed')))
       } else {
-        navigate(withActiveCase(suspectPath(accusationTarget.pokemonId)))
+        navigate(withActiveCase(TODAY_SUSPECTS_PATH), { state: { wrongAccusationId: accusationTarget.pokemonId } })
       }
     }
   }

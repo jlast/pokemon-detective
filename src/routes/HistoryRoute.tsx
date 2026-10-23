@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { backfillPuzzleHistory, getPuzzleHistory, type PuzzleHistoryItem, type PuzzleHistoryResponse } from '../api'
 import { TODAY_PATH } from '../paths'
+import { pokemonData } from '../data/pokemon'
 
 interface HistoryRouteProps {
   authed: boolean
@@ -71,7 +72,6 @@ const getCaseActionLabel = (status: 'playing' | 'solved' | 'failed') => (
 )
 
 export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
-  const navigate = useNavigate()
   const [history, setHistory] = useState<PuzzleHistoryResponse>(emptyHistory)
   const [loading, setLoading] = useState(authed)
   const [error, setError] = useState(false)
@@ -122,10 +122,10 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
   if (!authed) {
     return (
       <div className="main-layout-single">
-        <section className="notebook-card history-page history-empty-state">
-                    <h2>Sign in to save puzzle history</h2>
+        <section className="history-page case-archive history-empty-state">
+          <h2>Archived cases</h2>
           <p className="subtle-text">
-            Completed cases are linked to your detective profile so you can review your solve record later.
+            Sign in to revisit your cases and their evidence.
           </p>
           <button type="button" className="primary-button" onClick={onLogin}>
             Sign in
@@ -139,55 +139,56 @@ export function HistoryRoute({ authed, onLogin }: HistoryRouteProps) {
 
   return (
     <div className="main-layout-single">
-      <section className="notebook-card history-page">
+      <section className="history-page case-archive">
         <div className="history-header">
           <div>
-                        <h2>Puzzle history</h2>
-            <p className="subtle-text">
-              Review previous daily puzzles saved to your detective profile.
-            </p>
+            <h2>Archived cases</h2>
           </div>
         </div>
 
         {loading ? (
-          <p className="placeholder-page">Loading case archive...</p>
+          <p className="archive-message" role="status">Opening the archive…</p>
         ) : error ? (
-          <p className="placeholder-page">Could not load your puzzle history right now.</p>
+          <p className="archive-message" role="alert">Could not open your archive right now. Please try again.</p>
         ) : historyGroups.length === 0 ? (
-          <p className="placeholder-page">No archived cases yet. Open today's puzzle to start your archive.</p>
+          <div className="archive-message">
+            <p>No cases filed yet.</p>
+            <Link className="history-card__play" to={TODAY_PATH}>Open today’s case <span aria-hidden="true">→</span></Link>
+          </div>
         ) : (
           <div className="history-list">
             {historyGroups.map((group) => (
               <article key={group.dateKey} className="history-day-card">
                 <header className="history-day-card__date">
-                  <span>{formatCaseDate(group.dateKey)}</span>
+                  <h3>{formatCaseDate(group.dateKey)}</h3>
                 </header>
                 <div className="history-day-card__cases">
-                  {group.items.map((item) => (
-                    <div key={item.caseId} className={`history-case-row history-case-row--${item.status}`}>
+                  {group.items.map((item) => {
+                    const culprit = item.status !== 'playing' && item.culpritPokemonId
+                      ? pokemonData.find(pokemon => pokemon.id === item.culpritPokemonId) : undefined
+                    return <div key={item.caseId} className={`history-case-row history-case-row--${item.status}`}>
+                      <div className={`archive-portrait${culprit ? '' : ' archive-portrait--file'}`} aria-hidden="true">
+                        <img src={culprit?.sprite ?? '/clue-sprites/journal.png'} alt="" width="64" height="64" loading="lazy" />
+                      </div>
                       <div className="history-card__body">
-                        <h3>{item.caseTitle}</h3>
-                        {item.culpritPokemonId && item.culpritPokemonName ? (
-                          <p>
-                            Culprit: <strong>{item.culpritPokemonName}</strong>
-                          </p>
-                        ) : item.status !== 'playing' ? (
-                          <p>Legacy record saved before detailed history was available.</p>
+                        <h4>{item.caseTitle}</h4>
+                        {item.status !== 'playing' && item.culpritPokemonName ? (
+                          <p>Culprit: {item.culpritPokemonName}</p>
                         ) : null}
+                        <div className="archive-case-details">
+                          <span className={`archive-difficulty ${getDifficultyClassName(item.difficulty)}`}>{formatDifficulty(item.difficulty)}</span>
+                          <span className="archive-status">{getStatusLabel(item.status)}</span>
+                        </div>
                       </div>
-                      <div className="history-card__meta" aria-label={`${item.caseTitle} details`}>
-                        <span className={`history-difficulty ${getDifficultyClassName(item.difficulty)}`}>{formatDifficulty(item.difficulty)}</span>
-                        <span className="history-status">{getStatusLabel(item.status)}</span>
-                        <button
-                          type="button"
-                          className={`history-card__play ${item.status === 'playing' ? 'history-card__play--case' : 'history-card__play--debrief'}`}
-                          onClick={() => navigate(`${TODAY_PATH}?case=${encodeURIComponent(item.caseId)}`)}
-                        >
-                          {getCaseActionLabel(item.status)}
-                        </button>
-                      </div>
+                      <Link
+                        className={`history-card__play ${item.status === 'playing' ? 'history-card__play--case' : 'history-card__play--debrief'}`}
+                        to={`${TODAY_PATH}?case=${encodeURIComponent(item.caseId)}`}
+                        aria-label={`${getCaseActionLabel(item.status)}: ${item.caseTitle}`}
+                      >
+                        {getCaseActionLabel(item.status)} <span aria-hidden="true">→</span>
+                      </Link>
                     </div>
-                  ))}
+                  })}
                 </div>
               </article>
             ))}
