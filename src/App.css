@@ -9354,12 +9354,9 @@
 .board-location-dialog .board-location-dialog__heading { position: relative; top: auto; flex: 0 0 auto; }
 .board-location-dialog__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 .board-location-dialog__footer { flex: 0 0 auto; }
-.suspect-dialog-actions { display: none; }
-@media (max-width: 900px) {
   .suspect-dialog-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 10px 16px max(10px, env(safe-area-inset-bottom)); border-top: 1px solid #d0ba8d; background: #eee2c7; box-shadow: 0 -3px 10px #593d1912; }
   .suspect-dialog-actions button { width: 100%; min-height: 44px; padding: 10px; border-radius: 6px; font-size: .85rem; }
   .suspect-dialog-actions .suspect-verdict-accuse-button { margin: 0; }
-}
 
 /* Suspect navigation shares the persistent popup header with its close button. */
 .suspect-dossier-dialog .board-location-dialog__heading { align-items: center; gap: 12px; }
@@ -9653,3 +9650,64 @@
 
 .wrong-accusation .board-location-dialog__heading { border-top-color: #a76250; }
 .wrong-accusation__actions { grid-template-columns: minmax(0, 1fr); }
+
+/* Suspect detail uses the lineup’s instant photo and plain paper notes. */
+.suspect-record-dialog { width: min(860px, calc(100vw - 32px)); border: 2px solid #b69c72; border-radius: 4px 8px 4px 4px; }
+.suspect-record-dialog .board-location-dialog__paper { background: #f4ecd9; }
+.suspect-record-dialog .board-location-dialog__heading { background: #e8d9b8; border-top-color: #ad8b51; border-bottom: 1px solid #cbb58c; }
+.suspect-record-dialog .suspect-file-page { padding: 24px; }
+.suspect-record { display: grid; gap: 28px; min-width: 0; }
+.suspect-record__overview { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 28px; align-items: start; }
+.suspect-record__photo { position: relative; display: grid; gap: 12px; justify-items: center; width: 100%; max-width: 190px; margin: 5px auto 0; padding: 10px 10px 16px; border: 1px solid #d7cbb5; background: #fffdf5; box-shadow: 2px 4px 5px #55301120; transform: rotate(-3deg); }
+.suspect-record__photo::before { content: ''; position: absolute; z-index: 1; top: -8px; left: calc(50% - 23px); width: 46px; height: 17px; border: 1px solid #bfa87955; background: #e3cf9c99; transform: rotate(5deg); }
+.suspect-record__image { position: relative; width: 100%; aspect-ratio: 1; background: repeating-linear-gradient(0deg, transparent 0 24px, #71857940 24px 25px), #b4c4b4; border: 1px solid #96a18e; overflow: hidden; }
+.suspect-record__image img { display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+.suspect-record__photo.is-cleared .suspect-record__image img { filter: grayscale(.8); opacity: .65; }
+.suspect-record__photo figcaption { color: #544433; text-align: center; font: 600 1.35rem/1.3 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', cursive; overflow-wrap: anywhere; max-width: 100%; }
+.suspect-record__status { padding: 3px 8px; border: 1px solid #b5a486; border-radius: 2px; color: #806c49; font-size: .7rem; font-weight: 650; }
+.suspect-record__status.is-cleared { color: #527255; border-color: #809879; }
+.suspect-record__status.is-false-lead { color: #9a5146; border-color: #b37a68; }
+.suspect-record .detective-profile { min-width: 0; }
+.suspect-record .detective-profile-card,
+.suspect-record .suspect-evidence-assessment-group { border: 1px solid #dbccad; border-radius: 2px; padding: 20px; background: repeating-linear-gradient(0deg, transparent 0 29px, #9aacb710 29px 30px), #fffbee; box-shadow: 1px 3px 4px #55301112; }
+.suspect-record .detective-profile-card h3,
+.suspect-record .suspect-evidence-assessment-group h3 { position: static; margin: 0 0 10px; padding: 0; border: 0; border-radius: 0; background: transparent; color: #544433; font: 600 1.3rem/1.4 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', cursive; text-transform: none; letter-spacing: 0; }
+.suspect-record .detective-profile-row { grid-template-columns: minmax(78px, .4fr) minmax(0, 1fr); gap: 14px; padding-block: 9px; }
+.suspect-record .detective-profile-label { font-size: .78rem; font-weight: 500; letter-spacing: 0; text-transform: none; }
+.suspect-record .detective-profile-value { font-size: .9rem; font-weight: 600; line-height: 1.5; }
+.suspect-record .suspect-evidence-assessment-list { gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.suspect-record .detective-evidence-card { grid-template-columns: minmax(0, 1fr); border: 1px solid #dfd1b6; border-radius: 3px; padding: 12px; background: #f6efde; }
+.suspect-record .detective-evidence-result-icon { display: none; }
+.suspect-record .detective-evidence-main { min-width: 0; gap: 10px; }
+.suspect-record .detective-evidence-heading { margin-bottom: 8px; font-size: .8rem; }
+.suspect-record .suspect-evidence-assessment-empty { margin: 0; color: #82735d; font-size: .85rem; line-height: 1.6; }
+.suspect-record-dialog--compact { width: min(400px, calc(100vw - 32px)); }
+.suspect-record--compact .suspect-record__overview { grid-template-columns: minmax(0, 1fr); }
+.suspect-record--compact .suspect-record__photo { max-width: 170px; }
+.suspect-record-dialog--compact .suspect-file-page { padding: 18px 24px 24px; }
+@media (max-width: 600px) {
+  .suspect-record-dialog .suspect-file-page { padding: 20px 16px; }
+  .suspect-record__overview { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .suspect-record__photo { max-width: 170px; }
+  .suspect-record .detective-profile-card,
+  .suspect-record .suspect-evidence-assessment-group { padding: 18px 14px; }
+  .suspect-record-dialog--compact .suspect-file-page { padding: 14px 20px 20px; }
+  .suspect-record--compact .suspect-record__photo { max-width: 150px; }
+}
+
+.suspect-record--compact .suspect-record__overview { gap: 20px; }
+.suspect-record--compact .detective-profile-card--unavailable { gap: 4px; padding: 14px 16px; }
+.suspect-record--compact .detective-profile-card--unavailable h3 { margin: 0; font-size: 1.15rem; }
+.suspect-record--compact .detective-profile-card--unavailable p { font-size: .82rem; font-weight: 500; line-height: 1.5; }
+
+.profile-color-value { width: fit-content; font-weight: 700; }
+.profile-color-value[data-color=black] { color: #292722; }
+.profile-color-value[data-color=blue] { color: #255f98; }
+.profile-color-value[data-color=brown] { color: #80502d; }
+.profile-color-value[data-color=gray] { color: #66645f; }
+.profile-color-value[data-color=green] { color: #376d3f; }
+.profile-color-value[data-color=pink] { color: #a63c6b; }
+.profile-color-value[data-color=purple] { color: #795294; }
+.profile-color-value[data-color=red] { color: #a63f36; }
+.profile-color-value[data-color=white] { color: #fffdf5; background: #5a554c; border-radius: 2px; padding: 1px 7px; }
+.profile-color-value[data-color=yellow] { color: #806000; }

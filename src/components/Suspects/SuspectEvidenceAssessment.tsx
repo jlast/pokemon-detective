@@ -36,7 +36,7 @@ export function SuspectEvidenceAssessment({ evidenceItems }: SuspectEvidenceAsse
   return (
     <section className="suspect-evidence-assessment" aria-label="Collected evidence">
       <section className="suspect-evidence-assessment-group">
-        <h3>Forensic Report</h3>
+        <h3>Your clues</h3>
         {evidenceItems.length ? (
           <div className="suspect-evidence-assessment-list">
             {evidenceItems.map((evidence) => {

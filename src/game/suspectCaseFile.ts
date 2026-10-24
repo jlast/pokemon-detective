@@ -1,9 +1,9 @@
-import { pokemonData, type Pokemon } from '../data/pokemon'
+import { pokemonData, type Pokemon, type PokemonColor } from '../data/pokemon'
 import type { ClueRule, Evidence, EvidenceBadgeData, EvidenceEvaluationResult } from './caseModel'
 
 const toTitle = (value: string) => value[0].toUpperCase() + value.slice(1)
 
-export type DetectiveProfileRow = { label: string; value: string; source?: string; badges?: EvidenceBadgeData[] }
+export type DetectiveProfileRow = { label: string; value: string; source?: string; badges?: EvidenceBadgeData[]; color?: PokemonColor }
 
 export type DetectiveProfileData = {
   investigativeTraits: DetectiveProfileRow[]
@@ -423,7 +423,8 @@ export const buildInvestigativeProfile = (pokemon: Pokemon): DetectiveProfileRow
   { label: 'Weight', value: `${pokemon.weightKg} kg · ${toTitle(getWeightBucket(pokemon))}` },
   { label: 'Type', value: '', badges: pokemon.types.map((type) => ({ text: toTitle(type), type })) },
   { label: 'Region', value: pokemon.region },
-  { label: 'Capture', value: `${formatCaptureGroup(getCaptureGroup(pokemon.captureRate))} · ${getCaptureGroupDescription(getCaptureGroup(pokemon.captureRate))}` },
+  { label: 'Catch rate', value: `${pokemon.captureRate} · ${formatCaptureGroup(getCaptureGroup(pokemon.captureRate))}` },
+  { label: 'Color', value: toTitle(pokemon.color), color: pokemon.color },
   { label: 'Evolution', value: formatEvolutionPotential(getEvolutionPotential(pokemon)) },
   { label: 'Highest stat', value: statLabels[pickStatKey(pokemon, highestStatPriority, 'highest')] },
   { label: 'Lowest stat', value: statLabels[pickStatKey(pokemon, lowestStatPriority, 'lowest')] },

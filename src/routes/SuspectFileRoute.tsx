@@ -84,21 +84,17 @@ export function SuspectFileRoute({
 
       {selectedSuspectOverride ? suspectNavigation : null}
 
-      <div className="dossier-shell">
-        <span className="dossier-shell-tab">Suspect Dossier</span>
-        <SelectedSuspectCaseFile
-          selectedSuspect={selectedSuspect}
-          currentCase={currentCase}
-          wrongAccusationIds={wrongAccusationIds}
-          setSuspectNoteStatus={setSuspectNoteStatus}
-          openAccusation={openAccusation}
-          attemptsLeft={attemptsLeft}
-          showMobileActions={Boolean(selectedSuspectOverride)}
-        />
-      </div>
+      <SelectedSuspectCaseFile
+        selectedSuspect={selectedSuspect}
+        currentCase={currentCase}
+        wrongAccusationIds={wrongAccusationIds}
+        setSuspectNoteStatus={setSuspectNoteStatus}
+        openAccusation={openAccusation}
+        attemptsLeft={attemptsLeft}
+        showMobileActions={Boolean(selectedSuspectOverride)}
+      />
     </section>
   )
-  // Accusation confirmation retains its existing page and confirmation overlay.
   if (selectedSuspectOverride) return dossier
   return <SuspectsRoute currentCase={currentCase} wrongAccusationIds={wrongAccusationIds}
     attemptsLeft={attemptsLeft} setSuspectNoteStatus={setSuspectNoteStatus}
@@ -108,7 +104,7 @@ export function SuspectFileRoute({
       footer={<SuspectActions suspect={selectedSuspect} caseStatus={currentCase.status}
         isFalseLead={wrongAccusationIds.includes(selectedSuspect.pokemonId)} attemptsLeft={attemptsLeft}
         setSuspectNoteStatus={setSuspectNoteStatus} openAccusation={openAccusation} className="suspect-dialog-actions" />}
-      className="suspect-dossier-dialog" closeLabel="Close dossier and return to suspects lineup"
+      className={`suspect-dossier-dialog suspect-record-dialog${currentCase.difficulty === 'hard' ? ' suspect-record-dialog--compact' : ''}`} closeLabel="Close dossier and return to suspects lineup"
       onClose={() => navigate(withSearch(backLinkTo), { state: { focusSuspectId: selectedSuspect.pokemonId } })}>
       {dossier}
     </BoardLocationDialog>
